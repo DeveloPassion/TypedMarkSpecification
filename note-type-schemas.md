@@ -1,0 +1,194 @@
+---
+title: Note Type Schemas
+parent: TypedMark
+nav_order: 4
+---
+
+# Note Type Schemas
+
+This page is authoritative for note type registration, the required top-level contract of `.metadata/schemas/<note_type>.yaml`, schema kinds, and storage rules. Field semantics live in [Managed Notes and Properties](managed-notes-and-properties.md), relationship, heading, and template semantics live in [Relationships, Headings, and Templates](relationships-headings-and-templates.md), and collection-level inheritance lives in [Collection Model](collection-model.md).
+
+## 7. Note Type Registry
+
+The note type registry is implicit.
+
+Rules:
+
+- Every YAML file directly under `.metadata/schemas/` defines one note type.
+- No separate registry file is maintained for note types.
+- A note type MUST NOT be defined in more than one schema file.
+- The schema file basename MUST equal the schema's `note_type` value.
+- A managed note MUST conform to exactly one primary note type.
+- The conformance requirements that determine when schema files MUST exist are defined in [Conformance and Roadmap](conformance-and-roadmap.md).
+
+## 8. Schema File Contract
+
+Each `.metadata/schemas/<note_type>.yaml` MUST define one concrete note type and MUST follow this shape:
+
+```yaml
+specification_version: 0.0.1
+note_type: topic
+label: Topic
+icon: note
+kind: entity
+description: Durable note about a specific topic.
+
+storage:
+  path_pattern: "Topics/{title}.md"
+  archive:
+    policy: mirror_under_archives
+    archived_path_pattern: "Archives/Topics/{title}.md"
+
+template:
+  file: ".metadata/templates/topic.md"
+
+frontmatter:
+  required_fields:
+    note_type:
+      type: text
+      const_value: topic
+    id:
+      type: text
+      format: slug
+      nullable: false
+    title:
+      type: text
+      nullable: false
+    domain:
+      type: text
+      format: note_link
+      nullable: false
+      relationship_kind: belongs_to
+    sources:
+      type: list
+      items:
+        type: text
+        format: note_link
+      nullable: false
+      relationship_kind: related_to
+    status:
+      type: text
+      allowed_values: [draft, active, archived]
+      nullable: true
+      default_value: null
+  optional_fields:
+    summary:
+      type: text
+      nullable: true
+      default_value: null
+
+relationships:
+  belongs_to:
+    allowed_note_types:
+      domain:
+        min: 1
+        max: 1
+  related_to:
+    allowed_note_types:
+      source:
+        min: 1
+      concept:
+        min: 0
+      topic:
+        min: 0
+
+headings:
+  required_h2:
+    - Summary
+    - Key Ideas
+    - Sources
+    - Related
+  optional_h2:
+    - Context
+    - Notes
+  allow_other_h2: true
+  require_order: false
+
+guidance:
+  when_to_use: "Use for a durable note about a specific topic."
+  when_not_to_use: "Do not use for broad groupings, source material, or dated logs."
+```
+
+Required top-level keys:
+
+- `specification_version`
+- `note_type`
+- `label`
+- `icon`
+- `kind`
+- `description`
+- `storage`
+- `template`
+- `frontmatter`
+- `relationships`
+- `headings`
+- `guidance`
+
+Rules:
+
+- Every top-level key listed above MUST be physically present in each note-type schema.
+- The semantics of `specification_version` are defined in [Foundations](foundations.md).
+- In schema files, `note_type` is the identifier of the note type being defined.
+- In managed notes, `note_type` is the frontmatter metadata field that declares which note type the note is.
+- `icon` MUST be a non-empty string.
+- `icon` is human-facing note-type metadata for generated references and applications.
+- The core specification treats `icon` as an opaque presentation token and does not standardize icon libraries or rendering behavior.
+- `template.file` MUST point to the canonical template for the same note type.
+- The `frontmatter` block semantics are defined in [Managed Notes and Properties](managed-notes-and-properties.md).
+- The `frontmatter` block MUST contain `required_fields` and `optional_fields` mappings, even when one mapping is empty.
+- The `relationships` block semantics are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
+- The `relationships` block MUST contain both `belongs_to.allowed_note_types` and `related_to.allowed_note_types`, even when those mappings are empty.
+- The `headings` block semantics are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
+- The `headings` block MUST be present even when the note type imposes no mandatory H2 headings.
+- `guidance` is human-facing explanatory content and MUST NOT override structural rules.
+- `inheritance` MAY be omitted.
+- A note-type schema MAY include an `inheritance` block to disable global inheritance entirely or for specific blocks.
+- Collection-level merge and override rules are defined in [Collection Model](collection-model.md).
+- Inheritance affects the contents of `frontmatter`, `relationships`, and `headings`; it does not make those blocks optional.
+- A note-type schema MAY omit individual inherited field definitions, relationship target definitions, or heading settings that remain unchanged.
+
+## 9. Allowed Schema Kinds
+
+Each note type MUST declare one of these `kind` values:
+
+- `singleton`
+- `entity`
+- `dated_record`
+- `rule_set`
+
+Definitions:
+
+- `singleton`: one canonical fixed-path note
+- `entity`: durable note for a long-lived thing
+- `dated_record`: time-based note whose path includes a date
+- `rule_set`: conventions, rules, style, or governance note
+
+Special-case guidance:
+
+- Fixed-path notes SHOULD be modeled as `singleton` note types.
+- Examples include `Home.md`, `Guide.md`, and `Glossary.md`.
+- A fixed-path singleton MAY omit `title` if the title is implied by the schema.
+- A singleton still requires `note_type` and `id` unless explicitly exempted in a future schema version.
+
+## 10. Storage Rules
+
+Every note type schema MUST define storage rules.
+
+Required storage fields:
+
+- `path_pattern`
+- `archive.policy`
+
+Allowed archive policies:
+
+- `mirror_under_archives`
+- `in_place_historical`
+- `fixed`
+
+Rules:
+
+- `path_pattern` and `archived_path_pattern`, when present, are relative to the collection root.
+- Validators MUST ensure a managed note path matches its schema `path_pattern`.
+- If `archive.policy` is `mirror_under_archives`, the schema MUST also define `archived_path_pattern`.
+- If a note is archived, its `id` and `note_type` MUST remain unchanged.
+- `dated_record` note types SHOULD encode the date in both path and metadata when practical.
