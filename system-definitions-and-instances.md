@@ -6,14 +6,14 @@ nav_order: 3
 
 # System Definitions and Instances
 
-This page is authoritative for `.metadata/system.yaml`, `.metadata/instance.yaml`, and the boundary between the core specification and profiles. It is not authoritative for `typedmark.json`; that lives in [Collection Model](collection-model.md). It is also not authoritative for note-type schema block semantics, managed note field semantics, or relationship and template semantics; those live in [Note Type Schemas](note-type-schemas.md), [Managed Notes and Properties](managed-notes-and-properties.md), and [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
+This page is authoritative for `.metadata/system.yaml`, `.metadata/instance.yaml`, and the boundary between the core specification and profiles. It is not authoritative for `typedmark.yaml`; that lives in [Collection Model](collection-model.md). It is also not authoritative for note-type schema block semantics, managed note field semantics, or relationship and template semantics; those live in [Note Type Schemas](note-type-schemas.md), [Managed Notes and Properties](managed-notes-and-properties.md), and [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 
 ## 6. System Definitions, Instances, and Profiles
 
 A system definition is a reusable package for a TypedMark collection model. It packages:
 
 - system identity and publishable metadata
-- the root `typedmark.json`
+- the root `typedmark.yaml`
 - named property sets, when used
 - note-type schemas
 - templates
@@ -40,7 +40,7 @@ publisher:
   name: Example Publisher
 license: MIT
 entrypoints:
-  collection: typedmark.json
+  collection: typedmark.yaml
   schemas: .metadata/schemas
   property_sets: .metadata/property-sets
   templates: .metadata/templates
@@ -87,7 +87,7 @@ Rules:
 - `system_id` identifies a reusable system family and is not an instantiated collection identifier.
 - `version` identifies a publishable system release and MUST be a Semantic Versioning 2.0.0 string.
 - `entrypoints` MUST point to the canonical collection assets within the same system definition.
-- `entrypoints.collection` MUST point to `typedmark.json`.
+- `entrypoints.collection` MUST point to `typedmark.yaml`.
 - `entrypoints.schemas` MUST point to `.metadata/schemas`.
 - `entrypoints.property_sets` MAY be omitted. If present, it MUST point to `.metadata/property-sets`.
 - If a system definition contains one or more property set files, `entrypoints.property_sets` SHOULD be present.
@@ -100,14 +100,14 @@ Rules:
 - `scaffold.notes[].values` MAY provide initial frontmatter values that are merged into the instantiated template.
 - Values supplied in `scaffold.notes[].values` override template placeholder values for that instantiated note only.
 - A system definition MAY be shared as a directory, a Git repository, or an archive file, provided relative paths are preserved.
-- The canonical published form is the unpacked directory tree that preserves the `typedmark.json` and `.metadata/` layout REQUIRED by this specification.
+- The canonical published form is the unpacked directory tree that preserves the `typedmark.yaml` and `.metadata/` layout REQUIRED by this specification.
 
 Import semantics:
 
-- An importer MUST preserve `typedmark.json` and the `.metadata/` directory structure and file contents unless the user explicitly requests a transformation.
-- An importer MUST validate `.metadata/system.yaml`, `typedmark.json`, any property set files present under `.metadata/property-sets/`, and the note-type schema files before creating a collection from the system.
+- An importer MUST preserve `typedmark.yaml` and the `.metadata/` directory structure and file contents unless the user explicitly requests a transformation.
+- An importer MUST validate `.metadata/system.yaml`, `typedmark.yaml`, any property set files present under `.metadata/property-sets/`, and the note-type schema files before creating a collection from the system.
 - An importer SHOULD support a full scaffolded import mode that creates the declared folders and notes.
-- An importer MAY additionally support a metadata-only import mode that installs `typedmark.json` and `.metadata/` without materializing scaffold notes.
+- An importer MAY additionally support a metadata-only import mode that installs `typedmark.yaml` and `.metadata/` without materializing scaffold notes.
 - A metadata-only import MUST NOT create `.metadata/instance.yaml`.
 - A full scaffolded import MUST create `.metadata/instance.yaml`.
 - A full scaffolded import MUST assign a new `collection_instance_id`.
@@ -148,8 +148,8 @@ Rules:
 - The semantics of `specification_version` are defined in [Foundations](foundations.md).
 - `collection_instance_id` MUST be a non-empty string and SHOULD be globally unique.
 - `collection_instance_id` identifies one concrete instantiated collection.
-- `collection_instance_id` MUST NOT appear in `typedmark.json`.
-- `collection_model_id` in `.metadata/instance.yaml` MUST equal `collection_model_id` in `typedmark.json`.
+- `collection_instance_id` MUST NOT appear in `typedmark.yaml`.
+- `collection_model_id` in `.metadata/instance.yaml` MUST equal `collection_model_id` in `typedmark.yaml`.
 - `system_id` and `system_version` MAY be omitted. If present, they are provenance fields in `.metadata/instance.yaml`.
 - If `.metadata/instance.yaml` declares `system_version`, it MUST be a Semantic Versioning 2.0.0 string.
 - If `.metadata/system.yaml` is present and `.metadata/instance.yaml` declares `system_id`, it MUST equal `.metadata/system.yaml` `system_id`.

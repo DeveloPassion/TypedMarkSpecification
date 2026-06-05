@@ -6,50 +6,45 @@ nav_order: 2
 
 # Collection Model
 
-This page is authoritative for `typedmark.json`, named property sets, collection-level inheritance, property-set application, and validation defaults. It is not authoritative for `.metadata/system.yaml` or `.metadata/instance.yaml`; those live in [System Definitions and Instances](system-definitions-and-instances.md). It is also not authoritative for relationship and template semantics; those live in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). Managed note field semantics still live in [Managed Notes and Properties](managed-notes-and-properties.md), even when field definitions are contributed through `global_properties`, property sets, or note-type schemas.
+This page is authoritative for `typedmark.yaml`, named property sets, collection-level inheritance, property-set application, and validation defaults. It is not authoritative for `.metadata/system.yaml` or `.metadata/instance.yaml`; those live in [System Definitions and Instances](system-definitions-and-instances.md). It is also not authoritative for relationship and template semantics; those live in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). Managed note field semantics still live in [Managed Notes and Properties](managed-notes-and-properties.md), even when field definitions are contributed through `global_properties`, property sets, or note-type schemas.
 
 ## 5. Collection Model Specification
 
-`typedmark.json` defines collection-model-wide rules.
+`typedmark.yaml` defines collection-model-wide rules.
 
 Required fields:
 
-```json
-{
-  "specification_version": "0.0.1",
-  "collection_model_id": "example-knowledge-base",
-  "relationship_kinds": [
-    "belongs_to",
-    "related_to"
-  ],
-  "exclude_paths": [
-    ".git/**",
-    ".metadata/**"
-  ],
-  "validation_defaults": {
-    "path": "error",
-    "missing_required_field": "error",
-    "missing_declared_field": "error",
-    "non_canonical_serialization": "error",
-    "unknown_field": "warn",
-    "invalid_allowed_value": "error",
-    "invalid_property_set": "error",
-    "invalid_note_link": "error",
-    "invalid_relationship_definition": "error",
-    "invalid_relationship_instance": "error",
-    "invalid_heading": "error",
-    "template_drift": "warn"
-  }
-}
+```yaml
+specification_version: 0.0.1
+collection_model_id: example-knowledge-base
+relationship_kinds:
+  - belongs_to
+  - related_to
+exclude_paths:
+  - .git/**
+  - .metadata/**
+validation_defaults:
+  path: error
+  missing_required_field: error
+  missing_declared_field: error
+  non_canonical_serialization: error
+  unknown_field: warn
+  invalid_allowed_value: error
+  invalid_property_set: error
+  invalid_note_link: error
+  invalid_relationship_definition: error
+  invalid_relationship_instance: error
+  invalid_heading: error
+  template_drift: warn
 ```
 
 Rules:
 
-- `typedmark.json` MUST exist at the root of every conforming managed collection.
-- A conforming system definition MUST also include `typedmark.json` at its root.
+- `typedmark.yaml` MUST exist at the root of every conforming managed collection.
+- A conforming system definition MUST also include `typedmark.yaml` at its root.
 - The semantics of `specification_version` are defined in [Foundations](foundations.md).
 - `collection_model_id` MUST be a non-empty slug.
-- `collection_model_id` identifies the structural collection model described by `typedmark.json`.
+- `collection_model_id` identifies the structural collection model described by `typedmark.yaml`.
 - `collection_model_id` is not an instantiated collection identifier.
 - Multiple instantiated collections MAY share the same `collection_model_id`.
 - `relationship_kinds` MUST be exactly `belongs_to` and `related_to`.
@@ -64,7 +59,7 @@ Rules:
 - `missing_required_field` applies when a field declared in `required_fields` lacks a concrete value required for conformance after applying the rules in [Managed Notes and Properties](managed-notes-and-properties.md).
 - `missing_declared_field` applies when a field declared in either `required_fields` or `optional_fields` is absent from stored note frontmatter.
 - `non_canonical_serialization` applies when a governed artifact is semantically valid but not serialized according to [Managed Notes and Properties](managed-notes-and-properties.md).
-- `unknown_field` applies when an undeclared field appears in `typedmark.json`, any governed YAML artifact, or managed note frontmatter.
+- `unknown_field` applies when an undeclared field appears in `typedmark.yaml`, any governed YAML artifact, or managed note frontmatter.
 - `invalid_allowed_value` applies when a field value violates an `allowed_values` constraint.
 - `invalid_property_set` applies when a property set file, or a note-type schema property-set reference, violates the property-set rules defined in this page.
 - `invalid_note_link` applies when an internal note link violates the syntax or resolution rules defined in [Managed Notes and Properties](managed-notes-and-properties.md).
@@ -75,54 +70,40 @@ Rules:
 
 ### Global Property Definitions
 
-`typedmark.json` MAY define `global_properties` to declare note properties that apply to all note types.
+`typedmark.yaml` MAY define `global_properties` to declare note properties that apply to all note types.
 
 Example:
 
-```json
-{
-  "global_properties": {
-    "frontmatter": {
-      "required_fields": {
-        "note_type": {
-          "type": "text",
-          "value_from_schema": "note_type"
-        },
-        "id": {
-          "type": "text",
-          "format": "slug",
-          "nullable": false
-        },
-        "title": {
-          "type": "text",
-          "nullable": true,
-          "default_value": null
-        }
-      },
-      "optional_fields": {
-        "summary": {
-          "type": "text",
-          "nullable": true,
-          "default_value": null
-        }
-      }
-    },
-    "relationships": {
-      "belongs_to": {
-        "allowed_note_types": {}
-      },
-      "related_to": {
-        "allowed_note_types": {}
-      }
-    },
-    "headings": {
-      "required_h2": [],
-      "optional_h2": [],
-      "allow_other_h2": true,
-      "require_order": false
-    }
-  }
-}
+```yaml
+global_properties:
+  frontmatter:
+    required_fields:
+      note_type:
+        type: text
+        value_from_schema: note_type
+      id:
+        type: text
+        format: slug
+        nullable: false
+      title:
+        type: text
+        nullable: true
+        default_value: null
+    optional_fields:
+      summary:
+        type: text
+        nullable: true
+        default_value: null
+  relationships:
+    belongs_to:
+      allowed_note_types: {}
+    related_to:
+      allowed_note_types: {}
+  headings:
+    required_h2: []
+    optional_h2: []
+    allow_other_h2: true
+    require_order: false
 ```
 
 Rules:

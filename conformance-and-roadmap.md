@@ -24,7 +24,7 @@ Conformance evaluates a filesystem tree against the authoritative artifact contr
 
 A filesystem tree conforms as a valid system definition when:
 
-1. `typedmark.json` is present at the root and valid under [Collection Model](collection-model.md).
+1. `typedmark.yaml` is present at the root and valid under [Collection Model](collection-model.md).
 2. `.metadata/system.yaml` is present and valid under [System Definitions and Instances](system-definitions-and-instances.md).
 3. `.metadata/instance.yaml` is absent or, if present, valid under [System Definitions and Instances](system-definitions-and-instances.md).
 4. Every property set file under `.metadata/property-sets/`, if present, is valid under [Collection Model](collection-model.md), and every property set reference from a note-type schema resolves.
@@ -37,7 +37,7 @@ A filesystem tree conforms as a valid system definition when:
 
 A filesystem tree conforms as a valid instantiated collection when:
 
-1. `typedmark.json` is present at the collection root and valid under [Collection Model](collection-model.md).
+1. `typedmark.yaml` is present at the collection root and valid under [Collection Model](collection-model.md).
 2. `.metadata/instance.yaml` is present and valid under [System Definitions and Instances](system-definitions-and-instances.md).
 3. Every property set file under `.metadata/property-sets/`, if present, is valid under [Collection Model](collection-model.md), and every property set reference from a note type used by managed notes resolves.
 4. Every note type used by managed notes has exactly one valid schema file under [Note Type Schemas](note-type-schemas.md).
@@ -57,7 +57,7 @@ Additional rules:
 
 Recommended implementation order:
 
-1. create `typedmark.json` and decide validation defaults, global properties, and inheritance using [Collection Model](collection-model.md)
+1. create `typedmark.yaml` and decide validation defaults, global properties, and inheritance using [Collection Model](collection-model.md)
 2. create any reusable property sets and the initial concrete note type schemas using [Collection Model](collection-model.md) and [Note Type Schemas](note-type-schemas.md)
 3. create canonical templates and heading and relationship rules using [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
 4. implement managed note parsing, field materialization, note-link resolution, and canonical serialization using [Managed Notes and Properties](managed-notes-and-properties.md)

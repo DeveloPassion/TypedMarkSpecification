@@ -27,10 +27,10 @@ TypedMark is the structural contract for a note collection. Artifact-specific ru
 
 ## 2. Design Principles
 
-- The authoritative contract lives in `typedmark.json` and `.metadata/`.
+- The authoritative contract lives in `typedmark.yaml` and `.metadata/`.
 - One schema file defines one concrete note type.
 - TypedMark is strongly typed.
-- Agents and tools MUST be able to understand collection structure from `typedmark.json` and `.metadata/` alone.
+- Agents and tools MUST be able to understand collection structure from `typedmark.yaml` and `.metadata/` alone.
 - Managed notes MUST remain directly readable and editable in any Markdown editor without transformation.
 - Managed note metadata MUST live in YAML frontmatter and MUST use property types supported by this specification.
 - The core specification defines reusable structure, not domain content.
@@ -59,7 +59,7 @@ Rules:
 A conforming TypedMark filesystem tree uses this artifact layout:
 
 ```text
-typedmark.json
+typedmark.yaml
 .metadata/
   system.yaml
   instance.yaml
@@ -73,7 +73,7 @@ typedmark.json
 
 The authoritative contract for each governed element lives in exactly one place:
 
-- `typedmark.json`: [Collection Model](collection-model.md)
+- `typedmark.yaml`: [Collection Model](collection-model.md)
 - `.metadata/system.yaml`: [System Definitions and Instances](system-definitions-and-instances.md)
 - `.metadata/instance.yaml`: [System Definitions and Instances](system-definitions-and-instances.md)
 - `.metadata/property-sets/<property_set>.yaml`: [Collection Model](collection-model.md)
@@ -83,15 +83,15 @@ The authoritative contract for each governed element lives in exactly one place:
 - relationship semantics, heading constraints, and template obligations: [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
 - conformance modes and required artifact sets: [Conformance and Roadmap](conformance-and-roadmap.md)
 
-`typedmark.json` MUST live at the root of the managed collection, such as the root folder of an Obsidian vault.
+`typedmark.yaml` MUST live at the root of the managed collection, such as the root folder of an Obsidian vault.
 
-Files outside `typedmark.json` and `.metadata/` MAY exist for humans, publishing, or navigation, but they are not authoritative for structure.
+Files outside `typedmark.yaml` and `.metadata/` MAY exist for humans, publishing, or navigation, but they are not authoritative for structure.
 
 ## 4. Authority and Precedence
 
 When two artifacts or surfaces appear to disagree, structural conflicts MUST be resolved in this order:
 
-1. `typedmark.json`
+1. `typedmark.yaml`
 2. `.metadata/schemas/<note_type>.yaml`
 3. `.metadata/property-sets/<property_set>.yaml`
 4. `.metadata/templates/<note_type>.md`
@@ -100,8 +100,8 @@ When two artifacts or surfaces appear to disagree, structural conflicts MUST be 
 
 Rules:
 
-- Agents MUST rely on `typedmark.json` and `.metadata/` for structural understanding.
+- Agents MUST rely on `typedmark.yaml` and `.metadata/` for structural understanding.
 - Agents MUST NOT infer note types or structural rules from prose guidance when authoritative artifacts exist.
 - Human-facing generated reference pages MAY restate the specification for convenience, but they are never authoritative.
-- `.metadata/system.yaml` governs system identity, packaging, publishing, and import semantics; it does not override note-structure rules defined by `typedmark.json` and note-type schemas.
-- `.metadata/instance.yaml` governs instantiated collection identity and provenance; it does not override note-structure rules defined by `typedmark.json` and note-type schemas.
+- `.metadata/system.yaml` governs system identity, packaging, publishing, and import semantics; it does not override note-structure rules defined by `typedmark.yaml` and note-type schemas.
+- `.metadata/instance.yaml` governs instantiated collection identity and provenance; it does not override note-structure rules defined by `typedmark.yaml` and note-type schemas.

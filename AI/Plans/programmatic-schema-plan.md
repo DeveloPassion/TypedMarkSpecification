@@ -9,7 +9,7 @@ Create a machine-readable schema layer for TypedMark that tools can use to valid
 TypedMark already defines strong structural rules for:
 
 - `.metadata/system.yaml`
-- `typedmark.json`
+- `typedmark.yaml`
 - `.metadata/instance.yaml`
 - `.metadata/schemas/<note_type>.yaml`
 
@@ -240,7 +240,7 @@ Output:
 
 Define the intended execution order:
 
-1. parse the governed artifact as JSON or YAML
+1. parse the governed artifact as YAML
 2. validate document shape with JSON Schema
 3. build effective models where inheritance applies
 4. run semantic validation
@@ -284,7 +284,7 @@ The first version is successful when:
 ## Risks and Watchouts
 
 - Trying to force all TypedMark semantics into JSON Schema will create a brittle and confusing design.
-- If the schema layer stops matching the fixed `typedmark.json` root contract and the YAML artifact contracts, implementations will diverge quickly.
+- If the schema layer stops matching the fixed `typedmark.yaml` root contract and the YAML artifact contracts, implementations will diverge quickly.
 - If the schema layer and prose spec evolve independently, tooling will become misleading.
 - Canonical serialization must remain a validator concern, not be implied by JSON Schema success.
 
@@ -294,7 +294,7 @@ Deliver the smallest useful slice first:
 
 1. boundary note
 2. shared definitions
-3. schema for `typedmark.json`
+3. schema for `typedmark.yaml`
 4. schema for `.metadata/schemas/<note_type>.yaml`
 5. a few fixtures that prove the placeholder-link boundary
 

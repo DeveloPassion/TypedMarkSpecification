@@ -189,7 +189,7 @@ This section is authoritative for canonical serialization of all governed artifa
 
 Unless a more specific rule says otherwise, the rules in this section apply to:
 
-- `typedmark.json`
+- `typedmark.yaml`
 - `.metadata/system.yaml`
 - `.metadata/instance.yaml`
 - `.metadata/property-sets/*.yaml`
@@ -201,12 +201,7 @@ Rules:
 - All governed artifacts MUST use canonical serialization.
 - Canonical serialization is normative and is not an implementation preference.
 - An artifact that is semantically valid but not canonically serialized is non-conforming.
-- `typedmark.json` MUST contain exactly one JSON object.
-- `typedmark.json` MUST be UTF-8 encoded.
-- `typedmark.json` MUST use LF line endings.
-- `typedmark.json` MUST use two-space indentation.
-- `typedmark.json` MUST NOT contain comments or trailing commas.
-- YAML files under `.metadata/` MUST contain exactly one YAML document and MUST NOT include YAML document delimiter lines such as `---` or `...`.
+- `typedmark.yaml` and YAML files under `.metadata/` MUST contain exactly one YAML document and MUST NOT include YAML document delimiter lines such as `---` or `...`.
 - Canonical YAML text MUST be UTF-8 encoded.
 - Canonical YAML line endings MUST use LF.
 - Canonical YAML indentation MUST use two spaces per level.
@@ -239,7 +234,7 @@ Rules:
 
 Canonical top-level key order for governed artifacts:
 
-- In `typedmark.json`: `specification_version`, `collection_model_id`, `relationship_kinds`, `exclude_paths`, `validation_defaults`, `global_properties`, then any allowed unknown keys in lexicographic order.
+- In `typedmark.yaml`: `specification_version`, `collection_model_id`, `relationship_kinds`, `exclude_paths`, `validation_defaults`, `global_properties`, then any allowed unknown keys in lexicographic order.
 - In `.metadata/system.yaml`: `specification_version`, `system_id`, `version`, `name`, `description`, `audiences`, `publisher`, `license`, `entrypoints`, `scaffold`, `catalog`, then any allowed unknown keys in lexicographic order.
 - In `.metadata/instance.yaml`: `specification_version`, `collection_instance_id`, `collection_model_id`, `system_id`, `system_version`, then any allowed unknown keys in lexicographic order.
 - In `.metadata/property-sets/<property_set>.yaml`: `specification_version`, `property_set`, `description`, `frontmatter`, then any allowed unknown keys in lexicographic order.
