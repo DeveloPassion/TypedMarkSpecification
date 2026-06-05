@@ -9,7 +9,7 @@ permalink: /
 
 TypedMark is an open specification for typed Markdown note systems.
 
-If you want the motivation behind the spec before the formal rules, start with the manifesto.
+If you want the motivation behind the spec before the formal rules, start with the [Manifesto](manifesto.md).
 
 ## Normative Map
 
