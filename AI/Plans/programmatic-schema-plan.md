@@ -68,7 +68,7 @@ These should stay in the semantic validator layer:
 - note-link resolution against real notes
 - allowed unresolved placeholder links
 - relationship cardinality against resolved targets
-- canonical serialization formatting and key ordering
+- formatting and key ordering, if the specification later adds normalization rules
 - template drift checks
 - simultaneous system-definition and instantiated-collection conformance
 
@@ -204,7 +204,7 @@ This note should cover at least:
 - relationship counting rules
 - cardinality enforcement
 - canonical materialization
-- canonical serialization
+- future formatting normalization rules, if added later
 - template drift
 - conformance-mode evaluation
 
@@ -250,7 +250,7 @@ The workflow should preserve the spec distinction between:
 
 - invalid document shape
 - valid shape but invalid semantic state
-- semantically valid but non-canonical serialization
+- semantically valid but outside any future formatting-normalization layer
 
 Output:
 

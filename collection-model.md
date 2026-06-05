@@ -24,7 +24,6 @@ validation_defaults:
   path: error
   missing_required_field: error
   missing_declared_field: error
-  non_canonical_serialization: error
   unknown_field: warn
   invalid_allowed_value: error
   invalid_property_set: error
@@ -53,7 +52,6 @@ Rules:
 - `path` applies when a managed note path violates the storage rules defined in [Note Type Schemas](note-type-schemas.md).
 - `missing_required_field` applies when a field declared in `required_fields` lacks a concrete value required for conformance after applying the rules in [Managed Notes and Properties](managed-notes-and-properties.md).
 - `missing_declared_field` applies when a field declared in either `required_fields` or `optional_fields` is absent from stored note frontmatter.
-- `non_canonical_serialization` applies when a governed artifact is semantically valid but not serialized according to [Canonical Serialization](canonical-serialization.md).
 - `unknown_field` applies when an undeclared field appears in `typedmark.yaml`, any governed YAML artifact, or managed note frontmatter.
 - `invalid_allowed_value` applies when a field value violates an `allowed_values` constraint.
 - `invalid_property_set` applies when a property set file, or a note-type schema property-set reference, violates the property-set rules defined in this page.

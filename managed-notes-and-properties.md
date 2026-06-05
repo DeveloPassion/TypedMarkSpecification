@@ -6,7 +6,7 @@ nav_order: 5
 
 # Managed Notes and Properties
 
-This page is authoritative for the managed note contract, frontmatter property types, note-link syntax and resolution, field definition attributes, canonical field materialization, and required-versus-optional field semantics. Canonical serialization of governed artifacts is defined in [Canonical Serialization](canonical-serialization.md). Relationship cardinality, heading constraints, and template obligations are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). The effective note-type schema that supplies a note's structural contract is described in [Note Type Schemas](note-type-schemas.md).
+This page is authoritative for the managed note contract, frontmatter property types, note-link syntax and resolution, field definition attributes, canonical field materialization, and required-versus-optional field semantics. Relationship cardinality, heading constraints, and template obligations are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). The effective note-type schema that supplies a note's structural contract is described in [Note Type Schemas](note-type-schemas.md).
 
 ## 11. Managed Note Contract
 
@@ -18,7 +18,7 @@ Every managed note MUST:
 - declare `note_type`
 - declare `id`
 - satisfy exactly one effective note-type schema as defined in [Note Type Schemas](note-type-schemas.md)
-- satisfy the field and materialization rules defined in this page and the canonical serialization rules defined in [Canonical Serialization](canonical-serialization.md)
+- satisfy the field and materialization rules defined in this page
 - satisfy the storage, relationship, and heading rules linked from its declared note type
 
 Common frontmatter shape:
@@ -43,7 +43,7 @@ Rules:
 - A conforming managed note MUST remain usable as a normal Markdown note without preprocessing, transpilation, or note-local sidecar metadata.
 - Managed-note conformance uses the effective note-type schema after collection-level inheritance, property-set application, and local schema definitions have been applied.
 - The meanings of `relationship_kind`, `belongs_to`, and `related_to` are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
-- Managed note frontmatter MUST follow the canonical field materialization rules defined on this page and the canonical serialization rules defined in [Canonical Serialization](canonical-serialization.md).
+- Managed note frontmatter MUST follow the canonical field materialization rules defined on this page.
 
 ## 12. Frontmatter Property Types
 
@@ -180,11 +180,9 @@ Rules:
 - `required_fields` MAY require a concrete non-null value, depending on `nullable` and `default_value`.
 - `optional_fields` never require a concrete non-null value; they remain valid when materialized as `null`.
 - A missing field declared anywhere under `frontmatter.required_fields` or `frontmatter.optional_fields` is a `missing_declared_field` validation failure.
-- Tools that create notes MUST write back materialized frontmatter in canonical form.
-- Tools that import or scaffold notes MUST write back materialized frontmatter in canonical form.
-- Tools that normalize notes or modify managed note frontmatter MUST rewrite frontmatter in canonical form before saving.
-
-Canonical serialization of governed artifacts is defined in [Canonical Serialization](canonical-serialization.md).
+- Tools that create notes MUST write back frontmatter that satisfies these canonical field materialization rules.
+- Tools that import or scaffold notes MUST write back frontmatter that satisfies these canonical field materialization rules.
+- Tools that normalize notes or modify managed note frontmatter MUST rewrite frontmatter so it satisfies these canonical field materialization rules before saving.
 
 ## 13. Required and Optional Fields
 

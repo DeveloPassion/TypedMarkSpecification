@@ -1,7 +1,7 @@
 ---
 title: System Definitions and Instances
 parent: TypedMark
-nav_order: 8
+nav_order: 7
 ---
 
 # System Definitions and Instances
@@ -151,7 +151,7 @@ The core specification defines the reusable structural model. Profiles and refer
 
 Rules:
 
-- The core specification defines the file layout, schema shapes, field semantics, validation model, canonical serialization, and conformance rules.
+- The core specification defines the file layout, schema shapes, field semantics, validation model, and conformance rules.
 - A profile MAY define a RECOMMENDED or REQUIRED note type set.
 - A profile MAY constrain preferred internal link syntax, path conventions, naming rules, scaffold content, and validation settings.
 - A profile MAY define fixed-path singleton notes, starter folders, and starter templates.

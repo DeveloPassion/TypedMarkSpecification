@@ -80,7 +80,6 @@ The authoritative contract for each governed element lives in exactly one place:
 - `.metadata/schemas/<note_type>.yaml`: [Note Type Schemas](note-type-schemas.md)
 - `.metadata/templates/<note_type_template>.md`: [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
 - managed note frontmatter, field definitions, note-link syntax, and field materialization: [Managed Notes and Properties](managed-notes-and-properties.md)
-- canonical serialization of governed artifacts: [Canonical Serialization](canonical-serialization.md)
 - relationship semantics, heading constraints, and template obligations: [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
 - conformance modes and required artifact sets: [Conformance and Roadmap](conformance-and-roadmap.md)
 
