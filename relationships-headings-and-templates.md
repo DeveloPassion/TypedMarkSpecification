@@ -1,7 +1,7 @@
 ---
 title: Relationships, Headings, and Templates
 parent: TypedMark
-nav_order: 6
+nav_order: 7
 ---
 
 # Relationships, Headings, and Templates

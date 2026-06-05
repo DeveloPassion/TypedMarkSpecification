@@ -17,7 +17,8 @@ If you want the motivation behind the spec before the formal rules, start with t
 - [Collection Model](collection-model.md): `typedmark.yaml`, property sets, inheritance, and validation defaults
 - [System Definitions and Instances](system-definitions-and-instances.md): `.metadata/system.yaml`, `.metadata/instance.yaml`, and profiles
 - [Note Type Schemas](note-type-schemas.md): note type registration, effective note-type schema, evaluation pipeline, schema shape, schema kinds, and storage rules
-- [Managed Notes and Properties](managed-notes-and-properties.md): managed note contract, field rules, note-link syntax, field materialization, and canonical serialization
+- [Managed Notes and Properties](managed-notes-and-properties.md): managed note contract, field rules, note-link syntax, field materialization, and required-versus-optional field semantics
+- [Canonical Serialization](canonical-serialization.md): canonical formatting, key order, and serialization obligations for governed artifacts
 - [Relationships, Headings, and Templates](relationships-headings-and-templates.md): relationship semantics, heading constraints, and template requirements
 - [Conformance and Roadmap](conformance-and-roadmap.md): non-goals, conformance modes, and implementation order
 
@@ -29,7 +30,8 @@ If you want the motivation behind the spec before the formal rules, start with t
 4. [System Definitions and Instances](system-definitions-and-instances.md)
 5. [Note Type Schemas](note-type-schemas.md)
 6. [Managed Notes and Properties](managed-notes-and-properties.md)
-7. [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
-8. [Conformance and Roadmap](conformance-and-roadmap.md)
+7. [Canonical Serialization](canonical-serialization.md)
+8. [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
+9. [Conformance and Roadmap](conformance-and-roadmap.md)
 
 If you want to understand one note type end to end, start with [Note Type Schemas](note-type-schemas.md), especially the effective note-type schema section, then follow the linked rule pages only for the blocks that section references.

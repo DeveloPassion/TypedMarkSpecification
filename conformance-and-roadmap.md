@@ -1,7 +1,7 @@
 ---
 title: Conformance and Roadmap
 parent: TypedMark
-nav_order: 7
+nav_order: 8
 ---
 
 # Conformance and Roadmap
@@ -30,7 +30,7 @@ A filesystem tree conforms as a valid system definition when:
 4. Every property set file under `.metadata/property-sets/`, if present, is valid under [Collection Model](collection-model.md), and every property set reference from a note-type schema resolves.
 5. Every managed note type has exactly one valid schema file under [Note Type Schemas](note-type-schemas.md).
 6. Every template referenced by note-type schemas exists and is valid under [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
-7. All governed artifacts use canonical serialization under [Managed Notes and Properties](managed-notes-and-properties.md).
+7. All governed artifacts use canonical serialization under [Canonical Serialization](canonical-serialization.md).
 
 ### 19.2 Valid Instantiated Collection
 
@@ -43,7 +43,7 @@ A filesystem tree conforms as a valid instantiated collection when:
 5. Managed notes declare valid `note_type` values and satisfy the managed note contract under [Managed Notes and Properties](managed-notes-and-properties.md).
 6. Managed notes satisfy their schema storage rules under [Note Type Schemas](note-type-schemas.md).
 7. Managed notes satisfy their schema relationship and heading rules under [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
-8. All governed artifacts use canonical serialization under [Managed Notes and Properties](managed-notes-and-properties.md).
+8. All governed artifacts use canonical serialization under [Canonical Serialization](canonical-serialization.md).
 
 Additional rules:
 
@@ -59,7 +59,7 @@ Recommended implementation order:
 1. create `typedmark.yaml` and decide validation defaults, global properties, and inheritance using [Collection Model](collection-model.md)
 2. create any reusable property sets and the initial concrete note type schemas using [Collection Model](collection-model.md) and [Note Type Schemas](note-type-schemas.md)
 3. create canonical templates and heading and relationship rules using [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
-4. implement managed note parsing, field materialization, note-link resolution, and canonical serialization using [Managed Notes and Properties](managed-notes-and-properties.md)
+4. implement managed note parsing, field materialization, and note-link resolution using [Managed Notes and Properties](managed-notes-and-properties.md), and implement canonical serialization using [Canonical Serialization](canonical-serialization.md)
 5. create `.metadata/system.yaml` if you are packaging a reusable system definition, using [System Definitions and Instances](system-definitions-and-instances.md)
 6. add a validator and importer that evaluate the conformance modes defined on this page
 7. make the importer generate `.metadata/instance.yaml` when creating an instantiated collection
