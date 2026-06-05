@@ -6,7 +6,7 @@ nav_order: 4
 
 # Note Type Schemas
 
-This page is authoritative for note type registration, the required top-level contract of `.metadata/schemas/<note_type>.yaml`, optional property-set references, schema kinds, and storage rules. Field semantics live in [Managed Notes and Properties](managed-notes-and-properties.md), relationship, heading, and template semantics live in [Relationships, Headings, and Templates](relationships-headings-and-templates.md), and collection-level inheritance and property-set application live in [Collection Model](collection-model.md).
+This page is authoritative for note type registration, the required top-level contract of `.metadata/schemas/<note_type>.yaml`, the effective note-type schema, optional property-set references, schema kinds, and storage rules. Field semantics live in [Managed Notes and Properties](managed-notes-and-properties.md), relationship, heading, and template semantics live in [Relationships, Headings, and Templates](relationships-headings-and-templates.md), and collection-level inheritance and property-set application live in [Collection Model](collection-model.md).
 
 ## 7. Note Type Registry
 
@@ -21,7 +21,27 @@ Rules:
 - A managed note MUST conform to exactly one primary note type.
 - The conformance requirements that determine when schema files MUST exist are defined in [Conformance and Roadmap](conformance-and-roadmap.md).
 
-## 8. Schema File Contract
+## 8. Effective Note-Type Schema
+
+A managed note is evaluated against one effective note-type schema.
+
+The effective note-type schema is not a separate stored artifact. It is the normative result of taking one note-type schema file and applying the collection-level inheritance, property-set, and block-merge rules defined by this specification before evaluating note conformance.
+
+### Normative Evaluation Pipeline
+
+Rules:
+
+1. A tool or validator MUST select exactly one note-type schema file from `.metadata/schemas/` using the note's declared `note_type`, as defined in [Managed Notes and Properties](managed-notes-and-properties.md).
+2. The selected note-type schema file provides the direct top-level values for `specification_version`, `note_type`, `label`, `icon`, `kind`, `description`, `storage`, `template`, and `guidance`.
+3. The tool or validator MUST determine whether `global_properties.frontmatter`, `global_properties.relationships`, and `global_properties.headings` apply to that note type using the inheritance rules in [Collection Model](collection-model.md).
+4. Enabled global blocks from `typedmark.yaml` MUST be applied first.
+5. Referenced property sets, if any, MUST be applied next in the schema's declared `property_sets` order, and they affect only `frontmatter`, as defined in [Collection Model](collection-model.md).
+6. Local `frontmatter`, `relationships`, and `headings` definitions in the note-type schema file MUST be applied last.
+7. The resulting `frontmatter`, `relationships`, and `headings` blocks, together with the direct top-level values from the note-type schema file, are the effective note-type schema for that note type.
+8. Managed-note, relationship, heading, template, and storage conformance MUST be evaluated against that effective note-type schema using the rule pages linked from this page.
+9. This specification MUST NOT be interpreted as requiring a separate serialized effective-schema artifact on disk.
+
+### Schema File Contract
 
 Each `.metadata/schemas/<note_type>.yaml` MUST define one concrete note type and MUST follow this shape:
 
@@ -130,6 +150,7 @@ Required top-level keys:
 Rules:
 
 - Every top-level key listed above MUST be physically present in each note-type schema.
+- The effective note-type schema MUST be computed using the normative evaluation pipeline defined above.
 - The semantics of `specification_version` are defined in [Foundations](foundations.md).
 - In schema files, `note_type` is the identifier of the note type being defined.
 - In managed notes, `note_type` is the frontmatter metadata field that declares which note type the note is.

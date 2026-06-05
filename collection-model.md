@@ -6,7 +6,7 @@ nav_order: 2
 
 # Collection Model
 
-This page is authoritative for `typedmark.yaml`, named property sets, collection-level inheritance, property-set application, and validation defaults. It is not authoritative for `.metadata/system.yaml` or `.metadata/instance.yaml`; those live in [System Definitions and Instances](system-definitions-and-instances.md). It is also not authoritative for relationship and template semantics; those live in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). Managed note field semantics still live in [Managed Notes and Properties](managed-notes-and-properties.md), even when field definitions are contributed through `global_properties`, property sets, or note-type schemas.
+This page is authoritative for `typedmark.yaml`, named property sets, collection-level inheritance, property-set application, and validation defaults. It is not authoritative for `.metadata/system.yaml` or `.metadata/instance.yaml`; those live in [System Definitions and Instances](system-definitions-and-instances.md). It is also not authoritative for relationship and template semantics; those live in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). Managed note field semantics still live in [Managed Notes and Properties](managed-notes-and-properties.md), even when field definitions are contributed through `global_properties`, property sets, or note-type schemas. The combined result of those contributions is the effective note-type schema described in [Note Type Schemas](note-type-schemas.md).
 
 ## 5. Collection Model Specification
 
@@ -192,8 +192,9 @@ Rules:
 - Multiple property sets MUST NOT define the same field name unless the note-type schema also defines that field locally.
 - Local note-type schema frontmatter definitions override property-set definitions by field name.
 
-Effective merge rules:
+Effective note-type schema merge rules:
 
+- These merge rules define the effective `frontmatter`, `relationships`, and `headings` blocks used by the effective note-type schema described in [Note Type Schemas](note-type-schemas.md).
 - Frontmatter merges by field name across both `required_fields` and `optional_fields`.
 - Within any one contributing block (`global_properties.frontmatter`, a property set `frontmatter`, or a note-type schema `frontmatter`), a field name MUST NOT appear in both `required_fields` and `optional_fields`.
 - If a property set defines a field already defined by inherited global frontmatter, the property set definition replaces the inherited global definition completely and determines whether the field is effectively required or optional.
@@ -235,3 +236,4 @@ Rules:
 - Block-specific flags affect global inheritance only; they do not disable declared property sets and they do not make required schema blocks optional.
 - Block-specific inheritance flags have no effect when `inheritance.enabled: false` because all inheritance is already disabled.
 - Disable rules are evaluated before global merge rules and before declared property sets are applied.
+- Inheritance settings affect only how the effective note-type schema is computed; they do not create a second schema file or a separate persisted artifact.

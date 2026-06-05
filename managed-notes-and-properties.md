@@ -6,7 +6,7 @@ nav_order: 5
 
 # Managed Notes and Properties
 
-This page is authoritative for the managed note contract, frontmatter property types, note-link syntax and resolution, field definition attributes, canonical field materialization, canonical serialization, and required-versus-optional field semantics. Relationship cardinality, heading constraints, and template obligations are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
+This page is authoritative for the managed note contract, frontmatter property types, note-link syntax and resolution, field definition attributes, canonical field materialization, canonical serialization, and required-versus-optional field semantics. Relationship cardinality, heading constraints, and template obligations are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). The effective note-type schema that supplies a note's structural contract is described in [Note Type Schemas](note-type-schemas.md).
 
 ## 11. Managed Note Contract
 
@@ -17,7 +17,7 @@ Every managed note MUST:
 - use YAML frontmatter as the note's metadata
 - declare `note_type`
 - declare `id`
-- satisfy exactly one note-type schema defined in [Note Type Schemas](note-type-schemas.md)
+- satisfy exactly one effective note-type schema as defined in [Note Type Schemas](note-type-schemas.md)
 - satisfy the field, materialization, and serialization rules defined in this page
 - satisfy the storage, relationship, and heading rules linked from its declared note type
 
@@ -41,6 +41,7 @@ Rules:
 - `id` MUST be stable across renames and moves.
 - `title` is human-facing and MAY change unless the schema marks it immutable.
 - A conforming managed note MUST remain usable as a normal Markdown note without preprocessing, transpilation, or note-local sidecar metadata.
+- Managed-note conformance uses the effective note-type schema after collection-level inheritance, property-set application, and local schema definitions have been applied.
 - The meanings of `relationship_kind`, `belongs_to`, and `related_to` are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - Managed note frontmatter MUST follow the canonical field materialization and canonical serialization rules defined later in this page.
 
