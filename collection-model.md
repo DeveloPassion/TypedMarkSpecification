@@ -6,7 +6,7 @@ nav_order: 2
 
 # Collection Model
 
-This page is authoritative for `typedmark.json`, collection-level inheritance, and validation defaults. It is not authoritative for `.metadata/system.yaml` or `.metadata/instance.yaml`; those live in [System Definitions and Instances](system-definitions-and-instances.md). It is also not authoritative for note-type schema block semantics, managed note field semantics, or relationship and template semantics; those live in [Note Type Schemas](note-type-schemas.md), [Managed Notes and Properties](managed-notes-and-properties.md), and [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
+This page is authoritative for `typedmark.json`, named property sets, collection-level inheritance, property-set application, and validation defaults. It is not authoritative for `.metadata/system.yaml` or `.metadata/instance.yaml`; those live in [System Definitions and Instances](system-definitions-and-instances.md). It is also not authoritative for relationship and template semantics; those live in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). Managed note field semantics still live in [Managed Notes and Properties](managed-notes-and-properties.md), even when field definitions are contributed through `global_properties`, property sets, or note-type schemas.
 
 ## 5. Collection Model Specification
 
@@ -33,6 +33,7 @@ Required fields:
     "non_canonical_serialization": "error",
     "unknown_field": "warn",
     "invalid_allowed_value": "error",
+    "invalid_property_set": "error",
     "invalid_note_link": "error",
     "invalid_relationship_definition": "error",
     "invalid_relationship_instance": "error",
@@ -65,6 +66,7 @@ Rules:
 - `non_canonical_serialization` applies when a governed artifact is semantically valid but not serialized according to [Managed Notes and Properties](managed-notes-and-properties.md).
 - `unknown_field` applies when an undeclared field appears in `typedmark.json`, any governed YAML artifact, or managed note frontmatter.
 - `invalid_allowed_value` applies when a field value violates an `allowed_values` constraint.
+- `invalid_property_set` applies when a property set file, or a note-type schema property-set reference, violates the property-set rules defined in this page.
 - `invalid_note_link` applies when an internal note link violates the syntax or resolution rules defined in [Managed Notes and Properties](managed-notes-and-properties.md).
 - `invalid_relationship_definition` applies when relationship declarations violate the relationship model defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - `invalid_relationship_instance` applies when concrete note-to-note links violate the relationship constraints defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
@@ -132,16 +134,104 @@ Rules:
 - Every note type inherits `global_properties` by default.
 - Note-type schemas MAY override inherited global properties locally.
 
-Override and merge rules:
+### Property Set Definitions
 
-- `frontmatter.required_fields` and `frontmatter.optional_fields` merge by field name.
-- If a field is defined both globally and locally, the local field definition replaces the global field definition for that field.
+A property set is a named reusable frontmatter field set that note-type schemas opt into explicitly. Property sets are distinct from `global_properties`: `global_properties` apply by default when inheritance is enabled, while property sets never apply unless a schema references them.
+
+Property set file shape:
+
+```yaml
+specification_version: 0.0.1
+property_set: review-metadata
+description: Reusable review and publication fields.
+frontmatter:
+  required_fields:
+    workflow_state:
+      type: text
+      allowed_values: [draft, in_review, published]
+      nullable: true
+      default_value: null
+  optional_fields:
+    rating:
+      type: number
+      nullable: true
+      default_value: null
+    published_on:
+      type: date
+      nullable: true
+      default_value: null
+```
+
+Rules:
+
+- `.metadata/property-sets/` MAY be omitted when no property sets are defined.
+- Every YAML file directly under `.metadata/property-sets/` defines one property set.
+- No separate registry file is maintained for property sets.
+- The property set file basename MUST equal the file's `property_set` value.
+- `property_set` MUST be a non-empty slug.
+- Each property set file MUST physically contain `specification_version`, `property_set`, `description`, and `frontmatter`.
+- `frontmatter` in a property set MUST contain `required_fields` and `optional_fields` mappings, even when one mapping is empty.
+- The semantics of frontmatter field definitions in property sets are the same as in note-type schemas.
+- A property set MAY define reusable frontmatter fields only.
+- A property set MUST NOT define `note_type` or `id`.
+- A property set MUST NOT define storage, template, relationships, headings, guidance, or inheritance settings.
+- A property set MUST NOT reference other property sets.
+
+### Applying Property Sets
+
+Example note-type schema usage:
+
+```yaml
+note_type: review
+property_sets:
+  - workflow
+  - publication-metadata
+
+frontmatter:
+  required_fields:
+    note_type:
+      type: text
+      const_value: review
+    id:
+      type: text
+      format: slug
+      nullable: false
+  optional_fields:
+    editor_notes:
+      type: text
+      nullable: true
+      default_value: null
+```
+
+Rules:
+
+- A note-type schema MAY define `property_sets`.
+- If present, `property_sets` MUST be a non-empty list of unique property set identifiers.
+- `property_sets` is opt-in only. If absent, no property sets are applied.
+- Each referenced property set MUST resolve to exactly one file under `.metadata/property-sets/`.
+- Property sets affect frontmatter only.
+- Property sets are applied after global frontmatter inheritance and before local note-type schema frontmatter definitions.
+- If `inheritance.enabled: false` or `inheritance.frontmatter: false`, only global frontmatter inheritance is disabled; declared property sets still apply.
+- The order of identifiers in `property_sets` is significant for the effective field order.
+- Multiple property sets MUST NOT define the same field name unless the note-type schema also defines that field locally.
+- Local note-type schema frontmatter definitions override property-set definitions by field name.
+
+Effective merge rules:
+
+- Frontmatter merges by field name across both `required_fields` and `optional_fields`.
+- Within any one contributing block (`global_properties.frontmatter`, a property set `frontmatter`, or a note-type schema `frontmatter`), a field name MUST NOT appear in both `required_fields` and `optional_fields`.
+- If a property set defines a field already defined by inherited global frontmatter, the property set definition replaces the inherited global definition completely and determines whether the field is effectively required or optional.
+- If a local note-type schema defines a field already contributed by inherited global frontmatter or property sets, the local definition replaces the earlier definition completely and determines whether the field is effectively required or optional.
+- Global frontmatter, when enabled, is applied first.
+- Property sets are then applied in the schema's declared `property_sets` order.
+- Local note-type schema frontmatter is applied last.
 - `relationships.belongs_to.allowed_note_types` and `relationships.related_to.allowed_note_types` merge by target note type.
 - If a relationship target is defined both globally and locally, the local target definition replaces the global target definition for that target.
 - `headings.required_h2` and `headings.optional_h2` use replace semantics: if a local list is present, it replaces the global list; otherwise the global list applies unchanged.
 - Scalar heading settings such as `allow_other_h2` and `require_order` use replace semantics: a local value replaces the global value; otherwise the global value applies unchanged.
-- Inheritance operates within the required `frontmatter`, `relationships`, and `headings` blocks of a note-type schema; those blocks remain mandatory even when much of their effective content is inherited.
-- A note-type schema MAY omit individual inherited field definitions, relationship target definitions, or heading settings that remain unchanged.
+- Property sets do not contribute relationship, heading, storage, template, or guidance content.
+- Inheritance operates within the required `frontmatter`, `relationships`, and `headings` blocks of a note-type schema; those blocks remain mandatory even when much of their effective content is inherited or provided by property sets.
+- A note-type schema MAY omit individual inherited or property-set-provided field definitions, relationship target definitions, or heading settings that remain unchanged.
 
 ### Disabling Inheritance
 
@@ -166,6 +256,6 @@ Rules:
 - `inheritance.frontmatter`, `inheritance.relationships`, and `inheritance.headings` MAY each be omitted; if omitted, each defaults to `true`.
 - If one of those block-specific flags is `false`, the corresponding global block is ignored completely for that note type before merge rules are applied.
 - If a block-specific flag is `false`, local definitions for that block still apply normally.
-- Block-specific flags affect inheritance only; they do not make required schema blocks optional.
+- Block-specific flags affect global inheritance only; they do not disable declared property sets and they do not make required schema blocks optional.
 - Block-specific inheritance flags have no effect when `inheritance.enabled: false` because all inheritance is already disabled.
-- Disable rules are evaluated before merge and override rules.
+- Disable rules are evaluated before global merge rules and before declared property sets are applied.

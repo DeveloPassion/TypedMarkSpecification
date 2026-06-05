@@ -13,6 +13,7 @@ This page is authoritative for the purpose of TypedMark, its design principles, 
 TypedMark defines:
 
 - which note types exist
+- which reusable property sets exist
 - which collection-wide rules apply
 - where notes of each type live
 - which metadata fields each type requires or allows
@@ -62,6 +63,8 @@ typedmark.json
 .metadata/
   system.yaml
   instance.yaml
+  property-sets/
+    <property_set>.yaml
   schemas/
     <note_type>.yaml
   templates/
@@ -73,6 +76,7 @@ The authoritative contract for each governed element lives in exactly one place:
 - `typedmark.json`: [Collection Model](collection-model.md)
 - `.metadata/system.yaml`: [System Definitions and Instances](system-definitions-and-instances.md)
 - `.metadata/instance.yaml`: [System Definitions and Instances](system-definitions-and-instances.md)
+- `.metadata/property-sets/<property_set>.yaml`: [Collection Model](collection-model.md)
 - `.metadata/schemas/<note_type>.yaml`: [Note Type Schemas](note-type-schemas.md)
 - `.metadata/templates/<note_type>.md`: [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
 - managed note frontmatter, field definitions, note-link syntax, field materialization, and canonical serialization: [Managed Notes and Properties](managed-notes-and-properties.md)
@@ -89,9 +93,10 @@ When two artifacts or surfaces appear to disagree, structural conflicts MUST be 
 
 1. `typedmark.json`
 2. `.metadata/schemas/<note_type>.yaml`
-3. `.metadata/templates/<note_type>.md`
-4. note contents
-5. human-facing generated reference pages
+3. `.metadata/property-sets/<property_set>.yaml`
+4. `.metadata/templates/<note_type>.md`
+5. note contents
+6. human-facing generated reference pages
 
 Rules:
 

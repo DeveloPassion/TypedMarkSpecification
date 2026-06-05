@@ -6,7 +6,7 @@ nav_order: 4
 
 # Note Type Schemas
 
-This page is authoritative for note type registration, the required top-level contract of `.metadata/schemas/<note_type>.yaml`, schema kinds, and storage rules. Field semantics live in [Managed Notes and Properties](managed-notes-and-properties.md), relationship, heading, and template semantics live in [Relationships, Headings, and Templates](relationships-headings-and-templates.md), and collection-level inheritance lives in [Collection Model](collection-model.md).
+This page is authoritative for note type registration, the required top-level contract of `.metadata/schemas/<note_type>.yaml`, optional property-set references, schema kinds, and storage rules. Field semantics live in [Managed Notes and Properties](managed-notes-and-properties.md), relationship, heading, and template semantics live in [Relationships, Headings, and Templates](relationships-headings-and-templates.md), and collection-level inheritance and property-set application live in [Collection Model](collection-model.md).
 
 ## 7. Note Type Registry
 
@@ -32,6 +32,9 @@ label: Topic
 icon: note
 kind: entity
 description: Durable note about a specific topic.
+
+property_sets:
+  - workflow
 
 storage:
   path_pattern: "Topics/{title}.md"
@@ -141,10 +144,15 @@ Rules:
 - The `headings` block semantics are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - The `headings` block MUST be present even when the note type imposes no mandatory H2 headings.
 - `guidance` is human-facing explanatory content and MUST NOT override structural rules.
+- `property_sets` MAY be omitted.
+- If present, `property_sets` MUST be a non-empty list of unique property set identifiers.
+- `property_sets` is the opt-in mechanism for named reusable frontmatter field sets.
+- Property-set definitions and merge rules are defined in [Collection Model](collection-model.md).
+- Property sets affect frontmatter only; they do not make `relationships` or `headings` blocks optional.
 - `inheritance` MAY be omitted.
 - A note-type schema MAY include an `inheritance` block to disable global inheritance entirely or for specific blocks.
 - Collection-level merge and override rules are defined in [Collection Model](collection-model.md).
-- Inheritance affects the contents of `frontmatter`, `relationships`, and `headings`; it does not make those blocks optional.
+- Inheritance affects the contents of `frontmatter`, `relationships`, and `headings`; property sets affect only `frontmatter`; neither mechanism makes required blocks optional.
 - A note-type schema MAY omit individual inherited field definitions, relationship target definitions, or heading settings that remain unchanged.
 
 ## 9. Allowed Schema Kinds

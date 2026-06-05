@@ -14,6 +14,7 @@ A system definition is a reusable package for a TypedMark collection model. It p
 
 - system identity and publishable metadata
 - the root `typedmark.json`
+- named property sets, when used
 - note-type schemas
 - templates
 - scaffold instructions for creating an initial collection structure
@@ -41,6 +42,7 @@ license: MIT
 entrypoints:
   collection: typedmark.json
   schemas: .metadata/schemas
+  property_sets: .metadata/property-sets
   templates: .metadata/templates
 scaffold:
   folders:
@@ -87,6 +89,8 @@ Rules:
 - `entrypoints` MUST point to the canonical collection assets within the same system definition.
 - `entrypoints.collection` MUST point to `typedmark.json`.
 - `entrypoints.schemas` MUST point to `.metadata/schemas`.
+- `entrypoints.property_sets` MAY be omitted. If present, it MUST point to `.metadata/property-sets`.
+- If a system definition contains one or more property set files, `entrypoints.property_sets` SHOULD be present.
 - `entrypoints.templates` MUST point to `.metadata/templates`.
 - `system_id` and `collection_model_id` identify different things and MUST NOT be treated as interchangeable.
 - `scaffold` SHOULD be present, even if empty.
@@ -101,7 +105,7 @@ Rules:
 Import semantics:
 
 - An importer MUST preserve `typedmark.json` and the `.metadata/` directory structure and file contents unless the user explicitly requests a transformation.
-- An importer MUST validate `.metadata/system.yaml`, `typedmark.json`, and the note-type schema files before creating a collection from the system.
+- An importer MUST validate `.metadata/system.yaml`, `typedmark.json`, any property set files present under `.metadata/property-sets/`, and the note-type schema files before creating a collection from the system.
 - An importer SHOULD support a full scaffolded import mode that creates the declared folders and notes.
 - An importer MAY additionally support a metadata-only import mode that installs `typedmark.json` and `.metadata/` without materializing scaffold notes.
 - A metadata-only import MUST NOT create `.metadata/instance.yaml`.

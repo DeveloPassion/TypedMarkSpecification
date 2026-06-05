@@ -14,9 +14,9 @@ If you want the motivation behind the spec before the formal rules, start with t
 ## Normative Map
 
 - [Foundations](foundations.md): purpose, design principles, authoritative artifact map, and structural precedence
-- [Collection Model](collection-model.md): `typedmark.json`, inheritance, and validation defaults
+- [Collection Model](collection-model.md): `typedmark.json`, property sets, inheritance, and validation defaults
 - [System Definitions and Instances](system-definitions-and-instances.md): `.metadata/system.yaml`, `.metadata/instance.yaml`, and profiles
-- [Note Type Schemas](note-type-schemas.md): note type registration, schema shape, schema kinds, and storage rules
+- [Note Type Schemas](note-type-schemas.md): note type registration, optional property-set references, schema shape, schema kinds, and storage rules
 - [Managed Notes and Properties](managed-notes-and-properties.md): managed note contract, field rules, note-link syntax, field materialization, and canonical serialization
 - [Relationships, Headings, and Templates](relationships-headings-and-templates.md): relationship semantics, heading constraints, and template requirements
 - [Conformance and Roadmap](conformance-and-roadmap.md): non-goals, conformance modes, and implementation order
