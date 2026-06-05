@@ -17,9 +17,6 @@ Required fields:
 ```yaml
 specification_version: 0.0.1
 collection_model_id: example-knowledge-base
-relationship_kinds:
-  - belongs_to
-  - related_to
 exclude_paths:
   - .git/**
   - .metadata/**
@@ -47,8 +44,6 @@ Rules:
 - `collection_model_id` identifies the structural collection model described by `typedmark.yaml`.
 - `collection_model_id` is not an instantiated collection identifier.
 - Multiple instantiated collections MAY share the same `collection_model_id`.
-- `relationship_kinds` MUST be exactly `belongs_to` and `related_to`.
-- The meanings of `belongs_to` and `related_to` are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - `exclude_paths` defines content that validators and agents MUST ignore for structural reasoning.
 - `validation_defaults` provides default severity levels for collection-wide validation reporting.
 - Supported validation severities are `error`, `warn`, `info`, and `off`.

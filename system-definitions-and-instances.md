@@ -39,11 +39,6 @@ audiences:
 publisher:
   name: Example Publisher
 license: MIT
-entrypoints:
-  collection: typedmark.yaml
-  schemas: .metadata/schemas
-  property_sets: .metadata/property-sets
-  templates: .metadata/templates
 scaffold:
   folders:
     - Domains
@@ -75,7 +70,6 @@ Required top-level keys:
 - `version`
 - `name`
 - `description`
-- `entrypoints`
 - `scaffold`
 
 Rules:
@@ -86,12 +80,7 @@ Rules:
 - `system_id` uniquely identifies the logical system family.
 - `system_id` identifies a reusable system family and is not an instantiated collection identifier.
 - `version` identifies a publishable system release and MUST be a Semantic Versioning 2.0.0 string.
-- `entrypoints` MUST point to the canonical collection assets within the same system definition.
-- `entrypoints.collection` MUST point to `typedmark.yaml`.
-- `entrypoints.schemas` MUST point to `.metadata/schemas`.
-- `entrypoints.property_sets` MAY be omitted. If present, it MUST point to `.metadata/property-sets`.
-- If a system definition contains one or more property set files, `entrypoints.property_sets` SHOULD be present.
-- `entrypoints.templates` MUST point to `.metadata/templates`.
+- Consumers MUST derive the canonical collection asset locations from the fixed filesystem layout in [Foundations](foundations.md).
 - `system_id` and `collection_model_id` identify different things and MUST NOT be treated as interchangeable.
 - `scaffold` SHOULD be present, even if empty.
 - `scaffold.folders` lists folders an importer SHOULD create when instantiating a collection from the system.

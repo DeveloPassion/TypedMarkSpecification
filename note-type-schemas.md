@@ -136,7 +136,10 @@ Rules:
 - `icon` MUST be a non-empty string.
 - `icon` is human-facing note-type metadata for generated references and applications.
 - The core specification treats `icon` as an opaque presentation token and does not standardize icon libraries or rendering behavior.
-- `template.file` MUST point to the canonical template for the same note type.
+- Note-type schemas MUST declare a `template` block.
+- `template.file` MUST be a relative path under `.metadata/templates/`.
+- `template.file` MUST end in `.md`.
+- `template.file` defines the canonical template for that note type.
 - The `frontmatter` block semantics are defined in [Managed Notes and Properties](managed-notes-and-properties.md).
 - The `frontmatter` block MUST contain `required_fields` and `optional_fields` mappings, even when one mapping is empty.
 - The `relationships` block semantics are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).

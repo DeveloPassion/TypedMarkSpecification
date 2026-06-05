@@ -94,12 +94,14 @@ Rules:
 
 ## 17. Templates
 
-Each note-type schema MUST define a matching template reference.
+Each note-type schema MUST define a template reference.
 
 Rules:
 
 - `template.file` in the schema MUST point to the canonical template for that note type.
-- Template files MUST live at `.metadata/templates/<note_type>.md`.
+- `template.file` MUST be a relative path under `.metadata/templates/`.
+- `template.file` MUST end in `.md`.
+- The template path referenced by a schema need not equal `.metadata/templates/<note_type>.md`.
 - Templates MUST include valid starter frontmatter in canonical materialized form.
 - Templates MUST NOT introduce managed-note frontmatter fields solely to mirror schema-level `relationships` declarations.
 - Templates SHOULD include the canonical required H2 headings.

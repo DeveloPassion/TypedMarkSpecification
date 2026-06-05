@@ -68,7 +68,7 @@ typedmark.yaml
   schemas/
     <note_type>.yaml
   templates/
-    <note_type>.md
+    <note_type_template>.md
 ```
 
 The authoritative contract for each governed element lives in exactly one place:
@@ -78,12 +78,14 @@ The authoritative contract for each governed element lives in exactly one place:
 - `.metadata/instance.yaml`: [System Definitions and Instances](system-definitions-and-instances.md)
 - `.metadata/property-sets/<property_set>.yaml`: [Collection Model](collection-model.md)
 - `.metadata/schemas/<note_type>.yaml`: [Note Type Schemas](note-type-schemas.md)
-- `.metadata/templates/<note_type>.md`: [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
+- `.metadata/templates/<note_type_template>.md`: [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
 - managed note frontmatter, field definitions, note-link syntax, field materialization, and canonical serialization: [Managed Notes and Properties](managed-notes-and-properties.md)
 - relationship semantics, heading constraints, and template obligations: [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
 - conformance modes and required artifact sets: [Conformance and Roadmap](conformance-and-roadmap.md)
 
-`typedmark.yaml` MUST live at the root of the managed collection, such as the root folder of an Obsidian vault.
+`typedmark.yaml` MUST live at the root of the managed collection.
+
+When this specification fixes an artifact location by artifact kind, governed artifacts MUST derive that location from the authoritative artifact map above. They MUST NOT restate the same path redundantly elsewhere unless an artifact-specific rule explicitly requires the restated path.
 
 Files outside `typedmark.yaml` and `.metadata/` MAY exist for humans, publishing, or navigation, but they are not authoritative for structure.
 
@@ -94,7 +96,7 @@ When two artifacts or surfaces appear to disagree, structural conflicts MUST be 
 1. `typedmark.yaml`
 2. `.metadata/schemas/<note_type>.yaml`
 3. `.metadata/property-sets/<property_set>.yaml`
-4. `.metadata/templates/<note_type>.md`
+4. `.metadata/templates/<note_type_template>.md`
 5. note contents
 6. human-facing generated reference pages
 

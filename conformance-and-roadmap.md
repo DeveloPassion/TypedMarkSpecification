@@ -30,8 +30,7 @@ A filesystem tree conforms as a valid system definition when:
 4. Every property set file under `.metadata/property-sets/`, if present, is valid under [Collection Model](collection-model.md), and every property set reference from a note-type schema resolves.
 5. Every managed note type has exactly one valid schema file under [Note Type Schemas](note-type-schemas.md).
 6. Every template referenced by note-type schemas exists and is valid under [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
-7. `entrypoints` in `.metadata/system.yaml` resolve correctly within the same filesystem tree.
-8. All governed artifacts use canonical serialization under [Managed Notes and Properties](managed-notes-and-properties.md).
+7. All governed artifacts use canonical serialization under [Managed Notes and Properties](managed-notes-and-properties.md).
 
 ### 19.2 Valid Instantiated Collection
 

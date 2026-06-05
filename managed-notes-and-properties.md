@@ -234,15 +234,14 @@ Rules:
 
 Canonical top-level key order for governed artifacts:
 
-- In `typedmark.yaml`: `specification_version`, `collection_model_id`, `relationship_kinds`, `exclude_paths`, `validation_defaults`, `global_properties`, then any allowed unknown keys in lexicographic order.
-- In `.metadata/system.yaml`: `specification_version`, `system_id`, `version`, `name`, `description`, `audiences`, `publisher`, `license`, `entrypoints`, `scaffold`, `catalog`, then any allowed unknown keys in lexicographic order.
+- In `typedmark.yaml`: `specification_version`, `collection_model_id`, `exclude_paths`, `validation_defaults`, `global_properties`, then any allowed unknown keys in lexicographic order.
+- In `.metadata/system.yaml`: `specification_version`, `system_id`, `version`, `name`, `description`, `audiences`, `publisher`, `license`, `scaffold`, `catalog`, then any allowed unknown keys in lexicographic order.
 - In `.metadata/instance.yaml`: `specification_version`, `collection_instance_id`, `collection_model_id`, `system_id`, `system_version`, then any allowed unknown keys in lexicographic order.
 - In `.metadata/property-sets/<property_set>.yaml`: `specification_version`, `property_set`, `description`, `frontmatter`, then any allowed unknown keys in lexicographic order.
 - In `.metadata/schemas/<note_type>.yaml`: `specification_version`, `note_type`, `label`, `icon`, `kind`, `description`, `inheritance`, `property_sets`, `storage`, `template`, `frontmatter`, `relationships`, `headings`, `guidance`, then any allowed unknown keys in lexicographic order.
 
 Canonical nested key order for standard metadata blocks:
 
-- In `entrypoints`: `collection`, `schemas`, `property_sets`, `templates`, then any allowed unknown keys in lexicographic order.
 - In `scaffold`: `folders`, `notes`, then any allowed unknown keys in lexicographic order.
 - In scaffold note entries: `path`, `note_type`, `from_template`, `values`, then any allowed unknown keys in lexicographic order.
 - In `storage`: `path_pattern`, `archive`, then any allowed unknown keys in lexicographic order.
