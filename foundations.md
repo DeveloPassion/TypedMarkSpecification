@@ -64,6 +64,7 @@ Rules:
 - When this specification defines a name in a namespace, it MUST also define that name's role, where it may appear, and the validation or conformance semantics that follow from its use in that namespace.
 - `label`, `description`, and `icon` are already spec-defined in the note-type schema top-level namespace and in the field-definition metadata namespace.
 - `catalog.tags` in `.metadata/system.yaml` and a managed-note frontmatter field named `tags` are different namespaces and MUST NOT be conflated.
+- A managed-note frontmatter field named `description` and a field-definition metadata key named `description` are different namespaces and MUST NOT be conflated.
 - Extensions, profiles, collection models, property sets, and note-type schemas MUST NOT assign incompatible meanings to a spec-defined name in the namespace where the core specification defines it.
 - Mentioning a candidate or example name in prose does not by itself define that name normatively.
 

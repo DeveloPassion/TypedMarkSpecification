@@ -27,6 +27,7 @@ Common frontmatter shape:
 note_type: topic
 id: note-taking
 title: Note Taking
+description: null
 domain: "[[Domains/Knowledge Management|Knowledge Management]]"
 sources:
   - "[Introduction to Note Taking](Sources/Introduction%20to%20Note%20Taking.md)"
@@ -40,6 +41,7 @@ Rules:
 - `note_type` MUST equal the schema identifier defined by the matching schema file.
 - `id` MUST be stable across renames and moves.
 - `title` is human-facing and MAY change unless the schema marks it immutable.
+- Display-oriented fields such as `title` and `description` are human-facing note metadata and MAY differ from the note's file name and storage path unless a schema rule explicitly couples them.
 - A conforming managed note MUST remain usable as a normal Markdown note without preprocessing, transpilation, or note-local sidecar metadata.
 - Managed-note conformance uses the effective note-type schema after collection-level inheritance, property-set application, and local schema definitions have been applied.
 - The meanings of `relationship_kind`, `belongs_to`, and `related_to` are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
@@ -55,9 +57,8 @@ Rules:
 - The normative contract for a core-defined managed-note field MUST define its meaning, whether it is required or optional or conditional, whether schemas may declare it explicitly, the constraints on its stored values, and any note-type association or conformance behavior that follows from its use.
 - `note_type` and `id` are core-defined managed-note field names in this specification version.
 - A core-defined managed-note field name MUST NOT be repurposed as an ordinary user-defined field in `global_properties.frontmatter`, a property set, or a note-type schema unless the core field contract explicitly permits schema-level declaration of that field.
+- Field names such as `title`, `description`, `tags`, `aliases`, `created_at`, `updated_at`, and `archived` are ordinary schema-defined managed-note field names in this specification version unless a rule explicitly defines them otherwise.
 - The `tags` property type defined below remains a first-class supported property type.
-- In this specification version, the field names `aliases`, `created_at`, `updated_at`, and `archived` are not yet core-defined managed-note field names. They become core-defined only in a TypedMark version that explicitly defines their contracts.
-- Supporting the `tags` property type does not by itself define a separate dedicated core field contract for the field name `tags`.
 - The generic property-type and field-definition rules in this page apply to ordinary schema-defined fields unless a dedicated core field rule says otherwise.
 
 ## 12. Frontmatter Property Types
@@ -71,6 +72,7 @@ Each field definition MUST declare one of these property `type` values:
 - `date`
 - `datetime`
 - `tags`
+- `object`
 
 Rules:
 
@@ -84,9 +86,9 @@ Rules:
 - `datetime` MUST use RFC 3339 date-time format with seconds and an explicit timezone designator such as `Z` or `+02:00`.
 - `tags` values MUST be YAML sequences of tag strings.
 - `tags` entries MUST be non-empty strings.
-- Ordinary schema-defined managed-note fields MUST NOT be object-valued, even when the YAML syntax itself is valid.
-- This version of the specification does not support nested object-valued ordinary schema-defined managed-note fields.
-- A core-defined managed-note field name MAY use a dedicated structured value only when this specification explicitly defines that field's contract.
+- `object` values MUST be YAML mappings and MUST declare `required_fields` and `optional_fields`.
+- YAML scalar, sequence, and mapping values are all supported when they satisfy the declared property type.
+- A core-defined managed-note field name MAY still use a dedicated structured value only when this specification explicitly defines that field's contract.
 
 ### Note-Link Syntax and Resolution
 
@@ -114,18 +116,19 @@ Rules:
 - In note bodies, embed-prefixed wikilinks such as `![[Target]]` or `![[Target#^block-id]]` are supported internal note links.
 - Relationship conformance uses the resolved managed-note targets produced by these rules; counting and cardinality rules are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 
-### List Properties and Unsupported Nested Properties
+### Composite Properties
 
 Rules:
 
 - `list.items` MUST be a valid field definition.
-- `list.items.type` MUST be one of `text`, `number`, `checkbox`, `date`, or `datetime`.
 - `list.items` MUST NOT declare `default_value` because anonymous list elements are not materialized independently.
 - `list.items` MUST NOT declare `nullable` because list elements are not materialized independently.
+- `list.items` MAY use any supported property type.
 - `tags` MUST NOT declare `items`.
-- Nested list properties are not supported.
-- Nested object-valued ordinary schema-defined managed-note fields are not supported.
-- Validators MUST reject object-valued ordinary schema-defined managed-note fields as non-conforming note metadata unless a dedicated core field rule explicitly allows that field name.
+- `object.required_fields` and `object.optional_fields` MUST each be mappings, even when one mapping is empty.
+- Nested field definitions inside an `object` field follow the same type, materialization, and value-requirement rules as top-level field definitions unless a type-specific rule says otherwise.
+- `object` MUST NOT declare `items`.
+- Nested list and object properties are supported.
 
 ### Field Definition Attributes
 
@@ -145,7 +148,7 @@ Each field definition MAY additionally declare:
 
 Rules:
 
-- Field definition attributes apply to top-level fields and to `list.items` unless a type-specific rule says otherwise.
+- Field definition attributes apply to top-level fields, to `list.items`, and recursively to nested fields inside `object.required_fields` and `object.optional_fields` unless a type-specific rule says otherwise.
 - `label` is the human-facing name of the field and MUST NOT change the stored field key. If present, MUST be a non-empty string.
 - `description` is human-facing explanatory metadata for generated references, forms, and authoring interfaces. If present, MUST be a non-empty string.
 - `icon` is human-facing field metadata for generated references and applications. If present, MUST be a non-empty string.
@@ -175,7 +178,8 @@ Rules:
 - Values with `format: uri` MUST be absolute URIs with a non-empty scheme and valid syntax according to RFC 3986. Relative references MUST NOT be used.
 - Values with `format: note_link` MUST use the note-link syntax and resolution rules defined earlier in this page.
 - `allowed_values` MAY be omitted.
-- `allowed_values` MUST be a non-empty list of unique scalar values compatible with the declared property `type`.
+- `allowed_values` MUST be a non-empty list of unique scalar values compatible with the declared scalar property `type`.
+- `allowed_values` MUST NOT be used with `type: list`, `type: tags`, or `type: object`.
 - Text `allowed_values` comparisons are case-sensitive and use exact string equality.
 - `whole_number` MAY be omitted.
 - `whole_number: true` is valid only for `type: number`.
@@ -200,10 +204,12 @@ Rules:
 - Every field declared in `frontmatter.required_fields` or `frontmatter.optional_fields` MUST be physically present in stored note frontmatter.
 - Declared fields MUST NOT be omitted merely because they currently have no concrete value.
 - When no concrete value is known for a nullable field, the canonical stored value is `null`, unless an explicit non-null `default_value` is defined.
+- When a field with `type: object` has a concrete mapping value, every field declared in that object's `required_fields` or `optional_fields` MUST be physically present in the stored mapping.
 - `required_fields` and `optional_fields` do not differ in physical materialization, but they do differ in value requirements.
 - `required_fields` MAY require a concrete non-null value, depending on `nullable` and `default_value`.
 - `optional_fields` never require a concrete non-null value; they remain valid when materialized as `null`.
 - A missing field declared anywhere under `frontmatter.required_fields` or `frontmatter.optional_fields` is a `missing_declared_field` validation failure.
+- A missing nested field declared within an object field is also a `missing_declared_field` validation failure.
 - Tools that create notes MUST write back frontmatter that satisfies these canonical field materialization rules.
 - Tools that import or scaffold notes MUST write back frontmatter that satisfies these canonical field materialization rules.
 - Tools that normalize notes or modify managed note frontmatter MUST rewrite frontmatter so it satisfies these canonical field materialization rules before saving.
@@ -223,5 +229,7 @@ Rules:
 - Fields declared in `optional_fields` MUST be nullable in the effective schema and MAY remain `null` indefinitely.
 - Fields declared in `optional_fields` MUST NOT be used for metadata that is REQUIRED to hold a concrete non-null value for conformance.
 - If a field is intended to become invalid when no concrete value is present, it MUST be declared in `required_fields`, not `optional_fields`.
+- The same required-versus-optional distinction applies recursively within object field definitions.
 - Unknown fields are evaluated using the `unknown_field` rule defined in [Collection Model](collection-model.md).
+- Unknown nested fields inside object values are also evaluated using the `unknown_field` rule defined in [Collection Model](collection-model.md).
 - `note_type` and `id` MUST always appear in `required_fields`.

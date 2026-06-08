@@ -57,10 +57,10 @@ property_sets:
   - workflow
 
 storage:
-  path_pattern: "Topics/{title}.md"
+  path_pattern: "Topics/{id}.md"
   archive:
     policy: mirror_under_archives
-    archived_path_pattern: "Archives/Topics/{title}.md"
+    archived_path_pattern: "Archives/Topics/{id}.md"
 
 template:
   file: ".metadata/templates/topic.md"
@@ -107,6 +107,13 @@ frontmatter:
       nullable: true
       default_value: null
   optional_fields:
+    description:
+      label: Description
+      description: Human-readable note description used in previews and references.
+      icon: paragraph
+      type: text
+      nullable: true
+      default_value: null
     summary:
       label: Summary
       description: Short overview used in generated references and previews.

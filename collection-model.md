@@ -85,6 +85,12 @@ global_properties:
         nullable: true
         default_value: null
     optional_fields:
+      description:
+        label: Description
+        description: Human-readable note description.
+        type: text
+        nullable: true
+        default_value: null
       summary:
         label: Summary
         description: Short overview of the note.
