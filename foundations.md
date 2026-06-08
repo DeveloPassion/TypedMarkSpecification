@@ -20,11 +20,11 @@ The collection configuration is the collection-wide structural contract defined 
 
 ### Note Types
 
-A note type is a named structural class that collection notes can be associated with. Every managed note conforms to exactly one primary note type, and both schema files and the core-defined note frontmatter field, when stored, use the identifier name `note_type`.
+A note type is a named structural class that collection notes can be associated with. Note types may be abstract or concrete. Every managed note conforms to exactly one concrete note type, and both schema files and the core-defined note frontmatter field, when stored, use the identifier name `note_type`.
 
 ### Note Type Configuration (Schemas)
 
-A note type configuration is the schema file for one note type, stored under `<metadata_directory>/schemas/`. It defines the note type's top-level metadata and the structural blocks that govern its notes. Details: [Note Type Schemas](note-type-schemas.md).
+A note type configuration is the schema file for one note type, stored under `<metadata_directory>/schemas/`. It defines the note type's top-level metadata and the structural blocks that govern its notes or its descendants. Details: [Note Type Schemas](note-type-schemas.md).
 
 ### Notes (Collection Content)
 
@@ -52,7 +52,7 @@ A property set is a named reusable frontmatter field set defined under `<metadat
 
 ### Effective Note-Type Schema
 
-The effective note-type schema is the normative result of taking one note-type schema and then applying collection-level inheritance, declared property sets, and local schema definitions in the order defined by this specification. Managed-note conformance is evaluated against that effective schema, not against isolated fragments.
+The effective note-type schema is the normative result of taking one concrete note-type schema, its abstract ancestor chain, and then applying collection-level inheritance, declared property sets, and local schema definitions in the order defined by this specification. Managed-note conformance is evaluated against that effective schema, not against isolated fragments.
 
 ### Relationships, Headings, and Templates
 
@@ -102,7 +102,7 @@ TypedMark is the structural contract for a note collection. Artifact-specific ru
 ## Design Principles
 
 - The authoritative contract lives in `typedmark.yaml` and the metadata directory named by `typedmark.yaml`.
-- One schema file defines one concrete note type.
+- One schema file defines one note type.
 - TypedMark is strongly typed.
 - Agents and tools MUST be able to understand collection structure from `typedmark.yaml` and the configured metadata directory alone.
 - Managed notes MUST remain directly readable and editable in any Markdown editor without transformation.

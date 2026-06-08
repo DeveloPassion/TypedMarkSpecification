@@ -18,8 +18,8 @@ Rules:
 - A managed note is a collection note that is associated with exactly one known note type under this specification version's note-type association rules.
 - The ordered note-type mapping rules are defined in [Collection Model](collection-model.md).
 - The first matching note-type mapping rule determines the note's candidate note type.
-- A collection note is managed only when the candidate note type from the winning mapping rule resolves to exactly one known schema.
-- A collection note is untyped when no mapping rule matches or when the winning mapping rule does not resolve to exactly one known schema.
+- A collection note is managed only when the candidate note type from the winning mapping rule resolves to exactly one known concrete schema.
+- A collection note is untyped when no mapping rule matches or when the winning mapping rule does not resolve to exactly one known concrete schema.
 - Untyped notes MAY exist in a collection.
 - Untyped notes are outside the managed-note contract on this page and are not validated against note-type storage, relationship, heading, or frontmatter field-definition rules.
 - Rules on this page apply only to managed notes unless a rule explicitly says otherwise.
@@ -31,7 +31,7 @@ Every managed note MUST:
 - be a Markdown file
 - contain YAML frontmatter
 - use YAML frontmatter as the note's metadata
-- resolve to exactly one known note type under the configured note-type mapping rules
+- resolve to exactly one known concrete note type under the configured note-type mapping rules
 - satisfy exactly one effective note-type schema as defined in [Note Type Schemas](note-type-schemas.md)
 - satisfy the field and materialization rules defined in this page
 - satisfy the storage, relationship, and heading rules linked from its resolved note type
@@ -54,7 +54,7 @@ This remains a common stored shape, especially when a collection uses explicit f
 Rules:
 
 - `note_type`, when stored, defines the explicit note type value of the note.
-- If stored, `note_type` MUST equal the schema identifier defined by the matching schema file.
+- If stored, `note_type` MUST equal the schema identifier defined by the matching concrete schema file.
 - `note_type` MAY be omitted when the configured note-type mapping rules resolve the note type from another surface.
 - `id` MAY be omitted.
 - A managed note MAY declare `id` when its schema includes an `id` field definition.
@@ -62,7 +62,7 @@ Rules:
 - `title` is human-facing and MAY change unless the schema marks it immutable.
 - Display-oriented fields such as `title` and `description` are human-facing note metadata and MAY differ from the note's file name and storage path unless a schema rule explicitly couples them.
 - A conforming managed note MUST remain usable as a normal Markdown note without preprocessing, transpilation, or note-local sidecar metadata.
-- Managed-note conformance uses the effective note-type schema after collection-level inheritance, property-set application, and local schema definitions have been applied.
+- Managed-note conformance uses the effective note-type schema after collection-level inheritance, abstract-ancestor application, property-set application, and local concrete schema definitions have been applied.
 - The meanings of `relationship_kind`, `belongs_to`, and `related_to` are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - Managed note frontmatter MUST follow the canonical field materialization rules defined on this page.
 

@@ -84,6 +84,7 @@ Rules:
 - `scaffold.folders` lists folders an importer SHOULD create when instantiating a collection from the system.
 - `scaffold.notes` lists note files an importer SHOULD create when instantiating a collection from the system.
 - Each scaffold note entry MUST define `path`, `note_type`, and `from_template`.
+- `scaffold.notes[].note_type` MUST resolve to exactly one concrete note type.
 - `scaffold.notes[].values` MAY provide initial frontmatter values that are merged into the instantiated template.
 - Values supplied in `scaffold.notes[].values` override template placeholder values for that instantiated note only.
 - A system definition MAY be shared as a directory, a Git repository, or an archive file, provided relative paths are preserved.

@@ -39,14 +39,15 @@ Rules:
 
 ## Relationship Constraints
 
-Each schema MUST define `relationships.belongs_to.allowed_note_types` and `relationships.related_to.allowed_note_types`. Each mapping MAY be empty.
+Each concrete note type's effective schema MUST define `relationships.belongs_to.allowed_note_types` and `relationships.related_to.allowed_note_types`. Each mapping MAY be empty.
 
 Rules:
 
 - `relationships.belongs_to.allowed_note_types` defines the note types that MAY appear under `belongs_to`.
 - `relationships.related_to.allowed_note_types` defines the note types that MAY appear under `related_to`.
 - Constraints are declared per target note type.
-- Every referenced target note type MUST be defined in the same system.
+- If a schema file physically declares `relationships`, it MUST define both `relationships.belongs_to.allowed_note_types` and `relationships.related_to.allowed_note_types`.
+- Every referenced target note type MUST be a concrete note type defined in the same system.
 - Within a single relationship kind, a target note type identifier MUST appear at most once.
 - The target note type sets for `belongs_to` and `related_to` MUST be disjoint for a given source note type.
 - Each target note type MAY declare `min` and `max`.
@@ -79,7 +80,7 @@ Using the `topic` schema example in [Note Type Schemas](note-type-schemas.md), t
 
 ## Heading Rules
 
-Each note-type schema MUST define a `headings` block. That block MAY impose no mandatory H2 headings.
+Each concrete note type's effective schema MUST define a `headings` block. That block MAY impose no mandatory H2 headings.
 
 Rules:
 
@@ -94,11 +95,11 @@ Rules:
 
 ## Templates
 
-Each note-type schema MUST define a template reference.
+Each concrete note type's effective schema MUST define a template reference.
 
 Rules:
 
-- `template.file` in the schema MUST point to the canonical template for that note type.
+- The effective `template.file` of a concrete note type MUST point to the canonical template for that note type.
 - `template.file` MUST be a relative path under `<metadata_directory>/templates/`.
 - `template.file` MUST end in `.md`.
 - The template path referenced by a schema need not equal `<metadata_directory>/templates/<note_type>.md`.
