@@ -81,7 +81,7 @@ Rules:
 
 ## Frontmatter Property Types
 
-Every field definition is a YAML mapping. Every field definition MUST declare `type`, and it MAY declare additional field-definition properties such as `label`, `description`, `icon`, `generated`, `optional`, `nullable`, and `default_value`.
+Every field definition is a YAML mapping. Every field definition MUST declare `type`, and it MAY declare additional field-definition properties such as `label`, `description`, `icon`, `generated`, `unique`, `deprecated`, `optional`, `nullable`, and `default_value`.
 
 ### Field Definition Property Reference
 
@@ -169,6 +169,32 @@ Rules:
 - This specification does not define how or when a generated field is produced, refreshed, or protected from manual edits.
 - `generated` does not make a field virtual. Declared generated fields still follow the same type validation, optionality, defaulting, stored-frontmatter, and canonical materialization rules as other declared fields.
 - `generated` does not replace `const_value` or `value_from_schema`.
+
+#### `unique`
+
+Rules:
+
+- `unique` MAY be omitted.
+- `unique` MUST be a boolean.
+- If omitted, `unique` defaults to `false`.
+- `unique` MAY be declared only on top-level frontmatter fields.
+- `unique: true` is valid only for scalar field types: `text`, `number`, `checkbox`, `date`, and `datetime`.
+- `unique: true` means every non-null stored value for that field MUST be distinct across all managed notes of the same note type.
+- Uniqueness is evaluated using exact stored-value equality after normal YAML parsing.
+- Multiple `null` values do not violate uniqueness.
+- A repeated non-null value for a field with `unique: true` is a `duplicate_unique_value` validation failure, as defined in [Collection Model](collection-model.md).
+- If a unique value may be assigned later, the RECOMMENDED pattern is `nullable: true` with `default_value: null`.
+
+#### `deprecated`
+
+Rules:
+
+- `deprecated` MAY be omitted.
+- `deprecated` MUST be a boolean.
+- If omitted, `deprecated` defaults to `false`.
+- `deprecated: true` marks a field as discouraged for new use.
+- A deprecated field remains valid and governed by the same type validation, optionality, defaulting, stored-frontmatter, and canonical materialization rules as any other declared field.
+- This specification version does not define replacement mappings, migration behavior, or automatic validator severities for deprecated fields.
 
 #### `optional`
 

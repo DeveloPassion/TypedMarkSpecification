@@ -26,6 +26,7 @@ validation_defaults:
   missing_declared_field: error
   unknown_field: warn
   invalid_allowed_value: error
+  duplicate_unique_value: error
   invalid_property_set: error
   invalid_note_link: error
   invalid_relationship_definition: error
@@ -54,6 +55,7 @@ Rules:
 - `missing_declared_field` applies when a field declared in `frontmatter` is absent from stored note frontmatter.
 - `unknown_field` applies when an undeclared field appears in `typedmark.yaml`, any governed YAML artifact, or managed note frontmatter.
 - `invalid_allowed_value` applies when a field value violates an `allowed_values` constraint.
+- `duplicate_unique_value` applies when a field declared with `unique: true` repeats a non-null stored value in more than one managed note of the same note type.
 - `invalid_property_set` applies when a property set file, or a note-type schema property-set reference, violates the property-set rules defined in this page.
 - `invalid_note_link` applies when an internal note link violates the syntax or resolution rules defined in [Managed Notes and Properties](managed-notes-and-properties.md).
 - `invalid_relationship_definition` applies when relationship declarations violate the relationship model defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
