@@ -81,7 +81,7 @@ Rules:
 
 ## Frontmatter Property Types
 
-Every field definition is a YAML mapping. Every field definition MUST declare `type`, and it MAY declare additional field-definition properties such as `label`, `description`, `icon`, `generated`, `unique`, `deprecated`, `optional`, `nullable`, and `default_value`.
+Every field definition is a YAML mapping. Every field definition MUST declare `type`, and it MAY declare additional field-definition properties such as `label`, `description`, `icon`, `format`, `generated`, `unique`, `deprecated`, `optional`, `nullable`, and `default_value`.
 
 ### Field Definition Property Reference
 
@@ -95,18 +95,22 @@ Rules:
 Rules:
 
 - `type` is REQUIRED on every field definition.
-- Supported `type` values are `text`, `list`, `number`, `checkbox`, `date`, `datetime`, `tags`, and `object`.
+- Supported `type` values are `text`, `integer`, `number`, `checkbox`, `date`, `time`, `datetime`, `link`, `list`, `tags`, `object`, and `any`.
 - Field definitions MUST NOT use unknown property types.
 - `text` values MUST be YAML strings.
+- `integer` values MUST be YAML numbers with no fractional component.
 - Markdown syntax inside property values has no special meaning.
-- Stored `list` values MUST be YAML sequences.
 - `number` values MUST be YAML numbers.
 - `checkbox` values MUST be either `true` or `false`.
 - `date` MUST use RFC 3339 full-date format `YYYY-MM-DD`.
+- `time` values MUST be YAML strings and MUST match the declared time `format`.
 - `datetime` MUST use RFC 3339 date-time format with seconds and an explicit timezone designator such as `Z` or `+02:00`.
+- `link` values MUST be YAML strings and MUST follow the declared link `format`.
+- Stored `list` values MUST be YAML sequences.
 - `tags` values MUST be YAML sequences of tag strings.
 - `tags` entries MUST be non-empty strings.
 - Stored `object` values MUST be YAML mappings.
+- `any` values MAY be any non-null YAML value, and MAY be `null` only when `nullable: true`.
 - YAML scalar, sequence, and mapping values are all supported when they satisfy the declared property type.
 - A core-defined managed-note field name MAY still use a dedicated structured value only when this specification explicitly defines that field's contract.
 
@@ -178,9 +182,9 @@ Rules:
 - `unique` MUST be a boolean.
 - If omitted, `unique` defaults to `false`.
 - `unique` MAY be declared only on top-level frontmatter fields.
-- `unique: true` is valid only for scalar field types: `text`, `number`, `checkbox`, `date`, and `datetime`.
+- `unique: true` is valid only for scalar field types: `text`, `integer`, `number`, `checkbox`, `date`, `time`, `datetime`, and `link`.
 - `unique: true` means every non-null stored value for that field MUST be distinct across all managed notes of the same note type.
-- Uniqueness is evaluated using exact stored-value equality after normal YAML parsing.
+- Uniqueness is evaluated using exact stored-value equality after normal YAML parsing, not by note-link resolution.
 - Multiple `null` values do not violate uniqueness.
 - A repeated non-null value for a field with `unique: true` is a `duplicate_unique_value` validation failure, as defined in [Collection Model](collection-model.md).
 - If a unique value may be assigned later, the RECOMMENDED pattern is `nullable: true` with `default_value: null`.
@@ -239,7 +243,7 @@ Rules:
 - `relationship_kind` MAY be omitted.
 - If present, `relationship_kind` MUST be either `belongs_to` or `related_to`.
 - `relationship_kind` MAY be declared only on top-level frontmatter fields.
-- A field with `relationship_kind` MUST have `type: text` and `format: note_link`, or `type: list` whose `items.type` is `text` and `items.format` is `note_link`.
+- A field with `relationship_kind` MUST have `type: link` and `format: note_link`, or `type: list` whose `items.type` is `link` and `items.format` is `note_link`.
 - A field without `relationship_kind` MAY still use `format: note_link`, but it does not contribute to typed relationship conformance.
 - The semantics of `relationship_kind` are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 
@@ -248,15 +252,21 @@ Rules:
 Rules:
 
 - `format` MAY be omitted.
-- Supported `format` values are `note_link`, `uri`, and `slug`.
-- `format: note_link` is valid only for `type: text` or `list.items.type: text`.
-- `format: uri` is valid only for `type: text` or `list.items.type: text`.
-- `format: slug` is valid only for `type: text`.
+- Supported `format` values are `slug`, `note_link`, `uri`, `hh:mm`, `hh:mm:ss`, and `hh:mm:ss.sss`.
+- `type: link` MUST declare `format`.
+- `type: time` MUST declare `format`.
+- `format: slug` is valid only for `type: text` or `list.items.type: text`.
+- `format: note_link` is valid only for `type: link` or `list.items.type: link`.
+- `format: uri` is valid only for `type: link` or `list.items.type: link`.
+- `format: hh:mm`, `format: hh:mm:ss`, and `format: hh:mm:ss.sss` are valid only for `type: time` or `list.items.type: time`.
 - Values with `format: slug` MUST match `^[a-z0-9]+(?:-[a-z0-9]+)*$`.
 - Values with `format: uri` MUST be absolute URIs with a non-empty scheme and valid syntax according to RFC 3986. Relative references MUST NOT be used.
 - Values with `format: note_link` MAY be the empty string as an explicit placeholder when no concrete link is known.
 - Non-empty values with `format: note_link` MUST use the note-link syntax and resolution rules defined later in this page.
 - An empty-string value with `format: note_link` does not resolve to a managed note and does not contribute to relationship conformance.
+- Values with `format: hh:mm` on `type: time` or `list.items.type: time` MUST use a 24-hour clock and match `^(?:[01]\d|2[0-3]):[0-5]\d$`.
+- Values with `format: hh:mm:ss` on `type: time` or `list.items.type: time` MUST use a 24-hour clock and match `^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d$`.
+- Values with `format: hh:mm:ss.sss` on `type: time` or `list.items.type: time` MUST use a 24-hour clock and match `^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d\.\d{3}$`.
 
 #### `allowed_values`
 
@@ -264,16 +274,8 @@ Rules:
 
 - `allowed_values` MAY be omitted.
 - `allowed_values` MUST be a non-empty list of unique scalar values compatible with the declared scalar property `type`.
-- `allowed_values` MUST NOT be used with `type: list`, `type: tags`, or `type: object`.
+- `allowed_values` MUST NOT be used with `type: list`, `type: tags`, `type: object`, or `type: any`.
 - Text `allowed_values` comparisons are case-sensitive and use exact string equality.
-
-#### `whole_number`
-
-Rules:
-
-- `whole_number` MAY be omitted.
-- `whole_number: true` is valid only for `type: number`.
-- If `whole_number: true`, the stored number value MUST have no fractional component.
 
 #### `const_value`
 
@@ -315,7 +317,7 @@ Rules:
 - A syntactically valid internal note link MUST resolve unambiguously to at most one managed note.
 - Resolution to zero managed notes MAY occur and represents a link to a note that does not exist yet.
 - Display text, aliases, and other presentation details do not affect target resolution.
-- Managed note frontmatter fields with `type: text` and `format: note_link` store exactly one non-embed internal note-link string.
+- Managed note frontmatter fields with `type: link` and `format: note_link` store exactly one non-embed internal note-link string.
 - In note bodies, embed-prefixed wikilinks such as `![[Target]]` or `![[Target#^block-id]]` are supported internal note links.
 - Relationship conformance uses the resolved managed-note targets produced by these rules; counting and cardinality rules are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 

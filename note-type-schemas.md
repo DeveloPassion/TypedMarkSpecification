@@ -79,7 +79,7 @@ frontmatter:
     label: Domain
     description: Domain note this topic belongs to.
     icon: folder
-    type: text
+    type: link
     format: note_link
     nullable: false
     default_value: ""
@@ -90,7 +90,7 @@ frontmatter:
     icon: book
     type: list
     items:
-      type: text
+      type: link
       format: note_link
     nullable: false
     relationship_kind: related_to

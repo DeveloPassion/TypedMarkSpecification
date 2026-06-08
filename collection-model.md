@@ -137,7 +137,7 @@ frontmatter:
     nullable: true
     default_value: null
   rating:
-    type: number
+    type: integer
     optional: true
     nullable: true
     default_value: null
@@ -146,6 +146,32 @@ frontmatter:
     description: Publication date when known.
     icon: calendar
     type: date
+    optional: true
+    nullable: true
+    default_value: null
+  published_time:
+    label: Published Time
+    description: Publication time of day when known.
+    icon: clock
+    type: time
+    format: hh:mm
+    optional: true
+    nullable: true
+    default_value: null
+  canonical_url:
+    label: Canonical URL
+    description: Canonical external URL when known.
+    icon: link
+    type: link
+    format: uri
+    optional: true
+    nullable: true
+    default_value: null
+  integration_payload:
+    label: Integration Payload
+    description: External-system data preserved without a fixed schema.
+    icon: package
+    type: any
     optional: true
     nullable: true
     default_value: null
