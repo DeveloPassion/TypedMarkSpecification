@@ -8,7 +8,7 @@ nav_order: 4
 
 This page is authoritative for note type registration, the required top-level contract of `.metadata/schemas/<note_type>.yaml`, the effective note-type schema, optional property-set references, schema kinds, and storage rules. Field semantics live in [Managed Notes and Properties](managed-notes-and-properties.md), relationship, heading, and template semantics live in [Relationships, Headings, and Templates](relationships-headings-and-templates.md), and collection-level inheritance and property-set application live in [Collection Model](collection-model.md).
 
-## 7. Note Type Registry
+## Note Type Registry
 
 The note type registry is implicit.
 
@@ -21,7 +21,7 @@ Rules:
 - A managed note MUST conform to exactly one primary note type.
 - The conformance requirements that determine when schema files MUST exist are defined in [Conformance and Roadmap](conformance-and-roadmap.md).
 
-## 8. Effective Note-Type Schema
+## Effective Note-Type Schema
 
 A managed note is evaluated against one effective note-type schema.
 
@@ -205,7 +205,7 @@ Rules:
 - Inheritance affects the contents of `frontmatter`, `relationships`, and `headings`; property sets affect only `frontmatter`; neither mechanism makes required blocks optional.
 - A note-type schema MAY omit individual inherited field definitions, relationship target definitions, or heading settings that remain unchanged.
 
-## 9. Allowed Schema Kinds
+## Allowed Schema Kinds
 
 Each note type MUST declare one of these `kind` values:
 
@@ -228,7 +228,7 @@ Special-case guidance:
 - A fixed-path singleton MAY omit `title` if the title is implied by the schema.
 - A singleton still requires `note_type` unless explicitly exempted in a future schema version.
 
-## 10. Storage Rules
+## Storage Rules
 
 Every note type schema MUST define storage rules.
 

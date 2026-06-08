@@ -8,7 +8,7 @@ nav_order: 7
 
 This page is authoritative for `.metadata/system.yaml`, `.metadata/instance.yaml`, and the boundary between the core specification and profiles. It is not authoritative for `typedmark.yaml`; that lives in [Collection Model](collection-model.md). It is also not authoritative for note-type schema block semantics, managed note field semantics, or relationship and template semantics; those live in [Note Type Schemas](note-type-schemas.md), [Managed Notes and Properties](managed-notes-and-properties.md), and [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 
-## 6. System Definitions, Instances, and Profiles
+## System Definitions, Instances, and Profiles
 
 A system definition is a reusable package for a TypedMark collection model. It packages:
 

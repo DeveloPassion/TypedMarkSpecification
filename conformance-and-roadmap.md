@@ -8,17 +8,17 @@ nav_order: 8
 
 This page is authoritative for conformance modes, non-goals, and the RECOMMENDED implementation order. Artifact-specific validity rules live in the linked pages.
 
-## 18. Non-Goals
+## Non-Goals
 
 This specification does not:
 
 - enforce a specific schema for note types. It describes how to define/document one
 
-## 19. Conformance
+## Conformance
 
 Conformance evaluates a filesystem tree against the authoritative artifact contracts defined in [Collection Model](collection-model.md), [System Definitions and Instances](system-definitions-and-instances.md), [Note Type Schemas](note-type-schemas.md), [Managed Notes and Properties](managed-notes-and-properties.md), and [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 
-### 19.1 Valid System Definition
+### Valid System Definition
 
 A filesystem tree conforms as a valid system definition when:
 
@@ -29,7 +29,7 @@ A filesystem tree conforms as a valid system definition when:
 5. Every managed note type has exactly one valid schema file under [Note Type Schemas](note-type-schemas.md).
 6. Every template referenced by note-type schemas exists and is valid under [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 
-### 19.2 Valid Instantiated Collection
+### Valid Instantiated Collection
 
 A filesystem tree conforms as a valid instantiated collection when:
 
@@ -46,9 +46,10 @@ Additional rules:
 - Validators MUST evaluate conformance against an explicit target mode: system definition, instantiated collection, or both.
 - When evaluating an instantiated collection, `.metadata/system.yaml` MAY be present, but it is not required.
 - A single filesystem tree MAY conform simultaneously as both a valid system definition and a valid instantiated collection.
+- Untyped notes MAY exist in an instantiated collection and do not by themselves make the collection non-conforming.
 - Structural precedence across artifacts remains defined in [Foundations](foundations.md).
 
-## 20. Recommended Next Steps
+## Recommended Next Steps
 
 Recommended implementation order:
 

@@ -6,7 +6,65 @@ nav_order: 1
 
 # Foundations
 
-This page describes the purpose of TypedMark, its design principles, the different artifacts and structural precedence. Artifact-specific contracts are defined only in the linked pages.
+This page introduces the high-level concepts of TypedMark first, then describes its purpose, design principles, authoritative artifacts, and structural precedence. Artifact-specific contracts are defined only in the linked pages.
+
+## Core Concepts
+
+### Collection
+
+A TypedMark collection is a governed filesystem tree containing Markdown notes plus the authoritative artifacts that define how those notes are structured. Its structural contract is anchored by the collection configuration at the collection root and by the governed artifacts under `.metadata/`.
+
+### Collection Configuration
+
+The collection configuration is the collection-wide structural contract defined in `typedmark.yaml`. It defines collection-level rules such as validation defaults, excluded paths, global inheritance inputs, and other defaults that apply across note types. Details: [Collection Model](collection-model.md).
+
+### Note Types
+
+A note type is a named structural class that collection notes can be associated with. Every managed note conforms to exactly one primary note type, and both schema files and note frontmatter use the identifier name `note_type`.
+
+### Note Type Configuration (Schemas)
+
+A note type configuration is the schema file for one note type, stored under `.metadata/schemas/`. It defines the note type's top-level metadata and the structural blocks that govern its notes. Details: [Note Type Schemas](note-type-schemas.md).
+
+### Notes (Collection Content)
+
+The collection content is the set of Markdown notes that belong to the collection as content rather than as TypedMark artifacts. It can include both managed notes and untyped notes.
+
+### Managed Notes
+
+A managed note is a collection note that is associated with exactly one known note type under the note-type association rules defined by this specification version. Managed notes are the subset of notes whose structure, storage location, and conformance are governed by TypedMark. Details: [Managed Notes and Properties](managed-notes-and-properties.md).
+
+### Untyped Notes
+
+An untyped note is a collection note that is not associated with any known note type. Untyped notes MAY exist in a TypedMark collection, but they are outside the managed-note contract and are not validated against note-type schema, storage, relationship, or heading rules unless a future specification version defines additional rules for them.
+
+### Frontmatter and Fields (Metadata / Properties)
+
+A managed note's frontmatter is its YAML metadata surface. Field definitions describe the allowed metadata properties, their types, value constraints, defaulting and materialization behavior, and any typed-relationship contribution. These rules are authoritative on [Managed Notes and Properties](managed-notes-and-properties.md).
+
+### Global Properties
+
+Global properties are collection-level defaults defined in `typedmark.yaml` that can contribute shared `frontmatter`, `relationships`, and `headings` definitions across note types. They apply by default when inheritance is enabled. They are authoritative on [Collection Model](collection-model.md).
+
+### Property Sets
+
+A property set is a named reusable frontmatter field set defined under `.metadata/property-sets/`. Property sets never apply automatically; a note-type schema opts into them explicitly through `property_sets`. They are authoritative on [Collection Model](collection-model.md).
+
+### Effective Note-Type Schema
+
+The effective note-type schema is the normative result of taking one note-type schema and then applying collection-level inheritance, declared property sets, and local schema definitions in the order defined by this specification. Managed-note conformance is evaluated against that effective schema, not against isolated fragments.
+
+### Relationships, Headings, and Templates
+
+A note type governs more than metadata fields. It also defines typed relationship constraints, heading requirements, and a canonical template reference. These rules are authoritative on [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
+
+### System Definitions, Collection Instances, and Profiles
+
+The specification distinguishes collection structure from packaging and instantiation metadata. `.metadata/system.yaml` defines reusable system-level packaging and scaffolding information, `.metadata/instance.yaml` defines an instantiated collection's identity and provenance, and profiles may layer starter content and house conventions on top of the core specification. These rules are authoritative on [System Definitions and Instances](system-definitions-and-instances.md).
+
+### Conformance
+
+Conformance is the process of evaluating whether the required artifacts exist and whether governed artifacts and managed notes satisfy the applicable TypedMark rules. Conformance modes and required artifact sets are defined on [Conformance and Roadmap](conformance-and-roadmap.md).
 
 ### Keywords
 
@@ -26,24 +84,22 @@ Rules:
 - `specification_version` MUST be a Semantic Versioning x.y.z string.
 
 
-## 1. Purpose
+## Purpose
 
 TypedMark defines:
 
-- how to define a collection of Markdown notes
-- which note types exist
+- how a collection is configured
+- which note types exist and how each type is configured
 - which reusable property sets exist
 - which collection-wide rules apply
 - where notes of each type live
-- which metadata fields each type requires or allows
-- which relationship constraints each type declares
-- which heading constraints each type declares
-- which templates define canonical starter structure
+- which frontmatter fields, relationships, headings, and templates each type declares
+- how systems and instantiated collections describe packaging, scaffolding, and provenance
 - how conformance is evaluated
 
 TypedMark is the structural contract for a note collection. Artifact-specific rules are authoritative only where this specification says they are.
 
-## 2. Design Principles
+## Design Principles
 
 - The authoritative contract lives in `typedmark.yaml` and `.metadata/`.
 - One schema file defines one concrete note type.
@@ -70,7 +126,7 @@ Rules:
 - Extensions, profiles, collection models, property sets, and note-type schemas MUST NOT assign incompatible meanings to a spec-defined name in the namespace where the core specification defines it.
 - Mentioning a candidate or example name in prose does not by itself define that name normatively.
 
-## 3. Authoritative Artifact Map
+## Authoritative Artifact Map
 
 A conforming TypedMark filesystem tree uses this artifact layout:
 
@@ -105,7 +161,7 @@ When this specification fixes an artifact location by artifact kind, governed ar
 
 Files outside `typedmark.yaml` and `.metadata/` MAY exist for humans, publishing, or navigation, but they are not authoritative for structure.
 
-## 4. Authority and Precedence
+## Authority and Precedence
 
 When two artifacts or surfaces appear to disagree, structural conflicts MUST be resolved in this order:
 

@@ -8,7 +8,7 @@ nav_order: 2
 
 This page is authoritative for `typedmark.yaml`, named property sets, collection-level inheritance, property-set application, and validation defaults. It is not authoritative for `.metadata/system.yaml` or `.metadata/instance.yaml`; those live in [System Definitions and Instances](system-definitions-and-instances.md). It is also not authoritative for relationship and template semantics; those live in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). Managed note field semantics still live in [Managed Notes and Properties](managed-notes-and-properties.md), even when field definitions are contributed through `global_properties`, property sets, or note-type schemas. The combined result of those contributions is the effective note-type schema described in [Note Type Schemas](note-type-schemas.md).
 
-## 5. Collection Model Specification
+## Collection Model Specification
 
 `typedmark.yaml` defines collection-model-wide rules.
 

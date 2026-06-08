@@ -8,7 +8,21 @@ nav_order: 5
 
 This page is authoritative for the managed note contract, core-defined managed-note field names, frontmatter property types, note-link syntax and resolution, field definition attributes, canonical field materialization, and field optionality semantics. Relationship cardinality, heading constraints, and template obligations are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). The effective note-type schema that supplies a note's structural contract is described in [Note Type Schemas](note-type-schemas.md).
 
-## 11. Managed Note Contract
+## Notes in a Collection
+
+TypedMark distinguishes between collection notes in general and managed notes specifically.
+
+Rules:
+
+- A collection note is a Markdown note that belongs to the collection as content rather than as a TypedMark artifact.
+- A managed note is a collection note that is associated with exactly one known note type under this specification version's note-type association rules.
+- In this specification version, note-type association is determined by the `note_type` frontmatter field.
+- A collection note whose `note_type` does not resolve to exactly one known schema, or that does not declare `note_type`, is an untyped note.
+- Untyped notes MAY exist in a collection.
+- Untyped notes are outside the managed-note contract on this page and are not validated against note-type storage, relationship, heading, or frontmatter field-definition rules.
+- Rules on this page apply only to managed notes unless a rule explicitly says otherwise.
+
+## Managed Note Contract
 
 Every managed note MUST:
 
@@ -65,7 +79,7 @@ Rules:
 - The `tags` property type defined below remains a first-class supported property type.
 - The generic property-type and field-definition rules in this page apply to ordinary schema-defined fields unless a dedicated core field rule says otherwise.
 
-## 12. Frontmatter Property Types
+## Frontmatter Property Types
 
 Each field definition MUST declare one of these property `type` values:
 
@@ -225,7 +239,7 @@ Rules:
 - Tools that import or scaffold notes MUST write back frontmatter that satisfies these canonical field materialization rules.
 - Tools that normalize notes or modify managed note frontmatter MUST rewrite frontmatter so it satisfies these canonical field materialization rules before saving.
 
-## 13. Field Optionality
+## Field Optionality
 
 Each schema MUST declare:
 

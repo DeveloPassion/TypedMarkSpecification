@@ -8,7 +8,7 @@ nav_order: 6
 
 This page is authoritative for relationship kinds, relationship constraints, heading rules, and template requirements. Internal note-link syntax and resolution are defined in [Managed Notes and Properties](managed-notes-and-properties.md), and note-type schema top-level contract is defined in [Note Type Schemas](note-type-schemas.md).
 
-## 14. Relationship Model
+## Relationship Model
 
 The schema system defines only two relationship kinds:
 
@@ -37,7 +37,7 @@ Rules:
 - `belongs_to` relationship instances MUST be represented in relationship-bearing metadata properties and MUST NOT be satisfied only by body links.
 - Inverse views MAY be derived by tooling and MUST NOT require duplicate schema declarations.
 
-## 15. Relationship Constraints
+## Relationship Constraints
 
 Each schema MUST define `relationships.belongs_to.allowed_note_types` and `relationships.related_to.allowed_note_types`. Each mapping MAY be empty.
 
@@ -77,7 +77,7 @@ Using the `topic` schema example in [Note Type Schemas](note-type-schemas.md), t
 - a `topic` MUST include at least one concrete `related_to` link to a `source`, whether in relationship-bearing metadata, in the body, or both
 - a `topic` MAY be related to any number of `concept` and `topic` notes
 
-## 16. Heading Rules
+## Heading Rules
 
 Each note-type schema MUST define a `headings` block. That block MAY impose no mandatory H2 headings.
 
@@ -92,7 +92,7 @@ Rules:
 - If `require_order` is `false`, declared H2 headings MAY appear in any order.
 - H3 and deeper headings are unconstrained by this version of the specification.
 
-## 17. Templates
+## Templates
 
 Each note-type schema MUST define a template reference.
 
