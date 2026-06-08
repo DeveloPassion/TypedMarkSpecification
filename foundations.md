@@ -92,7 +92,7 @@ TypedMark defines:
 - which note types exist and how each type is configured
 - which reusable property sets exist
 - which collection-wide rules apply
-- where notes of each type live
+- where notes of each type live and how their note names are formed
 - which frontmatter fields, relationships, headings, and templates each type declares
 - how systems and instantiated collections describe packaging, scaffolding, and provenance
 - how conformance is evaluated

@@ -57,10 +57,12 @@ property_sets:
   - workflow
 
 storage:
-  path_pattern: "Topics/{title}.md"
+  folder_pattern: "Topics"
+  note_name_pattern: "{title}"
   archive:
     policy: mirror_under_archives
-    archived_path_pattern: "Archives/Topics/{title}.md"
+    folder_pattern: "Archives/Topics"
+    note_name_pattern: "{title}"
 
 template:
   file: "<metadata_directory>/templates/topic.md"
@@ -236,7 +238,8 @@ Every note type schema MUST define storage rules.
 
 Required storage fields:
 
-- `path_pattern`
+- `folder_pattern`
+- `note_name_pattern`
 - `archive.policy`
 
 Allowed archive policies:
@@ -247,9 +250,45 @@ Allowed archive policies:
 
 Rules:
 
-- `path_pattern` and `archived_path_pattern`, when present, are relative to the collection root.
-- Validators MUST ensure a managed note path matches its schema `path_pattern`.
-- If `archive.policy` is `mirror_under_archives`, the schema MUST also define `archived_path_pattern`.
+- `folder_pattern` is the collection-relative folder rule for active notes of that type.
+- `note_name_pattern` is the file-name rule for active notes of that type, without the `.md` extension.
+- `folder_pattern`, `note_name_pattern`, and any archive storage patterns are authoritative for both storage conformance and note creation.
+- `folder_pattern` MAY be the empty string to represent the collection root.
+- `folder_pattern` MUST use forward slashes when it contains subfolders.
+- `folder_pattern` MUST NOT start or end with `/`.
+- `note_name_pattern` MUST be a non-empty string.
+- `note_name_pattern` MUST NOT contain `/` or `\`.
+- `note_name_pattern` MUST NOT include the `.md` extension.
+- Storage patterns are template strings composed of literal text plus zero or more placeholders.
+- A placeholder has the form `{field_name}` or `{field_name:format}`.
+- `field_name` in a storage placeholder MUST refer to a top-level effective frontmatter field name.
+- Nested field references are not supported in storage patterns in this specification version.
+- `{field_name}` inserts the concrete stored scalar value of that field.
+- `{field_name:format}` is valid only when the stored value is a `date` or `datetime` field and `format` is one of `YYYY`, `MM`, `DD`, `YYYY-MM`, or `YYYY-MM-DD`.
+- Storage placeholders MUST resolve from physically stored frontmatter values, not from note body content, inferred values, or template prose.
+- A field used in a storage pattern MUST resolve to a concrete non-null scalar value when the managed note path is evaluated.
+- List, tags, object, and `any` values MUST NOT be used in storage patterns.
+- The active managed-note path is the resolved `folder_pattern` plus `/` plus the resolved `note_name_pattern` plus `.md`, unless `folder_pattern` is empty, in which case the active managed-note path is the resolved `note_name_pattern` plus `.md`.
+- Validators MUST ensure a managed note path matches the resolved active storage path for its note type.
+- If `archive.policy` is `mirror_under_archives` or `fixed`, the schema MUST also define `archive.folder_pattern` and `archive.note_name_pattern`.
+- `archive.folder_pattern` and `archive.note_name_pattern` follow the same syntax and resolution rules as the active storage patterns.
+- If `archive.policy` is `in_place_historical`, `archive.folder_pattern` and `archive.note_name_pattern` MUST be omitted.
+- If a note is archived under `mirror_under_archives` or `fixed`, its archived path is resolved using `archive.folder_pattern` and `archive.note_name_pattern`.
+- Tools that create managed notes MUST derive the initial note folder and note name from `storage.folder_pattern` and `storage.note_name_pattern` using the stored frontmatter values they are writing.
+- A tool that creates a managed note MUST obtain every concrete value needed to resolve the storage patterns before writing the note.
+- If required storage-pattern values are not yet known, a tool MUST ask for them or otherwise obtain them before claiming the created note conforms.
 - If a note is archived, its `note_type` MUST remain unchanged.
 - If a note declares `id`, its `id` MUST remain unchanged when the note is archived.
-- `dated_record` note types SHOULD encode the date in both path and metadata when practical.
+- `dated_record` note types SHOULD encode the date in both storage patterns and metadata when practical.
+
+Example creation-oriented storage rules:
+
+```yaml
+storage:
+  folder_pattern: "Meetings/{meeting_date:YYYY}/{meeting_date:MM}"
+  note_name_pattern: "{meeting_date:YYYY-MM-DD} - Meeting - {title}"
+  archive:
+    policy: in_place_historical
+```
+
+Using that storage block, a tool creating a `meeting` note with `meeting_date: 2026-06-08` and `title: foo` MUST create the note at `Meetings/2026/06/2026-06-08 - Meeting - foo.md`.
