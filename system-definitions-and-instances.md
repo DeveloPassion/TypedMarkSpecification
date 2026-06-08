@@ -50,13 +50,11 @@ scaffold:
       from_template: ".metadata/templates/home.md"
       values:
         note_type: home
-        id: home
     - path: "Glossary.md"
       note_type: glossary
       from_template: ".metadata/templates/glossary.md"
       values:
         note_type: glossary
-        id: glossary
 catalog:
   tags:
     - notes

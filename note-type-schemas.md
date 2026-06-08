@@ -57,10 +57,10 @@ property_sets:
   - workflow
 
 storage:
-  path_pattern: "Topics/{id}.md"
+  path_pattern: "Topics/{title}.md"
   archive:
     policy: mirror_under_archives
-    archived_path_pattern: "Archives/Topics/{id}.md"
+    archived_path_pattern: "Archives/Topics/{title}.md"
 
 template:
   file: ".metadata/templates/topic.md"
@@ -69,10 +69,6 @@ frontmatter:
   note_type:
     type: text
     const_value: topic
-  id:
-    type: text
-    format: slug
-    nullable: false
   title:
     label: Title
     description: Human-readable note title.
@@ -86,6 +82,7 @@ frontmatter:
     type: text
     format: note_link
     nullable: false
+    default_value: ""
     relationship_kind: belongs_to
   sources:
     label: Sources
@@ -112,7 +109,7 @@ frontmatter:
     type: text
     optional: true
     nullable: true
-    default_value: null
+    default_value: ""
   summary:
     label: Summary
     description: Short overview used in generated references and previews.
@@ -120,7 +117,7 @@ frontmatter:
     type: text
     optional: true
     nullable: true
-    default_value: null
+    default_value: ""
 
 relationships:
   belongs_to:
@@ -190,6 +187,7 @@ Rules:
 - The `frontmatter` block semantics are defined in [Managed Notes and Properties](managed-notes-and-properties.md).
 - The `frontmatter` block MUST be a field-definition mapping, even when it is empty.
 - Field definitions inside `frontmatter` MAY declare flat human-facing keys such as `label`, `description`, and `icon`, as defined in [Managed Notes and Properties](managed-notes-and-properties.md).
+- A note-type schema MAY declare `id` when that note type uses stable note-level identifiers.
 - Frontmatter field names declared in a note-type schema MUST follow the core-defined managed-note field-name rules defined in [Managed Notes and Properties](managed-notes-and-properties.md).
 - The `relationships` block semantics are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - The `relationships` block MUST contain both `belongs_to.allowed_note_types` and `related_to.allowed_note_types`, even when those mappings are empty.
@@ -228,7 +226,7 @@ Special-case guidance:
 - Fixed-path notes SHOULD be modeled as `singleton` note types.
 - Examples include `Home.md`, `Guide.md`, and `Glossary.md`.
 - A fixed-path singleton MAY omit `title` if the title is implied by the schema.
-- A singleton still requires `note_type` and `id` unless explicitly exempted in a future schema version.
+- A singleton still requires `note_type` unless explicitly exempted in a future schema version.
 
 ## 10. Storage Rules
 
@@ -250,5 +248,6 @@ Rules:
 - `path_pattern` and `archived_path_pattern`, when present, are relative to the collection root.
 - Validators MUST ensure a managed note path matches its schema `path_pattern`.
 - If `archive.policy` is `mirror_under_archives`, the schema MUST also define `archived_path_pattern`.
-- If a note is archived, its `id` and `note_type` MUST remain unchanged.
+- If a note is archived, its `note_type` MUST remain unchanged.
+- If a note declares `id`, its `id` MUST remain unchanged when the note is archived.
 - `dated_record` note types SHOULD encode the date in both path and metadata when practical.

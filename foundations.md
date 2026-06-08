@@ -6,12 +6,31 @@ nav_order: 1
 
 # Foundations
 
-This page is authoritative for the purpose of TypedMark, its design principles, the authoritative artifact map, and structural precedence. Artifact-specific contracts are defined only in the linked pages.
+This page describes the purpose of TypedMark, its design principles, the different artifacts and structural precedence. Artifact-specific contracts are defined only in the linked pages.
+
+### Keywords
+
+The uppercase keywords `MUST`, `MUST NOT`, `SHOULD`, `SHOULD NOT`, `MAY`, `OPTIONAL`, and `RECOMMENDED` in this specification are to be interpreted as described in RFC 2119 and RFC 8174.
+
+Rules:
+
+- Uppercase normative keywords are normative everywhere in this specification.
+- Lowercase modal verbs such as "must", "should", "may", "can", and "could" are ordinary English unless they appear inside a quoted example.
+
+### Specification Versioning
+
+`specification_version` identifies the version of the TypedMark core specification that governs an artifact.
+
+Rules:
+
+- `specification_version` MUST be a Semantic Versioning x.y.z string.
+
 
 ## 1. Purpose
 
 TypedMark defines:
 
+- how to define a collection of Markdown notes
 - which note types exist
 - which reusable property sets exist
 - which collection-wide rules apply
@@ -35,23 +54,6 @@ TypedMark is the structural contract for a note collection. Artifact-specific ru
 - The core specification defines reusable structure, not domain content.
 - Concrete note sets, starter content, and house conventions belong to profiles or reference systems layered on top of the core specification.
 - Examples in this specification are illustrative and non-normative unless a rule explicitly says otherwise.
-
-### Normative Keywords
-
-The uppercase keywords `MUST`, `MUST NOT`, `SHOULD`, `SHOULD NOT`, `MAY`, `OPTIONAL`, and `RECOMMENDED` in this specification are to be interpreted as described in RFC 2119 and RFC 8174.
-
-Rules:
-
-- Uppercase normative keywords are normative everywhere in this specification.
-- Lowercase modal verbs such as "must", "should", "may", "can", and "could" are ordinary English unless they appear inside a quoted example.
-
-### Specification Versioning
-
-`specification_version` identifies the version of the TypedMark core specification that governs an artifact.
-
-Rules:
-
-- `specification_version` MUST be a Semantic Versioning x.y.z string.
 
 ### Spec-Defined Names and Namespaces
 
@@ -112,7 +114,6 @@ When two artifacts or surfaces appear to disagree, structural conflicts MUST be 
 3. `.metadata/property-sets/<property_set>.yaml`
 4. `.metadata/templates/<note_type_template>.md`
 5. note contents
-6. human-facing generated reference pages
 
 Rules:
 

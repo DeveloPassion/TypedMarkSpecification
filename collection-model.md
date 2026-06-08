@@ -73,10 +73,6 @@ global_properties:
     note_type:
       type: text
       value_from_schema: note_type
-    id:
-      type: text
-      format: slug
-      nullable: false
     title:
       label: Title
       description: Human-readable note title.
@@ -89,14 +85,14 @@ global_properties:
       type: text
       optional: true
       nullable: true
-      default_value: null
+      default_value: ""
     summary:
       label: Summary
       description: Short overview of the note.
       type: text
       optional: true
       nullable: true
-      default_value: null
+      default_value: ""
   relationships:
     belongs_to:
       allowed_note_types: {}
@@ -183,10 +179,6 @@ frontmatter:
   note_type:
     type: text
     const_value: review
-  id:
-    type: text
-    format: slug
-    nullable: false
   editor_notes:
     type: text
     optional: true

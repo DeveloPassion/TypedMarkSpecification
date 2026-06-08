@@ -16,7 +16,6 @@ Every managed note MUST:
 - contain YAML frontmatter
 - use YAML frontmatter as the note's metadata
 - declare `note_type`
-- declare `id`
 - satisfy exactly one effective note-type schema as defined in [Note Type Schemas](note-type-schemas.md)
 - satisfy the field and materialization rules defined in this page
 - satisfy the storage, relationship, and heading rules linked from its declared note type
@@ -25,13 +24,12 @@ Common frontmatter shape:
 
 ```yaml
 note_type: topic
-id: note-taking
 title: Note Taking
-description: null
-domain: "[[Domains/Knowledge Management|Knowledge Management]]"
+description: ""
+domain: ""
 sources:
   - "[Introduction to Note Taking](Sources/Introduction%20to%20Note%20Taking.md)"
-summary: null
+summary: ""
 status: active
 ```
 
@@ -39,7 +37,9 @@ Rules:
 
 - `note_type` defines what the note is.
 - `note_type` MUST equal the schema identifier defined by the matching schema file.
-- `id` MUST be stable across renames and moves.
+- `id` MAY be omitted.
+- A managed note MAY declare `id` when its schema includes an `id` field definition.
+- If a managed note declares `id`, its `id` MUST be stable across renames and moves.
 - `title` is human-facing and MAY change unless the schema marks it immutable.
 - Display-oriented fields such as `title` and `description` are human-facing note metadata and MAY differ from the note's file name and storage path unless a schema rule explicitly couples them.
 - A conforming managed note MUST remain usable as a normal Markdown note without preprocessing, transpilation, or note-local sidecar metadata.
@@ -55,7 +55,11 @@ Rules:
 
 - A managed-note frontmatter field name is core-defined only when this specification gives that field a normative contract.
 - The normative contract for a core-defined managed-note field MUST define its meaning, whether it is required or optional or conditional, whether schemas may declare it explicitly, the constraints on its stored values, and any note-type association or conformance behavior that follows from its use.
-- `note_type` and `id` are core-defined managed-note field names in this specification version.
+- `note_type` is a required core-defined managed-note field name in this specification version.
+- `id` is an optional core-defined managed-note field name in this specification version.
+- Schemas MAY declare `id` when they require stable note-level identifiers.
+- If a schema declares `id`, it MUST declare `type: text` and `format: slug`.
+- If a schema declares `id`, it MUST NOT declare `optional: true` or `nullable: true`.
 - A core-defined managed-note field name MUST NOT be repurposed as an ordinary user-defined field in `global_properties.frontmatter`, a property set, or a note-type schema unless the core field contract explicitly permits schema-level declaration of that field.
 - Field names such as `title`, `description`, `tags`, `aliases`, `created_at`, `updated_at`, and `archived` are ordinary schema-defined managed-note field names in this specification version unless a rule explicitly defines them otherwise.
 - The `tags` property type defined below remains a first-class supported property type.
@@ -183,7 +187,9 @@ Rules:
 - `format: slug` is valid only for `type: text`.
 - Values with `format: slug` MUST match `^[a-z0-9]+(?:-[a-z0-9]+)*$`.
 - Values with `format: uri` MUST be absolute URIs with a non-empty scheme and valid syntax according to RFC 3986. Relative references MUST NOT be used.
-- Values with `format: note_link` MUST use the note-link syntax and resolution rules defined earlier in this page.
+- Values with `format: note_link` MAY be the empty string as an explicit placeholder when no concrete link is known.
+- Non-empty values with `format: note_link` MUST use the note-link syntax and resolution rules defined earlier in this page.
+- An empty-string value with `format: note_link` does not resolve to a managed note and does not contribute to relationship conformance.
 - `allowed_values` MAY be omitted.
 - `allowed_values` MUST be a non-empty list of unique scalar values compatible with the declared scalar property `type`.
 - `allowed_values` MUST NOT be used with `type: list`, `type: tags`, or `type: object`.
@@ -237,5 +243,6 @@ Rules:
 - The same optionality distinction applies recursively within object field definitions.
 - Unknown fields are evaluated using the `unknown_field` rule defined in [Collection Model](collection-model.md).
 - Unknown nested fields inside object values are also evaluated using the `unknown_field` rule defined in [Collection Model](collection-model.md).
-- `note_type` and `id` MUST always appear in `frontmatter`.
-- `note_type` and `id` MUST NOT declare `optional: true`.
+- `note_type` MUST always appear in `frontmatter`.
+- `note_type` MUST NOT declare `optional: true`.
+- If `frontmatter` declares `id`, `id` MUST NOT declare `optional: true`.
