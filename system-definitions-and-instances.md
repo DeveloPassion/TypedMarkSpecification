@@ -10,7 +10,7 @@ This page is authoritative for `<metadata_directory>/system.yaml`, `<metadata_di
 
 ## System Definitions, Instances, and Profiles
 
-A system definition is a reusable package for a TypedMark collection model. It packages:
+A system definition is a reusable packaging form for a TypedMark collection model. It packages:
 
 - system identity and publishable metadata
 - the root `typedmark.yaml`
@@ -19,11 +19,11 @@ A system definition is a reusable package for a TypedMark collection model. It p
 - templates
 - scaffold instructions for creating an initial collection structure
 
-An instantiated collection is a concrete workspace described by `<metadata_directory>/instance.yaml`.
+An instantiated collection is a concrete collection described by `<metadata_directory>/instance.yaml`.
 
 ### System Definition Artifact
 
-`<metadata_directory>/system.yaml` defines a reusable system package. Conformance requirements for when a filesystem tree counts as a valid system definition are defined in [Conformance and Roadmap](conformance-and-roadmap.md).
+`<metadata_directory>/system.yaml` defines a reusable system package. Conformance requirements for when a collection root counts as a valid system definition are defined in [Conformance and Roadmap](conformance-and-roadmap.md).
 
 Required system manifest example:
 
@@ -87,8 +87,8 @@ Rules:
 - `scaffold.notes[].note_type` MUST resolve to exactly one concrete note type.
 - `scaffold.notes[].values` MAY provide initial frontmatter values that are merged into the instantiated template.
 - Values supplied in `scaffold.notes[].values` override template placeholder values for that instantiated note only.
-- A system definition MAY be shared as a directory, a Git repository, or an archive file, provided relative paths are preserved.
-- The canonical published form is the unpacked directory tree that preserves `typedmark.yaml` and the metadata directory selected by `typedmark.yaml`, including its governed internal layout.
+- A system definition MAY be shared as a directory tree, a Git repository, or an archive file, provided relative paths are preserved.
+- The canonical published form is the unpacked collection directory tree that preserves `typedmark.yaml` and the metadata directory selected by `typedmark.yaml`, including its governed internal layout.
 
 Import semantics:
 
@@ -101,7 +101,7 @@ Import semantics:
 - A full scaffolded import MUST assign a new `collection_instance_id`.
 - When instantiating a note from a template, the importer MUST emit frontmatter that conforms to [Managed Notes and Properties](managed-notes-and-properties.md).
 - Marketplace or catalog implementations SHOULD be able to index a system definition from `<metadata_directory>/system.yaml` alone.
-- A metadata-only import yields an installed system definition and does not by itself require the target workspace to contain any instantiated notes.
+- A metadata-only import yields an installed system definition and does not by itself require the target collection root to contain any instantiated notes.
 - A full scaffolded import yields an instantiated collection, even if many instantiated notes still contain placeholder or `null` values.
 
 Publishing and catalog semantics:
@@ -110,9 +110,9 @@ Publishing and catalog semantics:
 - `name`, `description`, `audiences`, `publisher`, `license`, and `catalog.tags` are the primary discovery fields for catalogs and application marketplaces.
 - Applications MAY present curated system definitions for different audiences such as individuals, teams, and organizations.
 
-### Collection Instance Artifact
+### Instantiated Collection Artifact
 
-`<metadata_directory>/instance.yaml` defines the identity and provenance of one instantiated collection. Conformance requirements for when a filesystem tree counts as a valid instantiated collection are defined in [Conformance and Roadmap](conformance-and-roadmap.md).
+`<metadata_directory>/instance.yaml` defines the identity and provenance of one instantiated collection. Conformance requirements for when a collection root counts as a valid instantiated collection are defined in [Conformance and Roadmap](conformance-and-roadmap.md).
 
 Required instance manifest example:
 

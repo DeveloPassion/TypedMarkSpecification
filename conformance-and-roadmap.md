@@ -16,11 +16,11 @@ This specification does not:
 
 ## Conformance
 
-Conformance evaluates a filesystem tree against the authoritative artifact contracts defined in [Collection Model](collection-model.md), [System Definitions and Instances](system-definitions-and-instances.md), [Note Type Schemas](note-type-schemas.md), [Managed Notes and Properties](managed-notes-and-properties.md), and [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
+Conformance evaluates a collection root, represented on disk as a directory tree, against the authoritative artifact contracts defined in [Collection Model](collection-model.md), [System Definitions and Instances](system-definitions-and-instances.md), [Note Type Schemas](note-type-schemas.md), [Managed Notes and Properties](managed-notes-and-properties.md), and [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 
 ### Valid System Definition
 
-A filesystem tree conforms as a valid system definition when:
+A collection root conforms as a valid system definition when:
 
 1. `typedmark.yaml` is present at the root and valid under [Collection Model](collection-model.md).
 2. `<metadata_directory>/system.yaml` is present and valid under [System Definitions and Instances](system-definitions-and-instances.md).
@@ -31,7 +31,7 @@ A filesystem tree conforms as a valid system definition when:
 
 ### Valid Instantiated Collection
 
-A filesystem tree conforms as a valid instantiated collection when:
+A collection root conforms as a valid instantiated collection when:
 
 1. `typedmark.yaml` is present at the collection root and valid under [Collection Model](collection-model.md).
 2. `<metadata_directory>/instance.yaml` is present and valid under [System Definitions and Instances](system-definitions-and-instances.md).
@@ -45,7 +45,7 @@ Additional rules:
 
 - Validators MUST evaluate conformance against an explicit target mode: system definition, instantiated collection, or both.
 - When evaluating an instantiated collection, `<metadata_directory>/system.yaml` MAY be present, but it is not required.
-- A single filesystem tree MAY conform simultaneously as both a valid system definition and a valid instantiated collection.
+- A single collection root MAY conform simultaneously as both a valid system definition and a valid instantiated collection.
 - Untyped notes MAY exist in an instantiated collection and do not by themselves make the collection non-conforming.
 - Structural precedence across artifacts remains defined in [Foundations](foundations.md).
 

@@ -12,7 +12,17 @@ This page introduces the high-level concepts of TypedMark first, then describes 
 
 ### Collection
 
-A TypedMark collection is a governed filesystem tree containing Markdown notes plus the authoritative artifacts that define how those notes are structured. Its structural contract is anchored by the collection configuration at the collection root and by the governed artifacts under the metadata directory named by `typedmark.yaml`.
+A TypedMark collection is the primary governed abstraction in this specification. It is a rooted set of Markdown notes plus the authoritative artifacts that define how those notes are structured. Its structural contract is anchored by the collection configuration at the collection root and by the governed artifacts under the metadata directory named by `typedmark.yaml`.
+
+Rules:
+
+- `collection` is the primary abstraction used by this specification.
+- A collection root is the directory that contains `typedmark.yaml`.
+- Unless a rule explicitly names a different artifact or conformance mode, references to the governed note set and its authoritative artifacts mean a collection.
+- `filesystem tree` and `directory tree` refer only to the on-disk representation of a collection; they are not separate core abstractions.
+- `workspace` and `repository` are host-environment or transport terms, not primary TypedMark abstractions.
+- A workspace or repository MAY contain or distribute a collection, but this specification governs the collection rooted at `typedmark.yaml`, not the surrounding host container.
+- `system definition` and `instantiated collection` are specific packaging or conformance states of a collection root; they are not generic aliases for the core collection concept.
 
 ### Collection Configuration
 
@@ -58,7 +68,7 @@ The effective note-type schema is the normative result of taking one concrete no
 
 A note type governs more than metadata fields. It also defines typed relationship constraints, heading requirements, and a canonical template reference. These rules are authoritative on [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 
-### System Definitions, Collection Instances, and Profiles
+### System Definitions, Instantiated Collections, and Profiles
 
 The specification distinguishes collection structure from packaging and instantiation metadata. `<metadata_directory>/system.yaml` defines reusable system-level packaging and scaffolding information, `<metadata_directory>/instance.yaml` defines an instantiated collection's identity and provenance, and profiles may layer starter content and house conventions on top of the core specification. These rules are authoritative on [System Definitions and Instances](system-definitions-and-instances.md).
 
@@ -128,7 +138,7 @@ Rules:
 
 ## Authoritative Artifact Map
 
-A conforming TypedMark filesystem tree uses this artifact layout:
+A conforming TypedMark collection uses this artifact layout:
 
 ```text
 typedmark.yaml
