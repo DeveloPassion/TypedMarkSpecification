@@ -86,6 +86,18 @@ Rules:
 - Schemas MAY declare `id` when they require stable note-level identifiers.
 - If a schema declares `id`, it MUST declare `type: text` and `format: slug`.
 - If a schema declares `id`, it MUST NOT declare `optional: true` or `nullable: true`.
+- `deleted` is an optional core-defined managed-note field name in this specification version.
+- `deleted` MAY appear in stored frontmatter even when it is not declared in the effective schema, because it is core-defined rather than user-defined.
+- If stored, `deleted` MUST be a YAML boolean.
+- If omitted or stored as `false`, the note is not logically deleted.
+- If stored as `true`, the note is logically deleted.
+- Logical deletion is distinct from archiving. Setting `deleted: true` does not by itself move the note or apply archive storage rules.
+- A logically deleted note remains a managed note and continues to use its resolved concrete note type in this specification version.
+- Logical deletion does not by itself change storage, relationship, heading, or field-conformance evaluation in this specification version.
+- `global_properties.frontmatter` or a note-type schema MAY declare `deleted` when they want canonical materialization of deletion state.
+- If `global_properties.frontmatter` or a note-type schema declares `deleted`, it MUST declare `type: checkbox`.
+- If `global_properties.frontmatter` or a note-type schema declares `deleted`, it MUST declare `default_value: false`.
+- If `global_properties.frontmatter` or a note-type schema declares `deleted`, it MUST NOT declare `optional: true` or `nullable: true`.
 - A core-defined managed-note field name MUST NOT be repurposed as an ordinary user-defined field in `global_properties.frontmatter`, a property set, or a note-type schema unless the core field contract explicitly permits schema-level declaration of that field.
 - Field names such as `title`, `description`, `tags`, `aliases`, `created_at`, `updated_at`, and `archived` are ordinary schema-defined managed-note field names in this specification version unless a rule explicitly defines them otherwise.
 - The `tags` property type defined below remains a first-class supported property type.
