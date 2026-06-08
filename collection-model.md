@@ -50,8 +50,8 @@ Rules:
 - A note or artifact with only `warn` or `info` issues remains structurally usable.
 - Validators SHOULD report the artifact path, note type when applicable, rule name, and failing field, relationship, or heading.
 - `path` applies when a managed note path violates the storage rules defined in [Note Type Schemas](note-type-schemas.md).
-- `missing_required_field` applies when a field declared in `required_fields` lacks a concrete value required for conformance after applying the rules in [Managed Notes and Properties](managed-notes-and-properties.md).
-- `missing_declared_field` applies when a field declared in either `required_fields` or `optional_fields` is absent from stored note frontmatter.
+- `missing_required_field` applies when a field declared in `frontmatter.fields` with `optional: false` lacks a concrete value required for conformance after applying the rules in [Managed Notes and Properties](managed-notes-and-properties.md).
+- `missing_declared_field` applies when a field declared in `frontmatter.fields` is absent from stored note frontmatter.
 - `unknown_field` applies when an undeclared field appears in `typedmark.yaml`, any governed YAML artifact, or managed note frontmatter.
 - `invalid_allowed_value` applies when a field value violates an `allowed_values` constraint.
 - `invalid_property_set` applies when a property set file, or a note-type schema property-set reference, violates the property-set rules defined in this page.
@@ -70,7 +70,7 @@ Example:
 ```yaml
 global_properties:
   frontmatter:
-    required_fields:
+    fields:
       note_type:
         type: text
         value_from_schema: note_type
@@ -84,17 +84,18 @@ global_properties:
         type: text
         nullable: true
         default_value: null
-    optional_fields:
       description:
         label: Description
         description: Human-readable note description.
         type: text
+        optional: true
         nullable: true
         default_value: null
       summary:
         label: Summary
         description: Short overview of the note.
         type: text
+        optional: true
         nullable: true
         default_value: null
   relationships:
@@ -130,7 +131,7 @@ specification_version: 0.0.1
 property_set: review-metadata
 description: Reusable review and publication fields.
 frontmatter:
-  required_fields:
+  fields:
     workflow_state:
       label: Workflow State
       description: Editorial lifecycle state.
@@ -139,9 +140,9 @@ frontmatter:
       allowed_values: [draft, in_review, published]
       nullable: true
       default_value: null
-  optional_fields:
     rating:
       type: number
+      optional: true
       nullable: true
       default_value: null
     published_on:
@@ -149,6 +150,7 @@ frontmatter:
       description: Publication date when known.
       icon: calendar
       type: date
+      optional: true
       nullable: true
       default_value: null
 ```
@@ -161,7 +163,7 @@ Rules:
 - The property set file basename MUST equal the file's `property_set` value.
 - `property_set` MUST be a non-empty slug.
 - Each property set file MUST physically contain `specification_version`, `property_set`, `description`, and `frontmatter`.
-- `frontmatter` in a property set MUST contain `required_fields` and `optional_fields` mappings, even when one mapping is empty.
+- `frontmatter` in a property set MUST contain a `fields` mapping, even when it is empty.
 - The semantics of frontmatter field definitions in property sets, including flat human-facing field metadata such as `label`, `description`, and `icon`, are the same as in note-type schemas.
 - A property set MAY define reusable frontmatter fields only.
 - A property set MUST NOT define `note_type` or `id`.
@@ -180,7 +182,7 @@ property_sets:
   - publication-metadata
 
 frontmatter:
-  required_fields:
+  fields:
     note_type:
       type: text
       const_value: review
@@ -188,9 +190,9 @@ frontmatter:
       type: text
       format: slug
       nullable: false
-  optional_fields:
     editor_notes:
       type: text
+      optional: true
       nullable: true
       default_value: null
 ```
@@ -211,10 +213,9 @@ Rules:
 Effective note-type schema merge rules:
 
 - These merge rules define the effective `frontmatter`, `relationships`, and `headings` blocks used by the effective note-type schema described in [Note Type Schemas](note-type-schemas.md).
-- Frontmatter merges by field name across both `required_fields` and `optional_fields`.
-- Within any one contributing block (`global_properties.frontmatter`, a property set `frontmatter`, or a note-type schema `frontmatter`), a field name MUST NOT appear in both `required_fields` and `optional_fields`.
-- If a property set defines a field already defined by inherited global frontmatter, the property set definition replaces the inherited global definition completely and determines whether the field is effectively required or optional.
-- If a local note-type schema defines a field already contributed by inherited global frontmatter or property sets, the local definition replaces the earlier definition completely and determines whether the field is effectively required or optional.
+- Frontmatter merges by field name within `fields`.
+- If a property set defines a field already defined by inherited global frontmatter, the property set definition replaces the inherited global definition completely and determines whether the field is effectively optional.
+- If a local note-type schema defines a field already contributed by inherited global frontmatter or property sets, the local definition replaces the earlier definition completely and determines whether the field is effectively optional.
 - Because replacement is complete, any inherited or property-set-provided field metadata such as `label`, `description`, or `icon` is replaced too unless the overriding definition restates it.
 - Global frontmatter, when enabled, is applied first.
 - Property sets are then applied in the schema's declared `property_sets` order.

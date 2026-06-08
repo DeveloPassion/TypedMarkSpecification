@@ -6,7 +6,7 @@ nav_order: 5
 
 # Managed Notes and Properties
 
-This page is authoritative for the managed note contract, core-defined managed-note field names, frontmatter property types, note-link syntax and resolution, field definition attributes, canonical field materialization, and required-versus-optional field semantics. Relationship cardinality, heading constraints, and template obligations are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). The effective note-type schema that supplies a note's structural contract is described in [Note Type Schemas](note-type-schemas.md).
+This page is authoritative for the managed note contract, core-defined managed-note field names, frontmatter property types, note-link syntax and resolution, field definition attributes, canonical field materialization, and field optionality semantics. Relationship cardinality, heading constraints, and template obligations are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). The effective note-type schema that supplies a note's structural contract is described in [Note Type Schemas](note-type-schemas.md).
 
 ## 11. Managed Note Contract
 
@@ -79,14 +79,16 @@ Rules:
 - Field definitions MUST NOT use unknown property types.
 - `text` values MUST be YAML strings.
 - Markdown syntax inside property values has no special meaning.
-- `list` values MUST be YAML sequences and MUST declare `items`.
+- A field definition with `type: list` MUST declare `items`.
+- Stored `list` values MUST be YAML sequences.
 - `number` values MUST be YAML numbers.
 - `checkbox` values MUST be either `true` or `false`.
 - `date` MUST use RFC 3339 full-date format `YYYY-MM-DD`.
 - `datetime` MUST use RFC 3339 date-time format with seconds and an explicit timezone designator such as `Z` or `+02:00`.
 - `tags` values MUST be YAML sequences of tag strings.
 - `tags` entries MUST be non-empty strings.
-- `object` values MUST be YAML mappings and MUST declare `required_fields` and `optional_fields`.
+- A field definition with `type: object` MUST declare `fields`.
+- Stored `object` values MUST be YAML mappings.
 - YAML scalar, sequence, and mapping values are all supported when they satisfy the declared property type.
 - A core-defined managed-note field name MAY still use a dedicated structured value only when this specification explicitly defines that field's contract.
 
@@ -125,7 +127,7 @@ Rules:
 - `list.items` MUST NOT declare `nullable` because list elements are not materialized independently.
 - `list.items` MAY use any supported property type.
 - `tags` MUST NOT declare `items`.
-- `object.required_fields` and `object.optional_fields` MUST each be mappings, even when one mapping is empty.
+- `object.fields` MUST be a mapping, even when it is empty.
 - Nested field definitions inside an `object` field follow the same type, materialization, and value-requirement rules as top-level field definitions unless a type-specific rule says otherwise.
 - `object` MUST NOT declare `items`.
 - Nested list and object properties are supported.
@@ -137,6 +139,7 @@ Each field definition MAY additionally declare:
 - `label`
 - `description`
 - `icon`
+- `optional`
 - `nullable`
 - `default_value`
 - `relationship_kind`
@@ -148,24 +151,28 @@ Each field definition MAY additionally declare:
 
 Rules:
 
-- Field definition attributes apply to top-level fields, to `list.items`, and recursively to nested fields inside `object.required_fields` and `object.optional_fields` unless a type-specific rule says otherwise.
+- Field definition attributes apply to top-level fields, to `list.items`, and recursively to nested fields inside `object.fields` unless a type-specific rule says otherwise.
 - `label` is the human-facing name of the field and MUST NOT change the stored field key. If present, MUST be a non-empty string.
 - `description` is human-facing explanatory metadata for generated references, forms, and authoring interfaces. If present, MUST be a non-empty string.
 - `icon` is human-facing field metadata for generated references and applications. If present, MUST be a non-empty string.
 - The core specification treats `icon` as opaque and does not standardize icon libraries or rendering behavior.
-- Human-facing field metadata MUST NOT change field identity, storage keys, type validation, required-versus-optional semantics, relationship semantics, or materialization behavior.
+- Human-facing field metadata MUST NOT change field identity, storage keys, type validation, optionality semantics, relationship semantics, or materialization behavior.
+- `optional` MUST be a boolean.
+- If omitted, `optional` defaults to `false`.
 - `nullable` MUST be a boolean.
-- In `required_fields`, `nullable` defaults to `false`.
-- In `optional_fields`, `nullable` defaults to `true`.
+- If `optional: false` and `nullable` is omitted, `nullable` defaults to `false`.
+- If `optional: true` and `nullable` is omitted, `nullable` defaults to `true`.
+- A field with `optional: true` MUST be nullable in the effective schema.
+- A schema MUST NOT yield a field definition with `optional: true` and `nullable: false`.
 - A field with `nullable: true` MAY explicitly use the value `null`.
-- `default_value` MAY be used on required or optional fields.
+- `default_value` MAY be used on any field definition.
 - `default_value` MUST conform to the declared field type, or MAY be `null` only when `nullable: true`.
 - `default_value` applies during field materialization when the field has no explicit concrete value.
 - An explicit `null` value is distinct from an absent field and MUST NOT be replaced by `default_value`.
-- `default_value` does not waive the physical presence requirement for fields declared in `required_fields`.
+- `default_value` does not waive the physical presence requirement for declared fields.
 - The RECOMMENDED pattern for a field that MUST always be present but MAY have no concrete value is `nullable: true` with `default_value: null`.
 - `relationship_kind`, if present, MUST be either `belongs_to` or `related_to`.
-- `relationship_kind` MAY be declared only on top-level frontmatter fields in `required_fields` or `optional_fields`.
+- `relationship_kind` MAY be declared only on top-level frontmatter fields in `fields`.
 - A field with `relationship_kind` MUST have `type: text` and `format: note_link`, or `type: list` whose `items.type` is `text` and `items.format` is `note_link`.
 - A field without `relationship_kind` MAY still use `format: note_link`, but it does not contribute to typed relationship conformance.
 - The semantics of `relationship_kind` are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
@@ -192,8 +199,6 @@ Rules:
 - If `value_from_schema` is present, the stored value MUST equal the derived schema value exactly.
 - If `nullable: true` and no explicit `default_value` is provided, the implicit materialization default is `null`.
 - If a field is not nullable and no explicit value or `default_value` is available, the field still MUST be present and the note MUST be treated as non-conforming until a conforming concrete value is supplied.
-- A field declared in `optional_fields` MUST be nullable in the effective schema.
-- A schema MUST NOT yield an `optional_fields` entry with `nullable: false`.
 
 ### Canonical Field Materialization
 
@@ -201,35 +206,36 @@ The canonical stored form of a managed note uses fully materialized frontmatter.
 
 Rules:
 
-- Every field declared in `frontmatter.required_fields` or `frontmatter.optional_fields` MUST be physically present in stored note frontmatter.
+- Every field declared in `frontmatter.fields` MUST be physically present in stored note frontmatter.
 - Declared fields MUST NOT be omitted merely because they currently have no concrete value.
 - When no concrete value is known for a nullable field, the canonical stored value is `null`, unless an explicit non-null `default_value` is defined.
-- When a field with `type: object` has a concrete mapping value, every field declared in that object's `required_fields` or `optional_fields` MUST be physically present in the stored mapping.
-- `required_fields` and `optional_fields` do not differ in physical materialization, but they do differ in value requirements.
-- `required_fields` MAY require a concrete non-null value, depending on `nullable` and `default_value`.
-- `optional_fields` never require a concrete non-null value; they remain valid when materialized as `null`.
-- A missing field declared anywhere under `frontmatter.required_fields` or `frontmatter.optional_fields` is a `missing_declared_field` validation failure.
+- When a field with `type: object` has a concrete mapping value, every field declared in that object's `fields` MUST be physically present in the stored mapping.
+- Fields with `optional: false` and `optional: true` do not differ in physical materialization, but they do differ in value requirements.
+- A field with `optional: false` MAY require a concrete non-null value, depending on `nullable` and `default_value`.
+- A field with `optional: true` never requires a concrete non-null value; it remains valid when materialized as `null`.
+- A missing field declared anywhere under `frontmatter.fields` is a `missing_declared_field` validation failure.
 - A missing nested field declared within an object field is also a `missing_declared_field` validation failure.
 - Tools that create notes MUST write back frontmatter that satisfies these canonical field materialization rules.
 - Tools that import or scaffold notes MUST write back frontmatter that satisfies these canonical field materialization rules.
 - Tools that normalize notes or modify managed note frontmatter MUST rewrite frontmatter so it satisfies these canonical field materialization rules before saving.
 
-## 13. Required and Optional Fields
+## 13. Field Optionality
 
 Each schema MUST declare:
 
-- `frontmatter.required_fields`
-- `frontmatter.optional_fields`
+- `frontmatter.fields`
 
 Rules:
 
-- `required_fields` and `optional_fields` define value requirements, not sparse-storage behavior; canonical storage requirements are defined in Canonical Field Materialization.
-- A field declared in `required_fields` MAY be nullable.
-- Fields declared in `optional_fields` are semantically OPTIONAL, not sparse.
-- Fields declared in `optional_fields` MUST be nullable in the effective schema and MAY remain `null` indefinitely.
-- Fields declared in `optional_fields` MUST NOT be used for metadata that is REQUIRED to hold a concrete non-null value for conformance.
-- If a field is intended to become invalid when no concrete value is present, it MUST be declared in `required_fields`, not `optional_fields`.
-- The same required-versus-optional distinction applies recursively within object field definitions.
+- `optional` defines value requirements, not sparse-storage behavior; canonical storage requirements are defined in Canonical Field Materialization.
+- A field with `optional: false` MAY be nullable.
+- A field with `optional: false` is part of the note's semantically expected metadata, even when `nullable: true` temporarily allows `null`.
+- Fields with `optional: true` are semantically OPTIONAL, not sparse.
+- Fields with `optional: true` MUST be nullable in the effective schema and MAY remain `null` indefinitely.
+- Fields with `optional: true` MUST NOT be used for metadata that is REQUIRED to hold a concrete non-null value for conformance.
+- If a field is intended to become invalid when no concrete value is present, it MUST declare `optional: false` and `nullable: false`.
+- The same optionality distinction applies recursively within object field definitions.
 - Unknown fields are evaluated using the `unknown_field` rule defined in [Collection Model](collection-model.md).
 - Unknown nested fields inside object values are also evaluated using the `unknown_field` rule defined in [Collection Model](collection-model.md).
-- `note_type` and `id` MUST always appear in `required_fields`.
+- `note_type` and `id` MUST always appear in `frontmatter.fields`.
+- `note_type` and `id` MUST NOT declare `optional: true`.

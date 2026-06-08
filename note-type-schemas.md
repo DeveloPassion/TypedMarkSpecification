@@ -66,7 +66,7 @@ template:
   file: ".metadata/templates/topic.md"
 
 frontmatter:
-  required_fields:
+  fields:
     note_type:
       type: text
       const_value: topic
@@ -106,12 +106,12 @@ frontmatter:
       allowed_values: [draft, active, archived]
       nullable: true
       default_value: null
-  optional_fields:
     description:
       label: Description
       description: Human-readable note description used in previews and references.
       icon: paragraph
       type: text
+      optional: true
       nullable: true
       default_value: null
     summary:
@@ -119,6 +119,7 @@ frontmatter:
       description: Short overview used in generated references and previews.
       icon: paragraph
       type: text
+      optional: true
       nullable: true
       default_value: null
 
@@ -143,6 +144,7 @@ headings:
     - Key Ideas
     - Sources
     - Related
+    - References
   optional_h2:
     - Context
     - Notes
@@ -187,8 +189,8 @@ Rules:
 - `template.file` MUST end in `.md`.
 - `template.file` defines the canonical template for that note type.
 - The `frontmatter` block semantics are defined in [Managed Notes and Properties](managed-notes-and-properties.md).
-- The `frontmatter` block MUST contain `required_fields` and `optional_fields` mappings, even when one mapping is empty.
-- Field definitions inside `frontmatter.required_fields` and `frontmatter.optional_fields` MAY declare flat human-facing keys such as `label`, `description`, and `icon`, as defined in [Managed Notes and Properties](managed-notes-and-properties.md).
+- The `frontmatter` block MUST contain a `fields` mapping, even when it is empty.
+- Field definitions inside `frontmatter.fields` MAY declare flat human-facing keys such as `label`, `description`, and `icon`, as defined in [Managed Notes and Properties](managed-notes-and-properties.md).
 - Frontmatter field names declared in a note-type schema MUST follow the core-defined managed-note field-name rules defined in [Managed Notes and Properties](managed-notes-and-properties.md).
 - The `relationships` block semantics are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - The `relationships` block MUST contain both `belongs_to.allowed_note_types` and `related_to.allowed_note_types`, even when those mappings are empty.
