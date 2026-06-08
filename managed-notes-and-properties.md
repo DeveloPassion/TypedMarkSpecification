@@ -115,6 +115,9 @@ Rules:
 
 Each field definition MAY additionally declare:
 
+- `label`
+- `description`
+- `icon`
 - `nullable`
 - `default_value`
 - `relationship_kind`
@@ -127,6 +130,11 @@ Each field definition MAY additionally declare:
 Rules:
 
 - Field definition attributes apply to top-level fields and to `list.items` unless a type-specific rule says otherwise.
+- `label` is the human-facing name of the field and MUST NOT change the stored field key. If present, MUST be a non-empty string.
+- `description` is human-facing explanatory metadata for generated references, forms, and authoring interfaces. If present, MUST be a non-empty string.
+- `icon` is human-facing field metadata for generated references and applications. If present, MUST be a non-empty string.
+- The core specification treats `icon` as opaque and does not standardize icon libraries or rendering behavior.
+- Human-facing field metadata MUST NOT change field identity, storage keys, type validation, required-versus-optional semantics, relationship semantics, or materialization behavior.
 - `nullable` MUST be a boolean.
 - In `required_fields`, `nullable` defaults to `false`.
 - In `optional_fields`, `nullable` defaults to `true`.

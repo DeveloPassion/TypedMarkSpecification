@@ -75,14 +75,23 @@ frontmatter:
       format: slug
       nullable: false
     title:
+      label: Title
+      description: Human-readable note title.
+      icon: text
       type: text
       nullable: false
     domain:
+      label: Domain
+      description: Domain note this topic belongs to.
+      icon: folder
       type: text
       format: note_link
       nullable: false
       relationship_kind: belongs_to
     sources:
+      label: Sources
+      description: Supporting source notes for this topic.
+      icon: book
       type: list
       items:
         type: text
@@ -90,12 +99,18 @@ frontmatter:
       nullable: false
       relationship_kind: related_to
     status:
+      label: Status
+      description: Lifecycle state of the note.
+      icon: badge
       type: text
       allowed_values: [draft, active, archived]
       nullable: true
       default_value: null
   optional_fields:
     summary:
+      label: Summary
+      description: Short overview used in generated references and previews.
+      icon: paragraph
       type: text
       nullable: true
       default_value: null
@@ -154,7 +169,10 @@ Rules:
 - The semantics of `specification_version` are defined in [Foundations](foundations.md).
 - In schema files, `note_type` is the identifier of the note type being defined.
 - In managed notes, `note_type` is the frontmatter metadata field that declares which note type the note is.
+- `label` is the human-facing name of the note type. MUST be a non-empty string.
+- `description` is concise human-facing explanatory metadata for generated references and applications. MUST be a non-empty string.
 - `icon` MUST be a non-empty string.
+- `label`, `description`, and `icon` are flat human-facing metadata keys on the note-type schema; this specification does not define a separate display block for them.
 - `icon` is human-facing note-type metadata for generated references and applications.
 - The core specification treats `icon` as an opaque presentation token and does not standardize icon libraries or rendering behavior.
 - Note-type schemas MUST declare a `template` block.
@@ -163,6 +181,7 @@ Rules:
 - `template.file` defines the canonical template for that note type.
 - The `frontmatter` block semantics are defined in [Managed Notes and Properties](managed-notes-and-properties.md).
 - The `frontmatter` block MUST contain `required_fields` and `optional_fields` mappings, even when one mapping is empty.
+- Field definitions inside `frontmatter.required_fields` and `frontmatter.optional_fields` MAY declare flat human-facing keys such as `label`, `description`, and `icon`, as defined in [Managed Notes and Properties](managed-notes-and-properties.md).
 - The `relationships` block semantics are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - The `relationships` block MUST contain both `belongs_to.allowed_note_types` and `related_to.allowed_note_types`, even when those mappings are empty.
 - The `headings` block semantics are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).

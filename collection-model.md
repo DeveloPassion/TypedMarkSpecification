@@ -79,11 +79,15 @@ global_properties:
         format: slug
         nullable: false
       title:
+        label: Title
+        description: Human-readable note title.
         type: text
         nullable: true
         default_value: null
     optional_fields:
       summary:
+        label: Summary
+        description: Short overview of the note.
         type: text
         nullable: true
         default_value: null
@@ -103,7 +107,7 @@ Rules:
 
 - `global_properties` MAY be omitted.
 - `global_properties` MAY define shared defaults for `frontmatter`, `relationships`, and `headings`.
-- The semantics of `frontmatter` are defined in [Managed Notes and Properties](managed-notes-and-properties.md).
+- The semantics of `frontmatter`, including flat human-facing field metadata such as `label`, `description`, and `icon`, are defined in [Managed Notes and Properties](managed-notes-and-properties.md).
 - The semantics of `relationships` and `headings` are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - Every note type inherits `global_properties` by default.
 - Note-type schemas MAY override inherited global properties locally.
@@ -121,6 +125,9 @@ description: Reusable review and publication fields.
 frontmatter:
   required_fields:
     workflow_state:
+      label: Workflow State
+      description: Editorial lifecycle state.
+      icon: badge
       type: text
       allowed_values: [draft, in_review, published]
       nullable: true
@@ -131,6 +138,9 @@ frontmatter:
       nullable: true
       default_value: null
     published_on:
+      label: Published On
+      description: Publication date when known.
+      icon: calendar
       type: date
       nullable: true
       default_value: null
@@ -145,7 +155,7 @@ Rules:
 - `property_set` MUST be a non-empty slug.
 - Each property set file MUST physically contain `specification_version`, `property_set`, `description`, and `frontmatter`.
 - `frontmatter` in a property set MUST contain `required_fields` and `optional_fields` mappings, even when one mapping is empty.
-- The semantics of frontmatter field definitions in property sets are the same as in note-type schemas.
+- The semantics of frontmatter field definitions in property sets, including flat human-facing field metadata such as `label`, `description`, and `icon`, are the same as in note-type schemas.
 - A property set MAY define reusable frontmatter fields only.
 - A property set MUST NOT define `note_type` or `id`.
 - A property set MUST NOT define storage, template, relationships, headings, guidance, or inheritance settings.
@@ -197,6 +207,7 @@ Effective note-type schema merge rules:
 - Within any one contributing block (`global_properties.frontmatter`, a property set `frontmatter`, or a note-type schema `frontmatter`), a field name MUST NOT appear in both `required_fields` and `optional_fields`.
 - If a property set defines a field already defined by inherited global frontmatter, the property set definition replaces the inherited global definition completely and determines whether the field is effectively required or optional.
 - If a local note-type schema defines a field already contributed by inherited global frontmatter or property sets, the local definition replaces the earlier definition completely and determines whether the field is effectively required or optional.
+- Because replacement is complete, any inherited or property-set-provided field metadata such as `label`, `description`, or `icon` is replaced too unless the overriding definition restates it.
 - Global frontmatter, when enabled, is applied first.
 - Property sets are then applied in the schema's declared `property_sets` order.
 - Local note-type schema frontmatter is applied last.
