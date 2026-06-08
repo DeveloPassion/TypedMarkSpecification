@@ -6,20 +6,20 @@ nav_order: 2
 
 # Collection Model
 
-This page is authoritative for `typedmark.yaml`, named property sets, collection-level inheritance, property-set application, and validation defaults. It is not authoritative for `.metadata/system.yaml` or `.metadata/instance.yaml`; those live in [System Definitions and Instances](system-definitions-and-instances.md). It is also not authoritative for relationship and template semantics; those live in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). Managed note field semantics still live in [Managed Notes and Properties](managed-notes-and-properties.md), even when field definitions are contributed through `global_properties`, property sets, or note-type schemas. The combined result of those contributions is the effective note-type schema described in [Note Type Schemas](note-type-schemas.md).
+This page is authoritative for `typedmark.yaml`, the configurable metadata directory, named property sets, collection-level inheritance, property-set application, and validation defaults. It is not authoritative for `<metadata_directory>/system.yaml` or `<metadata_directory>/instance.yaml`; those live in [System Definitions and Instances](system-definitions-and-instances.md). It is also not authoritative for relationship and template semantics; those live in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). Managed note field semantics still live in [Managed Notes and Properties](managed-notes-and-properties.md), even when field definitions are contributed through `global_properties`, property sets, or note-type schemas. The combined result of those contributions is the effective note-type schema described in [Note Type Schemas](note-type-schemas.md).
 
 ## Collection Model Specification
 
-`typedmark.yaml` defines collection-model-wide rules.
+`typedmark.yaml` defines collection-model-wide rules, including the metadata directory that contains governed TypedMark artifacts.
 
 Required fields:
 
 ```yaml
 specification_version: 0.0.1
 collection_model_id: example-knowledge-base
+metadata_directory: .metadata
 exclude_paths:
   - .git/**
-  - .metadata/**
 validation_defaults:
   path: error
   missing_required_field: error
@@ -35,16 +35,24 @@ validation_defaults:
   template_drift: warn
 ```
 
+In path notation on this page, `<metadata_directory>` means the directory name declared by `typedmark.yaml` `metadata_directory`.
+
 Rules:
 
 - `typedmark.yaml` MUST exist at the root of every conforming managed collection.
 - A conforming system definition MUST also include `typedmark.yaml` at its root.
+- `typedmark.yaml` MUST physically contain `specification_version`, `collection_model_id`, `metadata_directory`, `exclude_paths`, and `validation_defaults`.
 - The semantics of `specification_version` are defined in [Foundations](foundations.md).
 - `collection_model_id` MUST be a non-empty slug.
 - `collection_model_id` identifies the structural collection model described by `typedmark.yaml`.
 - `collection_model_id` is not an instantiated collection identifier.
 - Multiple instantiated collections MAY share the same `collection_model_id`.
-- `exclude_paths` defines content that validators and agents MUST ignore for structural reasoning.
+- `metadata_directory` MUST be a non-empty string.
+- `metadata_directory` MUST name a single directory at the collection root.
+- `metadata_directory` MUST NOT be `.` or `..` and MUST NOT contain path separators.
+- `metadata_directory` identifies the governed-artifact subtree for the collection, including the system manifest, instance manifest, property sets, note-type schemas, and templates.
+- Validators and agents MUST derive governed artifact locations from `metadata_directory`.
+- `exclude_paths` defines additional content that validators and agents MUST ignore for structural reasoning. It does not redefine or relocate the metadata directory.
 - `validation_defaults` provides default severity levels for collection-wide validation reporting.
 - Supported validation severities are `error`, `warn`, `info`, and `off`.
 - A note or artifact with any `error` violation is non-conforming.
@@ -192,8 +200,8 @@ frontmatter:
 
 Rules:
 
-- `.metadata/property-sets/` MAY be omitted when no property sets are defined.
-- Every YAML file directly under `.metadata/property-sets/` defines one property set.
+- `<metadata_directory>/property-sets/` MAY be omitted when no property sets are defined.
+- Every YAML file directly under `<metadata_directory>/property-sets/` defines one property set.
 - No separate registry file is maintained for property sets.
 - The property set file basename MUST equal the file's `property_set` value.
 - `property_set` MUST be a non-empty slug.
@@ -232,7 +240,7 @@ Rules:
 - A note-type schema MAY define `property_sets`.
 - If present, `property_sets` MUST be a non-empty list of unique property set identifiers.
 - `property_sets` is opt-in only. If absent, no property sets are applied.
-- Each referenced property set MUST resolve to exactly one file under `.metadata/property-sets/`.
+- Each referenced property set MUST resolve to exactly one file under `<metadata_directory>/property-sets/`.
 - Property sets affect frontmatter only.
 - Property sets are applied after global frontmatter inheritance and before local note-type schema frontmatter definitions.
 - If `inheritance.enabled: false` or `inheritance.frontmatter: false`, only global frontmatter inheritance is disabled; declared property sets still apply.

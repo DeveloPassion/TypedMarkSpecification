@@ -18,7 +18,7 @@ If you want the motivation behind the spec, start with the [Manifesto](manifesto
 - [Note Type Schemas](note-type-schemas.md): note type registration, effective note-type schema, evaluation pipeline, schema shape, schema kinds, and storage rules
 - [Managed Notes and Properties](managed-notes-and-properties.md): managed note contract, field rules, note-link syntax, field materialization, and required-versus-optional field semantics
 - [Relationships, Headings, and Templates](relationships-headings-and-templates.md): relationship semantics, heading constraints, and template requirements
-- [System Definitions and Instances](system-definitions-and-instances.md): `.metadata/system.yaml`, `.metadata/instance.yaml`, and profiles
+- [System Definitions and Instances](system-definitions-and-instances.md): system manifest, instance manifest, and profiles under the configured metadata directory
 - [Conformance and Roadmap](conformance-and-roadmap.md): non-goals, conformance modes, and implementation order
 
 ## Reading Path

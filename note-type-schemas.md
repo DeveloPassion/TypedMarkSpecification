@@ -6,7 +6,7 @@ nav_order: 4
 
 # Note Type Schemas
 
-This page is authoritative for note type registration, the required top-level contract of `.metadata/schemas/<note_type>.yaml`, the effective note-type schema, optional property-set references, schema kinds, and storage rules. Field semantics live in [Managed Notes and Properties](managed-notes-and-properties.md), relationship, heading, and template semantics live in [Relationships, Headings, and Templates](relationships-headings-and-templates.md), and collection-level inheritance and property-set application live in [Collection Model](collection-model.md).
+This page is authoritative for note type registration, the required top-level contract of `<metadata_directory>/schemas/<note_type>.yaml`, the effective note-type schema, optional property-set references, schema kinds, and storage rules. Field semantics live in [Managed Notes and Properties](managed-notes-and-properties.md), relationship, heading, and template semantics live in [Relationships, Headings, and Templates](relationships-headings-and-templates.md), and collection-level inheritance and property-set application live in [Collection Model](collection-model.md).
 
 ## Note Type Registry
 
@@ -14,7 +14,7 @@ The note type registry is implicit.
 
 Rules:
 
-- Every YAML file directly under `.metadata/schemas/` defines one note type.
+- Every YAML file directly under `<metadata_directory>/schemas/` defines one note type.
 - No separate registry file is maintained for note types.
 - A note type MUST NOT be defined in more than one schema file.
 - The schema file basename MUST equal the schema's `note_type` value.
@@ -31,7 +31,7 @@ The effective note-type schema is not a separate stored artifact. It is the norm
 
 Rules:
 
-1. A tool or validator MUST select exactly one note-type schema file from `.metadata/schemas/` using the note's declared `note_type`, as defined in [Managed Notes and Properties](managed-notes-and-properties.md).
+1. A tool or validator MUST select exactly one note-type schema file from `<metadata_directory>/schemas/` using the note's declared `note_type`, as defined in [Managed Notes and Properties](managed-notes-and-properties.md).
 2. The selected note-type schema file provides the direct top-level values for `specification_version`, `note_type`, `label`, `icon`, `kind`, `description`, `storage`, `template`, and `guidance`.
 3. The tool or validator MUST determine whether `global_properties.frontmatter`, `global_properties.relationships`, and `global_properties.headings` apply to that note type using the inheritance rules in [Collection Model](collection-model.md).
 4. Enabled global blocks from `typedmark.yaml` MUST be applied first.
@@ -43,7 +43,7 @@ Rules:
 
 ### Schema File Contract
 
-Each `.metadata/schemas/<note_type>.yaml` MUST define one concrete note type and MUST follow this shape:
+Each `<metadata_directory>/schemas/<note_type>.yaml` MUST define one concrete note type and MUST follow this shape:
 
 ```yaml
 specification_version: 0.0.1
@@ -63,7 +63,7 @@ storage:
     archived_path_pattern: "Archives/Topics/{title}.md"
 
 template:
-  file: ".metadata/templates/topic.md"
+  file: "<metadata_directory>/templates/topic.md"
 
 frontmatter:
   note_type:
@@ -183,7 +183,7 @@ Rules:
 - `icon` is human-facing note-type metadata for generated references and applications.
 - The core specification treats `icon` as an opaque presentation token and does not standardize icon libraries or rendering behavior.
 - Note-type schemas MUST declare a `template` block.
-- `template.file` MUST be a relative path under `.metadata/templates/`.
+- `template.file` MUST be a relative path under `<metadata_directory>/templates/`.
 - `template.file` MUST end in `.md`.
 - `template.file` defines the canonical template for that note type.
 - The `frontmatter` block semantics are defined in [Managed Notes and Properties](managed-notes-and-properties.md).

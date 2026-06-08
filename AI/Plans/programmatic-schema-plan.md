@@ -8,10 +8,10 @@ Create a machine-readable schema layer for TypedMark that tools can use to valid
 
 TypedMark already defines strong structural rules for:
 
-- `.metadata/system.yaml`
+- the system manifest under the configured metadata directory
 - `typedmark.yaml`
-- `.metadata/instance.yaml`
-- `.metadata/schemas/<note_type>.yaml`
+- the instance manifest under the configured metadata directory
+- the note-type schema files under the configured metadata directory
 
 Those rules are currently described only in prose. A programmatic schema would make it easier to:
 
@@ -284,7 +284,7 @@ The first version is successful when:
 ## Risks and Watchouts
 
 - Trying to force all TypedMark semantics into JSON Schema will create a brittle and confusing design.
-- If the schema layer stops matching the fixed `typedmark.yaml` root contract and the YAML artifact contracts, implementations will diverge quickly.
+- If the schema layer stops matching the `typedmark.yaml` contract and the governed YAML artifact contracts, implementations will diverge quickly.
 - If the schema layer and prose spec evolve independently, tooling will become misleading.
 - Canonical serialization must remain a validator concern, not be implied by JSON Schema success.
 
@@ -295,7 +295,7 @@ Deliver the smallest useful slice first:
 1. boundary note
 2. shared definitions
 3. schema for `typedmark.yaml`
-4. schema for `.metadata/schemas/<note_type>.yaml`
+4. schema for the note-type schema file contract under the configured metadata directory
 5. a few fixtures that prove the placeholder-link boundary
 
 That milestone would exercise the most important parts of the model without waiting for the full validator to exist.

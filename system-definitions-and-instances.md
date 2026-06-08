@@ -6,7 +6,7 @@ nav_order: 7
 
 # System Definitions and Instances
 
-This page is authoritative for `.metadata/system.yaml`, `.metadata/instance.yaml`, and the boundary between the core specification and profiles. It is not authoritative for `typedmark.yaml`; that lives in [Collection Model](collection-model.md). It is also not authoritative for note-type schema block semantics, managed note field semantics, or relationship and template semantics; those live in [Note Type Schemas](note-type-schemas.md), [Managed Notes and Properties](managed-notes-and-properties.md), and [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
+This page is authoritative for `<metadata_directory>/system.yaml`, `<metadata_directory>/instance.yaml`, and the boundary between the core specification and profiles. It is not authoritative for `typedmark.yaml`; that lives in [Collection Model](collection-model.md). It is also not authoritative for note-type schema block semantics, managed note field semantics, or relationship and template semantics; those live in [Note Type Schemas](note-type-schemas.md), [Managed Notes and Properties](managed-notes-and-properties.md), and [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 
 ## System Definitions, Instances, and Profiles
 
@@ -19,11 +19,11 @@ A system definition is a reusable package for a TypedMark collection model. It p
 - templates
 - scaffold instructions for creating an initial collection structure
 
-An instantiated collection is a concrete workspace described by `.metadata/instance.yaml`.
+An instantiated collection is a concrete workspace described by `<metadata_directory>/instance.yaml`.
 
 ### System Definition Artifact
 
-`.metadata/system.yaml` defines a reusable system package. Conformance requirements for when a filesystem tree counts as a valid system definition are defined in [Conformance and Roadmap](conformance-and-roadmap.md).
+`<metadata_directory>/system.yaml` defines a reusable system package. Conformance requirements for when a filesystem tree counts as a valid system definition are defined in [Conformance and Roadmap](conformance-and-roadmap.md).
 
 Required system manifest example:
 
@@ -47,12 +47,12 @@ scaffold:
   notes:
     - path: "Home.md"
       note_type: home
-      from_template: ".metadata/templates/home.md"
+      from_template: "<metadata_directory>/templates/home.md"
       values:
         note_type: home
     - path: "Glossary.md"
       note_type: glossary
-      from_template: ".metadata/templates/glossary.md"
+      from_template: "<metadata_directory>/templates/glossary.md"
       values:
         note_type: glossary
 catalog:
@@ -72,13 +72,13 @@ Required top-level keys:
 
 Rules:
 
-- `.metadata/system.yaml` defines the canonical system representation for packaging, publishing, sharing, and import.
-- `.metadata/system.yaml` MUST conform to the system-manifest rules defined by this specification.
+- `<metadata_directory>/system.yaml` defines the canonical system representation for packaging, publishing, sharing, and import.
+- `<metadata_directory>/system.yaml` MUST conform to the system-manifest rules defined by this specification.
 - The semantics of `specification_version` are defined in [Foundations](foundations.md).
 - `system_id` uniquely identifies the logical system family.
 - `system_id` identifies a reusable system family and is not an instantiated collection identifier.
 - `version` identifies a publishable system release and MUST be a Semantic Versioning 2.0.0 string.
-- Consumers MUST derive the canonical collection asset locations from the fixed filesystem layout in [Foundations](foundations.md).
+- Consumers MUST derive the canonical collection asset locations from the authoritative artifact map in [Foundations](foundations.md) together with `typedmark.yaml` `metadata_directory`.
 - `system_id` and `collection_model_id` identify different things and MUST NOT be treated as interchangeable.
 - `scaffold` SHOULD be present, even if empty.
 - `scaffold.folders` lists folders an importer SHOULD create when instantiating a collection from the system.
@@ -87,19 +87,19 @@ Rules:
 - `scaffold.notes[].values` MAY provide initial frontmatter values that are merged into the instantiated template.
 - Values supplied in `scaffold.notes[].values` override template placeholder values for that instantiated note only.
 - A system definition MAY be shared as a directory, a Git repository, or an archive file, provided relative paths are preserved.
-- The canonical published form is the unpacked directory tree that preserves the `typedmark.yaml` and `.metadata/` layout REQUIRED by this specification.
+- The canonical published form is the unpacked directory tree that preserves `typedmark.yaml` and the metadata directory selected by `typedmark.yaml`, including its governed internal layout.
 
 Import semantics:
 
-- An importer MUST preserve `typedmark.yaml` and the `.metadata/` directory structure and file contents unless the user explicitly requests a transformation.
-- An importer MUST validate `.metadata/system.yaml`, `typedmark.yaml`, any property set files present under `.metadata/property-sets/`, and the note-type schema files before creating a collection from the system.
+- An importer MUST preserve `typedmark.yaml` and the configured metadata directory structure and file contents unless the user explicitly requests a transformation.
+- An importer MUST validate `<metadata_directory>/system.yaml`, `typedmark.yaml`, any property set files present under `<metadata_directory>/property-sets/`, and the note-type schema files before creating a collection from the system.
 - An importer SHOULD support a full scaffolded import mode that creates the declared folders and notes.
-- An importer MAY additionally support a metadata-only import mode that installs `typedmark.yaml` and `.metadata/` without materializing scaffold notes.
-- A metadata-only import MUST NOT create `.metadata/instance.yaml`.
-- A full scaffolded import MUST create `.metadata/instance.yaml`.
+- An importer MAY additionally support a metadata-only import mode that installs `typedmark.yaml` and the configured metadata directory without materializing scaffold notes.
+- A metadata-only import MUST NOT create `<metadata_directory>/instance.yaml`.
+- A full scaffolded import MUST create `<metadata_directory>/instance.yaml`.
 - A full scaffolded import MUST assign a new `collection_instance_id`.
 - When instantiating a note from a template, the importer MUST emit frontmatter that conforms to [Managed Notes and Properties](managed-notes-and-properties.md).
-- Marketplace or catalog implementations SHOULD be able to index a system definition from `.metadata/system.yaml` alone.
+- Marketplace or catalog implementations SHOULD be able to index a system definition from `<metadata_directory>/system.yaml` alone.
 - A metadata-only import yields an installed system definition and does not by itself require the target workspace to contain any instantiated notes.
 - A full scaffolded import yields an instantiated collection, even if many instantiated notes still contain placeholder or `null` values.
 
@@ -111,7 +111,7 @@ Publishing and catalog semantics:
 
 ### Collection Instance Artifact
 
-`.metadata/instance.yaml` defines the identity and provenance of one instantiated collection. Conformance requirements for when a filesystem tree counts as a valid instantiated collection are defined in [Conformance and Roadmap](conformance-and-roadmap.md).
+`<metadata_directory>/instance.yaml` defines the identity and provenance of one instantiated collection. Conformance requirements for when a filesystem tree counts as a valid instantiated collection are defined in [Conformance and Roadmap](conformance-and-roadmap.md).
 
 Required instance manifest example:
 
@@ -131,16 +131,16 @@ Required top-level keys:
 
 Rules:
 
-- `.metadata/instance.yaml` MUST conform to the instance-manifest rules defined by this specification.
+- `<metadata_directory>/instance.yaml` MUST conform to the instance-manifest rules defined by this specification.
 - The semantics of `specification_version` are defined in [Foundations](foundations.md).
 - `collection_instance_id` MUST be a non-empty string and SHOULD be globally unique.
 - `collection_instance_id` identifies one concrete instantiated collection.
 - `collection_instance_id` MUST NOT appear in `typedmark.yaml`.
-- `collection_model_id` in `.metadata/instance.yaml` MUST equal `collection_model_id` in `typedmark.yaml`.
-- `system_id` and `system_version` MAY be omitted. If present, they are provenance fields in `.metadata/instance.yaml`.
-- If `.metadata/instance.yaml` declares `system_version`, it MUST be a Semantic Versioning 2.0.0 string.
-- If `.metadata/system.yaml` is present and `.metadata/instance.yaml` declares `system_id`, it MUST equal `.metadata/system.yaml` `system_id`.
-- If `.metadata/system.yaml` is present and `.metadata/instance.yaml` declares `system_version`, it MUST equal `.metadata/system.yaml` `version`.
+- `collection_model_id` in `<metadata_directory>/instance.yaml` MUST equal `collection_model_id` in `typedmark.yaml`.
+- `system_id` and `system_version` MAY be omitted. If present, they are provenance fields in `<metadata_directory>/instance.yaml`.
+- If `<metadata_directory>/instance.yaml` declares `system_version`, it MUST be a Semantic Versioning 2.0.0 string.
+- If `<metadata_directory>/system.yaml` is present and `<metadata_directory>/instance.yaml` declares `system_id`, it MUST equal `<metadata_directory>/system.yaml` `system_id`.
+- If `<metadata_directory>/system.yaml` is present and `<metadata_directory>/instance.yaml` declares `system_version`, it MUST equal `<metadata_directory>/system.yaml` `version`.
 - Multiple instantiated collections MAY share the same `system_id`, `system_version`, and `collection_model_id`, but each instantiated collection MUST have its own `collection_instance_id`.
 
 ### Core Specification and Profiles
