@@ -9,9 +9,9 @@ permalink: /
 
 TypedMark is an open specification for typed Markdown note systems.
 
-If you want the motivation behind the spec before the formal rules, start with the [Manifesto](manifesto.md).
+If you want the motivation behind the spec, start with the [Manifesto](manifesto.md).
 
-## Normative Map
+## Index
 
 - [Foundations](foundations.md): purpose, design principles, artifact map, and structural precedence
 - [Collection Model](collection-model.md): `typedmark.yaml`, property sets, inheritance, and validation defaults
