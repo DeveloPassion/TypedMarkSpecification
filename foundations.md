@@ -16,11 +16,11 @@ A TypedMark collection is a governed filesystem tree containing Markdown notes p
 
 ### Collection Configuration
 
-The collection configuration is the collection-wide structural contract defined in `typedmark.yaml`. It defines collection-level rules such as the metadata directory, validation defaults, excluded paths, global inheritance inputs, and other defaults that apply across note types. Details: [Collection Model](collection-model.md).
+The collection configuration is the collection-wide structural contract defined in `typedmark.yaml`. It defines collection-level rules such as the metadata directory, note-type mappings, validation defaults, excluded paths, global inheritance inputs, and other defaults that apply across note types. Details: [Collection Model](collection-model.md).
 
 ### Note Types
 
-A note type is a named structural class that collection notes can be associated with. Every managed note conforms to exactly one primary note type, and both schema files and note frontmatter use the identifier name `note_type`.
+A note type is a named structural class that collection notes can be associated with. Every managed note conforms to exactly one primary note type, and both schema files and the core-defined note frontmatter field, when stored, use the identifier name `note_type`.
 
 ### Note Type Configuration (Schemas)
 

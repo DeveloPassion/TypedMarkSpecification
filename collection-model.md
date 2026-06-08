@@ -6,11 +6,11 @@ nav_order: 2
 
 # Collection Model
 
-This page is authoritative for `typedmark.yaml`, the configurable metadata directory, named property sets, collection-level inheritance, property-set application, and validation defaults. It is not authoritative for `<metadata_directory>/system.yaml` or `<metadata_directory>/instance.yaml`; those live in [System Definitions and Instances](system-definitions-and-instances.md). It is also not authoritative for relationship and template semantics; those live in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). Managed note field semantics still live in [Managed Notes and Properties](managed-notes-and-properties.md), even when field definitions are contributed through `global_properties`, property sets, or note-type schemas. The combined result of those contributions is the effective note-type schema described in [Note Type Schemas](note-type-schemas.md).
+This page is authoritative for `typedmark.yaml`, the configurable metadata directory, ordered note-type mappings, named property sets, collection-level inheritance, property-set application, and validation defaults. It is not authoritative for `<metadata_directory>/system.yaml` or `<metadata_directory>/instance.yaml`; those live in [System Definitions and Instances](system-definitions-and-instances.md). It is also not authoritative for relationship and template semantics; those live in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). Managed note field semantics still live in [Managed Notes and Properties](managed-notes-and-properties.md), even when field definitions are contributed through `global_properties`, property sets, or note-type schemas. The combined result of those contributions is the effective note-type schema described in [Note Type Schemas](note-type-schemas.md).
 
 ## Collection Model Specification
 
-`typedmark.yaml` defines collection-model-wide rules, including the metadata directory that contains governed TypedMark artifacts.
+`typedmark.yaml` defines collection-model-wide rules, including the metadata directory, the ordered note-type mappings, and the governed TypedMark artifacts.
 
 Required fields:
 
@@ -28,6 +28,7 @@ validation_defaults:
   invalid_field_value: error
   duplicate_unique_value: error
   invalid_property_set: error
+  invalid_note_type_mapping: error
   invalid_note_link: error
   invalid_relationship_definition: error
   invalid_relationship_instance: error
@@ -65,11 +66,84 @@ Rules:
 - `invalid_field_value` applies when a field value violates a declared field-level value constraint such as `format`, `regex`, `not_empty`, `not_blank`, `min`, `max`, or `allowed_values`. `format: note_link` syntax and resolution failures still use `invalid_note_link`.
 - `duplicate_unique_value` applies when a field declared with `unique: true` repeats a non-null stored value in more than one managed note of the same note type.
 - `invalid_property_set` applies when a property set file, or a note-type schema property-set reference, violates the property-set rules defined in this page.
+- `invalid_note_type_mapping` applies when a note-type mapping rule in `typedmark.yaml` violates the mapping-rule contract defined in this page.
 - `invalid_note_link` applies when an internal note link violates the syntax or resolution rules defined in [Managed Notes and Properties](managed-notes-and-properties.md).
 - `invalid_relationship_definition` applies when relationship declarations violate the relationship model defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - `invalid_relationship_instance` applies when concrete note-to-note links violate the relationship constraints defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - `invalid_heading` applies when a managed note violates the effective heading rules defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - `template_drift` applies when a validator chooses to compare a managed note to its canonical template and detects material divergence that is not itself a core conformance failure.
+
+### Note-Type Mappings
+
+`typedmark.yaml` MAY define `note_type_mappings` to control how collection notes are associated with note types.
+
+Example:
+
+```yaml
+note_type_mappings:
+  - kind: frontmatter_field
+    field: note_type
+  - kind: fixed
+    note_type: source
+    when:
+      path:
+        under: "Sources/"
+  - kind: fixed
+    note_type: problem
+    when:
+      path:
+        regex: "^Problems/\\d{4}/\\d{2}/.+\\.md$"
+      frontmatter:
+        tags:
+          contains_any: [problem, blocker]
+        severity:
+          equals: high
+```
+
+Rules:
+
+- `note_type_mappings` MAY be omitted.
+- If `note_type_mappings` is omitted, the collection uses an implicit ordered mapping list containing exactly one rule equivalent to `kind: frontmatter_field` and `field: note_type`.
+- If present, `note_type_mappings` MUST be a non-empty ordered list.
+- Each mapping rule MUST be a YAML mapping and MUST declare `kind`.
+- Supported `kind` values are `frontmatter_field` and `fixed`.
+- Mapping rules are evaluated in list order.
+- A collection note MAY match no mapping rule and remain untyped.
+- The winning mapping rule is the first rule in `note_type_mappings` whose own match conditions succeed for a note.
+- After a mapping rule wins for a note, later mapping rules MUST NOT be used as fallback for that note.
+- Note-type mapping is evaluated before schema selection, inheritance, field defaulting, field materialization, relationship derivation, or template comparison.
+- Mapping rules MAY inspect only the collection-relative note path and the stored frontmatter physically present in the note file.
+- Mapping rules MUST NOT depend on the effective note-type schema, generated field values, or template content.
+- `kind: frontmatter_field` MUST physically contain `field`.
+- In this specification version, the only supported `field` value is `note_type`.
+- A `kind: frontmatter_field` rule matches when the named field is physically present in stored frontmatter.
+- The candidate note type produced by a `kind: frontmatter_field` rule is the stored value of that field.
+- `kind: fixed` MUST physically contain `note_type` and `when`.
+- `note_type` in a `kind: fixed` rule MUST be a non-empty slug and MUST resolve to exactly one schema file under `<metadata_directory>/schemas/`.
+- A `kind: fixed` rule matches when every condition in its `when` block matches.
+- The candidate note type produced by a `kind: fixed` rule is the rule's `note_type`.
+- `when` MUST be a mapping.
+- `when` MUST contain at least one of `path` or `frontmatter`.
+- Multiple conditions within one `when` block are combined with logical AND.
+- `when.path` MAY declare `equals`, `under`, and `regex`.
+- Path conditions are evaluated against the collection-relative note path including the `.md` extension and normalized to use forward slashes.
+- `when.path.equals` MUST be a non-empty collection-relative path string.
+- `when.path.under` MUST be a non-empty collection-relative directory string and MUST end with `/`.
+- `when.path.regex` MUST be a non-empty string and is matched against the entire normalized collection-relative note path.
+- Regex evaluation in `note_type_mappings` uses the same implementation regex dialect documented for field constraints in [Managed Notes and Properties](managed-notes-and-properties.md).
+- `when.frontmatter` is a mapping from top-level stored frontmatter field name to one predicate mapping.
+- Nested frontmatter field paths are not supported in `note_type_mappings` in this specification version.
+- If a note has no YAML frontmatter, all `when.frontmatter` predicates fail.
+- Each frontmatter predicate MUST be a mapping.
+- Each frontmatter predicate MUST declare at least one of `exists`, `equals`, `regex`, `contains_any`, or `contains_all`.
+- If a frontmatter predicate declares more than one operator, all declared operators MUST match.
+- `exists` MUST be a boolean.
+- `equals` compares the stored field value using exact YAML-value equality.
+- `regex` MUST be a non-empty string and is valid only when the stored field value is a string.
+- `contains_any` and `contains_all` MUST be non-empty lists of non-empty strings.
+- `contains_any` and `contains_all` are valid only when the stored field value is a YAML sequence of strings.
+- If the winning mapping rule yields a candidate note type that does not resolve to exactly one schema file under `<metadata_directory>/schemas/`, the note is untyped.
+- Because `note_type_mappings` is ordered, more specific rules SHOULD appear before more general rules.
 
 ### Global Property Definitions
 

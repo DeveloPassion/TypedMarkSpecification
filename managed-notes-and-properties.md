@@ -6,7 +6,7 @@ nav_order: 5
 
 # Managed Notes and Properties
 
-This page is authoritative for the managed note contract, core-defined managed-note field names, frontmatter property types, note-link syntax and resolution, field-definition properties, canonical field materialization, and field optionality semantics. Relationship cardinality, heading constraints, and template obligations are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). The effective note-type schema that supplies a note's structural contract is described in [Note Type Schemas](note-type-schemas.md).
+This page is authoritative for the managed note contract, note-type association, core-defined managed-note field names, frontmatter property types, note-link syntax and resolution, field-definition properties, canonical field materialization, and field optionality semantics. Relationship cardinality, heading constraints, and template obligations are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). The effective note-type schema that supplies a note's structural contract is described in [Note Type Schemas](note-type-schemas.md).
 
 ## Notes in a Collection
 
@@ -16,8 +16,10 @@ Rules:
 
 - A collection note is a Markdown note that belongs to the collection as content rather than as a TypedMark artifact.
 - A managed note is a collection note that is associated with exactly one known note type under this specification version's note-type association rules.
-- In this specification version, note-type association is determined by the `note_type` frontmatter field.
-- A collection note whose `note_type` does not resolve to exactly one known schema, or that does not declare `note_type`, is an untyped note.
+- The ordered note-type mapping rules are defined in [Collection Model](collection-model.md).
+- The first matching note-type mapping rule determines the note's candidate note type.
+- A collection note is managed only when the candidate note type from the winning mapping rule resolves to exactly one known schema.
+- A collection note is untyped when no mapping rule matches or when the winning mapping rule does not resolve to exactly one known schema.
 - Untyped notes MAY exist in a collection.
 - Untyped notes are outside the managed-note contract on this page and are not validated against note-type storage, relationship, heading, or frontmatter field-definition rules.
 - Rules on this page apply only to managed notes unless a rule explicitly says otherwise.
@@ -29,10 +31,10 @@ Every managed note MUST:
 - be a Markdown file
 - contain YAML frontmatter
 - use YAML frontmatter as the note's metadata
-- declare `note_type`
+- resolve to exactly one known note type under the configured note-type mapping rules
 - satisfy exactly one effective note-type schema as defined in [Note Type Schemas](note-type-schemas.md)
 - satisfy the field and materialization rules defined in this page
-- satisfy the storage, relationship, and heading rules linked from its declared note type
+- satisfy the storage, relationship, and heading rules linked from its resolved note type
 
 Common frontmatter shape:
 
@@ -47,10 +49,13 @@ summary: ""
 status: active
 ```
 
+This remains a common stored shape, especially when a collection uses explicit frontmatter mapping or chooses to materialize the resolved note type in frontmatter.
+
 Rules:
 
-- `note_type` defines what the note is.
-- `note_type` MUST equal the schema identifier defined by the matching schema file.
+- `note_type`, when stored, defines the explicit note type value of the note.
+- If stored, `note_type` MUST equal the schema identifier defined by the matching schema file.
+- `note_type` MAY be omitted when the configured note-type mapping rules resolve the note type from another surface.
 - `id` MAY be omitted.
 - A managed note MAY declare `id` when its schema includes an `id` field definition.
 - If a managed note declares `id`, its `id` MUST be stable across renames and moves.
@@ -69,7 +74,14 @@ Rules:
 
 - A managed-note frontmatter field name is core-defined only when this specification gives that field a normative contract.
 - The normative contract for a core-defined managed-note field MUST define its meaning, whether it is required or optional or conditional, whether schemas may declare it explicitly, the constraints on its stored values, and any note-type association or conformance behavior that follows from its use.
-- `note_type` is a required core-defined managed-note field name in this specification version.
+- `note_type` is a core-defined managed-note field name in this specification version.
+- `note_type` MAY appear in stored frontmatter even when it is not declared in the effective schema, because it is core-defined rather than user-defined.
+- `note_type` MAY be omitted from stored frontmatter when the configured note-type mapping rules resolve the note type from another surface.
+- If stored, `note_type` MUST be a non-empty string.
+- If stored, `note_type` MUST equal the resolved note type for that note.
+- If `global_properties.frontmatter` or a note-type schema declares `note_type`, it MUST declare `type: text`.
+- If `global_properties.frontmatter` or a note-type schema declares `note_type`, it MUST declare either `value_from_schema: note_type` or `const_value` equal to the schema's top-level `note_type`.
+- If `global_properties.frontmatter` or a note-type schema declares `note_type`, it MUST NOT declare `optional: true` or `nullable: true`.
 - `id` is an optional core-defined managed-note field name in this specification version.
 - Schemas MAY declare `id` when they require stable note-level identifiers.
 - If a schema declares `id`, it MUST declare `type: text` and `format: slug`.
@@ -420,6 +432,6 @@ Rules:
 - The same optionality distinction applies recursively within object field definitions.
 - Unknown fields are evaluated using the `unknown_field` rule defined in [Collection Model](collection-model.md).
 - Unknown nested fields inside object values are also evaluated using the `unknown_field` rule defined in [Collection Model](collection-model.md).
-- `note_type` MUST always appear in `frontmatter`.
-- `note_type` MUST NOT declare `optional: true`.
+- If the effective `frontmatter` block declares `note_type`, `note_type` MUST be physically present in stored frontmatter.
+- If the effective `frontmatter` block declares `note_type`, `note_type` MUST NOT declare `optional: true`.
 - If `frontmatter` declares `id`, `id` MUST NOT declare `optional: true`.

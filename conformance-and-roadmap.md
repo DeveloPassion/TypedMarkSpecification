@@ -37,7 +37,7 @@ A filesystem tree conforms as a valid instantiated collection when:
 2. `<metadata_directory>/instance.yaml` is present and valid under [System Definitions and Instances](system-definitions-and-instances.md).
 3. Every property set file under `<metadata_directory>/property-sets/`, if present, is valid under [Collection Model](collection-model.md), and every property set reference from a note type used by managed notes resolves.
 4. Every note type used by managed notes has exactly one valid schema file under [Note Type Schemas](note-type-schemas.md).
-5. Managed notes declare valid `note_type` values and satisfy the managed note contract under [Managed Notes and Properties](managed-notes-and-properties.md).
+5. Managed notes resolve to valid note types under the configured note-type mapping rules and satisfy the managed note contract under [Managed Notes and Properties](managed-notes-and-properties.md).
 6. Managed notes satisfy their schema storage rules under [Note Type Schemas](note-type-schemas.md).
 7. Managed notes satisfy their schema relationship and heading rules under [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 
@@ -53,7 +53,7 @@ Additional rules:
 
 Recommended implementation order:
 
-1. create `typedmark.yaml` and decide validation defaults, global properties, and inheritance using [Collection Model](collection-model.md)
+1. create `typedmark.yaml` and decide note-type mappings, validation defaults, global properties, and inheritance using [Collection Model](collection-model.md)
 2. create any reusable property sets and the initial concrete note type schemas using [Collection Model](collection-model.md) and [Note Type Schemas](note-type-schemas.md)
 3. create canonical templates and heading and relationship rules using [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
 4. implement managed note parsing, field materialization, and note-link resolution using [Managed Notes and Properties](managed-notes-and-properties.md)
