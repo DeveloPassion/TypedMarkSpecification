@@ -66,62 +66,61 @@ template:
   file: ".metadata/templates/topic.md"
 
 frontmatter:
-  fields:
-    note_type:
-      type: text
-      const_value: topic
-    id:
-      type: text
-      format: slug
-      nullable: false
-    title:
-      label: Title
-      description: Human-readable note title.
-      icon: text
-      type: text
-      nullable: false
-    domain:
-      label: Domain
-      description: Domain note this topic belongs to.
-      icon: folder
+  note_type:
+    type: text
+    const_value: topic
+  id:
+    type: text
+    format: slug
+    nullable: false
+  title:
+    label: Title
+    description: Human-readable note title.
+    icon: text
+    type: text
+    nullable: false
+  domain:
+    label: Domain
+    description: Domain note this topic belongs to.
+    icon: folder
+    type: text
+    format: note_link
+    nullable: false
+    relationship_kind: belongs_to
+  sources:
+    label: Sources
+    description: Supporting source notes for this topic.
+    icon: book
+    type: list
+    items:
       type: text
       format: note_link
-      nullable: false
-      relationship_kind: belongs_to
-    sources:
-      label: Sources
-      description: Supporting source notes for this topic.
-      icon: book
-      type: list
-      items:
-        type: text
-        format: note_link
-      nullable: false
-      relationship_kind: related_to
-    status:
-      label: Status
-      description: Lifecycle state of the note.
-      icon: badge
-      type: text
-      allowed_values: [draft, active, archived]
-      nullable: true
-      default_value: null
-    description:
-      label: Description
-      description: Human-readable note description used in previews and references.
-      icon: paragraph
-      type: text
-      optional: true
-      nullable: true
-      default_value: null
-    summary:
-      label: Summary
-      description: Short overview used in generated references and previews.
-      icon: paragraph
-      type: text
-      optional: true
-      nullable: true
-      default_value: null
+    nullable: false
+    relationship_kind: related_to
+  status:
+    label: Status
+    description: Lifecycle state of the note.
+    icon: badge
+    type: text
+    allowed_values: [draft, active, archived]
+    nullable: true
+    default_value: null
+  description:
+    label: Description
+    description: Human-readable note description used in previews and references.
+    icon: paragraph
+    type: text
+    optional: true
+    nullable: true
+    default_value: null
+  summary:
+    label: Summary
+    description: Short overview used in generated references and previews.
+    icon: paragraph
+    type: text
+    optional: true
+    nullable: true
+    default_value: null
 
 relationships:
   belongs_to:
@@ -189,8 +188,8 @@ Rules:
 - `template.file` MUST end in `.md`.
 - `template.file` defines the canonical template for that note type.
 - The `frontmatter` block semantics are defined in [Managed Notes and Properties](managed-notes-and-properties.md).
-- The `frontmatter` block MUST contain a `fields` mapping, even when it is empty.
-- Field definitions inside `frontmatter.fields` MAY declare flat human-facing keys such as `label`, `description`, and `icon`, as defined in [Managed Notes and Properties](managed-notes-and-properties.md).
+- The `frontmatter` block MUST be a field-definition mapping, even when it is empty.
+- Field definitions inside `frontmatter` MAY declare flat human-facing keys such as `label`, `description`, and `icon`, as defined in [Managed Notes and Properties](managed-notes-and-properties.md).
 - Frontmatter field names declared in a note-type schema MUST follow the core-defined managed-note field-name rules defined in [Managed Notes and Properties](managed-notes-and-properties.md).
 - The `relationships` block semantics are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - The `relationships` block MUST contain both `belongs_to.allowed_note_types` and `related_to.allowed_note_types`, even when those mappings are empty.

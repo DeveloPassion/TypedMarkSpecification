@@ -172,7 +172,7 @@ Rules:
 - `default_value` does not waive the physical presence requirement for declared fields.
 - The RECOMMENDED pattern for a field that MUST always be present but MAY have no concrete value is `nullable: true` with `default_value: null`.
 - `relationship_kind`, if present, MUST be either `belongs_to` or `related_to`.
-- `relationship_kind` MAY be declared only on top-level frontmatter fields in `fields`.
+- `relationship_kind` MAY be declared only on top-level frontmatter fields.
 - A field with `relationship_kind` MUST have `type: text` and `format: note_link`, or `type: list` whose `items.type` is `text` and `items.format` is `note_link`.
 - A field without `relationship_kind` MAY still use `format: note_link`, but it does not contribute to typed relationship conformance.
 - The semantics of `relationship_kind` are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
@@ -206,14 +206,14 @@ The canonical stored form of a managed note uses fully materialized frontmatter.
 
 Rules:
 
-- Every field declared in `frontmatter.fields` MUST be physically present in stored note frontmatter.
+- Every field declared in `frontmatter` MUST be physically present in stored note frontmatter.
 - Declared fields MUST NOT be omitted merely because they currently have no concrete value.
 - When no concrete value is known for a nullable field, the canonical stored value is `null`, unless an explicit non-null `default_value` is defined.
 - When a field with `type: object` has a concrete mapping value, every field declared in that object's `fields` MUST be physically present in the stored mapping.
 - Fields with `optional: false` and `optional: true` do not differ in physical materialization, but they do differ in value requirements.
 - A field with `optional: false` MAY require a concrete non-null value, depending on `nullable` and `default_value`.
 - A field with `optional: true` never requires a concrete non-null value; it remains valid when materialized as `null`.
-- A missing field declared anywhere under `frontmatter.fields` is a `missing_declared_field` validation failure.
+- A missing field declared anywhere under `frontmatter` is a `missing_declared_field` validation failure.
 - A missing nested field declared within an object field is also a `missing_declared_field` validation failure.
 - Tools that create notes MUST write back frontmatter that satisfies these canonical field materialization rules.
 - Tools that import or scaffold notes MUST write back frontmatter that satisfies these canonical field materialization rules.
@@ -223,7 +223,7 @@ Rules:
 
 Each schema MUST declare:
 
-- `frontmatter.fields`
+- `frontmatter`
 
 Rules:
 
@@ -237,5 +237,5 @@ Rules:
 - The same optionality distinction applies recursively within object field definitions.
 - Unknown fields are evaluated using the `unknown_field` rule defined in [Collection Model](collection-model.md).
 - Unknown nested fields inside object values are also evaluated using the `unknown_field` rule defined in [Collection Model](collection-model.md).
-- `note_type` and `id` MUST always appear in `frontmatter.fields`.
+- `note_type` and `id` MUST always appear in `frontmatter`.
 - `note_type` and `id` MUST NOT declare `optional: true`.
