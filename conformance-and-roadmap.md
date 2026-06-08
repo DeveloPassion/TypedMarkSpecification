@@ -10,11 +10,9 @@ This page is authoritative for conformance modes, non-goals, and the RECOMMENDED
 
 ## 18. Non-Goals
 
-This version of the specification does not:
+This specification does not:
 
-- infer authoritative structure from folder names alone
-- define canonical serialization for governed artifacts
-- constrain H3 or deeper headings
+- enforce a specific schema for note types. It describes how to define/document one
 
 ## 19. Conformance
 

@@ -20,7 +20,6 @@ TypedMark defines:
 - which relationship constraints each type declares
 - which heading constraints each type declares
 - which templates define canonical starter structure
-- how governed artifacts are serialized
 - how conformance is evaluated
 
 TypedMark is the structural contract for a note collection. Artifact-specific rules are authoritative only where this specification says they are.
@@ -53,6 +52,20 @@ Rules:
 Rules:
 
 - `specification_version` MUST be a Semantic Versioning x.y.z string.
+
+### Spec-Defined Names and Namespaces
+
+TypedMark defines names in several namespaces rather than in one global pool of keys.
+
+Rules:
+
+- A name is spec-defined when this specification assigns it structural meaning in a specific artifact position or metadata namespace.
+- Spec-defined names are scoped to the namespace where they are defined. The same spelling MAY be spec-defined in more than one namespace with different roles.
+- When this specification defines a name in a namespace, it MUST also define that name's role, where it may appear, and the validation or conformance semantics that follow from its use in that namespace.
+- `label`, `description`, and `icon` are already spec-defined in the note-type schema top-level namespace and in the field-definition metadata namespace.
+- `catalog.tags` in `.metadata/system.yaml` and a managed-note frontmatter field named `tags` are different namespaces and MUST NOT be conflated.
+- Extensions, profiles, collection models, property sets, and note-type schemas MUST NOT assign incompatible meanings to a spec-defined name in the namespace where the core specification defines it.
+- Mentioning a candidate or example name in prose does not by itself define that name normatively.
 
 ## 3. Authoritative Artifact Map
 

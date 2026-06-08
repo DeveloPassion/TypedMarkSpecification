@@ -6,7 +6,7 @@ nav_order: 5
 
 # Managed Notes and Properties
 
-This page is authoritative for the managed note contract, frontmatter property types, note-link syntax and resolution, field definition attributes, canonical field materialization, and required-versus-optional field semantics. Relationship cardinality, heading constraints, and template obligations are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). The effective note-type schema that supplies a note's structural contract is described in [Note Type Schemas](note-type-schemas.md).
+This page is authoritative for the managed note contract, core-defined managed-note field names, frontmatter property types, note-link syntax and resolution, field definition attributes, canonical field materialization, and required-versus-optional field semantics. Relationship cardinality, heading constraints, and template obligations are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). The effective note-type schema that supplies a note's structural contract is described in [Note Type Schemas](note-type-schemas.md).
 
 ## 11. Managed Note Contract
 
@@ -45,6 +45,21 @@ Rules:
 - The meanings of `relationship_kind`, `belongs_to`, and `related_to` are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - Managed note frontmatter MUST follow the canonical field materialization rules defined on this page.
 
+### Core-Defined Frontmatter Field Names
+
+Managed-note frontmatter includes both generic schema-defined fields and core-defined field names whose meaning is assigned by this specification.
+
+Rules:
+
+- A managed-note frontmatter field name is core-defined only when this specification gives that field a normative contract.
+- The normative contract for a core-defined managed-note field MUST define its meaning, whether it is required or optional or conditional, whether schemas may declare it explicitly, the constraints on its stored values, and any note-type association or conformance behavior that follows from its use.
+- `note_type` and `id` are core-defined managed-note field names in this specification version.
+- A core-defined managed-note field name MUST NOT be repurposed as an ordinary user-defined field in `global_properties.frontmatter`, a property set, or a note-type schema unless the core field contract explicitly permits schema-level declaration of that field.
+- The `tags` property type defined below remains a first-class supported property type.
+- In this specification version, the field names `aliases`, `created_at`, `updated_at`, and `archived` are not yet core-defined managed-note field names. They become core-defined only in a TypedMark version that explicitly defines their contracts.
+- Supporting the `tags` property type does not by itself define a separate dedicated core field contract for the field name `tags`.
+- The generic property-type and field-definition rules in this page apply to ordinary schema-defined fields unless a dedicated core field rule says otherwise.
+
 ## 12. Frontmatter Property Types
 
 Each field definition MUST declare one of these property `type` values:
@@ -67,10 +82,11 @@ Rules:
 - `checkbox` values MUST be either `true` or `false`.
 - `date` MUST use RFC 3339 full-date format `YYYY-MM-DD`.
 - `datetime` MUST use RFC 3339 date-time format with seconds and an explicit timezone designator such as `Z` or `+02:00`.
-- `tags` MUST be materialized as a YAML sequence of tag strings.
+- `tags` values MUST be YAML sequences of tag strings.
 - `tags` entries MUST be non-empty strings.
-- This version of the specification does not support nested object-valued note properties.
-- Managed note properties MUST NOT be object-valued, even when the YAML syntax itself is valid.
+- Ordinary schema-defined managed-note fields MUST NOT be object-valued, even when the YAML syntax itself is valid.
+- This version of the specification does not support nested object-valued ordinary schema-defined managed-note fields.
+- A core-defined managed-note field name MAY use a dedicated structured value only when this specification explicitly defines that field's contract.
 
 ### Note-Link Syntax and Resolution
 
@@ -108,8 +124,8 @@ Rules:
 - `list.items` MUST NOT declare `nullable` because list elements are not materialized independently.
 - `tags` MUST NOT declare `items`.
 - Nested list properties are not supported.
-- Nested object-valued note properties are not supported.
-- Validators MUST reject object-valued note properties as non-conforming note metadata in this version of the specification.
+- Nested object-valued ordinary schema-defined managed-note fields are not supported.
+- Validators MUST reject object-valued ordinary schema-defined managed-note fields as non-conforming note metadata unless a dedicated core field rule explicitly allows that field name.
 
 ### Field Definition Attributes
 

@@ -108,6 +108,7 @@ Rules:
 - `global_properties` MAY be omitted.
 - `global_properties` MAY define shared defaults for `frontmatter`, `relationships`, and `headings`.
 - The semantics of `frontmatter`, including flat human-facing field metadata such as `label`, `description`, and `icon`, are defined in [Managed Notes and Properties](managed-notes-and-properties.md).
+- `global_properties.frontmatter` MUST follow the core-defined managed-note field-name rules defined in [Managed Notes and Properties](managed-notes-and-properties.md).
 - The semantics of `relationships` and `headings` are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - Every note type inherits `global_properties` by default.
 - Note-type schemas MAY override inherited global properties locally.
@@ -158,6 +159,7 @@ Rules:
 - The semantics of frontmatter field definitions in property sets, including flat human-facing field metadata such as `label`, `description`, and `icon`, are the same as in note-type schemas.
 - A property set MAY define reusable frontmatter fields only.
 - A property set MUST NOT define `note_type` or `id`.
+- A property set MUST NOT define any other core-defined managed-note field name unless this specification version explicitly permits schema-level declaration of that field.
 - A property set MUST NOT define storage, template, relationships, headings, guidance, or inheritance settings.
 - A property set MUST NOT reference other property sets.
 
