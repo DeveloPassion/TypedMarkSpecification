@@ -115,6 +115,7 @@ frontmatter:
     description: Short overview used in generated references and previews.
     icon: paragraph
     type: text
+    generated: true
     optional: true
     nullable: true
     default_value: ""
