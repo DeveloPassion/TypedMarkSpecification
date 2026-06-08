@@ -331,8 +331,11 @@ Rules:
 Rules:
 
 - `allowed_values` MAY be omitted.
-- `allowed_values` MUST be a non-empty list of unique scalar values compatible with the declared scalar property `type`.
-- `allowed_values` MUST NOT be used with `type: list`, `type: tags`, `type: object`, or `type: any`.
+- `allowed_values` MUST be a non-empty list of unique scalar values.
+- For scalar field types, `allowed_values` entries MUST be compatible with the declared property `type`.
+- For `type: list`, `allowed_values` is valid only when `items.type` is one of `text`, `integer`, `number`, `checkbox`, `date`, `time`, `datetime`, or `link`, and each `allowed_values` entry MUST be compatible with that item type.
+- For `type: list`, every stored item value MUST be one of the declared `allowed_values`.
+- `allowed_values` MUST NOT be used with `type: tags`, `type: object`, or `type: any`.
 - Text and link `allowed_values` comparisons are case-sensitive and use exact string equality.
 - Non-text scalar `allowed_values` comparisons use exact scalar equality after normal YAML parsing and type validation.
 
