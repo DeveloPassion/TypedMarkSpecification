@@ -204,9 +204,9 @@ Rules:
 - Property-set definitions and merge rules are defined in [Collection Model](collection-model.md).
 - Property sets affect frontmatter only; they do not make `relationships` or `headings` blocks optional.
 - `inheritance` MAY be omitted.
-- A note-type schema MAY include an `inheritance` block to disable global inheritance entirely or for specific blocks.
+- A note-type schema MAY include an `inheritance` block to disable global inheritance entirely, to disable specific inherited blocks, or to subtract individual inherited global frontmatter fields.
 - Collection-level merge and override rules are defined in [Collection Model](collection-model.md).
-- Inheritance affects the contents of `frontmatter`, `relationships`, and `headings`; property sets affect only `frontmatter`; neither mechanism makes required blocks optional.
+- Inheritance affects the contents of `frontmatter`, `relationships`, and `headings`; `inheritance.frontmatter_remove` can subtract inherited global frontmatter fields before property sets and local schema definitions are applied; property sets affect only `frontmatter`; neither mechanism makes required blocks optional.
 - A note-type schema MAY omit individual inherited field definitions, relationship target definitions, or heading settings that remain unchanged.
 
 ## Allowed Schema Kinds
@@ -230,6 +230,7 @@ Special-case guidance:
 - Fixed-path notes SHOULD be modeled as `singleton` note types.
 - Examples include `Home.md`, `Guide.md`, and `Glossary.md`.
 - A fixed-path singleton MAY omit `title` if the title is implied by the schema.
+- A fixed-path singleton that inherits most global frontmatter but does not want `title` MAY use `inheritance.frontmatter_remove: [title]`.
 - A fixed-path singleton MAY omit stored `note_type` when the collection's mapping rules and effective schema do not require it to be present.
 
 ## Storage Rules

@@ -326,10 +326,13 @@ Effective note-type schema merge rules:
 
 - These merge rules define the effective `frontmatter`, `relationships`, and `headings` blocks used by the effective note-type schema described in [Note Type Schemas](note-type-schemas.md).
 - Frontmatter merges by field name within `frontmatter`.
+- If `inheritance.frontmatter_remove` is present, the named fields are removed from inherited global frontmatter before any property set or local note-type schema frontmatter is applied.
 - If a property set defines a field already defined by inherited global frontmatter, the property set definition replaces the inherited global definition completely and determines whether the field is effectively optional.
 - If a local note-type schema defines a field already contributed by inherited global frontmatter or property sets, the local definition replaces the earlier definition completely and determines whether the field is effectively optional.
+- A field removed by `inheritance.frontmatter_remove` does not appear in the effective schema unless a declared property set or the local note-type schema defines that field later.
 - Because replacement is complete, any inherited or property-set-provided field metadata such as `label`, `description`, or `icon` is replaced too unless the overriding definition restates it.
 - Global frontmatter, when enabled, is applied first.
+- `inheritance.frontmatter_remove`, when present, is then applied to inherited global frontmatter.
 - Property sets are then applied in the schema's declared `property_sets` order.
 - Local note-type schema frontmatter is applied last.
 - `relationships.belongs_to.allowed_note_types` and `relationships.related_to.allowed_note_types` merge by target note type.
@@ -340,9 +343,9 @@ Effective note-type schema merge rules:
 - Inheritance operates within the required `frontmatter`, `relationships`, and `headings` blocks of a note-type schema; those blocks remain mandatory even when much of their effective content is inherited or provided by property sets.
 - A note-type schema MAY omit individual inherited or property-set-provided field definitions, relationship target definitions, or heading settings that remain unchanged.
 
-### Disabling Inheritance
+### Disabling and Subtracting Inheritance
 
-A note-type schema MAY explicitly disable inheritance from `global_properties`.
+A note-type schema MAY explicitly disable inheritance from `global_properties` and MAY subtract individual inherited frontmatter fields.
 
 Example:
 
@@ -355,15 +358,33 @@ inheritance:
   headings: true
 ```
 
+Example field subtraction:
+
+```yaml
+note_type: home
+inheritance:
+  enabled: true
+  frontmatter: true
+  frontmatter_remove:
+    - title
+```
+
 Rules:
 
 - `inheritance` MAY be omitted.
 - `inheritance.enabled` MAY be omitted; if omitted, it defaults to `true`.
 - If `inheritance.enabled: false`, the note type inherits nothing from `global_properties`.
 - `inheritance.frontmatter`, `inheritance.relationships`, and `inheritance.headings` MAY each be omitted; if omitted, each defaults to `true`.
+- `inheritance.frontmatter_remove` MAY be omitted.
+- If present, `inheritance.frontmatter_remove` MUST be a non-empty list of unique frontmatter field names.
+- `inheritance.frontmatter_remove` affects only `global_properties.frontmatter`.
+- Each field named in `inheritance.frontmatter_remove` MUST resolve to a field declared in `global_properties.frontmatter`.
+- If `inheritance.enabled: false` or `inheritance.frontmatter: false`, `inheritance.frontmatter_remove` MUST be omitted.
 - If one of those block-specific flags is `false`, the corresponding global block is ignored completely for that note type before merge rules are applied.
 - If a block-specific flag is `false`, local definitions for that block still apply normally.
-- Block-specific flags affect global inheritance only; they do not disable declared property sets and they do not make required schema blocks optional.
+- `inheritance.frontmatter_remove` is evaluated after block-specific disable rules and before declared property sets are applied.
+- `inheritance.frontmatter_remove` subtracts inherited global frontmatter only; it does not remove fields contributed later by property sets or local schema definitions.
+- Block-specific flags and `inheritance.frontmatter_remove` affect global inheritance only; they do not disable declared property sets and they do not make required schema blocks optional.
 - Block-specific inheritance flags have no effect when `inheritance.enabled: false` because all inheritance is already disabled.
 - Disable rules are evaluated before global merge rules and before declared property sets are applied.
 - Inheritance settings affect only how the effective note-type schema is computed; they do not create a second schema file or a separate persisted artifact.
