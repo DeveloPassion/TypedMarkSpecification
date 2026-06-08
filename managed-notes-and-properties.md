@@ -81,7 +81,7 @@ Rules:
 
 ## Frontmatter Property Types
 
-Every field definition is a YAML mapping. Every field definition MUST declare `type`, and it MAY declare additional field-definition properties such as `label`, `description`, `icon`, `format`, `generated`, `unique`, `deprecated`, `optional`, `nullable`, and `default_value`.
+Every field definition is a YAML mapping. Every field definition MUST declare `type`, and it MAY declare additional field-definition properties such as `label`, `description`, `icon`, `format`, `generated`, `unique`, `deprecated`, `optional`, `nullable`, `default_value`, `not_empty`, `not_blank`, `regex`, `min`, `max`, and `allowed_values`.
 
 ### Field Definition Property Reference
 
@@ -89,6 +89,8 @@ Rules:
 
 - Field-definition properties apply to top-level fields, to `list.items`, and recursively to nested fields inside `object.fields` unless a type-specific rule says otherwise.
 - Human-facing field metadata MUST NOT change field identity, storage keys, type validation, optionality semantics, relationship semantics, or materialization behavior.
+- Constraint properties other than `nullable` and `optional` are evaluated only when the stored value is non-null.
+- A non-null `default_value` MUST satisfy all declared field constraints.
 
 #### `type`
 
@@ -268,6 +270,62 @@ Rules:
 - Values with `format: hh:mm:ss` on `type: time` or `list.items.type: time` MUST use a 24-hour clock and match `^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d$`.
 - Values with `format: hh:mm:ss.sss` on `type: time` or `list.items.type: time` MUST use a 24-hour clock and match `^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d\.\d{3}$`.
 
+#### `not_empty`
+
+Rules:
+
+- `not_empty` MAY be omitted.
+- `not_empty` MUST be a boolean.
+- If omitted, `not_empty` defaults to `false`.
+- `not_empty: true` is valid only for `type: text`, `type: link`, `type: list`, `type: tags`, or `type: object`.
+- For `type: text` and `type: link`, `not_empty: true` means the stored string MUST NOT be `""`.
+- For `type: list` and `type: tags`, `not_empty: true` means the stored sequence MUST contain at least one item.
+- For `type: object`, `not_empty: true` means the stored mapping MUST contain at least one key.
+
+#### `not_blank`
+
+Rules:
+
+- `not_blank` MAY be omitted.
+- `not_blank` MUST be a boolean.
+- If omitted, `not_blank` defaults to `false`.
+- `not_blank: true` is valid only for `type: text` or `type: link`.
+- `not_blank: true` means the stored string MUST contain at least one non-whitespace character.
+- `not_blank: true` is stronger than `not_empty: true`.
+
+#### `regex`
+
+Rules:
+
+- `regex` MAY be omitted.
+- `regex` MUST be a non-empty string.
+- `regex` is valid only for `type: text` or `type: link`.
+- `regex` is matched against the entire stored string value.
+- This specification version does not standardize one regex dialect; validators MUST use one consistent documented regex dialect within a given implementation.
+
+#### `min`
+
+Rules:
+
+- `min` MAY be omitted.
+- `min` is valid only for `type: text`, `type: link`, `type: integer`, `type: number`, `type: date`, `type: time`, `type: datetime`, `type: list`, or `type: tags`.
+- For `type: text` and `type: link`, `min` constrains string length in Unicode code points and MUST be a non-negative integer.
+- For `type: list` and `type: tags`, `min` constrains item count and MUST be a non-negative integer.
+- For `type: integer`, `type: number`, `type: date`, `type: time`, and `type: datetime`, `min` constrains the stored value itself and MUST conform to the declared field type and `format` when applicable.
+- For `type: date`, `type: time`, and `type: datetime`, `min` comparison uses temporal ordering, not raw string comparison.
+
+#### `max`
+
+Rules:
+
+- `max` MAY be omitted.
+- `max` is valid only for `type: text`, `type: link`, `type: integer`, `type: number`, `type: date`, `type: time`, `type: datetime`, `type: list`, or `type: tags`.
+- For `type: text` and `type: link`, `max` constrains string length in Unicode code points and MUST be a non-negative integer.
+- For `type: list` and `type: tags`, `max` constrains item count and MUST be a non-negative integer.
+- For `type: integer`, `type: number`, `type: date`, `type: time`, and `type: datetime`, `max` constrains the stored value itself and MUST conform to the declared field type and `format` when applicable.
+- For `type: date`, `type: time`, and `type: datetime`, `max` comparison uses temporal ordering, not raw string comparison.
+- If both `min` and `max` are present, `min` MUST be less than or equal to `max`.
+
 #### `allowed_values`
 
 Rules:
@@ -275,7 +333,8 @@ Rules:
 - `allowed_values` MAY be omitted.
 - `allowed_values` MUST be a non-empty list of unique scalar values compatible with the declared scalar property `type`.
 - `allowed_values` MUST NOT be used with `type: list`, `type: tags`, `type: object`, or `type: any`.
-- Text `allowed_values` comparisons are case-sensitive and use exact string equality.
+- Text and link `allowed_values` comparisons are case-sensitive and use exact string equality.
+- Non-text scalar `allowed_values` comparisons use exact scalar equality after normal YAML parsing and type validation.
 
 #### `const_value`
 

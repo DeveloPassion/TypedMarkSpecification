@@ -74,6 +74,7 @@ frontmatter:
     description: Human-readable note title.
     icon: text
     type: text
+    not_blank: true
     nullable: false
   domain:
     label: Domain
