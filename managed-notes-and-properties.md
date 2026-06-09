@@ -6,7 +6,7 @@ nav_order: 5
 
 # Managed Notes and Properties
 
-This page is authoritative for the managed note contract, note-type association, core-defined managed-note field names, frontmatter property types, note-link syntax and resolution, field-definition properties, canonical field materialization, and field optionality semantics. Relationship cardinality, heading constraints, and template obligations are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). The effective note-type schema that supplies a note's structural contract is described in [Note Type Schemas](note-type-schemas.md).
+This page is authoritative for the managed note contract, note-type association, managed-note field names, core-defined managed-note field names, frontmatter property types, note-link syntax and resolution, field-definition properties, canonical field materialization, and field optionality semantics. Relationship cardinality, heading constraints, and template obligations are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). The effective note-type schema that supplies a note's structural contract is described in [Note Type Schemas](note-type-schemas.md).
 
 ## Notes in a Collection
 
@@ -65,6 +65,23 @@ Rules:
 - Managed-note conformance uses the effective note-type schema after default property sets, abstract-ancestor application, composed property sets, and local concrete schema definitions have been applied.
 - The meanings of `relationship_kind`, `belongs_to`, and `related_to` are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - Managed note frontmatter MUST follow the canonical field materialization rules defined on this page.
+
+### Field Names
+
+A managed-note frontmatter field name is the YAML key under which a field definition stores its value. The same field-name rules apply wherever this specification declares field definitions: the `frontmatter` block of a note-type schema, the `frontmatter` block of a property set, and any nested `object.fields` mapping.
+
+Rules:
+
+- A field name MUST be a non-empty string.
+- A field name MUST match the regular expression `^[a-z][a-z0-9_]*$`.
+- A field name MUST start with a lowercase ASCII letter and MAY continue with lowercase ASCII letters, digits, and underscores.
+- A field name MUST NOT contain uppercase letters, whitespace, dots, slashes, or any other character outside that grammar.
+- Field names are case-sensitive; two names that differ only in case are different names.
+- A field name MUST be unique within the `frontmatter` mapping or `object.fields` mapping that declares it.
+- A note-type schema or property set that declares a field name violating these rules is invalid under its artifact contract.
+- The core-defined managed-note field names defined below conform to this grammar and additionally carry the contracts defined in Core-Defined Frontmatter Field Names.
+- Storage-pattern placeholders of the form `{field_name}` reference top-level field names that follow these rules, as defined in [Note Type Schemas](note-type-schemas.md).
+- When two field definitions contributed through property-set composition or note-type inheritance share a field name, they are the same field and merge by name under the rules in [Collection Model](collection-model.md); this is not a uniqueness violation.
 
 ### Core-Defined Frontmatter Field Names
 
