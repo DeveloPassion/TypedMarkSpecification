@@ -31,5 +31,3 @@ If you want the motivation behind the spec, start with the [Manifesto](manifesto
 6. [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
 7. [System Definitions and Instances](system-definitions-and-instances.md)
 8. [Conformance and Roadmap](conformance-and-roadmap.md)
-
-If you want to understand one note type end to end, start with [Note Type Schemas](note-type-schemas.md), especially the effective note-type schema section, then follow the linked rule pages only for the blocks that section references.

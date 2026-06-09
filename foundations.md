@@ -6,23 +6,18 @@ nav_order: 1
 
 # Foundations
 
-This page introduces the high-level concepts of TypedMark first, then describes its purpose, design principles, authoritative artifacts, and structural precedence. Artifact-specific contracts are defined only in the linked pages.
+This page introduces the high-level concepts of TypedMark, its purpose, design principles, artifacts, ...
 
 ## Core Concepts
 
 ### Collection
 
-A TypedMark collection is the primary governed abstraction in this specification. It is a rooted set of Markdown notes plus the authoritative artifacts that define how those notes are structured. Its structural contract is anchored by the collection configuration at the collection root and by the governed artifacts under the metadata directory named by `typedmark.yaml`.
+A TypedMark collection is a rooted set of Markdown notes plus the TypedMark-based artifacts that define how those notes are structured. The main configuration file for a TypedMark collection is called `typedmark.yaml`.
 
 Rules:
 
 - `collection` is the primary abstraction used by this specification.
-- A collection root is the directory that contains `typedmark.yaml`.
-- Unless a rule explicitly names a different artifact or conformance mode, references to the governed note set and its authoritative artifacts mean a collection.
-- `filesystem tree` and `directory tree` refer only to the on-disk representation of a collection; they are not separate core abstractions.
-- `workspace` and `repository` are host-environment or transport terms, not primary TypedMark abstractions.
-- A workspace or repository MAY contain or distribute a collection, but this specification governs the collection rooted at `typedmark.yaml`, not the surrounding host container.
-- `system definition` and `instantiated collection` are specific packaging or conformance states of a collection root; they are not generic aliases for the core collection concept.
+- A collection root is any directory that contains `typedmark.yaml`.
 
 ### Collection Configuration
 
