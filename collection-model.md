@@ -6,7 +6,7 @@ nav_order: 2
 
 # Collection Model
 
-This page is authoritative for `typedmark.yaml`, the configurable metadata directory, ordered note-type mappings, named property sets, default property sets, property-set composition, effective block-merge rules, and validation defaults. It is not authoritative for `<metadata_directory>/system.yaml` or `<metadata_directory>/instance.yaml`; those live in [System Definitions and Instances](system-definitions-and-instances.md). It is also not authoritative for relationship and template semantics; those live in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). Managed note field semantics still live in [Managed Notes and Properties](managed-notes-and-properties.md), even when field definitions are contributed through property sets, abstract note types, or note-type schemas. The combined result of those contributions is the effective note-type schema described in [Note Type Schemas](note-type-schemas.md).
+This page is authoritative for `typedmark.yaml`, the configurable metadata directory, ordered note-type mappings, named property sets, default property sets, property-set composition, the collection's composition provenance, effective block-merge rules, and validation defaults. It is not authoritative for `<metadata_directory>/system.yaml`, system composition, or change history; those live in [Systems, Composition, and Evolution](system-definitions-and-instances.md). It is also not authoritative for relationship and template semantics; those live in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). Managed note field semantics still live in [Managed Notes and Properties](managed-notes-and-properties.md), even when field definitions are contributed through property sets, abstract note types, or note-type schemas. The combined result of those contributions is the effective note-type schema described in [Note Type Schemas](note-type-schemas.md).
 
 Property sets are the single composition mechanism for reusable `frontmatter`, `relationships`, and `headings`. A property set is a named bundle stored under `<metadata_directory>/property-sets/`. A collection applies property sets to note types in two ways: `typedmark.yaml` MAY name default property sets that apply to every note type, and a concrete note-type schema MAY name additional property sets to compose. Note-type inheritance through `extends` is a distinct axis defined in [Note Type Schemas](note-type-schemas.md); it carries `kind`, `storage`, `template`, and `guidance`, which property sets do not.
 
@@ -31,6 +31,7 @@ validation_defaults:
   duplicate_unique_value: error
   invalid_property_set: error
   invalid_note_type_mapping: error
+  invalid_composition: error
   invalid_note_link: error
   invalid_relationship_definition: error
   invalid_relationship_instance: error
@@ -48,12 +49,12 @@ Rules:
 - The semantics of `specification_version` are defined in [Foundations](foundations.md).
 - `collection_model_id` MUST be a non-empty slug.
 - `collection_model_id` identifies the structural collection model described by `typedmark.yaml`.
-- `collection_model_id` is not an instantiated collection identifier.
-- Multiple instantiated collections MAY share the same `collection_model_id`.
+- `collection_model_id` identifies a structural model, not a system release and not a specific collection on disk.
+- Multiple collections MAY share the same `collection_model_id`.
 - `metadata_directory` MUST be a non-empty string.
 - `metadata_directory` MUST name a single directory at the collection root.
 - `metadata_directory` MUST NOT be `.` or `..` and MUST NOT contain path separators.
-- `metadata_directory` identifies the governed-artifact subtree for the collection, including the system manifest, instance manifest, property sets, note-type schemas, and templates.
+- `metadata_directory` identifies the governed-artifact subtree for the collection, including the system manifest, change history, property sets, note-type schemas, and templates.
 - Validators and agents MUST derive governed artifact locations from `metadata_directory`.
 - `exclude_paths` defines additional content that validators and agents MUST ignore for structural reasoning. It does not redefine or relocate the metadata directory.
 - `validation_defaults` provides default severity levels for collection-wide validation reporting.
@@ -69,6 +70,7 @@ Rules:
 - `duplicate_unique_value` applies when a field declared with `unique: true` repeats a non-null stored value in more than one managed note of the same note type.
 - `invalid_property_set` applies when a property set file, a `typedmark.yaml` `default_property_sets` reference, or a note-type schema `property_sets` or `exclude_property_sets` reference violates the property-set rules defined in this page.
 - `invalid_note_type_mapping` applies when a note-type mapping rule in `typedmark.yaml` violates the mapping-rule contract defined in this page.
+- `invalid_composition` applies when the `composition` block in `typedmark.yaml` violates the composition-provenance rules defined in this page, including a source that does not resolve to exactly one system at the declared version.
 - `invalid_note_link` applies when an internal note link violates the syntax or resolution rules defined in [Managed Notes and Properties](managed-notes-and-properties.md).
 - `invalid_relationship_definition` applies when relationship declarations violate the relationship model defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - `invalid_relationship_instance` applies when concrete note-to-note links violate the relationship constraints defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
@@ -146,6 +148,35 @@ Rules:
 - `contains_any` and `contains_all` are valid only when the stored field value is a YAML sequence of strings.
 - If the winning mapping rule yields a candidate note type that does not resolve to exactly one concrete schema file under `<metadata_directory>/schemas/`, the note is untyped.
 - Because `note_type_mappings` is ordered, more specific rules SHOULD appear before more general rules.
+
+### Composition Provenance
+
+`typedmark.yaml` MAY define `composition` to record the systems this collection's structure was composed from. The lineage is both provenance and the reproducible recipe: re-composing the same sources at the same versions reconstructs the same collection. It is also the input the update flow uses to migrate a collection to newer system versions. System composition, its deterministic merge semantics, and the migration flow are defined in [Systems, Composition, and Evolution](system-definitions-and-instances.md).
+
+Example:
+
+```yaml
+composition:
+  sources:
+    - system_id: para-system
+      system_version: 1.2.0
+    - system_id: dev-team-ai-context
+      system_version: 0.3.0
+```
+
+Rules:
+
+- `composition` MAY be omitted. A collection authored directly, without composing any system, omits it.
+- If present, `composition` MUST physically contain `sources`.
+- `composition.sources` MUST be a non-empty ordered list.
+- The order of `composition.sources` is significant and defines the composition merge order defined in [Systems, Composition, and Evolution](system-definitions-and-instances.md).
+- Each source MUST declare `system_id` and `system_version`.
+- `system_id` MUST be a non-empty slug.
+- `system_version` MUST be a Semantic Versioning 2.0.0 string.
+- A `system_id` MUST appear at most once in `composition.sources`.
+- Each source MUST resolve to exactly one system whose `system_id` and `version` match; a source that does not resolve is an `invalid_composition` failure.
+- A composed collection MUST remain self-contained: its materialized schemas, property sets, and templates MUST be physically present under `metadata_directory`, and conformance MUST NOT require re-resolving `composition.sources`.
+- `composition` records provenance only; it does not relocate, replace, or override any governed artifact physically present under `metadata_directory`.
 
 ### Default Property Sets
 

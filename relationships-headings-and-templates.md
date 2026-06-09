@@ -104,6 +104,9 @@ Rules:
 - `template.file` MUST end in `.md`.
 - The template path referenced by a schema need not equal `<metadata_directory>/templates/<note_type>.md`.
 - Templates MUST include valid starter frontmatter in canonical materialized form.
+- A template's starter frontmatter MUST conform to the effective note-type schema of the note type that references the template, under the rules in [Managed Notes and Properties](managed-notes-and-properties.md).
+- A template whose starter frontmatter declares a field absent from the effective schema, omits a declared field, or violates a field's type or value constraints is invalid, independently of the optional `template_drift` comparison.
+- Template-frontmatter conformance is part of system-definition validity; an invalid template makes its referencing note type non-conforming.
 - Templates MUST NOT introduce managed-note frontmatter fields solely to mirror schema-level `relationships` declarations.
 - Templates SHOULD include the canonical required H2 headings.
 - System-definition conformance requires every referenced template to exist and be valid; see [Conformance and Roadmap](conformance-and-roadmap.md).

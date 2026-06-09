@@ -1,36 +1,38 @@
 ---
-title: System Definitions and Instances
+title: Systems, Composition, and Evolution
 parent: TypedMark
 nav_order: 7
 ---
 
-# System Definitions and Instances
+# Systems, Composition, and Evolution
 
-This page is authoritative for `<metadata_directory>/system.yaml`, `<metadata_directory>/instance.yaml`, and the boundary between the core specification and profiles. It is not authoritative for `typedmark.yaml`; that lives in [Collection Model](collection-model.md). It is also not authoritative for note-type schema block semantics, managed note field semantics, or relationship and template semantics; those live in [Note Type Schemas](note-type-schemas.md), [Managed Notes and Properties](managed-notes-and-properties.md), and [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
+This page is authoritative for `<metadata_directory>/system.yaml`, system versioning semantics, deterministic system composition, `<metadata_directory>/history.yaml`, and the migration and update flow. Collection-level provenance (`composition` in `typedmark.yaml`) is defined in [Collection Model](collection-model.md). This page is not authoritative for note-type schema block semantics, managed note field semantics, or relationship and template semantics; those live in [Note Type Schemas](note-type-schemas.md), [Managed Notes and Properties](managed-notes-and-properties.md), and [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 
-## System Definitions, Instances, and Profiles
+## Systems
 
-A system definition is a reusable packaging form for a TypedMark collection model. It packages:
+A system is a reusable, versioned, publishable packaging of a TypedMark collection model. It is the unit people share and instantiate: a personal-knowledge system, a dev-team AI-context system, a marketing-agency system, a PARA system, and so on. Where the core specification defines *how* to define note types, a system defines *which* note types exist and how a collection of that kind is configured and scaffolded.
 
-- system identity and publishable metadata
-- the root `typedmark.yaml`
-- named property sets, when used
-- note-type schemas
-- templates
-- scaffold instructions for creating an initial collection structure
+A system is therefore the domain layer of TypedMark. It carries domain note types, house conventions, templates, and starter content on top of the domain-agnostic core.
 
-An instantiated collection is a concrete collection described by `<metadata_directory>/instance.yaml`.
+Rules:
 
-### System Definition Artifact
+- The core specification defines the file layout, schema shapes, field semantics, validation model, composition semantics, and conformance rules.
+- A system applies that model to a concrete domain by shipping note-type schemas, property sets, templates, scaffold content, and validation defaults.
+- A system MAY establish house conventions such as preferred note types, folder conventions, and validation strictness through the artifacts it ships.
+- A system MUST NOT relax a core `MUST` requirement.
+- System-specific conformance is evaluated in addition to, not instead of, the core conformance rules in [Conformance and Roadmap](conformance-and-roadmap.md).
+- A system MAY be composed from other systems, as defined under System Composition below.
 
-`<metadata_directory>/system.yaml` defines a reusable system package. Conformance requirements for when a collection root counts as a valid system definition are defined in [Conformance and Roadmap](conformance-and-roadmap.md).
+## System Definition Artifact
 
-Required system manifest example:
+`<metadata_directory>/system.yaml` defines a reusable, publishable system. Conformance requirements for when a collection root counts as a valid system definition are defined in [Conformance and Roadmap](conformance-and-roadmap.md).
+
+System manifest example:
 
 ```yaml
 specification_version: 0.0.1
 system_id: example-knowledge-system
-version: 0.0.1
+version: 0.2.0
 name: Example Knowledge System
 description: Reusable knowledge note system.
 audiences:
@@ -72,14 +74,14 @@ Required top-level keys:
 
 Rules:
 
-- `<metadata_directory>/system.yaml` defines the canonical system representation for packaging, publishing, sharing, and import.
+- `<metadata_directory>/system.yaml` defines the canonical system representation for packaging, publishing, sharing, composition, and import.
 - `<metadata_directory>/system.yaml` MUST conform to the system-manifest rules defined by this specification.
 - The semantics of `specification_version` are defined in [Foundations](foundations.md).
 - `system_id` uniquely identifies the logical system family.
-- `system_id` identifies a reusable system family and is not an instantiated collection identifier.
+- `system_id` identifies a reusable system family and is not a collection identifier.
+- `system_id` and `collection_model_id` in `typedmark.yaml` identify different things and MUST NOT be treated as interchangeable.
 - `version` identifies a publishable system release and MUST be a Semantic Versioning 2.0.0 string.
-- Consumers MUST derive the canonical collection asset locations from the authoritative artifact map in [Foundations](foundations.md) together with `typedmark.yaml` `metadata_directory`.
-- `system_id` and `collection_model_id` identify different things and MUST NOT be treated as interchangeable.
+- `version` MUST follow the system versioning semantics defined under System Versioning below.
 - `scaffold` SHOULD be present, even if empty.
 - `scaffold.folders` lists folders an importer SHOULD create when instantiating a collection from the system.
 - `scaffold.notes` lists note files an importer SHOULD create when instantiating a collection from the system.
@@ -87,73 +89,172 @@ Rules:
 - `scaffold.notes[].note_type` MUST resolve to exactly one concrete note type.
 - `scaffold.notes[].values` MAY provide initial frontmatter values that are merged into the instantiated template.
 - Values supplied in `scaffold.notes[].values` override template placeholder values for that instantiated note only.
-- A system definition MAY be shared as a directory tree, a Git repository, or an archive file, provided relative paths are preserved.
+- `scaffold.notes[].path` and `scaffold.folders` entries MUST be collection-relative, MUST use forward slashes, and MUST NOT escape the collection root with absolute paths or `..` segments.
+- A system MAY be shared as a directory tree, a Git repository, or an archive file, provided relative paths are preserved.
 - The canonical published form is the unpacked collection directory tree that preserves `typedmark.yaml` and the metadata directory selected by `typedmark.yaml`, including its governed internal layout.
 
-Import semantics:
+### Publishing and Catalog
 
-- An importer MUST preserve `typedmark.yaml` and the configured metadata directory structure and file contents unless the user explicitly requests a transformation.
-- An importer MUST validate `<metadata_directory>/system.yaml`, `typedmark.yaml`, any property set files present under `<metadata_directory>/property-sets/`, and the note-type schema files before creating a collection from the system.
-- An importer SHOULD support a full scaffolded import mode that creates the declared folders and notes.
-- An importer MAY additionally support a metadata-only import mode that installs `typedmark.yaml` and the configured metadata directory without materializing scaffold notes.
-- A metadata-only import MUST NOT create `<metadata_directory>/instance.yaml`.
-- A full scaffolded import MUST create `<metadata_directory>/instance.yaml`.
-- A full scaffolded import MUST assign a new `collection_instance_id`.
-- When instantiating a note from a template, the importer MUST emit frontmatter that conforms to [Managed Notes and Properties](managed-notes-and-properties.md).
-- Marketplace or catalog implementations SHOULD be able to index a system definition from `<metadata_directory>/system.yaml` alone.
-- A metadata-only import yields an installed system definition and does not by itself require the target collection root to contain any instantiated notes.
-- A full scaffolded import yields an instantiated collection, even if many instantiated notes still contain placeholder or `null` values.
-
-Publishing and catalog semantics:
+Rules:
 
 - A marketplace entry SHOULD be keyed by `system_id` and `version`.
 - `name`, `description`, `audiences`, `publisher`, `license`, and `catalog.tags` are the primary discovery fields for catalogs and application marketplaces.
-- Applications MAY present curated system definitions for different audiences such as individuals, teams, and organizations.
+- Applications MAY present curated systems for different audiences such as individuals, teams, and organizations.
+- Marketplace or catalog implementations SHOULD be able to index a system from `<metadata_directory>/system.yaml` alone.
 
-### Instantiated Collection Artifact
+### Importing and Instantiating a System
 
-`<metadata_directory>/instance.yaml` defines the identity and provenance of one instantiated collection. Conformance requirements for when a collection root counts as a valid instantiated collection are defined in [Conformance and Roadmap](conformance-and-roadmap.md).
+Instantiating a system creates a working collection from it. The collection records which system it came from in `typedmark.yaml` `composition`, defined in [Collection Model](collection-model.md); there is no separate instance manifest.
 
-Required instance manifest example:
+Rules:
+
+- An importer MUST validate `<metadata_directory>/system.yaml`, `typedmark.yaml`, any property set files under `<metadata_directory>/property-sets/`, the note-type schema files, and `<metadata_directory>/history.yaml` when present, before creating a collection from the system.
+- An importer MUST preserve `typedmark.yaml` and the configured metadata directory structure and file contents unless the user explicitly requests a transformation.
+- An importer SHOULD support a full scaffolded import mode that creates the declared folders and notes.
+- An importer MAY additionally support a metadata-only import mode that installs `typedmark.yaml` and the configured metadata directory without materializing scaffold notes.
+- When instantiating a note from a template, the importer MUST emit frontmatter that conforms to [Managed Notes and Properties](managed-notes-and-properties.md).
+- An importer that instantiates a collection from one or more systems MUST record those systems and their resolved versions in `typedmark.yaml` `composition`, so the result can be reproduced and later updated.
+- A full scaffolded import yields a usable collection, even if many instantiated notes still contain placeholder or `null` values.
+- A metadata-only import yields an installed structural model and does not by itself require the target collection root to contain any instantiated notes.
+
+## System Composition
+
+A collection or a system MAY be built by composing other systems. Composition is how a marketplace and a CLI let a user stack several systems together — for example combining a PARA system, a personal-knowledge system, and a dev-team AI-context system into one working collection, or publishing that combination as a new system.
+
+Composition is a build-time operation. A composing tool loads the source systems at their declared versions, merges them deterministically, and materializes one self-contained collection in which every schema, property set, and template is physically present in the metadata directory. The composed collection then conforms exactly like any hand-authored collection, and remains understandable from `typedmark.yaml` and the metadata directory alone.
+
+The ordered list of source systems and their resolved versions is the collection's composition lineage, recorded in `typedmark.yaml` `composition`, defined in [Collection Model](collection-model.md). The lineage is both provenance and the reproducible recipe: re-running composition over the same sources at the same versions reconstructs the same result.
+
+Rules:
+
+- Composition resolves each source system identifier and version to exactly one system whose `system_id` and `version` match.
+- A composing tool MUST materialize the merged note-type schemas, property sets, and templates into the target metadata directory so the composed collection is self-contained.
+- A composing tool MUST record each source `system_id` and resolved `system_version` in `typedmark.yaml` `composition.sources`, in composition order.
+- A composing tool MUST NOT require network access, the source systems, or the composition tool itself to evaluate the conformance of an already-composed collection.
+- Composition MUST be deterministic, as defined under Composition Merge Semantics below.
+
+### Composition Merge Semantics
+
+The inputs to composition are the ordered source systems from `composition.sources` plus the local artifacts authored directly in the target collection. The merge is a deterministic ordered fold.
+
+Rules:
+
+- Sources are merged in `composition.sources` order; the local collection's own artifacts are applied last.
+- Note-type schemas merge by `note_type`; property sets merge by `property_set`; templates merge by template path; `scaffold.folders` merge by set union; `scaffold.notes` merge by `path`.
+- When two inputs contribute the same keyed artifact, the later input in the merge order replaces the earlier one completely, and the local collection's artifact overrides every source.
+- `typedmark.yaml` `metadata_directory` MUST be identical across all sources and the target; a mismatch is a composition error.
+- `typedmark.yaml` `default_property_sets` merge by concatenation in merge order with duplicate identifiers removed, keeping the first occurrence.
+- `typedmark.yaml` `note_type_mappings` merge by concatenation in merge order; because mapping rules are evaluated in order, earlier sources' rules are evaluated before later sources' rules unless the target overrides them.
+- `typedmark.yaml` `validation_defaults` and `exclude_paths` merge by key, with later inputs overriding earlier inputs per key, and the target overriding all.
+- A composing tool MUST report every collision it resolves, identifying the artifact, the contributing sources, and the winner.
+- `history.yaml` from each source MAY be retained for update reasoning, as defined under Migration and Updates; composition itself does not require merging source histories into a single log.
+
+### Reproducibility and Canonical Form
+
+Rules:
+
+- Two conforming composing tools given identical `composition.sources` at identical versions MUST produce the same composed schemas, property sets, and templates under canonical comparison.
+- Canonical comparison uses the canonical field materialization rules in [Managed Notes and Properties](managed-notes-and-properties.md) for frontmatter, and the deterministic merge order defined above for every ordered construct, including effective field order, `property_sets` order, and `composition.sources` order.
+- A composing tool SHOULD serialize composed artifacts in canonical form so that identical inputs produce byte-identical, hash-stable output.
+- Canonical serialization MUST preserve the deterministic merge order for ordered constructs and MUST NOT reorder fields, property-set references, or composition sources.
+- The local-only contribution of a composed collection is, by definition, the difference between its current materialized state and the state obtained by recomposing its `composition.sources`; a tool MUST be able to recover it by recomposition rather than by reading per-artifact origin tags.
+
+## System Versioning
+
+A system's `version` communicates the intent of a release to humans and catalogs. It does not, by itself, tell a tool what a given upgrade will do to a collection.
+
+Change classes:
+
+- `patch`: non-structural changes only, such as edits to `label`, `description`, `icon`, or `guidance`.
+- `minor`: additive, backward-compatible structural changes, such as a new note type, a new property set, or a new optional field.
+- `major`: breaking structural changes, such as removing or renaming a note type or field, changing a field type, tightening a constraint, or changing storage rules.
+
+Rules:
+
+- `version` MUST be a Semantic Versioning 2.0.0 string.
+- A system release SHOULD select its `version` change class according to the most impactful change it introduces, using the change classes above.
+- The version number conveys intent only. A tool MUST NOT infer the concrete migration impact of an upgrade from the version number alone.
+- A tool that evaluates an upgrade MUST compute the actual impact from the new system definition and its `history.yaml`, as defined under Migration and Updates, and MUST treat the version number as advisory.
+
+## Change History
+
+`<metadata_directory>/history.yaml` is an append-only, event-sourced log of the structural changes a system has undergone. Replaying its events in order reconstructs the current effective schema state. It is the authoritative record of *what changed* between versions, including changes such as field renames that cannot be inferred from a structural comparison alone.
+
+History example:
 
 ```yaml
 specification_version: 0.0.1
-collection_instance_id: 01JWW3QGMBH1MG4VK9A6V4ZJ9C
-collection_model_id: example-knowledge-base
-system_id: example-knowledge-system
-system_version: 0.0.1
+history:
+  - version: 0.1.0
+    changes:
+      - op: add_note_type
+        note_type: topic
+      - op: add_field
+        note_type: topic
+        field: title
+      - op: add_field
+        note_type: topic
+        field: summary
+  - version: 0.2.0
+    changes:
+      - op: rename_field
+        note_type: topic
+        from: summary
+        to: overview
+      - op: add_field
+        note_type: topic
+        field: status
 ```
 
-Required top-level keys:
+Defined change operations:
 
-- `specification_version`
-- `collection_instance_id`
-- `collection_model_id`
-
-Rules:
-
-- `<metadata_directory>/instance.yaml` MUST conform to the instance-manifest rules defined by this specification.
-- The semantics of `specification_version` are defined in [Foundations](foundations.md).
-- `collection_instance_id` MUST be a non-empty string and SHOULD be globally unique.
-- `collection_instance_id` identifies one concrete instantiated collection.
-- `collection_instance_id` MUST NOT appear in `typedmark.yaml`.
-- `collection_model_id` in `<metadata_directory>/instance.yaml` MUST equal `collection_model_id` in `typedmark.yaml`.
-- `system_id` and `system_version` MAY be omitted. If present, they are provenance fields in `<metadata_directory>/instance.yaml`.
-- If `<metadata_directory>/instance.yaml` declares `system_version`, it MUST be a Semantic Versioning 2.0.0 string.
-- If `<metadata_directory>/system.yaml` is present and `<metadata_directory>/instance.yaml` declares `system_id`, it MUST equal `<metadata_directory>/system.yaml` `system_id`.
-- If `<metadata_directory>/system.yaml` is present and `<metadata_directory>/instance.yaml` declares `system_version`, it MUST equal `<metadata_directory>/system.yaml` `version`.
-- Multiple instantiated collections MAY share the same `system_id`, `system_version`, and `collection_model_id`, but each instantiated collection MUST have its own `collection_instance_id`.
-
-### Core Specification and Profiles
-
-The core specification defines the reusable structural model. Profiles and reference systems apply that model to a concrete domain.
+- `add_note_type` with `note_type`
+- `remove_note_type` with `note_type`
+- `rename_note_type` with `from` and `to`
+- `add_field` with `note_type` and `field`
+- `remove_field` with `note_type` and `field`
+- `rename_field` with `note_type`, `from`, and `to`
+- `retype_field` with `note_type`, `field`, `from_type`, and `to_type`
+- `change_field` with `note_type` and `field`, for constraint or metadata changes that are neither a rename nor a retype
+- `add_property_set` with `property_set`
+- `remove_property_set` with `property_set`
+- `rename_property_set` with `from` and `to`
 
 Rules:
 
-- The core specification defines the file layout, schema shapes, field semantics, validation model, and conformance rules.
-- A profile MAY define a RECOMMENDED or REQUIRED note type set.
-- A profile MAY constrain preferred internal link syntax, path conventions, naming rules, scaffold content, and validation settings.
-- A profile MAY define fixed-path singleton notes, starter folders, and starter templates.
-- A profile MUST NOT relax a core `MUST` requirement.
-- Profile-specific conformance is evaluated in addition to, not instead of, the core conformance rules in [Conformance and Roadmap](conformance-and-roadmap.md).
-- A system definition MAY act as a publishable profile or reference system.
+- `<metadata_directory>/history.yaml` MAY be omitted by a system that publishes no change history.
+- If present, `history.yaml` MUST physically contain `specification_version` and `history`.
+- `history` MUST be an ordered list of release entries.
+- Each release entry MUST declare `version` and `changes`.
+- Each release entry's `version` MUST be a Semantic Versioning 2.0.0 string.
+- Release entries MUST appear in ascending version order, and each `version` MUST be unique within `history`.
+- The last release entry's `version` MUST equal the system's `version` in `<metadata_directory>/system.yaml` when both files are present.
+- Each entry in `changes` MUST declare `op` using one of the defined change operations.
+- A `field` operand MAY be a dotted path to address a nested field inside an `object.fields` mapping.
+- Replaying `history` from the first entry to the last, applying each `changes` list in order, MUST reconstruct the system's current effective schema state.
+- A validator MAY check this reconstruction invariant and report a divergence between `history.yaml` and the current schemas.
+- When cutting a new release, a tool SHOULD generate candidate `changes` by comparing the previous version's state to the current state, and the author MUST confirm or correct any change that a structural comparison cannot classify unambiguously, in particular distinguishing a `rename_field` from a paired `remove_field` and `add_field`.
+
+## Migration and Updates
+
+Updating a collection to newer versions of one or more of its source systems re-resolves the lineage, recomposes the collection, and migrates existing notes to match the new effective schemas.
+
+Because a structural comparison cannot distinguish a rename from a removal paired with an addition, migration does not trust the version number and does not rely on a structural diff alone. It computes the concrete impact on the specific target collection by examining the new system definition together with the change history that produced it.
+
+The update flow:
+
+1. Read the lineage from `typedmark.yaml` `composition.sources`.
+2. Resolve the new target version for each source system being updated.
+3. Recompose the collection deterministically at the new versions to obtain the new effective schemas.
+4. Compute the structural impact on the specific target by comparing the collection's current effective schemas to the recomposed schemas.
+5. Reconcile that impact with the `changes` recorded in each updated source's `history.yaml` between the collection's current source version and the target source version, so that renames and retypes are classified correctly rather than treated as drops and adds.
+6. Produce an ordered migration plan of managed-note operations from the reconciled change set.
+7. Apply the migration plan to the collection's managed notes, then update `composition.sources` to the new versions.
+
+Rules:
+
+- A tool MUST recompute migration impact against the actual target collection, because local overrides recorded on top of the lineage MAY change which source changes are relevant.
+- A tool MUST classify field renames and retypes using the source `history.yaml` change operations rather than inferring them from a structural comparison.
+- The managed-note effect of each change operation is defined in [Managed Notes and Properties](managed-notes-and-properties.md).
+- After a migration completes, the collection MUST conform to the recomposed effective schemas, and `typedmark.yaml` `composition.sources` MUST record the new resolved versions.
+- A tool MUST NOT silently discard managed-note data; a migration step that cannot preserve data, such as an unclassifiable `retype_field`, MUST be reported for explicit resolution rather than applied destructively.

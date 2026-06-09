@@ -21,7 +21,7 @@ Rules:
 
 ### Collection Configuration
 
-The collection configuration is the collection-wide structural contract defined in `typedmark.yaml`. It defines collection-level rules such as the metadata directory, note-type mappings, validation defaults, excluded paths, default property sets, and other defaults that apply across note types. Details: [Collection Model](collection-model.md).
+The collection configuration is the collection-wide structural contract defined in `typedmark.yaml`. It defines collection-level rules such as the metadata directory, note-type mappings, validation defaults, excluded paths, default property sets, composition provenance, and other defaults that apply across note types. Details: [Collection Model](collection-model.md).
 
 ### Note Types
 
@@ -59,9 +59,9 @@ The effective note-type schema is the normative result of taking one concrete no
 
 A note type governs more than metadata fields. It also defines typed relationship constraints, heading requirements, and a canonical template reference. These rules are authoritative on [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 
-### System Definitions, Instantiated Collections, and Profiles
+### Systems, Composition, and Evolution
 
-The specification distinguishes collection structure from packaging and instantiation metadata. `<metadata_directory>/system.yaml` defines reusable system-level packaging and scaffolding information, `<metadata_directory>/instance.yaml` defines an instantiated collection's identity and provenance, and profiles may layer starter content and house conventions on top of the core specification. These rules are authoritative on [System Definitions and Instances](system-definitions-and-instances.md).
+The specification distinguishes collection structure from the systems that package and evolve it. A system is the domain layer of TypedMark: `<metadata_directory>/system.yaml` defines a reusable, versioned, publishable system that carries domain note types, house conventions, templates, and scaffold content on top of the domain-agnostic core. A collection MAY be composed from several systems; the resulting collection is materialized self-contained, and its composition lineage is recorded as provenance in `typedmark.yaml`. `<metadata_directory>/history.yaml` records the event-sourced change history that drives migrating a collection to newer system versions. These rules are authoritative on [Systems, Composition, and Evolution](system-definitions-and-instances.md).
 
 ### Conformance
 
@@ -95,7 +95,7 @@ TypedMark defines:
 - which collection-wide rules apply
 - where notes of each type live and how their note names are formed
 - which frontmatter fields, relationships, headings, and templates each type declares
-- how systems and instantiated collections describe packaging, scaffolding, and provenance
+- how systems package, version, compose, scaffold, and evolve collections, and how a collection records its composition provenance
 - how conformance is evaluated
 
 TypedMark is the structural contract for a note collection. Artifact-specific rules are authoritative only where this specification says they are.
@@ -109,7 +109,9 @@ TypedMark is the structural contract for a note collection. Artifact-specific ru
 - Managed notes MUST remain directly readable and editable in any Markdown editor without transformation.
 - Managed note metadata MUST live in YAML frontmatter and MUST use property types supported by this specification.
 - The core specification defines reusable structure, not domain content.
-- Concrete note sets, starter content, and house conventions belong to profiles or reference systems layered on top of the core specification.
+- Concrete note sets, starter content, and house conventions belong to systems layered on top of the core specification.
+- A collection composed from several systems is materialized self-contained, so it remains understandable from `typedmark.yaml` and the metadata directory alone, without re-resolving its sources.
+- Composing the same systems at the same versions MUST reproduce the same collection.
 - Examples in this specification are illustrative and non-normative unless a rule explicitly says otherwise.
 
 ### Spec-Defined Names and Namespaces
@@ -124,7 +126,7 @@ Rules:
 - `label`, `description`, and `icon` are already spec-defined in the note-type schema top-level namespace and in the field-definition metadata namespace.
 - `catalog.tags` in `<metadata_directory>/system.yaml` and a managed-note frontmatter field named `tags` are different namespaces and MUST NOT be conflated.
 - A managed-note frontmatter field named `description` and a field-definition metadata key named `description` are different namespaces and MUST NOT be conflated.
-- Extensions, profiles, collection models, property sets, and note-type schemas MUST NOT assign incompatible meanings to a spec-defined name in the namespace where the core specification defines it.
+- Extensions, systems, collection models, property sets, and note-type schemas MUST NOT assign incompatible meanings to a spec-defined name in the namespace where the core specification defines it.
 - Mentioning a candidate or example name in prose does not by itself define that name normatively.
 
 ## Authoritative Artifact Map
@@ -135,7 +137,7 @@ A conforming TypedMark collection uses this artifact layout:
 typedmark.yaml
 <metadata_directory>/
   system.yaml
-  instance.yaml
+  history.yaml
   property-sets/
     <property_set>.yaml
   schemas/
@@ -149,8 +151,8 @@ In path notation below, `<metadata_directory>` is the directory name declared by
 The authoritative contract for each governed element lives in exactly one place:
 
 - `typedmark.yaml`: [Collection Model](collection-model.md)
-- `<metadata_directory>/system.yaml`: [System Definitions and Instances](system-definitions-and-instances.md)
-- `<metadata_directory>/instance.yaml`: [System Definitions and Instances](system-definitions-and-instances.md)
+- `<metadata_directory>/system.yaml`: [Systems, Composition, and Evolution](system-definitions-and-instances.md)
+- `<metadata_directory>/history.yaml`: [Systems, Composition, and Evolution](system-definitions-and-instances.md)
 - `<metadata_directory>/property-sets/<property_set>.yaml`: [Collection Model](collection-model.md)
 - `<metadata_directory>/schemas/<note_type>.yaml`: [Note Type Schemas](note-type-schemas.md)
 - `<metadata_directory>/templates/<note_type_template>.md`: [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
@@ -179,5 +181,6 @@ Rules:
 - Agents MUST rely on `typedmark.yaml` and the configured metadata directory for structural understanding.
 - Agents MUST NOT infer note types or structural rules from prose guidance when authoritative artifacts exist.
 - Human-facing generated reference pages MAY restate the specification for convenience, but they are never authoritative.
-- `<metadata_directory>/system.yaml` governs system identity, packaging, publishing, and import semantics; it does not override note-structure rules defined by `typedmark.yaml` and note-type schemas.
-- `<metadata_directory>/instance.yaml` governs instantiated collection identity and provenance; it does not override note-structure rules defined by `typedmark.yaml` and note-type schemas.
+- `<metadata_directory>/system.yaml` governs system identity, packaging, publishing, composition, and import semantics; it does not override note-structure rules defined by `typedmark.yaml` and note-type schemas.
+- `<metadata_directory>/history.yaml` governs the system's change history and the migration of collections to newer versions; it does not override the live note-structure rules defined by `typedmark.yaml` and note-type schemas.
+- A collection's composition provenance in `typedmark.yaml` records how the collection was built but does not override any governed artifact physically present under the metadata directory.

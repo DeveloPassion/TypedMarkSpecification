@@ -6,7 +6,7 @@ nav_order: 5
 
 # Managed Notes and Properties
 
-This page is authoritative for the managed note contract, note-type association, managed-note field names, core-defined managed-note field names, frontmatter property types, note-link syntax and resolution, field-definition properties, canonical field materialization, and field optionality semantics. Relationship cardinality, heading constraints, and template obligations are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). The effective note-type schema that supplies a note's structural contract is described in [Note Type Schemas](note-type-schemas.md).
+This page is authoritative for the managed note contract, note-type association, managed-note field names, core-defined managed-note field names, frontmatter property types, note-link syntax and resolution, field-definition properties, canonical field materialization, field optionality semantics, and the managed-note effect of system migration operations. Relationship cardinality, heading constraints, and template obligations are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). The effective note-type schema that supplies a note's structural contract is described in [Note Type Schemas](note-type-schemas.md).
 
 ## Notes in a Collection
 
@@ -464,3 +464,21 @@ Rules:
 - If the effective `frontmatter` block declares `note_type`, `note_type` MUST be physically present in stored frontmatter.
 - If the effective `frontmatter` block declares `note_type`, `note_type` MUST NOT declare `optional: true`.
 - If `frontmatter` declares `id`, `id` MUST NOT declare `optional: true`.
+
+## Migrating Managed Notes
+
+When a collection is updated to newer versions of its source systems, the migration plan defined in [Systems, Composition, and Evolution](system-definitions-and-instances.md) is applied to managed notes. Each system change operation recorded in `history.yaml` has a defined effect on managed-note frontmatter, defined here. The migration plan determines the order in which these operations are applied; this page defines what each one does to a note.
+
+Rules:
+
+- A migration operation applies only to managed notes whose resolved note type is the note type named by the operation.
+- `add_field` MUST add the new field to every affected managed note, materialized to its `default_value` or to `null` under the Canonical Field Materialization rules.
+- `remove_field` MUST remove the named field from every affected managed note.
+- `rename_field` MUST move the stored value from the old field name to the new field name in every affected managed note, preserving the value unchanged.
+- `retype_field` MUST convert the stored value to the new type when this specification defines a lossless conversion for that type pair; when it does not, the migration MUST report the field for explicit resolution and MUST NOT discard or coerce the value destructively.
+- `change_field` MUST re-validate every affected managed note against the field's new constraints; a stored value that violates the new constraints MUST be reported rather than silently dropped or altered.
+- `rename_note_type` MUST update the stored `note_type` field when present, MUST re-resolve the note's storage path under the renamed type's effective storage rules, and MUST update internal note links and relationship-bearing fields that target the renamed type.
+- `add_note_type`, `remove_note_type`, `add_property_set`, `remove_property_set`, and `rename_property_set` change which schemas and property sets exist; their effect on an individual managed note is only the resulting change to that note's effective schema, evaluated through the field operations above.
+- After a migration operation is applied, every affected managed note MUST satisfy the Canonical Field Materialization rules on this page.
+- A migration MUST NOT discard managed-note data silently; any operation that cannot preserve data MUST be reported for explicit resolution, as required by [Systems, Composition, and Evolution](system-definitions-and-instances.md).
+- A field whose name is changed by `rename_field` follows the managed-note field-name rules defined on this page; a rename whose target name violates those rules is invalid.
