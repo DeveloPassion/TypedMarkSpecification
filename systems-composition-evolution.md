@@ -6,7 +6,7 @@ nav_order: 7
 
 # Systems, Composition, and Evolution
 
-This page is authoritative for the system fields of `typedmark.yaml` — release version, scaffold, and publishing metadata — and for system versioning semantics, deterministic system composition, `<metadata_directory>/history.yaml`, and the migration and update flow. The identity and structural fields of `typedmark.yaml`, including `id`, `name`, `description`, and the `composition` provenance block, are defined in [Collection Model](collection-model.md). This page is not authoritative for note-type schema block semantics, managed note field semantics, or relationship and template semantics; those live in [Note Type Schemas](note-type-schemas.md), [Managed Notes and Properties](managed-notes-and-properties.md), and [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
+This page is authoritative for the system fields of `typedmark.yaml` — release version, scaffold, and publishing metadata — and for system versioning semantics, deterministic system composition, `<metadata_directory>/history.yaml`, and the migration and update flow. The identity and structural fields of `typedmark.yaml`, including `name`, `label`, `description`, `keywords`, and the `composition` provenance block, are defined in [Collection Model](collection-model.md). This page is not authoritative for note-type schema block semantics, managed note field semantics, or relationship and template semantics; those live in [Note Type Schemas](note-type-schemas.md), [Managed Notes and Properties](managed-notes-and-properties.md), and [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 
 ## Systems
 
@@ -14,7 +14,7 @@ A system is a reusable, versioned, publishable collection model. It is the unit 
 
 A system is therefore the domain layer of TypedMark. It carries domain note types, house conventions, templates, and starter content on top of the domain-agnostic core.
 
-There is no separate system manifest. Every collection already declares its identity (`id`, `name`, `description`) and structural fields in `typedmark.yaml`; a collection *is* a system when it additionally declares the system fields defined on this page, which describe how it is versioned, published, and scaffolded. A private working collection omits them; a publishable system declares them. Publishing a system is therefore nothing more than populating those fields and sharing the folder that contains `typedmark.yaml` and the metadata directory.
+There is no separate system manifest. Every collection already declares its identity (`name`, an optional `label`, and `description`) and structural fields in `typedmark.yaml`; a collection *is* a system when it additionally declares the system fields defined on this page, which describe how it is versioned, published, and scaffolded. A private working collection omits them; a publishable system declares them. Publishing a system is therefore nothing more than populating those fields and sharing the folder that contains `typedmark.yaml` and the metadata directory.
 
 Rules:
 
@@ -27,14 +27,19 @@ Rules:
 
 ## System Fields
 
-The system fields are the part of `typedmark.yaml` that makes a collection a publishable, versioned system. They live alongside the structural and identity fields defined in [Collection Model](collection-model.md). Every collection already declares `id`, `name`, and `description`; a system additionally declares `version` and `scaffold`, and MAY add discovery metadata.
+The system fields are the part of `typedmark.yaml` that makes a collection a publishable, versioned system. They live alongside the structural and identity fields defined in [Collection Model](collection-model.md). Every collection already declares `name`, `description`, and an optional `label`; a system additionally declares `version` and `scaffold`, and MAY add discovery metadata.
 
 Example `typedmark.yaml` for a publishable system, showing the system fields together with the identity and structural fields they accompany:
 
 ```yaml
 specification_version: 0.0.1
-id: example-knowledge-system
+name: "@example/knowledge-system"
+label: Example Knowledge System
+description: Reusable knowledge note system.
 version: 0.2.0
+keywords:
+  - notes
+  - reference
 
 metadata_directory: .metadata
 exclude_paths:
@@ -44,18 +49,12 @@ validation_defaults:
 default_property_sets:
   - base
 
-name: Example Knowledge System
-description: Reusable knowledge note system.
 audiences:
   - individual
   - team
 publisher:
   name: Example Publisher
 license: MIT
-catalog:
-  tags:
-    - notes
-    - reference
 scaffold:
   folders:
     - Domains
@@ -78,15 +77,15 @@ System fields:
 
 - `version`
 - `scaffold`
-- `audiences`, `publisher`, `license`, and `catalog`, which are optional discovery metadata
+- `audiences`, `publisher`, and `license`, which are optional discovery metadata
 
-The `id`, `name`, and `description` fields are mandatory on every collection and are defined in [Collection Model](collection-model.md); a marketplace reuses them as the system's identity, display name, and summary.
+The `name`, `label`, `description`, and `keywords` fields are defined in [Collection Model](collection-model.md). A marketplace reuses `name` as the system's identity, `label` as its display name, `description` as its summary, and `keywords` for search.
 
 Rules:
 
 - A collection is a system definition when its `typedmark.yaml` declares `version` and `scaffold`. Conformance requirements for a valid system definition are defined in [Conformance and Roadmap](conformance-and-roadmap.md).
 - `version` is the single marker that a collection is a publishable, versioned system; a collection without `version` is a working collection, not a system.
-- `id`, the collection identity defined in [Collection Model](collection-model.md), is also the distribution identity a marketplace and `composition.sources` resolve against. A collection has exactly one identity.
+- `name`, the collection identity defined in [Collection Model](collection-model.md), is also the distribution identity a marketplace and `composition.sources` resolve against. A collection has exactly one identity.
 - `version` identifies a publishable system release, MUST be a Semantic Versioning 2.0.0 string, and MUST follow the system versioning semantics defined under System Versioning below.
 - A collection that declares `version` MUST also declare `scaffold`.
 - `scaffold` SHOULD be present, even if empty, on a system definition.
@@ -105,8 +104,8 @@ Rules:
 
 - The canonical published form of a system is the folder that contains `typedmark.yaml` and the metadata directory selected by `typedmark.yaml`, including its governed internal layout.
 - A system MAY be shared as a directory tree, a Git repository, or an archive file, provided relative paths are preserved.
-- A marketplace entry SHOULD be keyed by `id` and `version`.
-- `name`, `description`, `audiences`, `publisher`, `license`, and `catalog.tags` are the primary discovery fields for catalogs and application marketplaces.
+- A marketplace entry SHOULD be keyed by `name` and `version`.
+- `name`, `label`, `description`, `keywords`, `audiences`, `publisher`, and `license` are the primary discovery fields for catalogs and application marketplaces.
 - Applications MAY present curated systems for different audiences such as individuals, teams, and organizations.
 - Marketplace or catalog implementations SHOULD be able to index a system from its `typedmark.yaml` alone.
 
@@ -135,9 +134,9 @@ The ordered list of source systems and their resolved versions is the collection
 
 Rules:
 
-- Composition resolves each source identity and version to exactly one system whose `id` and `version` match.
+- Composition resolves each source identity and version to exactly one system whose `name` and `version` match.
 - A composing tool MUST materialize the merged note-type schemas, property sets, and templates into the target metadata directory so the composed collection is self-contained.
-- A composing tool MUST record each source `id` and resolved `version` in `typedmark.yaml` `composition.sources`, in composition order.
+- A composing tool MUST record each source `name` and resolved `version` in `typedmark.yaml` `composition.sources`, in composition order.
 - A composing tool MUST NOT require network access, the source systems, or the composition tool itself to evaluate the conformance of an already-composed collection.
 - Composition MUST be deterministic, as defined under Composition Merge Semantics below.
 
@@ -154,7 +153,7 @@ Rules:
 - `typedmark.yaml` `default_property_sets` merge by concatenation in merge order with duplicate identifiers removed, keeping the first occurrence.
 - `typedmark.yaml` `note_type_mappings` merge by concatenation in merge order; because mapping rules are evaluated in order, earlier sources' rules are evaluated before later sources' rules unless the target overrides them.
 - `typedmark.yaml` `validation_defaults` and `exclude_paths` merge by key, with later inputs overriding earlier inputs per key, and the target overriding all.
-- The composing collection's own `id`, `version`, and other system fields are authored on the result; they are never inherited from a source.
+- The composing collection's own `name`, `version`, and other system fields are authored on the result; they are never inherited from a source.
 - A composing tool MUST report every collision it resolves, identifying the artifact, the contributing sources, and the winner.
 - `history.yaml` from each source MAY be retained for update reasoning, as defined under Migration and Updates; composition itself does not require merging source histories into a single log.
 

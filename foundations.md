@@ -21,7 +21,7 @@ Rules:
 
 ### Collection Configuration
 
-The collection configuration is the collection-wide structural contract defined in `typedmark.yaml`. It declares the collection's identity (`id`, `name`, `description`) and collection-level rules such as the metadata directory, note-type mappings, validation defaults, excluded paths, default property sets, composition provenance, and other defaults that apply across note types. Details: [Collection Model](collection-model.md).
+The collection configuration is the collection-wide structural contract defined in `typedmark.yaml`. It declares the collection's identity (`name`, an optional `label`, `description`, and `keywords`) and collection-level rules such as the metadata directory, note-type mappings, validation defaults, excluded paths, default property sets, composition provenance, and other defaults that apply across note types. Details: [Collection Model](collection-model.md).
 
 ### Note Types
 
@@ -123,10 +123,10 @@ Rules:
 - A name is spec-defined when this specification assigns it structural meaning in a specific artifact position or metadata namespace.
 - Spec-defined names are scoped to the namespace where they are defined. The same spelling MAY be spec-defined in more than one namespace with different roles.
 - When this specification defines a name in a namespace, it MUST also define that name's role, where it may appear, and the validation or conformance semantics that follow from its use in that namespace.
-- `label`, `description`, and `icon` are already spec-defined in the note-type schema top-level namespace and in the field-definition metadata namespace.
-- `catalog.tags` in `typedmark.yaml` and a managed-note frontmatter field named `tags` are different namespaces and MUST NOT be conflated.
-- `id` in `typedmark.yaml` is the collection identity, while a managed-note frontmatter field named `id` is a note-level identifier; they are different namespaces and MUST NOT be conflated.
-- A managed-note frontmatter field named `description`, a field-definition metadata key named `description`, and the collection-level `description` in `typedmark.yaml` are different namespaces and MUST NOT be conflated.
+- `label`, `description`, and `icon` are already spec-defined in the `typedmark.yaml` top-level namespace, the note-type schema top-level namespace, and the field-definition metadata namespace.
+- `keywords` in `typedmark.yaml` and a managed-note frontmatter field named `tags` are different namespaces and MUST NOT be conflated.
+- `name` in the `typedmark.yaml` top-level namespace is the collection identity, while `name` under `publisher` is the publisher's name; they are different namespaces and MUST NOT be conflated.
+- A managed-note frontmatter field named `description`, a field-definition metadata key named `description`, the note-type schema top-level `description`, and the collection-level `description` in `typedmark.yaml` are different namespaces and MUST NOT be conflated.
 - Extensions, systems, collection models, property sets, and note-type schemas MUST NOT assign incompatible meanings to a spec-defined name in the namespace where the core specification defines it.
 - Mentioning a candidate or example name in prose does not by itself define that name normatively.
 

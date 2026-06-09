@@ -18,8 +18,8 @@ Required fields:
 
 ```yaml
 specification_version: 0.0.1
-id: example-knowledge-base
-name: Example Knowledge Base
+name: example-knowledge-base
+label: Example Knowledge Base
 description: Personal knowledge base.
 metadata_directory: .metadata
 exclude_paths:
@@ -46,15 +46,23 @@ In path notation on this page, `<metadata_directory>` means the directory name d
 Rules:
 
 - `typedmark.yaml` MUST exist at the root of every conforming managed collection.
-- `typedmark.yaml` MUST physically contain `specification_version`, `id`, `name`, `description`, `metadata_directory`, `exclude_paths`, and `validation_defaults`.
+- `typedmark.yaml` MUST physically contain `specification_version`, `name`, `description`, `metadata_directory`, `exclude_paths`, and `validation_defaults`.
 - The semantics of `specification_version` are defined in [Foundations](foundations.md).
-- `id` MUST be a non-empty slug.
-- `id` is the collection's single identity. It identifies the collection's structural model and, when the collection is a publishable system, is the distribution identity a marketplace and `composition.sources` resolve against.
-- `id` is not a release; the release version is the optional `version` system field defined in [Systems, Composition, and Evolution](systems-composition-evolution.md).
-- `id` SHOULD be unique to the system family it identifies.
-- A collection has its own `id`; a collection composed from systems MUST give itself an `id` distinct from its sources, which appear in `composition.sources`.
-- `name` MUST be a non-empty string; it is the human-facing name of the collection.
+- `name` is the collection's single identity. It identifies the collection's structural model and, when the collection is a publishable system, is the distribution identity a marketplace and `composition.sources` resolve against.
+- `name` MUST be a non-empty string of at most 214 characters, including any scope.
+- `name` MUST NOT contain uppercase letters or whitespace.
+- `name` MAY be scoped using an `@scope/local-name` form.
+- An unscoped `name`, and the scope and local-name parts of a scoped `name`, MUST each match `^[a-z0-9][a-z0-9._-]*$`.
+- A scoped `name` MUST match `^@[a-z0-9][a-z0-9._-]*/[a-z0-9][a-z0-9._-]*$`.
+- `name` is case-sensitive and compared as exact Unicode code points.
+- `name` is not a release; the release version is the optional `version` system field defined in [Systems, Composition, and Evolution](systems-composition-evolution.md).
+- `name` SHOULD be unique to the system family it identifies.
+- A collection has its own `name`; a collection composed from systems MUST give itself a `name` distinct from its sources, which appear in `composition.sources`.
+- `label` MAY be omitted; if present, it MUST be a non-empty string.
+- `label` is the human-facing display name of the collection; applications SHOULD display `label` when present and fall back to `name` otherwise.
 - `description` MUST be a non-empty string; it is concise human-facing explanatory metadata for the collection.
+- `keywords` MAY be omitted; if present, it MUST be a list of unique non-empty strings.
+- `keywords` is discovery metadata that catalogs and marketplaces use to index and search collections.
 - `typedmark.yaml` MAY declare the optional system fields, including `version`, `scaffold`, and discovery metadata, defined in [Systems, Composition, and Evolution](systems-composition-evolution.md). `version` is what makes a collection a publishable system.
 - `metadata_directory` MUST be a non-empty string.
 - `metadata_directory` MUST name a single directory at the collection root.
@@ -163,9 +171,9 @@ Example:
 ```yaml
 composition:
   sources:
-    - id: para-system
+    - name: "@acme/para-system"
       version: 1.2.0
-    - id: dev-team-ai-context
+    - name: dev-team-ai-context
       version: 0.3.0
 ```
 
@@ -175,12 +183,12 @@ Rules:
 - If present, `composition` MUST physically contain `sources`.
 - `composition.sources` MUST be a non-empty ordered list.
 - The order of `composition.sources` is significant and defines the composition merge order defined in [Systems, Composition, and Evolution](systems-composition-evolution.md).
-- Each source MUST declare `id` and `version`.
-- A source `id` MUST be a non-empty slug.
+- Each source MUST declare `name` and `version`.
+- A source `name` MUST follow the `name` rules defined above for a collection identity, including the scope and length rules.
 - A source `version` MUST be a Semantic Versioning 2.0.0 string.
-- An `id` MUST appear at most once in `composition.sources`.
-- A source `id` MUST NOT equal the composing collection's own `id`.
-- Each source MUST resolve to exactly one system whose `id` and `version` match; a source that does not resolve is an `invalid_composition` failure.
+- A `name` MUST appear at most once in `composition.sources`.
+- A source `name` MUST NOT equal the composing collection's own `name`.
+- Each source MUST resolve to exactly one system whose `name` and `version` match; a source that does not resolve is an `invalid_composition` failure.
 - A composed collection MUST remain self-contained: its materialized schemas, property sets, and templates MUST be physically present under `metadata_directory`, and conformance MUST NOT require re-resolving `composition.sources`.
 - `composition` records provenance only; it does not relocate, replace, or override any governed artifact physically present under `metadata_directory`.
 
