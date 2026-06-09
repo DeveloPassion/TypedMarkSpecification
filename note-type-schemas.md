@@ -30,6 +30,8 @@ A managed note is evaluated against one effective note-type schema.
 
 The effective note-type schema is not a separate stored artifact. It is the normative result of taking one concrete note-type schema file, its abstract ancestor chain, and the default-property-set, property-set composition, and block-merge rules defined by this specification before evaluating note conformance.
 
+A note type's own `frontmatter`, `relationships`, and `headings` blocks are not a separate kind of definition. They are the note type's inline, note-type-scoped property set, and they participate in the same composition as named property sets, applied last as its highest-precedence layer. Reusable fields belong in named property sets; one-off fields belong inline.
+
 ### Normative Evaluation Pipeline
 
 Rules:
