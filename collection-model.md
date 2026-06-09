@@ -25,7 +25,7 @@ specification_version: 0.0.1
 name: example-knowledge-base
 label: Example Knowledge Base
 description: Personal knowledge base.
-metadata_directory: .metadata
+metadata_directory: .typedmark
 exclude_paths:
   - .git/**
 validation_defaults:

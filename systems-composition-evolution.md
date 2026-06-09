@@ -41,7 +41,7 @@ keywords:
   - notes
   - reference
 
-metadata_directory: .metadata
+metadata_directory: .typedmark
 exclude_paths:
   - .git/**
 validation_defaults:
