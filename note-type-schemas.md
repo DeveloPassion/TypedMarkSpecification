@@ -6,7 +6,7 @@ nav_order: 4
 
 # Note Type Schemas
 
-This page is authoritative for note type registration, abstract note types, note-type inheritance, the required top-level contract of `<metadata_directory>/schemas/<note_type>.yaml`, the effective note-type schema, optional property-set references, schema kinds, and storage rules. Field semantics and managed-note note-type association live in [Managed Notes and Properties](managed-notes-and-properties.md), relationship, heading, and template semantics live in [Relationships, Headings, and Templates](relationships-headings-and-templates.md), and collection-level inheritance and property-set application live in [Collection Model](collection-model.md).
+This page is authoritative for note type registration, abstract note types, note-type inheritance through `extends`, the required top-level contract of `<metadata_directory>/schemas/<note_type>.yaml`, the effective note-type schema, optional property-set composition references, schema kinds, and storage rules. Field semantics and managed-note note-type association live in [Managed Notes and Properties](managed-notes-and-properties.md), relationship, heading, and template semantics live in [Relationships, Headings, and Templates](relationships-headings-and-templates.md), and default property sets, property-set definitions, and property-set composition live in [Collection Model](collection-model.md).
 
 ## Note Type Registry
 
@@ -28,7 +28,7 @@ Rules:
 
 A managed note is evaluated against one effective note-type schema.
 
-The effective note-type schema is not a separate stored artifact. It is the normative result of taking one concrete note-type schema file, its abstract ancestor chain, and the collection-level inheritance, property-set, and block-merge rules defined by this specification before evaluating note conformance.
+The effective note-type schema is not a separate stored artifact. It is the normative result of taking one concrete note-type schema file, its abstract ancestor chain, and the default-property-set, property-set composition, and block-merge rules defined by this specification before evaluating note conformance.
 
 ### Normative Evaluation Pipeline
 
@@ -38,11 +38,11 @@ Rules:
 2. If the selected concrete note type declares `extends`, the tool or validator MUST load the full abstract ancestor chain, starting with the farthest abstract ancestor and ending with the selected concrete note type.
 3. The selected concrete note-type schema file provides the direct top-level values for `specification_version`, `note_type`, `abstract`, `label`, `icon`, and `description`.
 4. For `kind`, `storage`, `template`, and `guidance`, note-type inheritance uses whole-key replacement along the abstract ancestor chain. The last schema in that chain order that physically defines one of those keys determines the effective value of that key.
-5. The tool or validator MUST determine whether `global_properties.frontmatter`, `global_properties.relationships`, and `global_properties.headings` apply to the selected concrete note type using the inheritance rules in [Collection Model](collection-model.md).
-6. Enabled global blocks from `typedmark.yaml` MUST be applied first.
+5. The tool or validator MUST determine which property sets apply to the selected concrete note type by taking the `default_property_sets` declared in `typedmark.yaml`, removing any named in the concrete note type's `exclude_property_sets`, and then appending the property sets named in the concrete note type's `property_sets`, using the composition rules in [Collection Model](collection-model.md).
+6. The `frontmatter`, `relationships`, and `headings` blocks contributed by the applied default property sets MUST be applied first, in `default_property_sets` order.
 7. Local `frontmatter`, `relationships`, and `headings` blocks declared by abstract ancestors, if any, MUST be applied next in abstract-ancestor order using the merge rules defined in [Collection Model](collection-model.md).
-8. If `inheritance.frontmatter_remove` is present on the selected concrete note type, it MUST be applied next to the accumulated inherited frontmatter.
-9. Referenced property sets, if any, MUST be applied next in the selected concrete schema's declared `property_sets` order, and they affect only `frontmatter`, as defined in [Collection Model](collection-model.md).
+8. If `frontmatter_remove` is present on the selected concrete note type, it MUST be applied next to the accumulated inherited frontmatter.
+9. The `frontmatter`, `relationships`, and `headings` blocks contributed by the opt-in property sets named in `property_sets`, if any, MUST be applied next in the selected concrete schema's declared `property_sets` order, as defined in [Collection Model](collection-model.md).
 10. Local `frontmatter`, `relationships`, and `headings` definitions in the selected concrete note-type schema file MUST be applied last.
 11. The resulting `frontmatter`, `relationships`, and `headings` blocks, together with the direct top-level values from the selected concrete schema file and the effective inherited values of `kind`, `storage`, `template`, and `guidance`, are the effective note-type schema for that note type.
 12. Managed-note, relationship, heading, template, and storage conformance MUST be evaluated against that effective note-type schema using the rule pages linked from this page.
@@ -218,18 +218,15 @@ Rules:
 - The `headings` block semantics are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - If a schema physically declares `headings`, it MUST follow the heading shape required by [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - `guidance` is human-facing explanatory content and MUST NOT override structural rules.
-- `property_sets` MAY be omitted.
-- Only concrete note types MAY declare `property_sets`.
+- `property_sets`, `exclude_property_sets`, and `frontmatter_remove` MAY each be omitted.
+- Only concrete note types MAY declare `property_sets`, `exclude_property_sets`, or `frontmatter_remove`.
 - If present, `property_sets` MUST be a non-empty list of unique property set identifiers.
-- `property_sets` is the opt-in mechanism for named reusable frontmatter field sets.
-- Property-set definitions and merge rules are defined in [Collection Model](collection-model.md).
-- Property sets affect frontmatter only; they do not make `relationships` or `headings` blocks optional.
-- `inheritance` MAY be omitted.
-- Only concrete note types MAY declare `inheritance`.
-- A concrete note type MAY include an `inheritance` block to disable global inheritance entirely, to disable specific inherited global blocks, or to subtract individual inherited frontmatter fields.
-- Collection-level merge and override rules are defined in [Collection Model](collection-model.md).
-- The `inheritance` block affects collection-level `global_properties` inheritance only; note-type inheritance is defined only by `extends`.
-- `inheritance.frontmatter_remove` can subtract frontmatter inherited from `global_properties` or abstract ancestors before property sets and local concrete schema definitions are applied.
+- `property_sets` is the opt-in part of the single property-set composition mechanism; property sets named in `default_property_sets` apply without being restated here.
+- Property sets MAY contribute `frontmatter`, `relationships`, and `headings`, but they do not make the effective `frontmatter`, `relationships`, or `headings` blocks optional.
+- `exclude_property_sets` opts the concrete note type out of specific default property sets; each named identifier MUST appear in `typedmark.yaml` `default_property_sets`.
+- `frontmatter_remove` subtracts individual frontmatter fields contributed by applied default property sets or abstract ancestors, before opt-in property sets and local concrete schema definitions are applied.
+- Property-set definitions, default property sets, composition, and merge rules are defined in [Collection Model](collection-model.md).
+- Note-type inheritance is defined only by `extends`; `property_sets`, `exclude_property_sets`, and `frontmatter_remove` do not affect the abstract ancestor chain.
 - A concrete note type MAY omit individual inherited field definitions, relationship target definitions, or heading settings that remain unchanged.
 
 ### Abstract Inheritance Example
@@ -329,7 +326,7 @@ Special-case guidance:
 - Fixed-path notes SHOULD be modeled as `singleton` note types.
 - Examples include `Home.md`, `Guide.md`, and `Glossary.md`.
 - A fixed-path singleton MAY omit `title` if the title is implied by the schema.
-- A fixed-path singleton that inherits most global or abstract frontmatter but does not want `title` MAY use `inheritance.frontmatter_remove: [title]`.
+- A fixed-path singleton that inherits most default-property-set or abstract frontmatter but does not want `title` MAY use `frontmatter_remove: [title]`.
 - A fixed-path singleton MAY omit stored `note_type` when the collection's mapping rules and effective schema do not require it to be present.
 
 ## Storage Rules

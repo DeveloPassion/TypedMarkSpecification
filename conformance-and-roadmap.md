@@ -53,7 +53,7 @@ Additional rules:
 
 Recommended implementation order:
 
-1. create `typedmark.yaml` and decide note-type mappings, validation defaults, global properties, and inheritance using [Collection Model](collection-model.md)
+1. create `typedmark.yaml` and decide note-type mappings, validation defaults, and default property sets using [Collection Model](collection-model.md)
 2. create any reusable property sets and the initial abstract and concrete note type schemas using [Collection Model](collection-model.md) and [Note Type Schemas](note-type-schemas.md)
 3. create canonical templates and heading and relationship rules using [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
 4. implement managed note parsing, field materialization, and note-link resolution using [Managed Notes and Properties](managed-notes-and-properties.md)

@@ -62,7 +62,7 @@ Rules:
 - `title` is human-facing and MAY change unless the schema marks it immutable.
 - Display-oriented fields such as `title` and `description` are human-facing note metadata and MAY differ from the note's file name and storage path unless a schema rule explicitly couples them.
 - A conforming managed note MUST remain usable as a normal Markdown note without preprocessing, transpilation, or note-local sidecar metadata.
-- Managed-note conformance uses the effective note-type schema after collection-level inheritance, abstract-ancestor application, property-set application, and local concrete schema definitions have been applied.
+- Managed-note conformance uses the effective note-type schema after default property sets, abstract-ancestor application, composed property sets, and local concrete schema definitions have been applied.
 - The meanings of `relationship_kind`, `belongs_to`, and `related_to` are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - Managed note frontmatter MUST follow the canonical field materialization rules defined on this page.
 
@@ -79,9 +79,9 @@ Rules:
 - `note_type` MAY be omitted from stored frontmatter when the configured note-type mapping rules resolve the note type from another surface.
 - If stored, `note_type` MUST be a non-empty string.
 - If stored, `note_type` MUST equal the resolved note type for that note.
-- If `global_properties.frontmatter` or a note-type schema declares `note_type`, it MUST declare `type: text`.
-- If `global_properties.frontmatter` or a note-type schema declares `note_type`, it MUST declare either `value_from_schema: note_type` or `const_value` equal to the schema's top-level `note_type`.
-- If `global_properties.frontmatter` or a note-type schema declares `note_type`, it MUST NOT declare `optional: true` or `nullable: true`.
+- If a property set or a note-type schema declares `note_type`, it MUST declare `type: text`.
+- If a property set or a note-type schema declares `note_type`, it MUST declare either `value_from_schema: note_type` or `const_value` equal to the schema's top-level `note_type`. In a property set, only `value_from_schema: note_type` is permitted, because a property set has no top-level `note_type`.
+- If a property set or a note-type schema declares `note_type`, it MUST NOT declare `optional: true` or `nullable: true`.
 - `id` is an optional core-defined managed-note field name in this specification version.
 - Schemas MAY declare `id` when they require stable note-level identifiers.
 - If a schema declares `id`, it MUST declare `type: text` and `format: slug`.
@@ -94,11 +94,11 @@ Rules:
 - Logical deletion is distinct from archiving. Setting `deleted: true` does not by itself move the note or apply archive storage rules.
 - A logically deleted note remains a managed note and continues to use its resolved concrete note type in this specification version.
 - Logical deletion does not by itself change storage, relationship, heading, or field-conformance evaluation in this specification version.
-- `global_properties.frontmatter` or a note-type schema MAY declare `deleted` when they want canonical materialization of deletion state.
-- If `global_properties.frontmatter` or a note-type schema declares `deleted`, it MUST declare `type: checkbox`.
-- If `global_properties.frontmatter` or a note-type schema declares `deleted`, it MUST declare `default_value: false`.
-- If `global_properties.frontmatter` or a note-type schema declares `deleted`, it MUST NOT declare `optional: true` or `nullable: true`.
-- A core-defined managed-note field name MUST NOT be repurposed as an ordinary user-defined field in `global_properties.frontmatter`, a property set, or a note-type schema unless the core field contract explicitly permits schema-level declaration of that field.
+- A property set or a note-type schema MAY declare `deleted` when they want canonical materialization of deletion state.
+- If a property set or a note-type schema declares `deleted`, it MUST declare `type: checkbox`.
+- If a property set or a note-type schema declares `deleted`, it MUST declare `default_value: false`.
+- If a property set or a note-type schema declares `deleted`, it MUST NOT declare `optional: true` or `nullable: true`.
+- A core-defined managed-note field name MUST NOT be repurposed as an ordinary user-defined field in a property set or a note-type schema unless the core field contract explicitly permits schema-level declaration of that field.
 - Field names such as `title`, `description`, `tags`, `aliases`, `created_at`, `updated_at`, and `archived` are ordinary schema-defined managed-note field names in this specification version unless a rule explicitly defines them otherwise.
 - The `tags` property type defined below remains a first-class supported property type.
 - The generic property-type and field-definition rules in this page apply to ordinary schema-defined fields unless a dedicated core field rule says otherwise.

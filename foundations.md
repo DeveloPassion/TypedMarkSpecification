@@ -21,7 +21,7 @@ Rules:
 
 ### Collection Configuration
 
-The collection configuration is the collection-wide structural contract defined in `typedmark.yaml`. It defines collection-level rules such as the metadata directory, note-type mappings, validation defaults, excluded paths, global inheritance inputs, and other defaults that apply across note types. Details: [Collection Model](collection-model.md).
+The collection configuration is the collection-wide structural contract defined in `typedmark.yaml`. It defines collection-level rules such as the metadata directory, note-type mappings, validation defaults, excluded paths, default property sets, and other defaults that apply across note types. Details: [Collection Model](collection-model.md).
 
 ### Note Types
 
@@ -47,17 +47,13 @@ An untyped note is a collection note that is not associated with any known note 
 
 A managed note's frontmatter is its YAML metadata surface. Field definitions describe the allowed metadata properties, their types, value constraints, defaulting and materialization behavior, and any typed-relationship contribution. These rules are authoritative on [Managed Notes and Properties](managed-notes-and-properties.md).
 
-### Global Properties
-
-Global properties are collection-level defaults defined in `typedmark.yaml` that can contribute shared `frontmatter`, `relationships`, and `headings` definitions across note types. They apply by default when inheritance is enabled. They are authoritative on [Collection Model](collection-model.md).
-
 ### Property Sets
 
-A property set is a named reusable frontmatter field set defined under `<metadata_directory>/property-sets/`. Property sets never apply automatically; a note-type schema opts into them explicitly through `property_sets`. They are authoritative on [Collection Model](collection-model.md).
+A property set is the single named reusable bundle for shared `frontmatter`, `relationships`, and `headings`, defined under `<metadata_directory>/property-sets/`. A collection applies a property set in two ways: `typedmark.yaml` MAY name default property sets that apply to every note type, and a concrete note-type schema MAY name additional property sets to compose, opt out of specific default property sets, and subtract individual inherited fields. Property sets are authoritative on [Collection Model](collection-model.md).
 
 ### Effective Note-Type Schema
 
-The effective note-type schema is the normative result of taking one concrete note-type schema, its abstract ancestor chain, and then applying collection-level inheritance, declared property sets, and local schema definitions in the order defined by this specification. Managed-note conformance is evaluated against that effective schema, not against isolated fragments.
+The effective note-type schema is the normative result of taking one concrete note-type schema, its abstract ancestor chain through `extends`, and then applying default property sets, composed property sets, and local schema definitions in the order defined by this specification. Managed-note conformance is evaluated against that effective schema, not against isolated fragments.
 
 ### Relationships, Headings, and Templates
 

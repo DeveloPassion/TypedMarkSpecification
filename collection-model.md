@@ -6,7 +6,9 @@ nav_order: 2
 
 # Collection Model
 
-This page is authoritative for `typedmark.yaml`, the configurable metadata directory, ordered note-type mappings, named property sets, collection-level inheritance, property-set application, effective block-merge rules, and validation defaults. It is not authoritative for `<metadata_directory>/system.yaml` or `<metadata_directory>/instance.yaml`; those live in [System Definitions and Instances](system-definitions-and-instances.md). It is also not authoritative for relationship and template semantics; those live in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). Managed note field semantics still live in [Managed Notes and Properties](managed-notes-and-properties.md), even when field definitions are contributed through `global_properties`, abstract note types, property sets, or note-type schemas. The combined result of those contributions is the effective note-type schema described in [Note Type Schemas](note-type-schemas.md).
+This page is authoritative for `typedmark.yaml`, the configurable metadata directory, ordered note-type mappings, named property sets, default property sets, property-set composition, effective block-merge rules, and validation defaults. It is not authoritative for `<metadata_directory>/system.yaml` or `<metadata_directory>/instance.yaml`; those live in [System Definitions and Instances](system-definitions-and-instances.md). It is also not authoritative for relationship and template semantics; those live in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). Managed note field semantics still live in [Managed Notes and Properties](managed-notes-and-properties.md), even when field definitions are contributed through property sets, abstract note types, or note-type schemas. The combined result of those contributions is the effective note-type schema described in [Note Type Schemas](note-type-schemas.md).
+
+Property sets are the single composition mechanism for reusable `frontmatter`, `relationships`, and `headings`. A property set is a named bundle stored under `<metadata_directory>/property-sets/`. A collection applies property sets to note types in two ways: `typedmark.yaml` MAY name default property sets that apply to every note type, and a concrete note-type schema MAY name additional property sets to compose. Note-type inheritance through `extends` is a distinct axis defined in [Note Type Schemas](note-type-schemas.md); it carries `kind`, `storage`, `template`, and `guidance`, which property sets do not.
 
 ## Collection Model Specification
 
@@ -65,7 +67,7 @@ Rules:
 - `unknown_field` applies when an undeclared field appears in `typedmark.yaml`, any governed YAML artifact, or managed note frontmatter.
 - `invalid_field_value` applies when a field value violates a declared field-level value constraint such as `format`, `regex`, `not_empty`, `not_blank`, `min`, `max`, or `allowed_values`. `format: note_link` syntax and resolution failures still use `invalid_note_link`.
 - `duplicate_unique_value` applies when a field declared with `unique: true` repeats a non-null stored value in more than one managed note of the same note type.
-- `invalid_property_set` applies when a property set file, or a note-type schema property-set reference, violates the property-set rules defined in this page.
+- `invalid_property_set` applies when a property set file, a `typedmark.yaml` `default_property_sets` reference, or a note-type schema `property_sets` or `exclude_property_sets` reference violates the property-set rules defined in this page.
 - `invalid_note_type_mapping` applies when a note-type mapping rule in `typedmark.yaml` violates the mapping-rule contract defined in this page.
 - `invalid_note_link` applies when an internal note link violates the syntax or resolution rules defined in [Managed Notes and Properties](managed-notes-and-properties.md).
 - `invalid_relationship_definition` applies when relationship declarations violate the relationship model defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
@@ -111,7 +113,7 @@ Rules:
 - A collection note MAY match no mapping rule and remain untyped.
 - The winning mapping rule is the first rule in `note_type_mappings` whose own match conditions succeed for a note.
 - After a mapping rule wins for a note, later mapping rules MUST NOT be used as fallback for that note.
-- Note-type mapping is evaluated before schema selection, inheritance, field defaulting, field materialization, relationship derivation, or template comparison.
+- Note-type mapping is evaluated before schema selection, property-set composition, note-type inheritance, field defaulting, field materialization, relationship derivation, or template comparison.
 - Mapping rules MAY inspect only the collection-relative note path and the stored frontmatter physically present in the note file.
 - Mapping rules MUST NOT depend on the effective note-type schema, generated field values, or template content.
 - `kind: frontmatter_field` MUST physically contain `field`.
@@ -145,63 +147,29 @@ Rules:
 - If the winning mapping rule yields a candidate note type that does not resolve to exactly one concrete schema file under `<metadata_directory>/schemas/`, the note is untyped.
 - Because `note_type_mappings` is ordered, more specific rules SHOULD appear before more general rules.
 
-### Global Property Definitions
+### Default Property Sets
 
-`typedmark.yaml` MAY define `global_properties` to declare note properties that apply to all note types.
+`typedmark.yaml` MAY define `default_property_sets` to name the property sets that apply to every note type by default. This is how a collection declares shared `frontmatter`, `relationships`, and `headings` without repeating them in each schema.
 
 Example:
 
 ```yaml
-global_properties:
-  frontmatter:
-    note_type:
-      type: text
-      value_from_schema: note_type
-    title:
-      label: Title
-      description: Human-readable note title.
-      type: text
-      nullable: true
-      default_value: null
-    description:
-      label: Description
-      description: Human-readable note description.
-      type: text
-      optional: true
-      nullable: true
-      default_value: ""
-    summary:
-      label: Summary
-      description: Short overview of the note.
-      type: text
-      optional: true
-      nullable: true
-      default_value: ""
-  relationships:
-    belongs_to:
-      allowed_note_types: {}
-    related_to:
-      allowed_note_types: {}
-  headings:
-    required_h2: []
-    optional_h2: []
-    allow_other_h2: true
-    require_order: false
+default_property_sets:
+  - base
 ```
 
 Rules:
 
-- `global_properties` MAY be omitted.
-- `global_properties` MAY define shared defaults for `frontmatter`, `relationships`, and `headings`.
-- The semantics of `frontmatter`, including flat human-facing field metadata such as `label`, `description`, and `icon`, are defined in [Managed Notes and Properties](managed-notes-and-properties.md).
-- `global_properties.frontmatter` MUST follow the core-defined managed-note field-name rules defined in [Managed Notes and Properties](managed-notes-and-properties.md).
-- The semantics of `relationships` and `headings` are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
-- Every note type inherits `global_properties` by default.
-- Note-type schemas MAY override inherited global properties locally.
+- `default_property_sets` MAY be omitted.
+- If present, `default_property_sets` MUST be a non-empty ordered list of unique property set identifiers.
+- Each identifier in `default_property_sets` MUST resolve to exactly one file under `<metadata_directory>/property-sets/`.
+- Default property sets are applied to every concrete note type unless that note type excludes them with `exclude_property_sets`.
+- The order of identifiers in `default_property_sets` is significant for the effective merge order.
+- If `default_property_sets` is omitted, no property set applies by default and a note type composes only the property sets it names in `property_sets`.
 
 ### Property Set Definitions
 
-A property set is a named reusable frontmatter field set that note-type schemas opt into explicitly. Property sets are distinct from `global_properties`: `global_properties` apply by default when inheritance is enabled, while property sets never apply unless a schema references them.
+A property set is the single named reusable bundle for `frontmatter`, `relationships`, and `headings`. A collection applies a property set either by naming it in `default_property_sets` or by naming it in a concrete note-type schema's `property_sets`.
 
 Property set file shape:
 
@@ -272,6 +240,34 @@ frontmatter:
     default_value: null
 ```
 
+A property set MAY also contribute shared `relationships` and `headings`, which is how collection-wide relationship and heading defaults are expressed:
+
+```yaml
+specification_version: 0.0.1
+property_set: base
+description: Shared fields, relationships, and headings for every note type.
+frontmatter:
+  note_type:
+    type: text
+    value_from_schema: note_type
+  title:
+    label: Title
+    description: Human-readable note title.
+    type: text
+    nullable: true
+    default_value: null
+relationships:
+  belongs_to:
+    allowed_note_types: {}
+  related_to:
+    allowed_note_types: {}
+headings:
+  required_h2: []
+  optional_h2: []
+  allow_other_h2: true
+  require_order: false
+```
+
 Rules:
 
 - `<metadata_directory>/property-sets/` MAY be omitted when no property sets are defined.
@@ -280,17 +276,24 @@ Rules:
 - The property set file basename MUST equal the file's `property_set` value.
 - `property_set` MUST be a non-empty slug.
 - Each property set file MUST physically contain `specification_version`, `property_set`, `description`, and `frontmatter`.
+- A property set MAY also declare `relationships` and `headings`.
 - `frontmatter` in a property set MUST be a field-definition mapping, even when it is empty.
 - The semantics of frontmatter field definitions in property sets, including flat human-facing field metadata such as `label`, `description`, and `icon`, are the same as in note-type schemas.
-- A property set MAY define reusable frontmatter fields only.
-- A property set MUST NOT define `note_type` or `id`.
+- If a property set declares `relationships`, it MUST contain both `belongs_to.allowed_note_types` and `related_to.allowed_note_types`, even when those mappings are empty, and its semantics are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
+- If a property set declares `headings`, it MUST follow the heading shape required by [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
+- A property set's `frontmatter` MUST follow the core-defined managed-note field-name rules defined in [Managed Notes and Properties](managed-notes-and-properties.md).
+- A property set MAY declare the core-defined `note_type` field; if it does, it MUST use `value_from_schema: note_type`.
+- A property set MAY declare the core-defined `deleted` field under the rules defined in [Managed Notes and Properties](managed-notes-and-properties.md).
+- A property set MUST NOT define `id`.
 - A property set MUST NOT define any other core-defined managed-note field name unless this specification version explicitly permits schema-level declaration of that field.
-- A property set MUST NOT define storage, template, relationships, headings, guidance, or inheritance settings.
-- A property set MUST NOT reference other property sets.
+- A property set MUST NOT define storage, template, or guidance settings.
+- A property set MUST NOT reference other property sets and MUST NOT name `default_property_sets`, `property_sets`, `exclude_property_sets`, or `frontmatter_remove`.
 
-### Applying Property Sets
+### Composing Property Sets
 
-Example note-type schema usage:
+A concrete note-type schema composes property sets through `property_sets`, opts out of default property sets through `exclude_property_sets`, and subtracts individual inherited fields through `frontmatter_remove`.
+
+Example opt-in composition:
 
 ```yaml
 note_type: review
@@ -309,89 +312,62 @@ frontmatter:
     default_value: null
 ```
 
-Rules:
-
-- A concrete note-type schema MAY define `property_sets`.
-- Abstract note types MUST NOT define `property_sets`.
-- If present, `property_sets` MUST be a non-empty list of unique property set identifiers.
-- `property_sets` is opt-in only. If absent, no property sets are applied to that concrete note type.
-- Each referenced property set MUST resolve to exactly one file under `<metadata_directory>/property-sets/`.
-- Property sets affect frontmatter only.
-- Property sets are applied after inherited global and abstract-note-type frontmatter and before local concrete note-type frontmatter definitions.
-- If `inheritance.enabled: false` or `inheritance.frontmatter: false`, only global frontmatter inheritance is disabled; frontmatter inherited from abstract note types and declared property sets still apply.
-- The order of identifiers in `property_sets` is significant for the effective field order.
-- Multiple property sets MUST NOT define the same field name unless the note-type schema also defines that field locally.
-- Local note-type schema frontmatter definitions override property-set definitions by field name.
-
-Effective note-type schema merge rules:
-
-- These merge rules define the effective `frontmatter`, `relationships`, and `headings` blocks used by the effective note-type schema described in [Note Type Schemas](note-type-schemas.md).
-- Frontmatter merges by field name within `frontmatter`.
-- Enabled global frontmatter, when enabled, is applied first.
-- Frontmatter declared by abstract ancestors, if any, is applied next from the farthest abstract ancestor to the nearest abstract ancestor.
-- If a later abstract ancestor defines a field already defined by enabled global frontmatter or by a more distant abstract ancestor, the later abstract ancestor definition replaces the earlier inherited definition completely and determines whether the field is effectively optional.
-- If `inheritance.frontmatter_remove` is present, the named fields are removed from accumulated inherited frontmatter after enabled global and abstract-ancestor frontmatter has been applied and before any property set or local concrete note-type frontmatter is applied.
-- If a property set defines a field already defined by inherited global or abstract-ancestor frontmatter, the property set definition replaces the inherited definition completely and determines whether the field is effectively optional.
-- If a local concrete note-type schema defines a field already contributed by inherited frontmatter or property sets, the local definition replaces the earlier definition completely and determines whether the field is effectively optional.
-- A field removed by `inheritance.frontmatter_remove` does not appear in the effective schema unless a declared property set or the local note-type schema defines that field later.
-- Because replacement is complete, any inherited or property-set-provided field metadata such as `label`, `description`, or `icon` is replaced too unless the overriding definition restates it.
-- Property sets are then applied in the schema's declared `property_sets` order.
-- Local concrete note-type schema frontmatter is applied last.
-- `relationships.belongs_to.allowed_note_types` and `relationships.related_to.allowed_note_types` merge by target note type.
-- Enabled global relationships, when enabled, are applied first.
-- Relationship targets declared by abstract ancestors, if any, are applied next from the farthest abstract ancestor to the nearest abstract ancestor.
-- If a relationship target is defined both earlier in the inherited stack and later in the inherited stack or locally, the later definition replaces the earlier definition for that target.
-- Enabled global headings, when enabled, are applied first.
-- Headings declared by abstract ancestors, if any, are applied next from the farthest abstract ancestor to the nearest abstract ancestor.
-- `headings.required_h2` and `headings.optional_h2` use replace semantics across the inherited stack and the local concrete schema: if a later list is present, it replaces the earlier list; otherwise the earlier list applies unchanged.
-- Scalar heading settings such as `allow_other_h2` and `require_order` use replace semantics across the inherited stack and the local concrete schema: a later value replaces the earlier value; otherwise the earlier value applies unchanged.
-- Property sets do not contribute relationship, heading, storage, template, or guidance content.
-- Global inheritance and abstract note-type inheritance operate within the effective `frontmatter`, `relationships`, and `headings` blocks of the selected concrete note type; those effective blocks remain mandatory even when much of their content is inherited or provided by property sets.
-- A concrete note-type schema MAY omit individual inherited or property-set-provided field definitions, relationship target definitions, or heading settings that remain unchanged.
-
-### Disabling and Subtracting Inheritance
-
-A concrete note-type schema MAY explicitly disable inheritance from `global_properties` and MAY subtract individual inherited frontmatter fields.
-
-Example:
+Example excluding a default property set:
 
 ```yaml
 note_type: glossary
-inheritance:
-  enabled: true
-  frontmatter: false
-  relationships: false
-  headings: true
+exclude_property_sets:
+  - base
 ```
 
 Example field subtraction:
 
 ```yaml
 note_type: home
-inheritance:
-  enabled: true
-  frontmatter: true
-  frontmatter_remove:
-    - title
+frontmatter_remove:
+  - title
 ```
 
 Rules:
 
-- `inheritance` MAY be omitted.
-- Only concrete note types MAY declare `inheritance`.
-- `inheritance.enabled` MAY be omitted; if omitted, it defaults to `true`.
-- If `inheritance.enabled: false`, the concrete note type inherits nothing from `global_properties`.
-- `inheritance.frontmatter`, `inheritance.relationships`, and `inheritance.headings` MAY each be omitted; if omitted, each defaults to `true`.
-- `inheritance.frontmatter_remove` MAY be omitted.
-- If present, `inheritance.frontmatter_remove` MUST be a non-empty list of unique frontmatter field names.
-- Each field named in `inheritance.frontmatter_remove` MUST resolve to a field contributed by enabled `global_properties.frontmatter` or by an abstract ancestor.
-- If no frontmatter is inherited from `global_properties` or abstract ancestors, `inheritance.frontmatter_remove` MUST be omitted.
-- If one of those block-specific flags is `false`, the corresponding global block is ignored completely for that note type before merge rules are applied.
-- If `inheritance.frontmatter: false`, only global frontmatter inheritance is disabled; frontmatter inherited from abstract note types still applies.
-- If a block-specific flag is `false`, local definitions for that block still apply normally.
-- `inheritance.frontmatter_remove` is evaluated after global block-specific disable rules and after abstract-ancestor frontmatter has been accumulated, and before declared property sets are applied.
-- `inheritance.frontmatter_remove` subtracts inherited frontmatter from `global_properties` or abstract ancestors only; it does not remove fields contributed later by property sets or local concrete schema definitions.
-- Block-specific flags and `inheritance.frontmatter_remove` affect global inheritance only; they do not disable abstract note-type inheritance, they do not disable declared property sets, and they do not make required effective blocks optional.
-- Block-specific inheritance flags have no effect when `inheritance.enabled: false` because all inheritance is already disabled.
-- Disable rules are evaluated before global merge rules are applied.
-- Inheritance settings affect only how the effective note-type schema is computed; they do not create a second schema file or a separate persisted artifact.
+- `property_sets`, `exclude_property_sets`, and `frontmatter_remove` MAY each be omitted.
+- Only concrete note types MAY declare `property_sets`, `exclude_property_sets`, or `frontmatter_remove`.
+- If present, `property_sets` MUST be a non-empty list of unique property set identifiers.
+- If present, `exclude_property_sets` MUST be a non-empty list of unique property set identifiers.
+- Each identifier in `property_sets` and `exclude_property_sets` MUST resolve to exactly one file under `<metadata_directory>/property-sets/`.
+- Each identifier in `exclude_property_sets` MUST be named in `default_property_sets`.
+- A property set MUST NOT appear in both `default_property_sets` (after exclusions) and `property_sets` for the same note type.
+- The order of identifiers in `property_sets` is significant for the effective merge order.
+- A concrete note type's applied property sets are the default property sets in `default_property_sets` order, minus those named in `exclude_property_sets`, followed by the property sets named in `property_sets`.
+- If present, `frontmatter_remove` MUST be a non-empty list of unique frontmatter field names.
+- Each field named in `frontmatter_remove` MUST resolve to a field contributed by an applied default property set or by an abstract ancestor.
+- If no frontmatter is contributed by default property sets or abstract ancestors, `frontmatter_remove` MUST be omitted.
+
+Effective note-type schema merge rules:
+
+- These merge rules define the effective `frontmatter`, `relationships`, and `headings` blocks used by the effective note-type schema described in [Note Type Schemas](note-type-schemas.md).
+- Frontmatter merges by field name within `frontmatter`.
+- Default property set frontmatter, in `default_property_sets` order and after applying `exclude_property_sets`, is applied first.
+- Frontmatter declared by abstract ancestors, if any, is applied next from the farthest abstract ancestor to the nearest abstract ancestor.
+- If a later abstract ancestor defines a field already defined by a default property set or by a more distant abstract ancestor, the later abstract ancestor definition replaces the earlier inherited definition completely and determines whether the field is effectively optional.
+- If `frontmatter_remove` is present, the named fields are removed from accumulated inherited frontmatter after default-property-set and abstract-ancestor frontmatter has been applied and before any opt-in property set or local concrete note-type frontmatter is applied.
+- Opt-in property sets named in `property_sets` are then applied in declared order.
+- If two applied property sets define the same field name, the later property set in the applied order replaces the earlier definition completely.
+- If a property set defines a field already defined by a default property set or abstract-ancestor frontmatter, the property set definition replaces the inherited definition completely and determines whether the field is effectively optional.
+- If a local concrete note-type schema defines a field already contributed by inherited frontmatter or property sets, the local definition replaces the earlier definition completely and determines whether the field is effectively optional.
+- A field removed by `frontmatter_remove` does not appear in the effective schema unless an opt-in property set or the local note-type schema defines that field later.
+- Because replacement is complete, any property-set-provided or inherited field metadata such as `label`, `description`, or `icon` is replaced too unless the overriding definition restates it.
+- Local concrete note-type schema frontmatter is applied last.
+- `relationships.belongs_to.allowed_note_types` and `relationships.related_to.allowed_note_types` merge by target note type.
+- Default property set relationships, in `default_property_sets` order and after applying `exclude_property_sets`, are applied first.
+- Relationship targets declared by abstract ancestors, if any, are applied next from the farthest abstract ancestor to the nearest abstract ancestor.
+- Relationship targets declared by opt-in property sets are applied next in declared `property_sets` order.
+- If a relationship target is defined both earlier in the merge stack and later in the merge stack or locally, the later definition replaces the earlier definition for that target.
+- Default property set headings, in `default_property_sets` order and after applying `exclude_property_sets`, are applied first.
+- Headings declared by abstract ancestors, if any, are applied next from the farthest abstract ancestor to the nearest abstract ancestor.
+- Headings declared by opt-in property sets are applied next in declared `property_sets` order.
+- `headings.required_h2` and `headings.optional_h2` use replace semantics across the merge stack and the local concrete schema: if a later list is present, it replaces the earlier list; otherwise the earlier list applies unchanged.
+- Scalar heading settings such as `allow_other_h2` and `require_order` use replace semantics across the merge stack and the local concrete schema: a later value replaces the earlier value; otherwise the earlier value applies unchanged.
+- Property-set composition and abstract note-type inheritance operate within the effective `frontmatter`, `relationships`, and `headings` blocks of the selected concrete note type; those effective blocks remain mandatory even when much of their content is contributed by property sets or abstract ancestors.
+- A concrete note-type schema MAY omit individual property-set-provided or inherited field definitions, relationship target definitions, or heading settings that remain unchanged.
+- Property-set composition affects only how the effective note-type schema is computed; it does not create a second schema file or a separate persisted artifact.

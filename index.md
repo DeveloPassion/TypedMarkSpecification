@@ -14,7 +14,7 @@ If you want the motivation behind the spec, start with the [Manifesto](manifesto
 ## Index
 
 - [Foundations](foundations.md): purpose, design principles, artifact map, and structural precedence
-- [Collection Model](collection-model.md): `typedmark.yaml`, note-type mappings, property sets, inheritance, and validation defaults
+- [Collection Model](collection-model.md): `typedmark.yaml`, note-type mappings, property sets, default property sets, property-set composition, and validation defaults
 - [Note Type Schemas](note-type-schemas.md): note type registration, abstract note types, note-type inheritance, effective note-type schema, evaluation pipeline, schema shape, schema kinds, and storage rules
 - [Managed Notes and Properties](managed-notes-and-properties.md): managed note contract, note-type association, field rules, note-link syntax, field materialization, and required-versus-optional field semantics
 - [Relationships, Headings, and Templates](relationships-headings-and-templates.md): relationship semantics, heading constraints, and template requirements
