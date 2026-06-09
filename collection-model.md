@@ -38,6 +38,7 @@ validation_defaults:
   invalid_property_set: error
   invalid_note_type_mapping: error
   invalid_composition: error
+  unsupported_specification_version: error
   invalid_note_link: error
   invalid_relationship_definition: error
   invalid_relationship_instance: error
@@ -88,6 +89,7 @@ Rules:
 - `invalid_property_set` applies when a property set file, a `typedmark.yaml` `default_property_sets` reference, or a note-type schema `property_sets` or `exclude_property_sets` reference violates the property-set rules defined in this page.
 - `invalid_note_type_mapping` applies when a note-type mapping rule in `typedmark.yaml` violates the mapping-rule contract defined in this page.
 - `invalid_composition` applies when the `composition` block in `typedmark.yaml` violates the composition-provenance rules defined in this page, including a source that does not resolve to exactly one system at the declared version.
+- `unsupported_specification_version` applies when a governed artifact declares a `specification_version` whose major version the tool does not implement; the tool MUST report it and MUST NOT assert conformance for that artifact, as defined in [Foundations](foundations.md).
 - `invalid_note_link` applies when an internal note link violates the syntax or resolution rules defined in [Managed Notes and Properties](managed-notes-and-properties.md).
 - `invalid_relationship_definition` applies when relationship declarations violate the relationship model defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - `invalid_relationship_instance` applies when concrete note-to-note links violate the relationship constraints defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).

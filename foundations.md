@@ -78,11 +78,27 @@ Rules:
 
 ### Specification Versioning
 
-`specification_version` identifies the version of the TypedMark core specification that governs an artifact.
+`specification_version` identifies the version of the TypedMark core specification that governs an artifact. It is distinct from a system's release `version` and from the change history in `<metadata_directory>/history.yaml`, both defined in [Systems, Composition, and Evolution](systems-composition-evolution.md): `specification_version` versions the specification itself, while `version` and `history.yaml` version a system built with it.
+
+The specification's own version uses Semantic Versioning change classes:
+
+- MAJOR: a breaking change to the specification. An artifact valid under an earlier major MAY be invalid under a new major.
+- MINOR: a backward-compatible addition, such as a new optional field, property type, or construct. An artifact valid under `x.y` remains valid under `x.(y+1)`.
+- PATCH: an editorial clarification that does not change structural requirements.
 
 Rules:
 
 - `specification_version` MUST be a Semantic Versioning x.y.z string.
+- Every governed YAML artifact declares its own `specification_version`, and each artifact is evaluated under the rules of the version it declares.
+- Governed artifacts in one collection MAY declare different `specification_version` values, because composition MAY combine artifacts authored against different specification versions; each artifact is evaluated under its own declared version.
+- A tool MUST advertise the specification major version, and the highest minor within it, that it implements.
+- Within a single major, the specification is additive and forward-compatible: a tool MUST evaluate an artifact whose declared minor is less than or equal to the tool's implemented minor under that artifact's declared version.
+- If an artifact declares a minor greater than the tool's implemented minor within a major the tool implements, the tool MUST evaluate it on a best-effort basis under the highest minor it implements, MUST NOT reject it solely because the minor is newer, and SHOULD report constructs it does not recognize as warnings rather than errors.
+- A construct introduced by a newer minor that a tool does not recognize MUST be reported under `unknown_field` or as an unrecognized construct; it MUST NOT be silently accepted as structure the tool understands.
+- If an artifact declares a major the tool does not implement, the tool MUST NOT assert conformance for that artifact and MUST report `unsupported_specification_version`, as defined in [Collection Model](collection-model.md).
+- The specification MAY mark a feature deprecated in a minor release and MAY remove it only in a subsequent major release.
+- A major release of the specification MUST document the breaking changes it introduces, so that migration tools can transform artifacts from the previous major to the new one.
+- Migrating a system's own schemas across its releases uses `history.yaml` and the migration flow defined in [Systems, Composition, and Evolution](systems-composition-evolution.md); that mechanism is independent of `specification_version`.
 
 
 ## Purpose
