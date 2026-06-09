@@ -14,7 +14,14 @@ A system is a reusable, versioned, publishable packaging of a TypedMark collecti
 
 A system is therefore the domain layer of TypedMark. It carries domain note types, house conventions, templates, and starter content on top of the domain-agnostic core.
 
+`typedmark.yaml` and `system.yaml` answer different questions and have different lifecycles. `typedmark.yaml` is the collection's structural contract and is always present: it defines how the collection is shaped and validated. `system.yaml` is the publishing overlay and is present only when the collection is shared as a system: it adds versioned distribution identity, discovery metadata, and scaffold instructions. A private collection needs only `typedmark.yaml`; a published system needs both.
+
 Rules:
+
+- `typedmark.yaml` is required for every conforming collection; `system.yaml` is required only when a collection is a system definition.
+- Only `system.yaml` carries a `version`. Composition lineage resolves against `system_id` and `system_version`, and the migration flow compares system versions, so the versioned identity has no equivalent in `typedmark.yaml`.
+- `typedmark.yaml` `collection_model_id` is structural-model identity; `system.yaml` `system_id` is distribution identity. They are related but distinct and MUST NOT be conflated.
+- `system.yaml` MUST NOT restate or override structural rules defined by `typedmark.yaml`, note-type schemas, or property sets; it governs packaging, publishing, composition, and import only.
 
 - The core specification defines the file layout, schema shapes, field semantics, validation model, composition semantics, and conformance rules.
 - A system applies that model to a concrete domain by shipping note-type schemas, property sets, templates, scaffold content, and validation defaults.
@@ -155,9 +162,37 @@ Rules:
 
 - Two conforming composing tools given identical `composition.sources` at identical versions MUST produce the same composed schemas, property sets, and templates under canonical comparison.
 - Canonical comparison uses the canonical field materialization rules in [Managed Notes and Properties](managed-notes-and-properties.md) for frontmatter, and the deterministic merge order defined above for every ordered construct, including effective field order, `property_sets` order, and `composition.sources` order.
-- A composing tool SHOULD serialize composed artifacts in canonical form so that identical inputs produce byte-identical, hash-stable output.
-- Canonical serialization MUST preserve the deterministic merge order for ordered constructs and MUST NOT reorder fields, property-set references, or composition sources.
+- A composing tool that claims reproducible or hash-stable output MUST serialize composed artifacts in the canonical serialization defined below; two artifacts that are equal under canonical comparison then have byte-identical canonical serializations.
 - The local-only contribution of a composed collection is, by definition, the difference between its current materialized state and the state obtained by recomposing its `composition.sources`; a tool MUST be able to recover it by recomposition rather than by reading per-artifact origin tags.
+
+### Canonical Serialization
+
+The canonical serialization of a governed YAML artifact is the byte sequence produced by the rules below. It exists so that composition and migration produce reproducible, hash-stable output. A hand-authored governed artifact need not be in canonical form to be valid; canonical serialization is the form a tool produces when it materializes composed artifacts or claims reproducible output.
+
+Encoding and layout:
+
+- The output MUST be UTF-8 without a byte-order mark.
+- Line endings MUST be a single LINE FEED (U+000A); carriage returns MUST NOT appear.
+- The output MUST end with exactly one LINE FEED, and no line may contain trailing whitespace.
+- Mappings and sequences MUST use block style; flow style, anchors, aliases, explicit tags, comments, and directives MUST NOT appear.
+- Indentation MUST be two spaces per nesting level.
+
+Key and element order:
+
+- Order-significant mappings preserve their defined order; every other mapping serializes its keys sorted ascending by Unicode code point.
+- The `frontmatter` mapping and every `object.fields` mapping are order-significant and MUST preserve the effective field order defined by the merge rules.
+- `property_sets`, `default_property_sets`, `composition.sources`, `history`, and every `changes` list are sequences and MUST preserve their defined order.
+- Every other mapping, including a field definition's property keys and the `storage`, `relationships`, `headings`, and `system.yaml` top-level mappings, MUST serialize its keys in ascending Unicode code-point order.
+
+Scalars:
+
+- Null MUST serialize as `null`.
+- Booleans MUST serialize as `true` or `false`.
+- Integers MUST serialize in base ten, with no leading zeros, no leading `+`, and a leading `-` only for negative values.
+- Numbers MUST serialize as the shortest base-ten decimal that round-trips to the stored value, using `.` for any fractional part and a lowercase `e` for any exponent; negative zero MUST serialize as `0`.
+- Strings MUST serialize in plain style when the value is plain-safe, and otherwise in double-quoted style with `\` escapes.
+- A string is plain-safe when it is non-empty, does not begin with a YAML indicator character, contains no control characters or characters that require escaping, and does not match the canonical serialization of a null, boolean, integer, or number.
+- Each materialized field value MUST also satisfy the Canonical Field Materialization rules in [Managed Notes and Properties](managed-notes-and-properties.md).
 
 ## System Versioning
 

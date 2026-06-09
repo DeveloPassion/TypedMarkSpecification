@@ -475,10 +475,34 @@ Rules:
 - `add_field` MUST add the new field to every affected managed note, materialized to its `default_value` or to `null` under the Canonical Field Materialization rules.
 - `remove_field` MUST remove the named field from every affected managed note.
 - `rename_field` MUST move the stored value from the old field name to the new field name in every affected managed note, preserving the value unchanged.
-- `retype_field` MUST convert the stored value to the new type when this specification defines a lossless conversion for that type pair; when it does not, the migration MUST report the field for explicit resolution and MUST NOT discard or coerce the value destructively.
+- `retype_field` MUST convert each stored value under the Field Type Conversions rules below: a defined lossless conversion is applied automatically, a conditional conversion is applied only when every affected value qualifies, and every other type pair MUST be reported for explicit resolution and MUST NOT be coerced destructively.
 - `change_field` MUST re-validate every affected managed note against the field's new constraints; a stored value that violates the new constraints MUST be reported rather than silently dropped or altered.
 - `rename_note_type` MUST update the stored `note_type` field when present, MUST re-resolve the note's storage path under the renamed type's effective storage rules, and MUST update internal note links and relationship-bearing fields that target the renamed type.
 - `add_note_type`, `remove_note_type`, `add_property_set`, `remove_property_set`, and `rename_property_set` change which schemas and property sets exist; their effect on an individual managed note is only the resulting change to that note's effective schema, evaluated through the field operations above.
 - After a migration operation is applied, every affected managed note MUST satisfy the Canonical Field Materialization rules on this page.
 - A migration MUST NOT discard managed-note data silently; any operation that cannot preserve data MUST be reported for explicit resolution, as required by [Systems, Composition, and Evolution](system-definitions-and-instances.md).
 - A field whose name is changed by `rename_field` follows the managed-note field-name rules defined on this page; a rename whose target name violates those rules is invalid.
+
+### Field Type Conversions
+
+A `retype_field` migration changes a field's declared `type`. Conversions fall into three tiers, defined by the source type and target type pair.
+
+Defined lossless conversions are always information-preserving and a tool MUST apply them automatically:
+
+- `integer` to `number`, because every integer is a valid number.
+- `date` to `text`, `time` to `text`, `datetime` to `text`, and `link` to `text`, because these types are stored as strings and the stored characters are unchanged.
+- `tags` to `list` when the target `items.type` is `text`, because every tag value is a valid text item and the stored sequence is unchanged.
+- any type to `any`, because `any` accepts any non-null value.
+
+Conditional conversions are information-preserving only for values that already satisfy the target type and its constraints. A tool MUST apply a conditional conversion only when every affected stored value qualifies, and MUST otherwise report the field for explicit resolution:
+
+- `number` to `integer`, when every value has no fractional component.
+- `text` to `link`, and `text` to `date`, `time`, or `datetime`, when every value satisfies the target type's `format`.
+- `list` to `tags`, when the source `items.type` is `text` and every item is a non-empty string.
+- `any` to a concrete type, when every value satisfies that type.
+
+Rules:
+
+- Any source and target type pair not listed above MUST be reported for explicit resolution and MUST NOT be coerced destructively.
+- A conversion changes only the stored representation; after conversion, each value MUST satisfy the new field definition's constraints under the rules on this page, and a value that fails is reported rather than silently altered.
+- A conversion to a non-nullable target MUST NOT introduce `null`; a value that cannot be converted to a conforming non-null value is reported for explicit resolution.
