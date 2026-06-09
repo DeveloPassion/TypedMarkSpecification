@@ -6,7 +6,7 @@ nav_order: 2
 
 # Collection Model
 
-This page is authoritative for `typedmark.yaml`, the configurable metadata directory, ordered note-type mappings, named property sets, default property sets, property-set composition, the collection's composition provenance, effective block-merge rules, and validation defaults. It is not authoritative for `<metadata_directory>/system.yaml`, system composition, or change history; those live in [Systems, Composition, and Evolution](system-definitions-and-instances.md). It is also not authoritative for relationship and template semantics; those live in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). Managed note field semantics still live in [Managed Notes and Properties](managed-notes-and-properties.md), even when field definitions are contributed through property sets, abstract note types, or note-type schemas. The combined result of those contributions is the effective note-type schema described in [Note Type Schemas](note-type-schemas.md).
+This page is authoritative for `typedmark.yaml`, the collection identity, the configurable metadata directory, ordered note-type mappings, named property sets, default property sets, property-set composition, the collection's composition provenance, effective block-merge rules, and validation defaults. It is not authoritative for the optional system fields of `typedmark.yaml` — release version, publishing metadata, and scaffold — nor for system composition or change history; those live in [Systems, Composition, and Evolution](system-definitions-and-instances.md). It is also not authoritative for relationship and template semantics; those live in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). Managed note field semantics still live in [Managed Notes and Properties](managed-notes-and-properties.md), even when field definitions are contributed through property sets, abstract note types, or note-type schemas. The combined result of those contributions is the effective note-type schema described in [Note Type Schemas](note-type-schemas.md).
 
 Property sets are the single composition mechanism for reusable `frontmatter`, `relationships`, and `headings`. A property set is a named bundle stored under `<metadata_directory>/property-sets/`. A collection applies property sets to note types in two ways: `typedmark.yaml` MAY name default property sets that apply to every note type, and a concrete note-type schema MAY name additional property sets to compose. Note-type inheritance through `extends` is a distinct axis defined in [Note Type Schemas](note-type-schemas.md); it carries `kind`, `storage`, `template`, and `guidance`, which property sets do not.
 
@@ -18,7 +18,7 @@ Required fields:
 
 ```yaml
 specification_version: 0.0.1
-collection_model_id: example-knowledge-base
+id: example-knowledge-base
 metadata_directory: .metadata
 exclude_paths:
   - .git/**
@@ -44,17 +44,18 @@ In path notation on this page, `<metadata_directory>` means the directory name d
 Rules:
 
 - `typedmark.yaml` MUST exist at the root of every conforming managed collection.
-- A conforming system definition MUST also include `typedmark.yaml` at its root.
-- `typedmark.yaml` MUST physically contain `specification_version`, `collection_model_id`, `metadata_directory`, `exclude_paths`, and `validation_defaults`.
+- `typedmark.yaml` MUST physically contain `specification_version`, `id`, `metadata_directory`, `exclude_paths`, and `validation_defaults`.
 - The semantics of `specification_version` are defined in [Foundations](foundations.md).
-- `collection_model_id` MUST be a non-empty slug.
-- `collection_model_id` identifies the structural collection model described by `typedmark.yaml`.
-- `collection_model_id` identifies a structural model, not a system release and not a specific collection on disk.
-- Multiple collections MAY share the same `collection_model_id`.
+- `id` MUST be a non-empty slug.
+- `id` is the collection's single identity. It identifies the collection's structural model and, when the collection is a publishable system, is the distribution identity a marketplace and `composition.sources` resolve against.
+- `id` is not a release; the release version is the optional `version` system field defined in [Systems, Composition, and Evolution](system-definitions-and-instances.md).
+- `id` SHOULD be unique to the system family it identifies.
+- A collection has its own `id`; a collection composed from systems MUST give itself an `id` distinct from its sources, which appear in `composition.sources`.
+- `typedmark.yaml` MAY declare the optional system fields, including `version`, `name`, `description`, `scaffold`, and discovery metadata, defined in [Systems, Composition, and Evolution](system-definitions-and-instances.md).
 - `metadata_directory` MUST be a non-empty string.
 - `metadata_directory` MUST name a single directory at the collection root.
 - `metadata_directory` MUST NOT be `.` or `..` and MUST NOT contain path separators.
-- `metadata_directory` identifies the governed-artifact subtree for the collection, including the system manifest, change history, property sets, note-type schemas, and templates.
+- `metadata_directory` identifies the governed-artifact subtree for the collection, including the change history, property sets, note-type schemas, and templates.
 - Validators and agents MUST derive governed artifact locations from `metadata_directory`.
 - `exclude_paths` defines additional content that validators and agents MUST ignore for structural reasoning. It does not redefine or relocate the metadata directory.
 - `validation_defaults` provides default severity levels for collection-wide validation reporting.
@@ -158,10 +159,10 @@ Example:
 ```yaml
 composition:
   sources:
-    - system_id: para-system
-      system_version: 1.2.0
-    - system_id: dev-team-ai-context
-      system_version: 0.3.0
+    - id: para-system
+      version: 1.2.0
+    - id: dev-team-ai-context
+      version: 0.3.0
 ```
 
 Rules:
@@ -170,11 +171,12 @@ Rules:
 - If present, `composition` MUST physically contain `sources`.
 - `composition.sources` MUST be a non-empty ordered list.
 - The order of `composition.sources` is significant and defines the composition merge order defined in [Systems, Composition, and Evolution](system-definitions-and-instances.md).
-- Each source MUST declare `system_id` and `system_version`.
-- `system_id` MUST be a non-empty slug.
-- `system_version` MUST be a Semantic Versioning 2.0.0 string.
-- A `system_id` MUST appear at most once in `composition.sources`.
-- Each source MUST resolve to exactly one system whose `system_id` and `version` match; a source that does not resolve is an `invalid_composition` failure.
+- Each source MUST declare `id` and `version`.
+- A source `id` MUST be a non-empty slug.
+- A source `version` MUST be a Semantic Versioning 2.0.0 string.
+- An `id` MUST appear at most once in `composition.sources`.
+- A source `id` MUST NOT equal the composing collection's own `id`.
+- Each source MUST resolve to exactly one system whose `id` and `version` match; a source that does not resolve is an `invalid_composition` failure.
 - A composed collection MUST remain self-contained: its materialized schemas, property sets, and templates MUST be physically present under `metadata_directory`, and conformance MUST NOT require re-resolving `composition.sources`.
 - `composition` records provenance only; it does not relocate, replace, or override any governed artifact physically present under `metadata_directory`.
 

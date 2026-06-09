@@ -18,7 +18,7 @@ If you want the motivation behind the spec, start with the [Manifesto](manifesto
 - [Note Type Schemas](note-type-schemas.md): note type registration, abstract note types, note-type inheritance, effective note-type schema, evaluation pipeline, schema shape, schema kinds, and storage rules
 - [Managed Notes and Properties](managed-notes-and-properties.md): managed note contract, note-type association, field rules, note-link syntax, field materialization, required-versus-optional field semantics, and managed-note migration
 - [Relationships, Headings, and Templates](relationships-headings-and-templates.md): relationship semantics, heading constraints, and template requirements
-- [Systems, Composition, and Evolution](system-definitions-and-instances.md): system manifest, versioning, deterministic composition, change history, and the migration and update flow
+- [Systems, Composition, and Evolution](system-definitions-and-instances.md): system fields in `typedmark.yaml`, versioning, deterministic composition, change history, and the migration and update flow
 - [Conformance and Roadmap](conformance-and-roadmap.md): non-goals, conformance modes, and implementation order
 
 ## Reading Path
