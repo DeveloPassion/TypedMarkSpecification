@@ -21,7 +21,7 @@ Rules:
 
 ### Collection Configuration
 
-The collection configuration is the collection-wide structural contract defined in `typedmark.yaml`. It defines collection-level rules such as the metadata directory, note-type mappings, validation defaults, excluded paths, default property sets, composition provenance, and other defaults that apply across note types. Details: [Collection Model](collection-model.md).
+The collection configuration is the collection-wide structural contract defined in `typedmark.yaml`. It declares the collection's identity (`id`, `name`, `description`) and collection-level rules such as the metadata directory, note-type mappings, validation defaults, excluded paths, default property sets, composition provenance, and other defaults that apply across note types. Details: [Collection Model](collection-model.md).
 
 ### Note Types
 
@@ -61,7 +61,7 @@ A note type governs more than metadata fields. It also defines typed relationshi
 
 ### Systems, Composition, and Evolution
 
-The specification distinguishes collection structure from the systems that package and evolve it. A system is the domain layer of TypedMark: a collection becomes a reusable, versioned, publishable system by declaring the optional system fields of `typedmark.yaml` — release version, publishing metadata, and scaffold — on top of the domain-agnostic core. There is no separate system manifest. A collection MAY be composed from several systems; the resulting collection is materialized self-contained, and its composition lineage is recorded as provenance in `typedmark.yaml`. `<metadata_directory>/history.yaml` records the event-sourced change history that drives migrating a collection to newer system versions. These rules are authoritative on [Systems, Composition, and Evolution](system-definitions-and-instances.md).
+The specification distinguishes collection structure from the systems that package and evolve it. A system is the domain layer of TypedMark: a collection becomes a reusable, versioned, publishable system by declaring the optional system fields of `typedmark.yaml` — release version, publishing metadata, and scaffold — on top of the domain-agnostic core. There is no separate system manifest. A collection MAY be composed from several systems; the resulting collection is materialized self-contained, and its composition lineage is recorded as provenance in `typedmark.yaml`. `<metadata_directory>/history.yaml` records the event-sourced change history that drives migrating a collection to newer system versions. These rules are authoritative on [Systems, Composition, and Evolution](systems-composition-evolution.md).
 
 ### Conformance
 
@@ -126,7 +126,7 @@ Rules:
 - `label`, `description`, and `icon` are already spec-defined in the note-type schema top-level namespace and in the field-definition metadata namespace.
 - `catalog.tags` in `typedmark.yaml` and a managed-note frontmatter field named `tags` are different namespaces and MUST NOT be conflated.
 - `id` in `typedmark.yaml` is the collection identity, while a managed-note frontmatter field named `id` is a note-level identifier; they are different namespaces and MUST NOT be conflated.
-- A managed-note frontmatter field named `description` and a field-definition metadata key named `description` are different namespaces and MUST NOT be conflated.
+- A managed-note frontmatter field named `description`, a field-definition metadata key named `description`, and the collection-level `description` in `typedmark.yaml` are different namespaces and MUST NOT be conflated.
 - Extensions, systems, collection models, property sets, and note-type schemas MUST NOT assign incompatible meanings to a spec-defined name in the namespace where the core specification defines it.
 - Mentioning a candidate or example name in prose does not by itself define that name normatively.
 
@@ -148,11 +148,11 @@ typedmark.yaml
 
 In path notation below, `<metadata_directory>` is the directory name declared by `typedmark.yaml` `metadata_directory`.
 
-The authoritative contract for each governed element lives in exactly one place, except that `typedmark.yaml` is documented by concern: its structural fields are authoritative on [Collection Model](collection-model.md) and its optional system fields are authoritative on [Systems, Composition, and Evolution](system-definitions-and-instances.md).
+The authoritative contract for each governed element lives in exactly one place, except that `typedmark.yaml` is documented by concern: its structural fields are authoritative on [Collection Model](collection-model.md) and its optional system fields are authoritative on [Systems, Composition, and Evolution](systems-composition-evolution.md).
 
 - `typedmark.yaml` structural fields: [Collection Model](collection-model.md)
-- `typedmark.yaml` system fields, including release version, publishing metadata, and scaffold: [Systems, Composition, and Evolution](system-definitions-and-instances.md)
-- `<metadata_directory>/history.yaml`: [Systems, Composition, and Evolution](system-definitions-and-instances.md)
+- `typedmark.yaml` system fields, including release version, publishing metadata, and scaffold: [Systems, Composition, and Evolution](systems-composition-evolution.md)
+- `<metadata_directory>/history.yaml`: [Systems, Composition, and Evolution](systems-composition-evolution.md)
 - `<metadata_directory>/property-sets/<property_set>.yaml`: [Collection Model](collection-model.md)
 - `<metadata_directory>/schemas/<note_type>.yaml`: [Note Type Schemas](note-type-schemas.md)
 - `<metadata_directory>/templates/<note_type_template>.md`: [Relationships, Headings, and Templates](relationships-headings-and-templates.md)

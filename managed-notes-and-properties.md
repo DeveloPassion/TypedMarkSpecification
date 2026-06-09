@@ -467,7 +467,7 @@ Rules:
 
 ## Migrating Managed Notes
 
-When a collection is updated to newer versions of its source systems, the migration plan defined in [Systems, Composition, and Evolution](system-definitions-and-instances.md) is applied to managed notes. Each system change operation recorded in `history.yaml` has a defined effect on managed-note frontmatter, defined here. The migration plan determines the order in which these operations are applied; this page defines what each one does to a note.
+When a collection is updated to newer versions of its source systems, the migration plan defined in [Systems, Composition, and Evolution](systems-composition-evolution.md) is applied to managed notes. Each system change operation recorded in `history.yaml` has a defined effect on managed-note frontmatter, defined here. The migration plan determines the order in which these operations are applied; this page defines what each one does to a note.
 
 Rules:
 
@@ -480,7 +480,7 @@ Rules:
 - `rename_note_type` MUST update the stored `note_type` field when present, MUST re-resolve the note's storage path under the renamed type's effective storage rules, and MUST update internal note links and relationship-bearing fields that target the renamed type.
 - `add_note_type`, `remove_note_type`, `add_property_set`, `remove_property_set`, and `rename_property_set` change which schemas and property sets exist; their effect on an individual managed note is only the resulting change to that note's effective schema, evaluated through the field operations above.
 - After a migration operation is applied, every affected managed note MUST satisfy the Canonical Field Materialization rules on this page.
-- A migration MUST NOT discard managed-note data silently; any operation that cannot preserve data MUST be reported for explicit resolution, as required by [Systems, Composition, and Evolution](system-definitions-and-instances.md).
+- A migration MUST NOT discard managed-note data silently; any operation that cannot preserve data MUST be reported for explicit resolution, as required by [Systems, Composition, and Evolution](systems-composition-evolution.md).
 - A field whose name is changed by `rename_field` follows the managed-note field-name rules defined on this page; a rename whose target name violates those rules is invalid.
 
 ### Field Type Conversions

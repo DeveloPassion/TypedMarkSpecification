@@ -16,15 +16,15 @@ This specification does not:
 
 ## Conformance
 
-Conformance evaluates a collection root, represented on disk as a directory tree, against the authoritative artifact contracts defined in [Collection Model](collection-model.md), [Systems, Composition, and Evolution](system-definitions-and-instances.md), [Note Type Schemas](note-type-schemas.md), [Managed Notes and Properties](managed-notes-and-properties.md), and [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
+Conformance evaluates a collection root, represented on disk as a directory tree, against the authoritative artifact contracts defined in [Collection Model](collection-model.md), [Systems, Composition, and Evolution](systems-composition-evolution.md), [Note Type Schemas](note-type-schemas.md), [Managed Notes and Properties](managed-notes-and-properties.md), and [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 
 ### Valid System Definition
 
 A collection root conforms as a valid system definition when:
 
 1. `typedmark.yaml` is present at the root and valid under [Collection Model](collection-model.md).
-2. `typedmark.yaml` declares the system fields `version`, `name`, `description`, and `scaffold`, valid under [Systems, Composition, and Evolution](system-definitions-and-instances.md).
-3. `<metadata_directory>/history.yaml`, if present, is valid under [Systems, Composition, and Evolution](system-definitions-and-instances.md) and reconstructs the current schema state when replayed.
+2. `typedmark.yaml` declares the system fields `version` and `scaffold`, valid under [Systems, Composition, and Evolution](systems-composition-evolution.md).
+3. `<metadata_directory>/history.yaml`, if present, is valid under [Systems, Composition, and Evolution](systems-composition-evolution.md) and reconstructs the current schema state when replayed.
 4. Every property set file under `<metadata_directory>/property-sets/`, if present, is valid under [Collection Model](collection-model.md), and every property set reference from a note-type schema resolves.
 5. Every schema file under `<metadata_directory>/schemas/`, if present, is valid under [Note Type Schemas](note-type-schemas.md).
 6. Every template referenced by a schema file exists, is valid under [Relationships, Headings, and Templates](relationships-headings-and-templates.md), and has starter frontmatter that conforms to its note type's effective schema.
@@ -57,8 +57,8 @@ Recommended implementation order:
 2. create any reusable property sets and the initial abstract and concrete note type schemas using [Collection Model](collection-model.md) and [Note Type Schemas](note-type-schemas.md)
 3. create canonical templates and heading and relationship rules using [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
 4. implement managed note parsing, field materialization, and note-link resolution using [Managed Notes and Properties](managed-notes-and-properties.md)
-5. populate the system fields in `typedmark.yaml`, and add a `<metadata_directory>/history.yaml` change log, if you are packaging a reusable, versioned system, using [Systems, Composition, and Evolution](system-definitions-and-instances.md)
+5. populate the system fields in `typedmark.yaml`, and add a `<metadata_directory>/history.yaml` change log, if you are packaging a reusable, versioned system, using [Systems, Composition, and Evolution](systems-composition-evolution.md)
 6. add a validator and importer that evaluate the conformance modes defined on this page
-7. implement deterministic system composition that materializes a self-contained collection and records its lineage in `typedmark.yaml` `composition`, using [Systems, Composition, and Evolution](system-definitions-and-instances.md)
+7. implement deterministic system composition that materializes a self-contained collection and records its lineage in `typedmark.yaml` `composition`, using [Systems, Composition, and Evolution](systems-composition-evolution.md)
 8. implement the migration and update flow that recomposes a collection at newer source versions and applies the resulting change operations to managed notes
 9. generate the human-facing reference pages from the authoritative artifacts

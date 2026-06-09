@@ -6,7 +6,7 @@ nav_order: 7
 
 # Systems, Composition, and Evolution
 
-This page is authoritative for the system fields of `typedmark.yaml` — identity, release version, publishing metadata, and scaffold — and for system versioning semantics, deterministic system composition, `<metadata_directory>/history.yaml`, and the migration and update flow. The structural fields of `typedmark.yaml`, including `id` and the `composition` provenance block, are defined in [Collection Model](collection-model.md). This page is not authoritative for note-type schema block semantics, managed note field semantics, or relationship and template semantics; those live in [Note Type Schemas](note-type-schemas.md), [Managed Notes and Properties](managed-notes-and-properties.md), and [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
+This page is authoritative for the system fields of `typedmark.yaml` — release version, scaffold, and publishing metadata — and for system versioning semantics, deterministic system composition, `<metadata_directory>/history.yaml`, and the migration and update flow. The identity and structural fields of `typedmark.yaml`, including `id`, `name`, `description`, and the `composition` provenance block, are defined in [Collection Model](collection-model.md). This page is not authoritative for note-type schema block semantics, managed note field semantics, or relationship and template semantics; those live in [Note Type Schemas](note-type-schemas.md), [Managed Notes and Properties](managed-notes-and-properties.md), and [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 
 ## Systems
 
@@ -14,7 +14,7 @@ A system is a reusable, versioned, publishable collection model. It is the unit 
 
 A system is therefore the domain layer of TypedMark. It carries domain note types, house conventions, templates, and starter content on top of the domain-agnostic core.
 
-There is no separate system manifest. A collection *is* a system when its `typedmark.yaml` declares the system fields defined on this page. The structural fields of `typedmark.yaml` describe how the collection is shaped; the system fields describe how it is identified, versioned, published, and scaffolded. A private working collection declares only the structural fields; a publishable system additionally declares the system fields. Publishing a system is therefore nothing more than populating those fields and sharing the folder that contains `typedmark.yaml` and the metadata directory.
+There is no separate system manifest. Every collection already declares its identity (`id`, `name`, `description`) and structural fields in `typedmark.yaml`; a collection *is* a system when it additionally declares the system fields defined on this page, which describe how it is versioned, published, and scaffolded. A private working collection omits them; a publishable system declares them. Publishing a system is therefore nothing more than populating those fields and sharing the folder that contains `typedmark.yaml` and the metadata directory.
 
 Rules:
 
@@ -27,9 +27,9 @@ Rules:
 
 ## System Fields
 
-The system fields are the part of `typedmark.yaml` that makes a collection a publishable, versioned system. They live alongside the structural fields defined in [Collection Model](collection-model.md).
+The system fields are the part of `typedmark.yaml` that makes a collection a publishable, versioned system. They live alongside the structural and identity fields defined in [Collection Model](collection-model.md). Every collection already declares `id`, `name`, and `description`; a system additionally declares `version` and `scaffold`, and MAY add discovery metadata.
 
-Example `typedmark.yaml` for a publishable system, showing the system fields together with the structural fields they accompany:
+Example `typedmark.yaml` for a publishable system, showing the system fields together with the identity and structural fields they accompany:
 
 ```yaml
 specification_version: 0.0.1
@@ -77,18 +77,18 @@ scaffold:
 System fields:
 
 - `version`
-- `name`
-- `description`
 - `scaffold`
 - `audiences`, `publisher`, `license`, and `catalog`, which are optional discovery metadata
 
+The `id`, `name`, and `description` fields are mandatory on every collection and are defined in [Collection Model](collection-model.md); a marketplace reuses them as the system's identity, display name, and summary.
+
 Rules:
 
-- A collection is a system definition when its `typedmark.yaml` declares `version`, `name`, `description`, and `scaffold`. Conformance requirements for a valid system definition are defined in [Conformance and Roadmap](conformance-and-roadmap.md).
-- `id` is the collection identity defined in [Collection Model](collection-model.md); it is also the distribution identity a marketplace and `composition.sources` resolve against. A collection has exactly one identity.
+- A collection is a system definition when its `typedmark.yaml` declares `version` and `scaffold`. Conformance requirements for a valid system definition are defined in [Conformance and Roadmap](conformance-and-roadmap.md).
+- `version` is the single marker that a collection is a publishable, versioned system; a collection without `version` is a working collection, not a system.
+- `id`, the collection identity defined in [Collection Model](collection-model.md), is also the distribution identity a marketplace and `composition.sources` resolve against. A collection has exactly one identity.
 - `version` identifies a publishable system release, MUST be a Semantic Versioning 2.0.0 string, and MUST follow the system versioning semantics defined under System Versioning below.
-- A collection that declares `version` MUST also declare `name`, `description`, and `scaffold`.
-- `name` and `description` MUST be non-empty strings.
+- A collection that declares `version` MUST also declare `scaffold`.
 - `scaffold` SHOULD be present, even if empty, on a system definition.
 - `scaffold.folders` lists folders an importer SHOULD create when instantiating a collection from the system.
 - `scaffold.notes` lists note files an importer SHOULD create when instantiating a collection from the system.
