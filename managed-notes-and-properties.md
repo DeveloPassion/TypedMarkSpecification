@@ -543,8 +543,9 @@ Rules:
 - Fields with `optional: true` MUST NOT be used for metadata that is REQUIRED to hold a concrete non-null value for conformance.
 - If a field is intended to become invalid when no concrete value is present, it MUST declare `optional: false` and `nullable: false`.
 - The same optionality distinction applies recursively within object field definitions.
-- Unknown fields are evaluated using the `unknown_field` rule defined in [Collection Model](collection-model.md).
+- Unknown fields are evaluated using the `unknown_field` rule defined in [Collection Model](collection-model.md), at the effective severity for the note's resolved note type as defined in [Note Type Schemas](note-type-schemas.md).
 - Unknown nested fields inside object values are also evaluated using the `unknown_field` rule defined in [Collection Model](collection-model.md).
+- A field is unknown when it is absent from the note's effective note-type schema; the core-defined managed-note field names `note_type`, `deleted`, and `archived` are never unknown fields, whether or not the effective schema declares them.
 - If the effective `frontmatter` block declares `note_type`, `note_type` MUST be physically present in stored frontmatter.
 - If the effective `frontmatter` block declares `note_type`, `note_type` MUST NOT declare `optional: true`.
 - If `frontmatter` declares `id`, `id` MUST NOT declare `optional: true`.

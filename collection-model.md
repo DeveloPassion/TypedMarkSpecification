@@ -91,7 +91,7 @@ Rules:
 - `path` applies when a managed note path violates the storage rules defined in [Note Type Schemas](note-type-schemas.md).
 - `missing_required_field` applies when a field declared in `frontmatter` with `optional: false` lacks a concrete value required for conformance after applying the rules in [Managed Notes and Properties](managed-notes-and-properties.md).
 - `missing_declared_field` applies when a field declared in `frontmatter` is absent from stored note frontmatter.
-- `unknown_field` applies when an undeclared field appears in the frontmatter of `typedmark.md` or any other governed artifact, or in managed note frontmatter.
+- `unknown_field` applies when an undeclared field appears in the frontmatter of `typedmark.md` or any other governed artifact, or in managed note frontmatter; a note-type schema MAY override its severity for managed notes of that type, as defined in [Note Type Schemas](note-type-schemas.md).
 - `invalid_field_value` applies when a field value violates a declared field-level value constraint such as `format`, `regex`, `not_empty`, `not_blank`, `min`, `max`, or `allowed_values`. `format: note_link` syntax and resolution failures still use `invalid_note_link`.
 - `duplicate_unique_value` applies when a field declared with `unique: true` repeats a non-null stored value in more than one managed note of the same note type.
 - `invalid_property_set` applies when a property set file, a `typedmark.md` `default_property_sets` reference, or a note-type schema `property_sets` or `exclude_property_sets` reference violates the property-set rules defined in this page.

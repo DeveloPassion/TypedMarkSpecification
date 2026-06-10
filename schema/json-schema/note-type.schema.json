@@ -37,6 +37,9 @@
     "kind": {
       "$ref": "defs.schema.json#/$defs/schema_kind"
     },
+    "unknown_field": {
+      "$ref": "defs.schema.json#/$defs/validation_severity"
+    },
     "storage": {
       "$ref": "defs.schema.json#/$defs/storage_block"
     },

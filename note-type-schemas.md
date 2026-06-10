@@ -39,7 +39,7 @@ Rules:
 1. A tool or validator MUST resolve the note's note type using the note-type association rules defined in [Managed Notes and Properties](managed-notes-and-properties.md) and MUST select exactly one concrete note-type schema file from `<metadata_directory>/schemas/` using that resolved identifier.
 2. If the selected concrete note type declares `extends`, the tool or validator MUST load the full abstract ancestor chain, starting with the farthest abstract ancestor and ending with the selected concrete note type.
 3. The selected concrete note-type schema file provides the direct top-level values for `specification_version`, `note_type`, `abstract`, `label`, `icon`, and `description`.
-4. For `kind`, `storage`, `template`, and `guidance`, note-type inheritance uses whole-key replacement along the abstract ancestor chain. The last schema in that chain order that physically defines one of those keys determines the effective value of that key.
+4. For `kind`, `storage`, `template`, `guidance`, and `unknown_field`, note-type inheritance uses whole-key replacement along the abstract ancestor chain. The last schema in that chain order that physically defines one of those keys determines the effective value of that key.
 5. The tool or validator MUST determine which property sets apply to the selected concrete note type by taking the `default_property_sets` declared in `typedmark.md`, removing any named in the concrete note type's `exclude_property_sets`, and then appending the property sets named in the concrete note type's `property_sets`, using the composition rules in [Collection Model](collection-model.md).
 6. The `frontmatter`, `relationships`, and `headings` blocks contributed by the applied default property sets MUST be applied first, in `default_property_sets` order.
 7. Local `frontmatter`, `relationships`, and `headings` blocks declared by abstract ancestors, if any, MUST be applied next in abstract-ancestor order using the merge rules defined in [Collection Model](collection-model.md).
@@ -202,9 +202,9 @@ Rules:
 - If present, `extends` MUST be a non-empty slug and MUST resolve to exactly one abstract note type under `<metadata_directory>/schemas/`.
 - A note type MUST NOT extend itself directly or transitively.
 - Because `extends` is singular, a note type MUST inherit from at most one parent.
-- Abstract note types MAY declare `kind`, `storage`, `template`, `frontmatter`, `relationships`, `headings`, and `guidance` to contribute reusable structure, but they are not required to declare them.
+- Abstract note types MAY declare `kind`, `storage`, `template`, `frontmatter`, `relationships`, `headings`, `guidance`, and `unknown_field` to contribute reusable structure, but they are not required to declare them.
 - If an abstract note type declares the core-defined `note_type` field in `frontmatter`, it MUST use `value_from_schema: note_type`.
-- Concrete note types MAY inherit `kind`, `storage`, `template`, `guidance`, `frontmatter`, `relationships`, and `headings` from abstract ancestors and therefore MAY omit those keys locally.
+- Concrete note types MAY inherit `kind`, `storage`, `template`, `guidance`, `unknown_field`, `frontmatter`, `relationships`, and `headings` from abstract ancestors and therefore MAY omit those keys locally.
 - A concrete note type's effective schema MUST contain every top-level key listed above as required for concrete note types.
 - All templates live under `<metadata_directory>/templates/`; `template.file` is resolved from within that folder.
 - If a schema physically declares `template`, `template.file` MUST be a relative path resolved against `<metadata_directory>/templates/`; the referenced template file is located at `<metadata_directory>/templates/` plus the `template.file` value.
@@ -225,6 +225,10 @@ Rules:
 - An effective schema without `headings` is equivalent to one declaring `required_h2: []`, `optional_h2: []`, `allow_other_h2: true`, and `require_order: false`: no heading constraints.
 - An effective schema without `guidance` simply provides no usage guidance; this has no structural effect.
 - `guidance` is human-facing explanatory content and MUST NOT override structural rules.
+- `unknown_field` MAY be declared on a note-type schema to override the collection's `validation_defaults.unknown_field` severity for managed notes of that type.
+- If present, `unknown_field` MUST be one of the validation severities `error`, `warn`, `info`, or `off`.
+- The effective `unknown_field` severity for a managed note is its note type's effective `unknown_field` value when declared, and the collection's `validation_defaults.unknown_field` value otherwise.
+- A note-type `unknown_field` declaration applies to managed-note frontmatter only; it does not change how unknown fields are evaluated in governed artifacts.
 - `property_sets`, `exclude_property_sets`, and `frontmatter_remove` MAY each be omitted.
 - Only concrete note types MAY declare `property_sets`, `exclude_property_sets`, or `frontmatter_remove`.
 - If present, `property_sets` MUST be a non-empty list of unique property set identifiers.

@@ -5,6 +5,7 @@ abstract: false
 label: Topic
 icon: note
 kind: entity
+unknown_field: warn
 description: Durable note about a specific topic.
 
 property_sets:
