@@ -114,11 +114,12 @@ Example:
 note_type_mappings:
   - kind: frontmatter_field
     field: note_type
-  - kind: fixed
+  - kind: tag
+    tag: meeting
+    note_type: meeting
+  - kind: folder
+    folder: "Sources/"
     note_type: source
-    when:
-      path:
-        under: "Sources/"
   - kind: fixed
     note_type: problem
     when:
@@ -137,7 +138,7 @@ Rules:
 - If `note_type_mappings` is omitted, the collection uses an implicit ordered mapping list containing exactly one rule equivalent to `kind: frontmatter_field` and `field: note_type`.
 - If present, `note_type_mappings` MUST be a non-empty ordered list.
 - Each mapping rule MUST be a YAML mapping and MUST declare `kind`.
-- Supported `kind` values are `frontmatter_field` and `fixed`.
+- Supported `kind` values are `frontmatter_field`, `tag`, `folder`, and `fixed`.
 - Mapping rules are evaluated in list order.
 - A collection note MAY match no mapping rule and remain untyped.
 - The winning mapping rule is the first rule in `note_type_mappings` whose own match conditions succeed for a note.
@@ -153,6 +154,14 @@ Rules:
 - `note_type` in a `kind: fixed` rule MUST be a non-empty slug and MUST resolve to exactly one concrete schema file under `<metadata_directory>/schemas/`.
 - A `kind: fixed` rule matches when every condition in its `when` block matches.
 - The candidate note type produced by a `kind: fixed` rule is the rule's `note_type`.
+- `kind: tag` MUST physically contain `tag` and `note_type`.
+- `tag` in a `kind: tag` rule MUST be a valid tags entry under the grammar defined in [Managed Notes and Properties](managed-notes-and-properties.md).
+- A `kind: tag` rule matches when the note's stored top-level `tags` field is a YAML sequence containing an entry equal to the rule's `tag` or a descendant of it under the tag hierarchy rules.
+- `kind: folder` MUST physically contain `folder` and `note_type`.
+- `folder` in a `kind: folder` rule MUST be a non-empty collection-relative directory string and MUST end with `/`.
+- A `kind: folder` rule matches when the collection-relative note path is under `folder`, with the same semantics as `when.path.under`.
+- `note_type` in `kind: tag` and `kind: folder` rules follows the same rules as `note_type` in a `kind: fixed` rule, and the candidate note type each produces is the rule's `note_type`.
+- `kind: tag` and `kind: folder` carry no implicit precedence over other kinds; list order alone decides the winning rule.
 - `when` MUST be a mapping.
 - `when` MUST contain at least one of `path` or `frontmatter`.
 - Multiple conditions within one `when` block are combined with logical AND.

@@ -31,11 +31,12 @@ validation_defaults:
 note_type_mappings:
   - kind: frontmatter_field
     field: note_type
-  - kind: fixed
+  - kind: tag
+    tag: meeting
+    note_type: meeting
+  - kind: folder
+    folder: "Sources/"
     note_type: source
-    when:
-      path:
-        under: "Sources/"
   - kind: fixed
     note_type: problem
     when:

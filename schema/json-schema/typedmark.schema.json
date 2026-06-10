@@ -130,6 +130,68 @@
             "type": "object",
             "required": [
               "kind",
+              "tag",
+              "note_type"
+            ],
+            "properties": {
+              "kind": {
+                "const": "tag"
+              },
+              "tag": {
+                "type": "string",
+                "pattern": "^[\\p{L}\\p{N}_][\\p{L}\\p{N}_-]*(?:/[\\p{L}\\p{N}_][\\p{L}\\p{N}_-]*)*$"
+              },
+              "note_type": {
+                "$ref": "defs.schema.json#/$defs/slug"
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "folder",
+              "note_type"
+            ],
+            "properties": {
+              "kind": {
+                "const": "folder"
+              },
+              "folder": {
+                "type": "string",
+                "minLength": 2,
+                "allOf": [
+                  {
+                    "pattern": "/$"
+                  },
+                  {
+                    "not": {
+                      "pattern": "^/"
+                    }
+                  },
+                  {
+                    "not": {
+                      "pattern": "\\\\"
+                    }
+                  },
+                  {
+                    "not": {
+                      "pattern": "(^|/)\\.\\.?(/|$)"
+                    }
+                  }
+                ]
+              },
+              "note_type": {
+                "$ref": "defs.schema.json#/$defs/slug"
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind",
               "note_type",
               "when"
             ],
