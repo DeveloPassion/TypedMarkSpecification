@@ -92,12 +92,23 @@ frontmatter:
     default_value: null
   created_on:
     label: Created On
-    description: Creation date; never changes once set.
+    description: Creation date, generated once at creation.
     icon: calendar
     type: date
+    generated: now
     immutable: true
     nullable: true
-    default_value: null
+  reference_number:
+    label: Reference Number
+    description: Sequential reference within the topic note type.
+    icon: hash
+    type: integer
+    generated:
+      sequence:
+        start: 1
+        scope: note_type
+    unique: true
+    nullable: true
   summary:
     label: Summary
     description: Short overview used in generated references and previews.

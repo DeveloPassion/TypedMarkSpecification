@@ -251,12 +251,33 @@ Rules:
 Rules:
 
 - `generated` MAY be omitted.
-- `generated` MUST be a boolean.
+- `generated` MUST be `false`, `true`, or a generation strategy.
 - If omitted, `generated` defaults to `false`.
-- `generated: true` marks a field as generated or computed metadata rather than ordinary manually authored metadata.
-- This specification does not define how or when a generated field is produced, refreshed, or protected from manual edits.
-- `generated` does not make a field virtual. Declared generated fields still follow the same type validation, optionality, defaulting, stored-frontmatter, and canonical materialization rules as other declared fields.
-- `generated` does not replace `const_value` or `value_from_schema`.
+- A field is generated when `generated` is `true` or declares a generation strategy.
+- `generated: true` marks a field whose values are produced by tool-defined means this specification does not standardize, such as AI-written summaries.
+- A generation strategy makes value production portable: every conforming tool MUST produce values as the strategy defines.
+- `generated` does not make a field virtual. Generated fields still follow the same type validation, optionality, stored-frontmatter, and canonical materialization rules as other declared fields.
+- A generation strategy does not constrain stored values; validation of stored values uses only the field's declared type and constraints.
+- A field declaring a generation strategy MUST NOT declare `default_value`, `const_value`, or `value_from_schema`; the strategy is the field's defaulting behavior.
+- A generated value MUST satisfy the field's declared type and constraints; a schema MUST NOT combine a strategy with constraints the strategy's values cannot satisfy.
+- `items` MUST NOT declare a generation strategy, because anonymous list elements are not materialized independently; `generated` on `items` MUST be a boolean.
+- Deriving a value from other fields is not a generation strategy; this specification version defines no derivation mechanism on `generated`.
+
+Supported generation strategies:
+
+- `now` is valid for `date`, `time`, and `datetime` fields. When a tool creates the note, or first materializes the field without a concrete value, it MUST set the field to the current instant in the collection timezone defined in [Collection Model](collection-model.md), rendered according to the field's type and declared `format`; generated `datetime` values SHOULD carry the collection timezone's offset at that instant. The value is produced once: a tool MUST NOT overwrite an existing concrete non-null value.
+- `now_on_write` is valid for `date`, `time`, and `datetime` fields. Every tool that writes changes to the managed note MUST set the field to the current instant in the collection timezone as part of that write; the refresh itself does not count as a further change. A field with `now_on_write` MUST NOT declare `immutable: true`.
+- `uuid` is valid for `text` fields. The tool MUST generate an RFC 4122 version 4 UUID in lowercase form, once; it MUST NOT overwrite an existing concrete non-null value. Lowercase UUIDs satisfy `format: slug`, so `uuid` MAY be used for the core-defined `id` field.
+- `ulid` is valid for `text` fields. The tool MUST generate a ULID written in lowercase, so the value satisfies `format: slug`, once; it MUST NOT overwrite an existing concrete non-null value.
+- `{ random: n }` is valid for `text` fields. `random` MUST be a positive integer. The tool MUST generate `n` characters drawn uniformly from the lowercase letters `a` through `z` and the digits `0` through `9`, once; it MUST NOT overwrite an existing concrete non-null value.
+- `{ sequence: { start, scope } }` is valid for `integer` fields. `start` MAY be omitted and defaults to `1`; `scope` MAY be omitted, MUST be `note_type` or `collection` when present, and defaults to `note_type`. The generated value is one greater than the highest stored value of this field across the managed notes in scope, or `start` when no stored value exists; `note_type` scope spans managed notes of the same note type and `collection` scope spans all managed notes. The value is produced once: a tool MUST NOT overwrite an existing concrete non-null value.
+
+Generation behavior rules:
+
+- Tools that create, scaffold, or import managed notes MUST apply every declared generation strategy before writing the note.
+- Generation alone guarantees no uniqueness: random values MAY collide and hard deletion MAY free sequence values. When the field also declares `unique`, the tool MUST verify the generated value against the field's uniqueness scope and regenerate on collision.
+- A note authored without a tool MAY lack generated values; the field's normal optionality and nullability rules decide whether the note conforms, and a tool that later normalizes the note MUST generate the missing values of once-produced strategies.
+- The once-produced strategies pair naturally with `immutable: true` when manual edits should be prevented as well.
 
 #### `unique`
 
@@ -327,7 +348,7 @@ Rules:
 
 Rules:
 
-- `default_value` MAY be used on any field definition.
+- `default_value` MAY be used on any field definition that does not declare a generation strategy, as defined under `generated`.
 - `default_value` MUST conform to the declared field type, or MAY be `null` only when `nullable: true`.
 - `default_value` applies during field materialization when the field has no explicit concrete value.
 - An explicit `null` value is distinct from an absent field and MUST NOT be replaced by `default_value`.
@@ -644,7 +665,7 @@ Rules:
 
 - A migration operation that names `note_type` applies only to managed notes whose resolved note type is that note type.
 - A field operation that names `property_set` applies to managed notes of every note type whose effective schema composes that property set.
-- `add_field` MUST add the new field to every affected managed note, materialized to its `default_value` or to `null` under the Canonical Field Materialization rules.
+- `add_field` MUST add the new field to every affected managed note, materialized to a freshly generated value when the field declares a generation strategy, and otherwise to its `default_value` or to `null` under the Canonical Field Materialization rules.
 - `remove_field` MUST remove the named field from every affected managed note.
 - `rename_field` MUST move the stored value from the old field name to the new field name in every affected managed note, preserving the value unchanged.
 - `retype_field` MUST convert each stored value under the Field Type Conversions rules below: a defined lossless conversion is applied automatically, a conditional conversion is applied only when every affected value qualifies, and every other type pair MUST be reported for explicit resolution and MUST NOT be coerced destructively.

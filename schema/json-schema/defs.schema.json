@@ -157,7 +157,56 @@
           }
         },
         "generated": {
-          "type": "boolean"
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "enum": [
+                "now",
+                "now_on_write",
+                "uuid",
+                "ulid"
+              ]
+            },
+            {
+              "type": "object",
+              "required": [
+                "random"
+              ],
+              "properties": {
+                "random": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "required": [
+                "sequence"
+              ],
+              "properties": {
+                "sequence": {
+                  "type": "object",
+                  "properties": {
+                    "start": {
+                      "type": "integer"
+                    },
+                    "scope": {
+                      "enum": [
+                        "note_type",
+                        "collection"
+                      ]
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            }
+          ]
         },
         "unique": {
           "anyOf": [
@@ -672,6 +721,158 @@
               }
             }
           }
+        },
+        {
+          "$comment": "now and now_on_write are valid only for temporal fields",
+          "if": {
+            "properties": {
+              "generated": {
+                "enum": [
+                  "now",
+                  "now_on_write"
+                ]
+              }
+            },
+            "required": [
+              "generated"
+            ]
+          },
+          "then": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "date",
+                  "time",
+                  "datetime"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "$comment": "uuid and ulid are valid only for text fields",
+          "if": {
+            "properties": {
+              "generated": {
+                "enum": [
+                  "uuid",
+                  "ulid"
+                ]
+              }
+            },
+            "required": [
+              "generated"
+            ]
+          },
+          "then": {
+            "properties": {
+              "type": {
+                "const": "text"
+              }
+            }
+          }
+        },
+        {
+          "$comment": "random is valid only for text fields",
+          "if": {
+            "properties": {
+              "generated": {
+                "type": "object",
+                "required": [
+                  "random"
+                ]
+              }
+            },
+            "required": [
+              "generated"
+            ]
+          },
+          "then": {
+            "properties": {
+              "type": {
+                "const": "text"
+              }
+            }
+          }
+        },
+        {
+          "$comment": "sequence is valid only for integer fields",
+          "if": {
+            "properties": {
+              "generated": {
+                "type": "object",
+                "required": [
+                  "sequence"
+                ]
+              }
+            },
+            "required": [
+              "generated"
+            ]
+          },
+          "then": {
+            "properties": {
+              "type": {
+                "const": "integer"
+              }
+            }
+          }
+        },
+        {
+          "$comment": "a generation strategy excludes default_value, const_value and value_from_schema",
+          "if": {
+            "properties": {
+              "generated": {
+                "not": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "required": [
+              "generated"
+            ]
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "default_value"
+                  ]
+                },
+                {
+                  "required": [
+                    "const_value"
+                  ]
+                },
+                {
+                  "required": [
+                    "value_from_schema"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "$comment": "now_on_write must not be combined with immutable: true",
+          "if": {
+            "properties": {
+              "generated": {
+                "const": "now_on_write"
+              }
+            },
+            "required": [
+              "generated"
+            ]
+          },
+          "then": {
+            "properties": {
+              "immutable": {
+                "const": false
+              }
+            }
+          }
         }
       ]
     },
@@ -688,7 +889,7 @@
       }
     },
     "list_items_field_definition": {
-      "$comment": "Field definition for list.items: anonymous list elements are not materialized independently, so default_value, nullable, and immutable are forbidden, and unique/relationship_kind are top-level-only.",
+      "$comment": "Field definition for list.items: anonymous list elements are not materialized independently, so default_value, nullable, and immutable are forbidden, and unique/relationship_kind are top-level-only. generated on items must remain a boolean.",
       "allOf": [
         {
           "$ref": "#/$defs/field_definition"
@@ -699,7 +900,10 @@
         "relationship_kind": false,
         "default_value": false,
         "nullable": false,
-        "immutable": false
+        "immutable": false,
+        "generated": {
+          "type": "boolean"
+        }
       }
     },
     "frontmatter_block": {

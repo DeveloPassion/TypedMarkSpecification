@@ -54,7 +54,8 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
 - effective-schema computation: the evaluation pipeline, block merge rules, and
   the required effective keys for concrete note types
 - value semantics: `default_value`/`const_value`/`allowed_values` conformance to
-  the declared type, `min <= max`, regex dialect, storage placeholder resolution
+  the declared type, `min <= max`, regex dialect, storage placeholder resolution,
+  and generation-strategy value production (a tool write-time behavior)
 - managed-note conformance: note-type association, canonical field
   materialization, note-link syntax and resolution, allowed unresolved
   placeholder links, relationship instance counting and cardinality, heading
