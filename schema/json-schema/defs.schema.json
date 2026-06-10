@@ -784,9 +784,12 @@
       }
     },
     "storage_folder_pattern": {
-      "$comment": "Folder template string: may be empty (collection root), forward slashes only, no leading or trailing slash.",
+      "$comment": "Folder template string: may be empty (collection root), forward slashes only, no leading or trailing slash, no . or .. path segments.",
       "type": "string",
-      "pattern": "^$|^[^/\\\\](?:[^\\\\]*[^/\\\\])?$"
+      "pattern": "^$|^[^/\\\\](?:[^\\\\]*[^/\\\\])?$",
+      "not": {
+        "pattern": "(^|/)\\.\\.?(/|$)"
+      }
     },
     "note_name_affix": {
       "type": "object",

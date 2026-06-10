@@ -365,6 +365,7 @@ Rules:
 - `folder_pattern` MAY be the empty string to represent the collection root.
 - `folder_pattern` MUST use forward slashes when it contains subfolders.
 - `folder_pattern` MUST NOT start or end with `/`.
+- `folder_pattern` and `archive.folder_pattern` MUST NOT contain `.` or `..` path segments.
 - `note_name_pattern` MUST be a non-empty string.
 - `note_name_pattern` MUST NOT contain `/` or `\`.
 - `note_name_pattern` MUST NOT include the `.md` extension.
@@ -383,7 +384,12 @@ Rules:
 - `{field_name:format}` is valid only when the stored value is a `date` or `datetime` field and `format` is one of `YYYY`, `MM`, `DD`, `YYYY-MM`, or `YYYY-MM-DD`.
 - Storage placeholders MUST resolve from physically stored frontmatter values, not from note body content, inferred values, or template prose.
 - A field used in a storage pattern MUST resolve to a concrete non-null scalar value when the managed note path is evaluated.
+- A field referenced by any storage pattern, including archive patterns and affixes, MUST NOT declare `optional: true`, and SHOULD be non-nullable or declare a non-null `default_value`, so that storage paths are resolvable at note creation.
 - List, tags, object, and `any` values MUST NOT be used in storage patterns.
+- A resolved placeholder value MUST NOT contain `/`, `\`, or control characters, and MUST NOT equal `.` or `..`; folder structure comes from the pattern, never from resolved values.
+- A resolved active or archived note name MUST NOT begin with `.`.
+- A managed note whose resolved storage path violates these value-safety rules is a `path` failure, and a tool MUST NOT create a managed note whose resolved path would violate them; it MUST obtain conforming values instead.
+- Fields referenced by storage patterns SHOULD declare value constraints, such as `regex`, that prevent path-hostile values.
 - The active managed-note path is the resolved `folder_pattern` plus `/` plus the conforming active note name plus `.md`, unless `folder_pattern` is empty, in which case the active managed-note path is the conforming active note name plus `.md`.
 - A managed note is active or archived according to its stored `archived` value, the core-defined field contract defined in [Managed Notes and Properties](managed-notes-and-properties.md).
 - Validators MUST ensure an active managed note's path matches the resolved active storage path for its note type.
@@ -399,6 +405,10 @@ Rules:
 - A tool that creates a managed note MUST apply every required affix to the created note name and MAY apply each optional affix, for example based on user choice.
 - A tool that creates a managed note MUST obtain every concrete value needed to resolve the storage patterns before writing the note.
 - If required storage-pattern values are not yet known, a tool MUST ask for them or otherwise obtain them before claiming the created note conforms.
+- A tool MUST NOT create or move a managed note onto a path already occupied by another note or governed artifact; an occupied resolved path MUST be reported rather than overwritten.
+- Authors SHOULD design storage patterns so that no two managed notes can resolve to the same path.
+- Tools SHOULD report two managed notes whose resolved paths differ only by letter case, because case-insensitive filesystems cannot store both.
+- Tools SHOULD report resolved path segments that are reserved on common filesystems, such as the Windows device names `CON`, `PRN`, `AUX`, `NUL`, `COM1` through `COM9`, and `LPT1` through `LPT9`, and segments ending with a dot or a space.
 - If a note is archived, its `note_type` MUST remain unchanged.
 - If a note declares `id`, its `id` MUST remain unchanged when the note is archived.
 - `dated_record` note types SHOULD encode the date in both storage patterns and metadata when practical.
