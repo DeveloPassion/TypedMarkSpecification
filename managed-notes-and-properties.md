@@ -175,6 +175,11 @@ Rules:
 - Stored `list` values MUST be YAML sequences.
 - `tags` values MUST be YAML sequences of tag strings.
 - `tags` entries MUST be non-empty strings.
+- A `tags` entry is one or more segments joined by single `/` separators; each segment MUST consist of Unicode letters, digits, underscores, and hyphens, and MUST NOT start with a hyphen. In the ECMA-262 dialect with the `u` flag: `^[\p{L}\p{N}_][\p{L}\p{N}_-]*(?:\/[\p{L}\p{N}_][\p{L}\p{N}_-]*)*$`.
+- `tags` entries MUST NOT include a leading `#`; the `#` prefix belongs to inline body syntax, which carries no structural meaning.
+- The `/` separator expresses hierarchy: `project/alpha` is a descendant of `project`. This specification assigns the separator that meaning but does not define controlled vocabularies or validate entries against a taxonomy.
+- Entries within one stored `tags` value MUST be unique under the string comparison rules defined in [Foundations](foundations.md); a duplicate entry is an `invalid_field_value` failure.
+- A `tags` entry that violates this grammar is an `invalid_field_value` failure.
 - Stored `object` values MUST be YAML mappings.
 - `any` values MAY be any non-null YAML value, and MAY be `null` only when `nullable: true`.
 - YAML scalar, sequence, and mapping values are all supported when they satisfy the declared property type.
