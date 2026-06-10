@@ -119,7 +119,12 @@ Rules:
 - If stored as `true`, the note is logically deleted.
 - Logical deletion is distinct from archiving. Setting `deleted: true` does not by itself move the note or apply archive storage rules.
 - A logically deleted note remains a managed note and continues to use its resolved concrete note type in this specification version.
-- Logical deletion does not by itself change storage, relationship, heading, or field-conformance evaluation in this specification version.
+- A logically deleted note MUST still satisfy its effective note-type schema, including field, storage, relationship, and heading rules; logical deletion marks state, it does not relax conformance.
+- A resolved internal note link to a logically deleted note still resolves; the effect on relationship counting is defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
+- Logical deletion is reversible: setting `deleted` back to `false` restores the note's non-deleted state without any other change.
+- Hard deletion is the removal of the note file itself and is outside managed-note state; this specification version defines no tombstone artifact for hard-deleted notes.
+- After hard deletion, internal note links to the removed note resolve to zero notes, and as unresolved placeholders they no longer satisfy minimum-cardinality requirements at their source notes.
+- A tool that hard-deletes a managed note SHOULD report the inbound internal note links that will stop resolving before it deletes the note.
 - A property set or a note-type schema MAY declare `deleted` when they want canonical materialization of deletion state.
 - If a property set or a note-type schema declares `deleted`, it MUST declare `type: checkbox`.
 - If a property set or a note-type schema declares `deleted`, it MUST declare `default_value: false`.

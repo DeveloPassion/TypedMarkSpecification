@@ -70,6 +70,7 @@ Rules:
 - Only resolved managed-note targets create concrete relationship instances.
 - Unresolved placeholders do not satisfy minimum-cardinality requirements until they resolve to concrete targets.
 - Duplicate concrete links from the same source note to the same target note under the same relationship kind are semantically idempotent and count once.
+- A resolved managed-note target that is logically deleted still creates a concrete relationship instance and still counts toward cardinality in this specification version; tools MAY additionally surface links to logically deleted notes as informational diagnostics.
 - The same source note and target note pair MUST NOT be counted under both `belongs_to` and `related_to`.
 - Link validity failures are reported as `invalid_note_link`; cardinality failures on declared targets are reported as `invalid_relationship_instance`, as defined in [Collection Model](collection-model.md).
 - A Markdown link in body content with a destination that is not a supported internal note-link form does not participate in typed relationship conformance.
