@@ -145,7 +145,7 @@ Rules:
 
 ## Frontmatter Property Types
 
-Every field definition is a YAML mapping. Every field definition MUST declare `type`, and it MAY declare additional field-definition properties such as `label`, `description`, `icon`, `format`, `generated`, `unique`, `deprecated`, `immutable`, `optional`, `nullable`, `default_value`, `not_empty`, `not_blank`, `regex`, `min`, `max`, and `allowed_values`.
+Every field definition is a YAML mapping. Every field definition MUST declare `type`, and it MAY declare additional field-definition properties such as `label`, `description`, `icon`, `format`, `generated`, `unique`, `deprecated`, `immutable`, `optional`, `nullable`, `default_value`, `validate_exists`, `not_empty`, `not_blank`, `regex`, `min`, `max`, and `allowed_values`.
 
 ### Field Definition Property Reference
 
@@ -349,6 +349,19 @@ Rules:
 - Values with `format: hh:mm:ss` on `type: time` or `list.items.type: time` MUST use a 24-hour clock and match `^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d$`.
 - Values with `format: hh:mm:ss.sss` on `type: time` or `list.items.type: time` MUST use a 24-hour clock and match `^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d\.\d{3}$`.
 
+#### `validate_exists`
+
+Rules:
+
+- `validate_exists` MAY be omitted.
+- `validate_exists` MUST be a boolean.
+- If omitted, `validate_exists` defaults to `false`.
+- `validate_exists` is valid only on field definitions that declare `format: note_link`, including `list.items`.
+- `validate_exists: true` means every non-empty stored note-link value MUST resolve to exactly one existing collection note under the note-link resolution rules on this page.
+- An empty-string placeholder value does not violate `validate_exists`; combine it with `not_empty: true` to forbid placeholders entirely.
+- A non-empty value that does not resolve violates `validate_exists` and is reported as `invalid_note_link`.
+- `validate_exists` does not change relationship counting; unresolved placeholders already fail minimum-cardinality requirements.
+
 #### `not_empty`
 
 Rules:
@@ -489,7 +502,7 @@ Rules:
 6. An ambiguous link MUST NOT resolve and is an `invalid_note_link` failure.
 7. Alias-based resolution is not defined in this specification version; a target that matches only an alias does not resolve.
 8. Target, `id`, and file-name comparisons in this algorithm are case-sensitive exact string comparisons.
-9. Resolution to zero notes MAY occur and represents a link to a note that does not exist yet; it is not by itself a failure.
+9. Resolution to zero notes MAY occur and represents a link to a note that does not exist yet; it is not by itself a failure, unless the declaring field requires existence through `validate_exists`.
 10. A note MAY link to itself; a self-link resolves to the containing note.
 
 #### Anchors

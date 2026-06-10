@@ -53,6 +53,7 @@ frontmatter:
     items:
       type: link
       format: note_link
+      validate_exists: true
     nullable: false
     relationship_kind: related_to
   status:
