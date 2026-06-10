@@ -1,0 +1,12 @@
+{
+  "name": "typedmark-specification",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "validate-fixtures": "bun schema/validate-fixtures.ts"
+  },
+  "devDependencies": {
+    "ajv": "^8.20.0",
+    "yaml": "^2.9.0"
+  }
+}

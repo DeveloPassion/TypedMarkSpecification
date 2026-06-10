@@ -68,15 +68,15 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
 `schema/fixtures/` contains three buckets:
 
 - `valid/` — artifacts that MUST pass their schema
-- `invalid-shape/` — artifacts that MUST fail their schema; each file's leading
-  comment names the violated rule
+- `invalid-shape/` — artifacts that MUST fail their schema; each file's body
+  names the violated rule
 - `invalid-semantic/` — artifacts that MUST pass their schema but are invalid
   under the semantic layer; see the README in that folder
 
 Run the expectations with:
 
 ```bash
-python3 schema/validate_fixtures.py
+bun run validate-fixtures
 ```
 
 Fixtures are mapped to artifact schemas by filename prefix (`typedmark-*`,
@@ -95,6 +95,6 @@ Fixtures are mapped to artifact schemas by filename prefix (`typedmark-*`,
 
 - every normative change to a governed artifact's shape MUST update the JSON
   Schemas and the fixtures in the same change
-- every schema change MUST keep `python3 schema/validate_fixtures.py` passing
+- every schema change MUST keep `bun run validate-fixtures` passing
 - rules the schemas cannot express MUST be listed in this document
 - schemas MUST NOT silently redefine or extend normative prose behavior

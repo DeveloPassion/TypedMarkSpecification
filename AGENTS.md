@@ -25,6 +25,9 @@ second page; link to the authoritative page instead.
 - `schema/fixtures/` — valid / invalid-shape / invalid-semantic fixtures
 - `schema/docs/schema-boundary.md` — what the schemas enforce vs. the semantic layer
 
+Repository scripts are TypeScript run with Bun (`bun install` once, then
+`bun run <script>`); do not add Python or shell scripts.
+
 ## Hard rule: schemas stay aligned with the specification
 
 The prose specification is the single source of truth. The JSON Schemas under
@@ -33,7 +36,7 @@ The prose specification is the single source of truth. The JSON Schemas under
 - **Any change to a governed artifact's shape in the prose (new key, removed key,
   changed enum, changed constraint) MUST update the JSON Schemas and the fixtures
   in the same commit.**
-- After any schema or fixture change, run `python3 schema/validate_fixtures.py`
+- After any schema or fixture change, run `bun run validate-fixtures`
   and make sure it passes before committing.
 - Schemas MUST NOT introduce or relax rules on their own; if a rule cannot be
   expressed in JSON Schema, list it in `schema/docs/schema-boundary.md` instead.
