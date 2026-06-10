@@ -35,26 +35,70 @@
       "pattern": "^(?:@[a-z0-9][a-z0-9._-]*/)?[a-z0-9][a-z0-9._-]*$"
     },
     "validation_severity": {
-      "enum": ["error", "warn", "info", "off"]
+      "enum": [
+        "error",
+        "warn",
+        "info",
+        "off"
+      ]
     },
     "property_type": {
-      "enum": ["text", "integer", "number", "checkbox", "date", "time", "datetime", "link", "list", "tags", "object", "any"]
+      "enum": [
+        "text",
+        "integer",
+        "number",
+        "checkbox",
+        "date",
+        "time",
+        "datetime",
+        "link",
+        "list",
+        "tags",
+        "object",
+        "any"
+      ]
     },
     "format_value": {
-      "enum": ["slug", "note_link", "uri", "hh:mm", "hh:mm:ss", "hh:mm:ss.sss"]
+      "enum": [
+        "slug",
+        "note_link",
+        "uri",
+        "hh:mm",
+        "hh:mm:ss",
+        "hh:mm:ss.sss"
+      ]
     },
     "schema_kind": {
-      "enum": ["singleton", "entity", "dated_record", "rule_set"]
+      "enum": [
+        "singleton",
+        "entity",
+        "dated_record",
+        "rule_set"
+      ]
     },
     "relative_md_path": {
       "$comment": "Relative path resolved against <metadata_directory>/templates/: no leading slash, no backslashes, no .. segments, ends in .md. Must not restate the metadata directory or the templates/ folder (semantic check).",
       "type": "string",
       "minLength": 4,
       "allOf": [
-        { "pattern": "\\.md$" },
-        { "not": { "pattern": "^/" } },
-        { "not": { "pattern": "\\\\" } },
-        { "not": { "pattern": "(^|/)\\.\\.(/|$)" } }
+        {
+          "pattern": "\\.md$"
+        },
+        {
+          "not": {
+            "pattern": "^/"
+          }
+        },
+        {
+          "not": {
+            "pattern": "\\\\"
+          }
+        },
+        {
+          "not": {
+            "pattern": "(^|/)\\.\\.(/|$)"
+          }
+        }
       ]
     },
     "collection_relative_path": {
@@ -62,219 +106,628 @@
       "type": "string",
       "minLength": 1,
       "allOf": [
-        { "not": { "pattern": "^/" } },
-        { "not": { "pattern": "\\\\" } },
-        { "not": { "pattern": "(^|/)\\.\\.(/|$)" } }
+        {
+          "not": {
+            "pattern": "^/"
+          }
+        },
+        {
+          "not": {
+            "pattern": "\\\\"
+          }
+        },
+        {
+          "not": {
+            "pattern": "(^|/)\\.\\.(/|$)"
+          }
+        }
       ]
     },
     "field_definition": {
       "$comment": "One frontmatter field definition. Semantic rules not enforced here: default_value/const_value/allowed_values conformance to the declared type, min <= max, and regex dialect. unique and relationship_kind are only valid on top-level frontmatter fields; use nested_field_definition or list_items_field_definition for nested positions.",
       "type": "object",
-      "required": ["type"],
+      "required": [
+        "type"
+      ],
       "properties": {
-        "type": { "$ref": "#/$defs/property_type" },
-        "label": { "$ref": "#/$defs/non_empty_string" },
-        "description": { "$ref": "#/$defs/non_empty_string" },
-        "icon": { "$ref": "#/$defs/non_empty_string" },
-        "format": { "$ref": "#/$defs/format_value" },
-        "generated": { "type": "boolean" },
-        "unique": { "type": "boolean" },
-        "deprecated": { "type": "boolean" },
-        "optional": { "type": "boolean" },
-        "nullable": { "type": "boolean" },
+        "type": {
+          "$ref": "#/$defs/property_type"
+        },
+        "label": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "description": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "icon": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "format": {
+          "$ref": "#/$defs/format_value"
+        },
+        "generated": {
+          "type": "boolean"
+        },
+        "unique": {
+          "type": "boolean"
+        },
+        "deprecated": {
+          "type": "boolean"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "optional": {
+          "type": "boolean"
+        },
+        "nullable": {
+          "type": "boolean"
+        },
         "default_value": {},
-        "not_empty": { "type": "boolean" },
-        "not_blank": { "type": "boolean" },
-        "regex": { "$ref": "#/$defs/non_empty_string" },
-        "min": { "type": ["number", "string"] },
-        "max": { "type": ["number", "string"] },
+        "not_empty": {
+          "type": "boolean"
+        },
+        "not_blank": {
+          "type": "boolean"
+        },
+        "regex": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "min": {
+          "type": [
+            "number",
+            "string"
+          ]
+        },
+        "max": {
+          "type": [
+            "number",
+            "string"
+          ]
+        },
         "allowed_values": {
           "type": "array",
           "minItems": 1,
           "uniqueItems": true
         },
         "const_value": {},
-        "value_from_schema": { "const": "note_type" },
-        "relationship_kind": { "enum": ["belongs_to", "related_to"] },
-        "items": { "$ref": "#/$defs/list_items_field_definition" },
+        "value_from_schema": {
+          "const": "note_type"
+        },
+        "relationship_kind": {
+          "enum": [
+            "belongs_to",
+            "related_to"
+          ]
+        },
+        "items": {
+          "$ref": "#/$defs/list_items_field_definition"
+        },
         "fields": {
           "type": "object",
-          "propertyNames": { "$ref": "#/$defs/field_name" },
-          "additionalProperties": { "$ref": "#/$defs/nested_field_definition" }
+          "propertyNames": {
+            "$ref": "#/$defs/field_name"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/nested_field_definition"
+          }
         }
       },
       "additionalProperties": false,
       "allOf": [
         {
           "$comment": "type: link must declare a link format",
-          "if": { "properties": { "type": { "const": "link" } }, "required": ["type"] },
+          "if": {
+            "properties": {
+              "type": {
+                "const": "link"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
           "then": {
-            "required": ["format"],
-            "properties": { "format": { "enum": ["note_link", "uri"] } }
+            "required": [
+              "format"
+            ],
+            "properties": {
+              "format": {
+                "enum": [
+                  "note_link",
+                  "uri"
+                ]
+              }
+            }
           }
         },
         {
           "$comment": "type: time must declare a time format",
-          "if": { "properties": { "type": { "const": "time" } }, "required": ["type"] },
+          "if": {
+            "properties": {
+              "type": {
+                "const": "time"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
           "then": {
-            "required": ["format"],
-            "properties": { "format": { "enum": ["hh:mm", "hh:mm:ss", "hh:mm:ss.sss"] } }
+            "required": [
+              "format"
+            ],
+            "properties": {
+              "format": {
+                "enum": [
+                  "hh:mm",
+                  "hh:mm:ss",
+                  "hh:mm:ss.sss"
+                ]
+              }
+            }
           }
         },
         {
           "$comment": "format: slug is the only format valid for type: text",
           "if": {
-            "properties": { "type": { "const": "text" } },
-            "required": ["type", "format"]
+            "properties": {
+              "type": {
+                "const": "text"
+              }
+            },
+            "required": [
+              "type",
+              "format"
+            ]
           },
-          "then": { "properties": { "format": { "const": "slug" } } }
+          "then": {
+            "properties": {
+              "format": {
+                "const": "slug"
+              }
+            }
+          }
         },
         {
           "$comment": "format is only valid for text, link, and time fields",
           "if": {
-            "properties": { "type": { "enum": ["integer", "number", "checkbox", "date", "datetime", "list", "tags", "object", "any"] } },
-            "required": ["type"]
+            "properties": {
+              "type": {
+                "enum": [
+                  "integer",
+                  "number",
+                  "checkbox",
+                  "date",
+                  "datetime",
+                  "list",
+                  "tags",
+                  "object",
+                  "any"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
           },
-          "then": { "not": { "required": ["format"] } }
+          "then": {
+            "not": {
+              "required": [
+                "format"
+              ]
+            }
+          }
         },
         {
           "$comment": "type: list requires items; other types must not declare items",
-          "if": { "properties": { "type": { "const": "list" } }, "required": ["type"] },
-          "then": { "required": ["items"] },
-          "else": { "not": { "required": ["items"] } }
+          "if": {
+            "properties": {
+              "type": {
+                "const": "list"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "items"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "items"
+              ]
+            }
+          }
         },
         {
           "$comment": "type: object requires fields; other types must not declare fields",
-          "if": { "properties": { "type": { "const": "object" } }, "required": ["type"] },
-          "then": { "required": ["fields"] },
-          "else": { "not": { "required": ["fields"] } }
+          "if": {
+            "properties": {
+              "type": {
+                "const": "object"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "fields"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "fields"
+              ]
+            }
+          }
         },
         {
           "$comment": "const_value and value_from_schema are mutually exclusive",
-          "not": { "required": ["const_value", "value_from_schema"] }
+          "not": {
+            "required": [
+              "const_value",
+              "value_from_schema"
+            ]
+          }
         },
         {
           "$comment": "not_empty is valid only for text, link, list, tags, object",
-          "if": { "required": ["not_empty"] },
-          "then": { "properties": { "type": { "enum": ["text", "link", "list", "tags", "object"] } } }
+          "if": {
+            "required": [
+              "not_empty"
+            ]
+          },
+          "then": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "text",
+                  "link",
+                  "list",
+                  "tags",
+                  "object"
+                ]
+              }
+            }
+          }
         },
         {
           "$comment": "not_blank is valid only for text and link",
-          "if": { "required": ["not_blank"] },
-          "then": { "properties": { "type": { "enum": ["text", "link"] } } }
+          "if": {
+            "required": [
+              "not_blank"
+            ]
+          },
+          "then": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "text",
+                  "link"
+                ]
+              }
+            }
+          }
         },
         {
           "$comment": "regex is valid only for text and link",
-          "if": { "required": ["regex"] },
-          "then": { "properties": { "type": { "enum": ["text", "link"] } } }
+          "if": {
+            "required": [
+              "regex"
+            ]
+          },
+          "then": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "text",
+                  "link"
+                ]
+              }
+            }
+          }
         },
         {
           "$comment": "min is not valid for checkbox, object, any",
-          "if": { "required": ["min"] },
-          "then": { "properties": { "type": { "enum": ["text", "link", "integer", "number", "date", "time", "datetime", "list", "tags"] } } }
+          "if": {
+            "required": [
+              "min"
+            ]
+          },
+          "then": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "text",
+                  "link",
+                  "integer",
+                  "number",
+                  "date",
+                  "time",
+                  "datetime",
+                  "list",
+                  "tags"
+                ]
+              }
+            }
+          }
         },
         {
           "$comment": "max is not valid for checkbox, object, any",
-          "if": { "required": ["max"] },
-          "then": { "properties": { "type": { "enum": ["text", "link", "integer", "number", "date", "time", "datetime", "list", "tags"] } } }
+          "if": {
+            "required": [
+              "max"
+            ]
+          },
+          "then": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "text",
+                  "link",
+                  "integer",
+                  "number",
+                  "date",
+                  "time",
+                  "datetime",
+                  "list",
+                  "tags"
+                ]
+              }
+            }
+          }
         },
         {
           "$comment": "allowed_values must not be used with tags, object, any",
-          "if": { "required": ["allowed_values"] },
-          "then": { "properties": { "type": { "enum": ["text", "integer", "number", "checkbox", "date", "time", "datetime", "link", "list"] } } }
+          "if": {
+            "required": [
+              "allowed_values"
+            ]
+          },
+          "then": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "text",
+                  "integer",
+                  "number",
+                  "checkbox",
+                  "date",
+                  "time",
+                  "datetime",
+                  "link",
+                  "list"
+                ]
+              }
+            }
+          }
         },
         {
           "$comment": "unique: true is valid only for scalar field types",
-          "if": { "properties": { "unique": { "const": true } }, "required": ["unique"] },
-          "then": { "properties": { "type": { "enum": ["text", "integer", "number", "checkbox", "date", "time", "datetime", "link"] } } }
+          "if": {
+            "properties": {
+              "unique": {
+                "const": true
+              }
+            },
+            "required": [
+              "unique"
+            ]
+          },
+          "then": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "text",
+                  "integer",
+                  "number",
+                  "checkbox",
+                  "date",
+                  "time",
+                  "datetime",
+                  "link"
+                ]
+              }
+            }
+          }
         },
         {
           "$comment": "a field with relationship_kind must be a note_link link or a list of note_link links",
-          "if": { "required": ["relationship_kind"] },
-          "then": { "properties": { "type": { "enum": ["link", "list"] } } }
+          "if": {
+            "required": [
+              "relationship_kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "link",
+                  "list"
+                ]
+              }
+            }
+          }
         },
         {
           "$comment": "optional: true must not be combined with nullable: false",
-          "if": { "properties": { "optional": { "const": true } }, "required": ["optional", "nullable"] },
-          "then": { "properties": { "nullable": { "const": true } } }
+          "if": {
+            "properties": {
+              "optional": {
+                "const": true
+              }
+            },
+            "required": [
+              "optional",
+              "nullable"
+            ]
+          },
+          "then": {
+            "properties": {
+              "nullable": {
+                "const": true
+              }
+            }
+          }
         }
       ]
     },
     "nested_field_definition": {
       "$comment": "Field definition in a nested position (inside object.fields): unique and relationship_kind are top-level-only.",
-      "allOf": [{ "$ref": "#/$defs/field_definition" }],
+      "allOf": [
+        {
+          "$ref": "#/$defs/field_definition"
+        }
+      ],
       "properties": {
         "unique": false,
         "relationship_kind": false
       }
     },
     "list_items_field_definition": {
-      "$comment": "Field definition for list.items: anonymous list elements are not materialized independently, so default_value and nullable are forbidden, and unique/relationship_kind are top-level-only.",
-      "allOf": [{ "$ref": "#/$defs/field_definition" }],
+      "$comment": "Field definition for list.items: anonymous list elements are not materialized independently, so default_value, nullable, and immutable are forbidden, and unique/relationship_kind are top-level-only.",
+      "allOf": [
+        {
+          "$ref": "#/$defs/field_definition"
+        }
+      ],
       "properties": {
         "unique": false,
         "relationship_kind": false,
         "default_value": false,
-        "nullable": false
+        "nullable": false,
+        "immutable": false
       }
     },
     "frontmatter_block": {
       "type": "object",
-      "propertyNames": { "$ref": "#/$defs/field_name" },
-      "additionalProperties": { "$ref": "#/$defs/field_definition" }
+      "propertyNames": {
+        "$ref": "#/$defs/field_name"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/field_definition"
+      }
     },
     "note_type_field_contract": {
       "$comment": "Core-defined note_type field: type text, const_value or value_from_schema, never optional or nullable. const_value equality with the schema's top-level note_type is a semantic check.",
-      "allOf": [{ "$ref": "#/$defs/field_definition" }],
+      "allOf": [
+        {
+          "$ref": "#/$defs/field_definition"
+        }
+      ],
       "properties": {
-        "type": { "const": "text" },
-        "optional": { "const": false },
-        "nullable": { "const": false }
+        "type": {
+          "const": "text"
+        },
+        "optional": {
+          "const": false
+        },
+        "nullable": {
+          "const": false
+        }
       },
       "anyOf": [
-        { "required": ["const_value"] },
-        { "required": ["value_from_schema"] }
+        {
+          "required": [
+            "const_value"
+          ]
+        },
+        {
+          "required": [
+            "value_from_schema"
+          ]
+        }
       ]
     },
     "id_field_contract": {
       "$comment": "Core-defined id field: type text, format slug, never optional or nullable.",
-      "allOf": [{ "$ref": "#/$defs/field_definition" }],
-      "required": ["type", "format"],
+      "allOf": [
+        {
+          "$ref": "#/$defs/field_definition"
+        }
+      ],
+      "required": [
+        "type",
+        "format"
+      ],
       "properties": {
-        "type": { "const": "text" },
-        "format": { "const": "slug" },
-        "optional": { "const": false },
-        "nullable": { "const": false }
+        "type": {
+          "const": "text"
+        },
+        "format": {
+          "const": "slug"
+        },
+        "optional": {
+          "const": false
+        },
+        "nullable": {
+          "const": false
+        }
       }
     },
     "state_flag_field_contract": {
       "$comment": "Core-defined deleted and archived fields: type checkbox, default_value false, never optional or nullable.",
-      "allOf": [{ "$ref": "#/$defs/field_definition" }],
-      "required": ["type", "default_value"],
+      "allOf": [
+        {
+          "$ref": "#/$defs/field_definition"
+        }
+      ],
+      "required": [
+        "type",
+        "default_value"
+      ],
       "properties": {
-        "type": { "const": "checkbox" },
-        "default_value": { "const": false },
-        "optional": { "const": false },
-        "nullable": { "const": false }
+        "type": {
+          "const": "checkbox"
+        },
+        "default_value": {
+          "const": false
+        },
+        "optional": {
+          "const": false
+        },
+        "nullable": {
+          "const": false
+        }
       }
     },
     "relationship_target": {
       "$comment": "min <= max is a semantic check.",
       "type": "object",
       "properties": {
-        "min": { "type": "integer", "minimum": 0 },
-        "max": { "type": "integer", "minimum": 0 }
+        "min": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max": {
+          "type": "integer",
+          "minimum": 0
+        }
       },
       "additionalProperties": false
     },
     "relationship_kind_block": {
       "type": "object",
-      "required": ["allowed_note_types"],
+      "required": [
+        "allowed_note_types"
+      ],
       "properties": {
         "allowed_note_types": {
           "type": "object",
-          "propertyNames": { "$ref": "#/$defs/slug" },
-          "additionalProperties": { "$ref": "#/$defs/relationship_target" }
+          "propertyNames": {
+            "$ref": "#/$defs/slug"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/relationship_target"
+          }
         }
       },
       "additionalProperties": false
@@ -282,10 +735,17 @@
     "relationships_block": {
       "$comment": "Target note-type resolution and belongs_to/related_to disjointness are semantic checks.",
       "type": "object",
-      "required": ["belongs_to", "related_to"],
+      "required": [
+        "belongs_to",
+        "related_to"
+      ],
       "properties": {
-        "belongs_to": { "$ref": "#/$defs/relationship_kind_block" },
-        "related_to": { "$ref": "#/$defs/relationship_kind_block" }
+        "belongs_to": {
+          "$ref": "#/$defs/relationship_kind_block"
+        },
+        "related_to": {
+          "$ref": "#/$defs/relationship_kind_block"
+        }
       },
       "additionalProperties": false
     },
@@ -295,14 +755,22 @@
       "properties": {
         "required_h2": {
           "type": "array",
-          "items": { "$ref": "#/$defs/non_empty_string" }
+          "items": {
+            "$ref": "#/$defs/non_empty_string"
+          }
         },
         "optional_h2": {
           "type": "array",
-          "items": { "$ref": "#/$defs/non_empty_string" }
+          "items": {
+            "$ref": "#/$defs/non_empty_string"
+          }
         },
-        "allow_other_h2": { "type": "boolean" },
-        "require_order": { "type": "boolean" }
+        "allow_other_h2": {
+          "type": "boolean"
+        },
+        "require_order": {
+          "type": "boolean"
+        }
       },
       "additionalProperties": false
     },
@@ -311,7 +779,9 @@
       "type": "string",
       "minLength": 1,
       "pattern": "^[^/\\\\]+$",
-      "not": { "pattern": "\\.md$" }
+      "not": {
+        "pattern": "\\.md$"
+      }
     },
     "storage_folder_pattern": {
       "$comment": "Folder template string: may be empty (collection root), forward slashes only, no leading or trailing slash.",
@@ -320,38 +790,102 @@
     },
     "note_name_affix": {
       "type": "object",
-      "required": ["pattern"],
+      "required": [
+        "pattern"
+      ],
       "properties": {
-        "pattern": { "$ref": "#/$defs/storage_name_pattern" },
-        "required": { "type": "boolean" }
+        "pattern": {
+          "$ref": "#/$defs/storage_name_pattern"
+        },
+        "required": {
+          "type": "boolean"
+        }
       },
       "additionalProperties": false
     },
     "archive_block": {
       "type": "object",
-      "required": ["policy"],
+      "required": [
+        "policy"
+      ],
       "properties": {
-        "policy": { "enum": ["mirror_under_archives", "in_place_historical", "fixed"] },
-        "folder_pattern": { "$ref": "#/$defs/storage_folder_pattern" },
-        "note_name_pattern": { "$ref": "#/$defs/storage_name_pattern" },
-        "note_name_prefix": { "$ref": "#/$defs/note_name_affix" },
-        "note_name_suffix": { "$ref": "#/$defs/note_name_affix" }
+        "policy": {
+          "enum": [
+            "mirror_under_archives",
+            "in_place_historical",
+            "fixed"
+          ]
+        },
+        "folder_pattern": {
+          "$ref": "#/$defs/storage_folder_pattern"
+        },
+        "note_name_pattern": {
+          "$ref": "#/$defs/storage_name_pattern"
+        },
+        "note_name_prefix": {
+          "$ref": "#/$defs/note_name_affix"
+        },
+        "note_name_suffix": {
+          "$ref": "#/$defs/note_name_affix"
+        }
       },
       "additionalProperties": false,
       "allOf": [
         {
-          "if": { "properties": { "policy": { "enum": ["mirror_under_archives", "fixed"] } }, "required": ["policy"] },
-          "then": { "required": ["folder_pattern", "note_name_pattern"] }
+          "if": {
+            "properties": {
+              "policy": {
+                "enum": [
+                  "mirror_under_archives",
+                  "fixed"
+                ]
+              }
+            },
+            "required": [
+              "policy"
+            ]
+          },
+          "then": {
+            "required": [
+              "folder_pattern",
+              "note_name_pattern"
+            ]
+          }
         },
         {
-          "if": { "properties": { "policy": { "const": "in_place_historical" } }, "required": ["policy"] },
+          "if": {
+            "properties": {
+              "policy": {
+                "const": "in_place_historical"
+              }
+            },
+            "required": [
+              "policy"
+            ]
+          },
           "then": {
             "not": {
               "anyOf": [
-                { "required": ["folder_pattern"] },
-                { "required": ["note_name_pattern"] },
-                { "required": ["note_name_prefix"] },
-                { "required": ["note_name_suffix"] }
+                {
+                  "required": [
+                    "folder_pattern"
+                  ]
+                },
+                {
+                  "required": [
+                    "note_name_pattern"
+                  ]
+                },
+                {
+                  "required": [
+                    "note_name_prefix"
+                  ]
+                },
+                {
+                  "required": [
+                    "note_name_suffix"
+                  ]
+                }
               ]
             }
           }
@@ -360,21 +894,39 @@
     },
     "storage_block": {
       "type": "object",
-      "required": ["folder_pattern", "note_name_pattern", "archive"],
+      "required": [
+        "folder_pattern",
+        "note_name_pattern",
+        "archive"
+      ],
       "properties": {
-        "folder_pattern": { "$ref": "#/$defs/storage_folder_pattern" },
-        "note_name_pattern": { "$ref": "#/$defs/storage_name_pattern" },
-        "note_name_prefix": { "$ref": "#/$defs/note_name_affix" },
-        "note_name_suffix": { "$ref": "#/$defs/note_name_affix" },
-        "archive": { "$ref": "#/$defs/archive_block" }
+        "folder_pattern": {
+          "$ref": "#/$defs/storage_folder_pattern"
+        },
+        "note_name_pattern": {
+          "$ref": "#/$defs/storage_name_pattern"
+        },
+        "note_name_prefix": {
+          "$ref": "#/$defs/note_name_affix"
+        },
+        "note_name_suffix": {
+          "$ref": "#/$defs/note_name_affix"
+        },
+        "archive": {
+          "$ref": "#/$defs/archive_block"
+        }
       },
       "additionalProperties": false
     },
     "template_block": {
       "type": "object",
-      "required": ["file"],
+      "required": [
+        "file"
+      ],
       "properties": {
-        "file": { "$ref": "#/$defs/relative_md_path" }
+        "file": {
+          "$ref": "#/$defs/relative_md_path"
+        }
       },
       "additionalProperties": false
     },
@@ -382,8 +934,12 @@
       "$comment": "The guidance block shape is not yet fully pinned by the specification (see issue #104); when_to_use and when_not_to_use are the documented keys.",
       "type": "object",
       "properties": {
-        "when_to_use": { "$ref": "#/$defs/non_empty_string" },
-        "when_not_to_use": { "$ref": "#/$defs/non_empty_string" }
+        "when_to_use": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "when_not_to_use": {
+          "$ref": "#/$defs/non_empty_string"
+        }
       },
       "additionalProperties": true
     }

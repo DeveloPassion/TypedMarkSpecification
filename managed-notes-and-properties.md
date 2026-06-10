@@ -59,7 +59,7 @@ Rules:
 - `id` MAY be omitted.
 - A managed note MAY declare `id` when its schema includes an `id` field definition.
 - If a managed note declares `id`, its `id` MUST be stable across renames and moves.
-- `title` is human-facing and MAY change unless the schema marks it immutable.
+- `title` is human-facing and MAY change unless its field definition declares `immutable: true`.
 - Display-oriented fields such as `title` and `description` are human-facing note metadata and MAY differ from the note's file name and storage path unless a schema rule explicitly couples them.
 - A conforming managed note MUST remain usable as a normal Markdown note without preprocessing, transpilation, or note-local sidecar metadata.
 - Managed-note conformance uses the effective note-type schema after default property sets, abstract-ancestor application, composed property sets, and local concrete schema definitions have been applied.
@@ -145,7 +145,7 @@ Rules:
 
 ## Frontmatter Property Types
 
-Every field definition is a YAML mapping. Every field definition MUST declare `type`, and it MAY declare additional field-definition properties such as `label`, `description`, `icon`, `format`, `generated`, `unique`, `deprecated`, `optional`, `nullable`, `default_value`, `not_empty`, `not_blank`, `regex`, `min`, `max`, and `allowed_values`.
+Every field definition is a YAML mapping. Every field definition MUST declare `type`, and it MAY declare additional field-definition properties such as `label`, `description`, `icon`, `format`, `generated`, `unique`, `deprecated`, `immutable`, `optional`, `nullable`, `default_value`, `not_empty`, `not_blank`, `regex`, `min`, `max`, and `allowed_values`.
 
 ### Field Definition Property Reference
 
@@ -189,6 +189,7 @@ Rules:
 - `items` MUST be a valid field definition.
 - `items` MUST NOT declare `default_value` because anonymous list elements are not materialized independently.
 - `items` MUST NOT declare `nullable` because list elements are not materialized independently.
+- `items` MUST NOT declare `immutable` because anonymous list elements are not tracked individually.
 - `items` MAY use any supported property type.
 - Fields with `type: tags` MUST NOT declare `items`.
 - Fields with `type: object` MUST NOT declare `items`.
@@ -265,6 +266,20 @@ Rules:
 - `deprecated: true` marks a field as discouraged for new use.
 - A deprecated field remains valid and governed by the same type validation, optionality, defaulting, stored-frontmatter, and canonical materialization rules as any other declared field.
 - This specification version does not define replacement mappings, migration behavior, or automatic validator severities for deprecated fields.
+
+#### `immutable`
+
+Rules:
+
+- `immutable` MAY be omitted.
+- `immutable` MUST be a boolean.
+- If omitted, `immutable` defaults to `false`.
+- `immutable: true` means that once the field holds a concrete non-null stored value, that value MUST NOT change.
+- Immutability is an obligation on tools and operations that modify managed notes; because conformance evaluation is stateless, a validator MAY verify immutability only when it has access to historical state.
+- A `rename_field` migration moves an immutable value unchanged; a `change_field` migration MAY change a field's `immutable` declaration.
+- `const_value` and `value_from_schema` are stronger guarantees than `immutable`; a field declaring either need not also declare `immutable`.
+- The core-defined `id` field is immutable whether or not its definition declares it.
+- `immutable` MAY be declared on top-level fields and on nested fields inside `object.fields`; it MUST NOT be declared on `items`.
 
 #### `optional`
 

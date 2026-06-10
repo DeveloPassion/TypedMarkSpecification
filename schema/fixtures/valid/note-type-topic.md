@@ -63,6 +63,14 @@ frontmatter:
     allowed_values: [draft, active, archived]
     nullable: true
     default_value: null
+  created_on:
+    label: Created On
+    description: Creation date; never changes once set.
+    icon: calendar
+    type: date
+    immutable: true
+    nullable: true
+    default_value: null
   summary:
     label: Summary
     description: Short overview used in generated references and previews.
