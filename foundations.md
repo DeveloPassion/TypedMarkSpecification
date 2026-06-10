@@ -146,6 +146,27 @@ Rules:
 - Extensions, systems, collection models, property sets, and note-type schemas MUST NOT assign incompatible meanings to a spec-defined name in the namespace where the core specification defines it.
 - Mentioning a candidate or example name in prose does not by itself define that name normatively.
 
+## Parsing and Matching Baselines
+
+Conforming tools must parse and match the same inputs the same way. This section pins the cross-cutting baselines; artifact-specific rules state where each baseline applies.
+
+### YAML Baseline
+
+Rules:
+
+- Governed YAML artifacts and managed-note frontmatter are parsed as YAML 1.2 using the core schema.
+- YAML 1.1 boolean spellings such as `yes`, `no`, `on`, and `off` are strings under this baseline, not booleans.
+- A duplicate key within one YAML mapping makes the containing document invalid.
+- Governed YAML artifacts and managed notes MUST be encoded as UTF-8; a leading byte-order mark, when present, MUST be ignored.
+
+### Regular Expression Dialect
+
+Rules:
+
+- Every regular expression on a governed surface — the `regex` field constraint, `when.path.regex`, and `when.frontmatter` `regex` predicates — uses the ECMAScript (ECMA-262) regular expression dialect.
+- Whether a pattern is matched against the entire value or searched within it is defined by each declaring rule.
+- A pattern that is not a valid ECMA-262 regular expression makes its declaring artifact invalid.
+
 ## Authoritative Artifact Map
 
 A conforming TypedMark collection uses this artifact layout:

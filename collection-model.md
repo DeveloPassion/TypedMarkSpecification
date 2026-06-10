@@ -75,6 +75,11 @@ Rules:
 - `metadata_directory` identifies the governed-artifact subtree for the collection, including the change history, property sets, note-type schemas, and templates.
 - Validators and agents MUST derive governed artifact locations from `metadata_directory`.
 - `exclude_paths` defines additional content that validators and agents MUST ignore for structural reasoning. It does not redefine or relocate the metadata directory.
+- Each `exclude_paths` entry is a glob pattern matched against the entire normalized collection-relative path, using forward slashes.
+- In `exclude_paths` globs, `*` matches any number of characters within one path segment, `?` matches exactly one character within a segment, and `**` matches any number of path segments including none.
+- `exclude_paths` does not support negation patterns in this specification version.
+- A note matched by `exclude_paths` is not a collection note: it is not evaluated for note-type mapping and is not a candidate for note-link resolution.
+- An `exclude_paths` entry that would exclude `typedmark.yaml` or content under the metadata directory has no effect on those paths.
 - `validation_defaults` provides default severity levels for collection-wide validation reporting.
 - Supported validation severities are `error`, `warn`, `info`, and `off`.
 - A note or artifact with any `error` violation is non-conforming.
@@ -153,7 +158,7 @@ Rules:
 - `when.path.equals` MUST be a non-empty collection-relative path string.
 - `when.path.under` MUST be a non-empty collection-relative directory string and MUST end with `/`.
 - `when.path.regex` MUST be a non-empty string and is matched against the entire normalized collection-relative note path.
-- Regex evaluation in `note_type_mappings` uses the same implementation regex dialect documented for field constraints in [Managed Notes and Properties](managed-notes-and-properties.md).
+- Regex evaluation in `note_type_mappings` uses the ECMA-262 regular expression dialect defined in [Foundations](foundations.md).
 - `when.frontmatter` is a mapping from top-level stored frontmatter field name to one predicate mapping.
 - Nested frontmatter field paths are not supported in `note_type_mappings` in this specification version.
 - If a note has no YAML frontmatter, all `when.frontmatter` predicates fail.

@@ -66,7 +66,16 @@ Rules:
 - The meanings of `relationship_kind`, `belongs_to`, and `related_to` are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - Managed note frontmatter MUST follow the canonical field materialization rules defined on this page.
 
-### Field Names
+### Frontmatter Block Grammar
+
+Rules:
+
+- A note has frontmatter when its first line is exactly `---`, ignoring a leading byte-order mark per the YAML baseline in [Foundations](foundations.md).
+- The frontmatter block ends at the next subsequent line that is exactly `---` or `...`.
+- If no closing line exists, the note has no frontmatter.
+- A note has at most one frontmatter block; any later delimiter lines are ordinary body content.
+- The frontmatter block content MUST parse as a YAML mapping under the YAML baseline defined in [Foundations](foundations.md); an empty block is an empty mapping.
+- If the block content parses as a non-mapping YAML document, the note has no valid frontmatter and cannot satisfy the managed note contract.
 
 A managed-note frontmatter field name is the YAML key under which a field definition stores its value. The same field-name rules apply wherever this specification declares field definitions: the `frontmatter` block of a note-type schema, the `frontmatter` block of a property set, and any nested `object.fields` mapping.
 
@@ -355,7 +364,7 @@ Rules:
 - `regex` MUST be a non-empty string.
 - `regex` is valid only for `type: text` or `type: link`.
 - `regex` is matched against the entire stored string value.
-- This specification version does not standardize one regex dialect; validators MUST use one consistent documented regex dialect within a given implementation.
+- `regex` patterns use the ECMA-262 regular expression dialect defined in [Foundations](foundations.md).
 
 #### `min`
 
