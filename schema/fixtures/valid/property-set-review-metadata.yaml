@@ -1,0 +1,77 @@
+# Valid property set (the review-metadata example from collection-model.md).
+# In a real collection this file lives at <metadata_directory>/property-sets/review-metadata.yaml.
+specification_version: 0.0.1
+property_set: review-metadata
+description: Reusable review and publication fields.
+frontmatter:
+  note_type:
+    type: text
+    value_from_schema: note_type
+  deleted:
+    type: checkbox
+    default_value: false
+  archived:
+    type: checkbox
+    default_value: false
+  workflow_state:
+    label: Workflow State
+    description: Editorial lifecycle state.
+    icon: badge
+    type: text
+    allowed_values: [draft, in_review, published]
+    not_blank: true
+    nullable: true
+    default_value: null
+  rating:
+    type: integer
+    min: 1
+    max: 5
+    optional: true
+    nullable: true
+    default_value: null
+  published_on:
+    label: Published On
+    description: Publication date when known.
+    icon: calendar
+    type: date
+    optional: true
+    nullable: true
+    default_value: null
+  published_time:
+    label: Published Time
+    description: Publication time of day when known.
+    icon: clock
+    type: time
+    format: hh:mm
+    optional: true
+    nullable: true
+    default_value: null
+  canonical_url:
+    label: Canonical URL
+    description: Canonical external URL when known.
+    icon: link
+    type: link
+    format: uri
+    not_blank: true
+    optional: true
+    nullable: true
+    default_value: null
+  review_code:
+    label: Review Code
+    description: Human-readable review identifier.
+    icon: hash
+    type: text
+    regex: "^[A-Z]{2}-\\d{4}$"
+    optional: true
+    nullable: true
+    default_value: null
+relationships:
+  belongs_to:
+    allowed_note_types: {}
+  related_to:
+    allowed_note_types: {}
+headings:
+  required_h2: []
+  optional_h2: []
+  allow_other_h2: true
+  require_order: false

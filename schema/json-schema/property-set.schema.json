@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developassion.github.io/TypedMarkSpecification/schema/property-set.schema.json",
+  "title": "TypedMark property set (<metadata_directory>/property-sets/<property_set>.yaml)",
+  "description": "Document shape of one property-set file. Authoritative semantics: collection-model.md. Semantic-layer checks include: file basename equals property_set, and relationship-target resolution against the composed collection. A property set must not declare storage, template, guidance, or any composition reference; additionalProperties: false enforces that here.",
+  "type": "object",
+  "required": ["specification_version", "property_set", "description", "frontmatter"],
+  "properties": {
+    "specification_version": { "$ref": "defs.schema.json#/$defs/specification_version" },
+    "property_set": { "$ref": "defs.schema.json#/$defs/slug" },
+    "description": { "$ref": "defs.schema.json#/$defs/non_empty_string" },
+    "frontmatter": {
+      "allOf": [
+        { "$ref": "defs.schema.json#/$defs/frontmatter_block" },
+        {
+          "$comment": "A property set must not define id; note_type, when declared, must use value_from_schema because a property set has no top-level note_type.",
+          "properties": {
+            "id": false,
+            "note_type": {
+              "allOf": [{ "$ref": "defs.schema.json#/$defs/note_type_field_contract" }],
+              "required": ["value_from_schema"],
+              "properties": { "const_value": false }
+            },
+            "deleted": { "$ref": "defs.schema.json#/$defs/state_flag_field_contract" },
+            "archived": { "$ref": "defs.schema.json#/$defs/state_flag_field_contract" }
+          }
+        }
+      ]
+    },
+    "relationships": { "$ref": "defs.schema.json#/$defs/relationships_block" },
+    "headings": { "$ref": "defs.schema.json#/$defs/headings_block" }
+  },
+  "additionalProperties": false
+}

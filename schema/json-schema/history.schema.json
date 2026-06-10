@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developassion.github.io/TypedMarkSpecification/schema/history.schema.json",
+  "title": "TypedMark change history (<metadata_directory>/history.yaml)",
+  "description": "Document shape of the append-only change history. Authoritative semantics: systems-composition-evolution.md. Semantic-layer checks include: ascending unique versions, the last entry matching the collection's version, and the replay/reconstruction invariant.",
+  "type": "object",
+  "required": ["specification_version", "history"],
+  "properties": {
+    "specification_version": { "$ref": "defs.schema.json#/$defs/specification_version" },
+    "history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["version", "changes"],
+        "properties": {
+          "version": { "$ref": "defs.schema.json#/$defs/semver" },
+          "changes": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/change_operation" }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "field_scope": {
+      "$comment": "A field operation declares exactly one of note_type or property_set, naming the artifact that physically defines the field.",
+      "oneOf": [
+        { "required": ["note_type"], "not": { "required": ["property_set"] } },
+        { "required": ["property_set"], "not": { "required": ["note_type"] } }
+      ]
+    },
+    "change_operation": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["op", "note_type"],
+          "properties": {
+            "op": { "enum": ["add_note_type", "remove_note_type", "change_storage", "change_template", "change_headings", "change_relationships", "change_note_type"] },
+            "note_type": { "$ref": "defs.schema.json#/$defs/slug" }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["op", "from", "to"],
+          "properties": {
+            "op": { "const": "rename_note_type" },
+            "from": { "$ref": "defs.schema.json#/$defs/slug" },
+            "to": { "$ref": "defs.schema.json#/$defs/slug" }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["op", "field"],
+          "properties": {
+            "op": { "enum": ["add_field", "remove_field", "change_field"] },
+            "field": { "$ref": "defs.schema.json#/$defs/dotted_field_path" },
+            "note_type": { "$ref": "defs.schema.json#/$defs/slug" },
+            "property_set": { "$ref": "defs.schema.json#/$defs/slug" }
+          },
+          "additionalProperties": false,
+          "allOf": [{ "$ref": "#/$defs/field_scope" }]
+        },
+        {
+          "type": "object",
+          "required": ["op", "from", "to"],
+          "properties": {
+            "op": { "const": "rename_field" },
+            "from": { "$ref": "defs.schema.json#/$defs/dotted_field_path" },
+            "to": { "$ref": "defs.schema.json#/$defs/dotted_field_path" },
+            "note_type": { "$ref": "defs.schema.json#/$defs/slug" },
+            "property_set": { "$ref": "defs.schema.json#/$defs/slug" }
+          },
+          "additionalProperties": false,
+          "allOf": [{ "$ref": "#/$defs/field_scope" }]
+        },
+        {
+          "type": "object",
+          "required": ["op", "field", "from_type", "to_type"],
+          "properties": {
+            "op": { "const": "retype_field" },
+            "field": { "$ref": "defs.schema.json#/$defs/dotted_field_path" },
+            "from_type": { "$ref": "defs.schema.json#/$defs/property_type" },
+            "to_type": { "$ref": "defs.schema.json#/$defs/property_type" },
+            "note_type": { "$ref": "defs.schema.json#/$defs/slug" },
+            "property_set": { "$ref": "defs.schema.json#/$defs/slug" }
+          },
+          "additionalProperties": false,
+          "allOf": [{ "$ref": "#/$defs/field_scope" }]
+        },
+        {
+          "type": "object",
+          "required": ["op"],
+          "properties": {
+            "op": { "const": "change_collection" }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["op", "property_set"],
+          "properties": {
+            "op": { "enum": ["add_property_set", "remove_property_set"] },
+            "property_set": { "$ref": "defs.schema.json#/$defs/slug" }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["op", "from", "to"],
+          "properties": {
+            "op": { "const": "rename_property_set" },
+            "from": { "$ref": "defs.schema.json#/$defs/slug" },
+            "to": { "$ref": "defs.schema.json#/$defs/slug" }
+          },
+          "additionalProperties": false
+        }
+      ]
+    }
+  }
+}

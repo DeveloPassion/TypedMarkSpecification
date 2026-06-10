@@ -1,0 +1,29 @@
+# INVALID SHAPE: "journal" is not an allowed schema kind (singleton | entity | dated_record | rule_set).
+specification_version: 0.0.1
+note_type: journal-entry
+abstract: false
+label: Journal Entry
+icon: calendar
+kind: journal
+description: Dated journal entry.
+storage:
+  folder_pattern: "Journal"
+  note_name_pattern: "{title}"
+  archive:
+    policy: in_place_historical
+template:
+  file: "journal-entry.md"
+frontmatter: {}
+relationships:
+  belongs_to:
+    allowed_note_types: {}
+  related_to:
+    allowed_note_types: {}
+headings:
+  required_h2: []
+  optional_h2: []
+  allow_other_h2: true
+  require_order: false
+guidance:
+  when_to_use: "Use for dated journal entries."
+  when_not_to_use: "Do not use for durable topics."

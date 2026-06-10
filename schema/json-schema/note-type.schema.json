@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developassion.github.io/TypedMarkSpecification/schema/note-type.schema.json",
+  "title": "TypedMark note-type schema (<metadata_directory>/schemas/<note_type>.yaml)",
+  "description": "Document shape of one note-type schema file. Authoritative semantics: note-type-schemas.md. Semantic-layer checks include: file basename equals note_type, extends resolves to one abstract note type without cycles, property-set references resolve, exclude_property_sets members appear in default_property_sets, frontmatter_remove targets inherited fields, the effective schema contains every required effective key for concrete note types, and template existence and validity.",
+  "type": "object",
+  "required": ["specification_version", "note_type", "abstract", "label", "icon", "description"],
+  "properties": {
+    "specification_version": { "$ref": "defs.schema.json#/$defs/specification_version" },
+    "note_type": { "$ref": "defs.schema.json#/$defs/slug" },
+    "abstract": { "type": "boolean" },
+    "extends": { "$ref": "defs.schema.json#/$defs/slug" },
+    "label": { "$ref": "defs.schema.json#/$defs/non_empty_string" },
+    "icon": { "$ref": "defs.schema.json#/$defs/non_empty_string" },
+    "description": { "$ref": "defs.schema.json#/$defs/non_empty_string" },
+    "kind": { "$ref": "defs.schema.json#/$defs/schema_kind" },
+    "storage": { "$ref": "defs.schema.json#/$defs/storage_block" },
+    "template": { "$ref": "defs.schema.json#/$defs/template_block" },
+    "property_sets": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "defs.schema.json#/$defs/slug" }
+    },
+    "exclude_property_sets": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "defs.schema.json#/$defs/slug" }
+    },
+    "frontmatter_remove": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "defs.schema.json#/$defs/field_name" }
+    },
+    "frontmatter": {
+      "allOf": [
+        { "$ref": "defs.schema.json#/$defs/frontmatter_block" },
+        {
+          "properties": {
+            "note_type": { "$ref": "defs.schema.json#/$defs/note_type_field_contract" },
+            "id": { "$ref": "defs.schema.json#/$defs/id_field_contract" },
+            "deleted": { "$ref": "defs.schema.json#/$defs/state_flag_field_contract" },
+            "archived": { "$ref": "defs.schema.json#/$defs/state_flag_field_contract" }
+          }
+        }
+      ]
+    },
+    "relationships": { "$ref": "defs.schema.json#/$defs/relationships_block" },
+    "headings": { "$ref": "defs.schema.json#/$defs/headings_block" },
+    "guidance": { "$ref": "defs.schema.json#/$defs/guidance_block" }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "$comment": "Only concrete note types may declare property-set composition references.",
+      "if": { "properties": { "abstract": { "const": true } }, "required": ["abstract"] },
+      "then": {
+        "properties": {
+          "property_sets": false,
+          "exclude_property_sets": false,
+          "frontmatter_remove": false
+        }
+      }
+    }
+  ]
+}

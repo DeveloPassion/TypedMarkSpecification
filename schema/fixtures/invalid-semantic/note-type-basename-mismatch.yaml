@@ -1,0 +1,30 @@
+# VALID SHAPE, INVALID SEMANTICS: note_type is "topic", but this file's basename is
+# "note-type-basename-mismatch"; in a real collection the file must be named topic.yaml.
+specification_version: 0.0.1
+note_type: topic
+abstract: false
+label: Topic
+icon: note
+kind: entity
+description: Durable note about a specific topic.
+storage:
+  folder_pattern: "Topics"
+  note_name_pattern: "{title}"
+  archive:
+    policy: in_place_historical
+template:
+  file: "topic.md"
+frontmatter: {}
+relationships:
+  belongs_to:
+    allowed_note_types: {}
+  related_to:
+    allowed_note_types: {}
+headings:
+  required_h2: []
+  optional_h2: []
+  allow_other_h2: true
+  require_order: false
+guidance:
+  when_to_use: "Use for a durable note about a specific topic."
+  when_not_to_use: "Do not use for dated logs."

@@ -1,0 +1,195 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developassion.github.io/TypedMarkSpecification/schema/typedmark.schema.json",
+  "title": "TypedMark collection configuration (typedmark.yaml)",
+  "description": "Document shape of typedmark.yaml. Authoritative semantics: collection-model.md (structural fields) and systems-composition-evolution.md (system fields). Cross-file checks (property-set resolution, composition source resolution, exclude_property_sets membership) are semantic-layer checks.",
+  "type": "object",
+  "required": ["specification_version", "name", "description", "metadata_directory", "exclude_paths", "validation_defaults"],
+  "dependentRequired": {
+    "version": ["scaffold"]
+  },
+  "properties": {
+    "specification_version": { "$ref": "defs.schema.json#/$defs/specification_version" },
+    "name": { "$ref": "defs.schema.json#/$defs/collection_name" },
+    "label": { "$ref": "defs.schema.json#/$defs/non_empty_string" },
+    "description": { "$ref": "defs.schema.json#/$defs/non_empty_string" },
+    "keywords": {
+      "type": "array",
+      "items": { "$ref": "defs.schema.json#/$defs/non_empty_string" },
+      "uniqueItems": true
+    },
+    "metadata_directory": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[^/\\\\]+$",
+      "not": { "enum": [".", ".."] }
+    },
+    "exclude_paths": {
+      "type": "array",
+      "items": { "$ref": "defs.schema.json#/$defs/non_empty_string" }
+    },
+    "validation_defaults": {
+      "type": "object",
+      "properties": {
+        "path": { "$ref": "defs.schema.json#/$defs/validation_severity" },
+        "missing_required_field": { "$ref": "defs.schema.json#/$defs/validation_severity" },
+        "missing_declared_field": { "$ref": "defs.schema.json#/$defs/validation_severity" },
+        "unknown_field": { "$ref": "defs.schema.json#/$defs/validation_severity" },
+        "invalid_field_value": { "$ref": "defs.schema.json#/$defs/validation_severity" },
+        "duplicate_unique_value": { "$ref": "defs.schema.json#/$defs/validation_severity" },
+        "invalid_property_set": { "$ref": "defs.schema.json#/$defs/validation_severity" },
+        "invalid_note_type_mapping": { "$ref": "defs.schema.json#/$defs/validation_severity" },
+        "invalid_composition": { "$ref": "defs.schema.json#/$defs/validation_severity" },
+        "unsupported_specification_version": { "$ref": "defs.schema.json#/$defs/validation_severity" },
+        "invalid_note_link": { "$ref": "defs.schema.json#/$defs/validation_severity" },
+        "invalid_relationship_definition": { "$ref": "defs.schema.json#/$defs/validation_severity" },
+        "invalid_relationship_instance": { "$ref": "defs.schema.json#/$defs/validation_severity" },
+        "invalid_heading": { "$ref": "defs.schema.json#/$defs/validation_severity" },
+        "template_drift": { "$ref": "defs.schema.json#/$defs/validation_severity" }
+      },
+      "additionalProperties": false
+    },
+    "note_type_mappings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": ["kind", "field"],
+            "properties": {
+              "kind": { "const": "frontmatter_field" },
+              "field": { "const": "note_type" }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": ["kind", "note_type", "when"],
+            "properties": {
+              "kind": { "const": "fixed" },
+              "note_type": { "$ref": "defs.schema.json#/$defs/slug" },
+              "when": {
+                "type": "object",
+                "minProperties": 1,
+                "properties": {
+                  "path": {
+                    "type": "object",
+                    "minProperties": 1,
+                    "properties": {
+                      "equals": { "$ref": "defs.schema.json#/$defs/non_empty_string" },
+                      "under": {
+                        "type": "string",
+                        "minLength": 2,
+                        "pattern": "/$"
+                      },
+                      "regex": { "$ref": "defs.schema.json#/$defs/non_empty_string" }
+                    },
+                    "additionalProperties": false
+                  },
+                  "frontmatter": {
+                    "type": "object",
+                    "minProperties": 1,
+                    "additionalProperties": {
+                      "type": "object",
+                      "minProperties": 1,
+                      "properties": {
+                        "exists": { "type": "boolean" },
+                        "equals": {},
+                        "regex": { "$ref": "defs.schema.json#/$defs/non_empty_string" },
+                        "contains_any": {
+                          "type": "array",
+                          "minItems": 1,
+                          "items": { "$ref": "defs.schema.json#/$defs/non_empty_string" }
+                        },
+                        "contains_all": {
+                          "type": "array",
+                          "minItems": 1,
+                          "items": { "$ref": "defs.schema.json#/$defs/non_empty_string" }
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "composition": {
+      "$comment": "Unique source names, source resolution, and name != own collection name are semantic checks.",
+      "type": "object",
+      "required": ["sources"],
+      "properties": {
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["name", "version"],
+            "properties": {
+              "name": { "$ref": "defs.schema.json#/$defs/collection_name" },
+              "version": { "$ref": "defs.schema.json#/$defs/semver" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "default_property_sets": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "defs.schema.json#/$defs/slug" }
+    },
+    "version": { "$ref": "defs.schema.json#/$defs/semver" },
+    "scaffold": {
+      "type": "object",
+      "properties": {
+        "folders": {
+          "type": "array",
+          "items": { "$ref": "defs.schema.json#/$defs/collection_relative_path" }
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["path", "note_type", "from_template"],
+            "properties": {
+              "path": {
+                "allOf": [
+                  { "$ref": "defs.schema.json#/$defs/collection_relative_path" },
+                  { "pattern": "\\.md$" }
+                ]
+              },
+              "note_type": { "$ref": "defs.schema.json#/$defs/slug" },
+              "from_template": { "$ref": "defs.schema.json#/$defs/relative_md_path" },
+              "values": { "type": "object" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "audiences": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "defs.schema.json#/$defs/non_empty_string" }
+    },
+    "publisher": {
+      "type": "object",
+      "properties": {
+        "name": { "$ref": "defs.schema.json#/$defs/non_empty_string" }
+      },
+      "additionalProperties": false
+    },
+    "license": { "$ref": "defs.schema.json#/$defs/non_empty_string" }
+  },
+  "additionalProperties": false
+}

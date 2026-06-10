@@ -1,0 +1,38 @@
+# Valid change history exercising note-type, field (both scopes), block, and collection operations.
+# In a real collection this file lives at <metadata_directory>/history.yaml.
+specification_version: 0.0.1
+history:
+  - version: 0.1.0
+    changes:
+      - op: add_note_type
+        note_type: topic
+      - op: add_field
+        note_type: topic
+        field: title
+      - op: add_field
+        note_type: topic
+        field: summary
+      - op: add_property_set
+        property_set: review-metadata
+      - op: add_field
+        property_set: review-metadata
+        field: rating
+  - version: 0.2.0
+    changes:
+      - op: rename_field
+        note_type: topic
+        from: summary
+        to: overview
+      - op: retype_field
+        note_type: topic
+        field: rating
+        from_type: number
+        to_type: integer
+      - op: change_storage
+        note_type: topic
+      - op: change_headings
+        note_type: topic
+      - op: change_collection
+      - op: rename_note_type
+        from: topic
+        to: subject
