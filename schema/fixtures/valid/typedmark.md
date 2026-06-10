@@ -10,6 +10,7 @@ keywords:
 
 metadata_directory: .typedmark
 assets_directory: Assets
+timezone: Europe/Brussels
 exclude_paths:
   - .git/**
 validation_defaults:

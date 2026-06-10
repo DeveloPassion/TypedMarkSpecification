@@ -179,6 +179,9 @@ Rules:
 - `date` MUST use RFC 3339 full-date format `YYYY-MM-DD`.
 - `time` values MUST be YAML strings and MUST match the declared time `format`.
 - `datetime` MUST use RFC 3339 date-time format with seconds and an explicit timezone designator such as `Z` or `+02:00`.
+- `date` and `time` values are floating: they carry no timezone and denote a calendar date or wall-clock time as written; when a rule needs to place them in time, they are interpreted in the collection timezone defined in [Collection Model](collection-model.md).
+- `datetime` values denote exact instants: two `datetime` values are equal when they denote the same instant regardless of offset notation, and temporal ordering compares instants.
+- Because stored `datetime` values carry explicit offsets and `date` and `time` values are floating, no daylight-saving disambiguation is required; the only conversions this specification defines are instant-to-collection-timezone conversions, which are always well defined.
 - `link` values MUST be YAML strings and MUST follow the declared link `format`.
 - Stored `list` values MUST be YAML sequences.
 - `tags` values MUST be YAML sequences of tag strings.

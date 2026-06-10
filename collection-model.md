@@ -86,6 +86,11 @@ Rules:
 - `assets_directory` does not change asset-link resolution; an asset resolves wherever it lives.
 - Tools MAY report assets stored outside `assets_directory`, and MAY report orphan assets that no collection note references; automated asset cleanup is not defined in this specification version.
 - This specification version defines no per-asset metadata mechanism.
+- `timezone` MAY be omitted.
+- If present, `timezone` MUST be an IANA Time Zone Database identifier, such as `UTC` or `Europe/Brussels`.
+- If `timezone` is omitted, the collection timezone is `UTC`.
+- The collection timezone defines how the current instant is converted to local dates and times wherever this specification refers to the current time, including the current-time storage placeholders defined in [Note Type Schemas](note-type-schemas.md), and how `datetime` instants are localized, as defined in [Managed Notes and Properties](managed-notes-and-properties.md).
+- Collections whose authors work in a single zone SHOULD declare `timezone` explicitly.
 - `validation_defaults` provides default severity levels for collection-wide validation reporting.
 - Supported validation severities are `error`, `warn`, `info`, and `off`.
 - `validation_defaults` MAY omit individual severity keys and MAY be an empty mapping.

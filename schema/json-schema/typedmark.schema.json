@@ -66,6 +66,10 @@
         }
       ]
     },
+    "timezone": {
+      "$comment": "IANA Time Zone Database identifier; identifier validity is a semantic check.",
+      "$ref": "defs.schema.json#/$defs/non_empty_string"
+    },
     "validation_defaults": {
       "type": "object",
       "properties": {

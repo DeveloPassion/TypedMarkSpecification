@@ -421,6 +421,7 @@ Rules:
 - Nested field references are not supported in storage patterns in this specification version.
 - `{field_name}` inserts the concrete stored scalar value of that field.
 - `{field_name:format}` is valid only when the stored value is a `date` or `datetime` field and `format` is one of `YYYY`, `MM`, `DD`, `YYYY-MM`, or `YYYY-MM-DD`.
+- When a `{field_name:format}` placeholder references a `datetime` field, the date components are taken from the stored instant expressed in the collection timezone defined in [Collection Model](collection-model.md); for `date` fields, they are taken from the stored value as written.
 - Storage placeholders MUST resolve from physically stored frontmatter values, not from note body content, inferred values, or template prose.
 - A field used in a storage pattern MUST resolve to a concrete non-null scalar value when the managed note path is evaluated.
 - A field referenced by any storage pattern, including archive patterns and affixes, MUST NOT declare `optional: true`, and SHOULD be non-nullable or declare a non-null `default_value`, so that storage paths are resolvable at note creation.
