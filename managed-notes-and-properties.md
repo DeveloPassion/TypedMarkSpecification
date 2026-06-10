@@ -249,7 +249,7 @@ Rules:
 - `unique` MAY be declared only on top-level frontmatter fields.
 - `unique: true` is valid only for scalar field types: `text`, `integer`, `number`, `checkbox`, `date`, `time`, `datetime`, and `link`.
 - `unique: true` means every non-null stored value for that field MUST be distinct across all managed notes of the same note type.
-- Uniqueness is evaluated using exact stored-value equality after normal YAML parsing, not by note-link resolution.
+- Uniqueness is evaluated using exact stored-value equality after normal YAML parsing, under the string comparison rules defined in [Foundations](foundations.md), not by note-link resolution.
 - Multiple `null` values do not violate uniqueness.
 - A repeated non-null value for a field with `unique: true` is a `duplicate_unique_value` validation failure, as defined in [Collection Model](collection-model.md).
 - If a unique value may be assigned later, the RECOMMENDED pattern is `nullable: true` with `default_value: null`.
@@ -399,7 +399,7 @@ Rules:
 - For `type: list`, `allowed_values` is valid only when `items.type` is one of `text`, `integer`, `number`, `checkbox`, `date`, `time`, `datetime`, or `link`, and each `allowed_values` entry MUST be compatible with that item type.
 - For `type: list`, every stored item value MUST be one of the declared `allowed_values`.
 - `allowed_values` MUST NOT be used with `type: tags`, `type: object`, or `type: any`.
-- Text and link `allowed_values` comparisons are case-sensitive and use exact string equality.
+- Text and link `allowed_values` comparisons are case-sensitive and use exact string equality under the string comparison rules defined in [Foundations](foundations.md).
 - Non-text scalar `allowed_values` comparisons use exact scalar equality after normal YAML parsing and type validation.
 
 #### `const_value`

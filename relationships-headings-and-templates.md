@@ -90,6 +90,8 @@ Each concrete note type's effective schema MUST define a `headings` block. That 
 Rules:
 
 - Heading validation applies to H2 headings only.
+- An H2 heading's text is its raw Markdown source after the `## ` marker, with leading and trailing whitespace trimmed; inline Markdown syntax within the heading is not interpreted or stripped.
+- A managed-note H2 heading matches a declared heading entry when their texts are equal under the string comparison rules defined in [Foundations](foundations.md).
 - `required_h2` entries MUST appear exactly once unless a future specification version says otherwise.
 - `optional_h2` entries MAY appear zero or one time.
 - If `allow_other_h2` is `false`, undeclared H2 headings MUST NOT appear.

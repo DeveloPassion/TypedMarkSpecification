@@ -167,6 +167,17 @@ Rules:
 - Whether a pattern is matched against the entire value or searched within it is defined by each declaring rule.
 - A pattern that is not a valid ECMA-262 regular expression makes its declaring artifact invalid.
 
+### Unicode Normalization and String Comparison
+
+Rules:
+
+- Every exact string comparison defined by this specification compares Unicode code points after normalizing both operands to Normalization Form C (NFC).
+- This applies wherever this specification compares stored strings, including `unique` equality, `allowed_values` and `const_value` equality, frontmatter mapping `equals` predicates on strings, note-link target, `id`, and file-name comparison, and heading-text comparison.
+- String comparisons are case-sensitive; this specification defines no case folding.
+- Code-point counts, such as `min` and `max` on text values, count the code points of the NFC-normalized value.
+- Spec-defined identifier grammars, such as collection names, slugs, and field names, restrict their values to ASCII, so normalization does not alter them.
+- Regular-expression matching operates on the NFC-normalized value.
+
 ## Authoritative Artifact Map
 
 A conforming TypedMark collection uses this artifact layout:
