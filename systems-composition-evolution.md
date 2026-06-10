@@ -63,12 +63,12 @@ scaffold:
   notes:
     - path: "Home.md"
       note_type: home
-      from_template: "<metadata_directory>/templates/home.md"
+      from_template: "home.md"
       values:
         note_type: home
     - path: "Glossary.md"
       note_type: glossary
-      from_template: "<metadata_directory>/templates/glossary.md"
+      from_template: "glossary.md"
       values:
         note_type: glossary
 ```
@@ -92,6 +92,7 @@ Rules:
 - `scaffold.folders` lists folders an importer SHOULD create when instantiating a collection from the system.
 - `scaffold.notes` lists note files an importer SHOULD create when instantiating a collection from the system.
 - Each scaffold note entry MUST define `path`, `note_type`, and `from_template`.
+- `scaffold.notes[].from_template` follows the same resolution rule as a schema's `template.file` defined in [Note Type Schemas](note-type-schemas.md): it is a relative path resolved against `<metadata_directory>/templates/`, MUST NOT restate the metadata directory or the `templates/` folder, and MUST end in `.md`.
 - `scaffold.notes[].note_type` MUST resolve to exactly one concrete note type.
 - `scaffold.notes[].values` MAY provide initial frontmatter values that are merged into the instantiated template.
 - Values supplied in `scaffold.notes[].values` override template placeholder values for that instantiated note only.

@@ -105,9 +105,10 @@ Each concrete note type's effective schema MUST define a template reference.
 Rules:
 
 - The effective `template.file` of a concrete note type MUST point to the canonical template for that note type.
-- `template.file` MUST be a relative path under `<metadata_directory>/templates/`.
+- All templates live under `<metadata_directory>/templates/`; `template.file` is a relative path resolved against that folder, as defined in [Note Type Schemas](note-type-schemas.md).
+- `template.file` MUST NOT restate the metadata directory or the `templates/` folder.
 - `template.file` MUST end in `.md`.
-- The template path referenced by a schema need not equal `<metadata_directory>/templates/<note_type>.md`.
+- The template file name referenced by a schema need not equal `<note_type>.md`.
 - Templates MUST include valid starter frontmatter in canonical materialized form.
 - A template's starter frontmatter MUST conform to the effective note-type schema of the note type that references the template, under the rules in [Managed Notes and Properties](managed-notes-and-properties.md).
 - A template whose starter frontmatter declares a field absent from the effective schema, omits a declared field, or violates a field's type or value constraints is invalid, independently of the optional `template_drift` comparison.

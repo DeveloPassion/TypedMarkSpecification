@@ -75,7 +75,7 @@ storage:
     note_name_pattern: "{title}"
 
 template:
-  file: "<metadata_directory>/templates/topic.md"
+  file: "topic.md"
 
 frontmatter:
   note_type:
@@ -207,7 +207,10 @@ Rules:
 - If an abstract note type declares the core-defined `note_type` field in `frontmatter`, it MUST use `value_from_schema: note_type`.
 - Concrete note types MAY inherit `kind`, `storage`, `template`, `guidance`, `frontmatter`, `relationships`, and `headings` from abstract ancestors and therefore MAY omit those keys locally.
 - A concrete note type's effective schema MUST contain every top-level key listed above as required for concrete note types.
-- If a schema physically declares `template`, `template.file` MUST be a relative path under `<metadata_directory>/templates/`.
+- All templates live under `<metadata_directory>/templates/`; `template.file` is resolved from within that folder.
+- If a schema physically declares `template`, `template.file` MUST be a relative path resolved against `<metadata_directory>/templates/`; the referenced template file is located at `<metadata_directory>/templates/` plus the `template.file` value.
+- `template.file` MUST NOT restate the metadata directory or the `templates/` folder, MUST NOT be an absolute path, and MUST NOT contain `..` segments.
+- `template.file` MAY include subfolders and MUST use forward slashes when it does.
 - If a schema physically declares `template`, `template.file` MUST end in `.md`.
 - The effective `template.file` of a concrete note type defines the canonical template for that note type.
 - The `frontmatter` block semantics are defined in [Managed Notes and Properties](managed-notes-and-properties.md).
@@ -245,7 +248,7 @@ description: Shared structure for person-like notes.
 kind: entity
 
 template:
-  file: "<metadata_directory>/templates/person.md"
+  file: "person.md"
 
 frontmatter:
   note_type:
