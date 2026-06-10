@@ -120,6 +120,7 @@ headings:
     - Notes
   allow_other_h2: true
   require_order: false
+  require_h1_title: true
 
 guidance:
   when_to_use: "Use for a durable note about a specific topic."

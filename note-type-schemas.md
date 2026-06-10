@@ -222,7 +222,7 @@ Rules:
 - An effective schema without `relationships` is equivalent to one declaring empty `belongs_to.allowed_note_types` and `related_to.allowed_note_types`: no documented relationships and no relationship constraints.
 - The `headings` block semantics are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - If a schema physically declares `headings`, it MUST follow the heading shape required by [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
-- An effective schema without `headings` is equivalent to one declaring `required_h2: []`, `optional_h2: []`, `allow_other_h2: true`, and `require_order: false`: no heading constraints.
+- An effective schema without `headings` is equivalent to one declaring `required_h2: []`, `optional_h2: []`, `allow_other_h2: true`, `require_order: false`, and `require_h1_title: false`: no heading constraints.
 - An effective schema without `guidance` simply provides no usage guidance; this has no structural effect.
 - `guidance` is human-facing explanatory content and MUST NOT override structural rules.
 - If a schema physically declares `guidance`, it MUST be a mapping that physically contains `when_to_use` and `when_not_to_use`.

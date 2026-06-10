@@ -86,11 +86,19 @@ Using the `topic` schema example in [Note Type Schemas](note-type-schemas.md), t
 
 ## Heading Rules
 
-A concrete note type's effective schema MAY define a `headings` block. That block MAY impose no mandatory H2 headings. An effective schema without a `headings` block is equivalent to one declaring `required_h2: []`, `optional_h2: []`, `allow_other_h2: true`, and `require_order: false`, as defined in [Note Type Schemas](note-type-schemas.md): no heading constraints.
+A concrete note type's effective schema MAY define a `headings` block. That block MAY impose no mandatory H2 headings. An effective schema without a `headings` block is equivalent to one declaring `required_h2: []`, `optional_h2: []`, `allow_other_h2: true`, `require_order: false`, and `require_h1_title: false`, as defined in [Note Type Schemas](note-type-schemas.md): no heading constraints.
 
 Rules:
 
-- Heading validation applies to H2 headings only.
+- Heading detection follows CommonMark; text inside fenced, indented, or inline code is not a heading.
+- H1 headings are ungoverned by default: a managed note MAY contain zero or more H1 headings, and no relationship between an H1 and the `title` field is assumed.
+- A `headings` block MAY declare `require_h1_title` to couple the body H1 to the note's `title` field.
+- `require_h1_title` MUST be a boolean; if omitted, it defaults to `false`.
+- If `require_h1_title` is `true`, the note body MUST contain exactly one H1 heading, that H1 MUST be the first heading in the body, and its text MUST equal the note's stored `title` value under the string comparison rules defined in [Foundations](foundations.md).
+- `require_h1_title: true` is valid only when the effective frontmatter declares a `title` field; a note whose `title` is `null` cannot satisfy it.
+- A `require_h1_title` violation is an `invalid_heading` failure.
+- H1 text is extracted like H2 text: the raw Markdown source after the `# ` marker, with leading and trailing whitespace trimmed.
+- Other heading validation applies to H2 headings only.
 - An H2 heading's text is its raw Markdown source after the `## ` marker, with leading and trailing whitespace trimmed; inline Markdown syntax within the heading is not interpreted or stripped.
 - A managed-note H2 heading matches a declared heading entry when their texts are equal under the string comparison rules defined in [Foundations](foundations.md).
 - `required_h2` entries MUST appear exactly once unless a future specification version says otherwise.

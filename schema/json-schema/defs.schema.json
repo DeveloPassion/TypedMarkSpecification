@@ -817,6 +817,9 @@
         },
         "require_order": {
           "type": "boolean"
+        },
+        "require_h1_title": {
+          "type": "boolean"
         }
       },
       "additionalProperties": false
