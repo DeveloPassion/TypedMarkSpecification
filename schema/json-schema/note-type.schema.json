@@ -104,6 +104,13 @@
     },
     "guidance": {
       "$ref": "defs.schema.json#/$defs/guidance_block"
+    },
+    "conditions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "defs.schema.json#/$defs/condition_rule"
+      }
     }
   },
   "additionalProperties": false,

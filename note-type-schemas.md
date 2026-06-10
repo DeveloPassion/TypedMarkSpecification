@@ -39,7 +39,7 @@ Rules:
 1. A tool or validator MUST resolve the note's note type using the note-type association rules defined in [Managed Notes and Properties](managed-notes-and-properties.md) and MUST select exactly one concrete note-type schema file from `<metadata_directory>/schemas/` using that resolved identifier.
 2. If the selected concrete note type declares `extends`, the tool or validator MUST load the full abstract ancestor chain, starting with the farthest abstract ancestor and ending with the selected concrete note type.
 3. The selected concrete note-type schema file provides the direct top-level values for `specification_version`, `note_type`, `abstract`, `label`, `icon`, and `description`.
-4. For `kind`, `storage`, `template`, `guidance`, and `unknown_field`, note-type inheritance uses whole-key replacement along the abstract ancestor chain. The last schema in that chain order that physically defines one of those keys determines the effective value of that key.
+4. For `kind`, `storage`, `template`, `guidance`, `unknown_field`, and `conditions`, note-type inheritance uses whole-key replacement along the abstract ancestor chain. The last schema in that chain order that physically defines one of those keys determines the effective value of that key.
 5. The tool or validator MUST determine which property sets apply to the selected concrete note type by taking the `default_property_sets` declared in `typedmark.md`, removing any named in the concrete note type's `exclude_property_sets`, and then appending the property sets named in the concrete note type's `property_sets`, using the composition rules in [Collection Model](collection-model.md).
 6. The `frontmatter`, `relationships`, and `headings` blocks contributed by the applied default property sets MUST be applied first, in `default_property_sets` order.
 7. Local `frontmatter`, `relationships`, and `headings` blocks declared by abstract ancestors, if any, MUST be applied next in abstract-ancestor order using the merge rules defined in [Collection Model](collection-model.md).
@@ -202,9 +202,9 @@ Rules:
 - If present, `extends` MUST be a non-empty slug and MUST resolve to exactly one abstract note type under `<metadata_directory>/schemas/`.
 - A note type MUST NOT extend itself directly or transitively.
 - Because `extends` is singular, a note type MUST inherit from at most one parent.
-- Abstract note types MAY declare `kind`, `storage`, `template`, `frontmatter`, `relationships`, `headings`, `guidance`, and `unknown_field` to contribute reusable structure, but they are not required to declare them.
+- Abstract note types MAY declare `kind`, `storage`, `template`, `frontmatter`, `relationships`, `headings`, `guidance`, `unknown_field`, and `conditions` to contribute reusable structure, but they are not required to declare them.
 - If an abstract note type declares the core-defined `note_type` field in `frontmatter`, it MUST use `value_from_schema: note_type`.
-- Concrete note types MAY inherit `kind`, `storage`, `template`, `guidance`, `unknown_field`, `frontmatter`, `relationships`, and `headings` from abstract ancestors and therefore MAY omit those keys locally.
+- Concrete note types MAY inherit `kind`, `storage`, `template`, `guidance`, `unknown_field`, `conditions`, `frontmatter`, `relationships`, and `headings` from abstract ancestors and therefore MAY omit those keys locally.
 - A concrete note type's effective schema MUST contain every top-level key listed above as required for concrete note types.
 - All templates live under `<metadata_directory>/templates/`; `template.file` is resolved from within that folder.
 - If a schema physically declares `template`, `template.file` MUST be a relative path resolved against `<metadata_directory>/templates/`; the referenced template file is located at `<metadata_directory>/templates/` plus the `template.file` value.
@@ -308,6 +308,45 @@ frontmatter:
 ```
 
 In that example, `customer` inherits `kind`, `template`, `guidance`, `note_type`, `title`, `email`, and `headings` from `person`, while adding its own concrete storage rule and local `customer_tier` field. Because no schema in the chain declares `relationships`, the effective relationships take the empty defaults.
+
+## Conditional Field Constraints
+
+A note-type schema MAY declare `conditions` to express cross-field conditional requirements that unconditional field definitions cannot: a field that must hold a value only when another field has a given value, or a field that must stay empty in certain states.
+
+Example:
+
+```yaml
+conditions:
+  - description: Archived topics need a reason.
+    when:
+      status:
+        equals: archived
+    then:
+      require:
+        - archived_reason
+  - description: Draft topics have no publication date.
+    when:
+      status:
+        equals: draft
+    then:
+      require_null:
+        - published_on
+```
+
+Rules:
+
+- `conditions` MAY be omitted.
+- If present, `conditions` MUST be a non-empty ordered list of condition rules.
+- Each condition rule MUST physically contain `when` and `then`, and MAY contain `description`, a non-empty string used for reporting.
+- `when` is a frontmatter predicate mapping with the same shape and semantics as `when.frontmatter` in `note_type_mappings`, defined in [Collection Model](collection-model.md), evaluated against the managed note's stored frontmatter.
+- `then` MUST contain at least one of `require` or `require_null`; each, when present, MUST be a non-empty list of unique top-level effective frontmatter field names.
+- Each field named in `require` or `require_null`, and each field named in `when`, MUST resolve to a field declared in the effective frontmatter; a condition naming an unresolved field makes the schema invalid.
+- A field named in `require` MUST NOT be declared `optional: true` in the effective schema and SHOULD be nullable, so it can remain `null` while no condition requires it.
+- When a condition's `when` predicate matches a managed note, every field named in `require` MUST hold a concrete non-null stored value, and every field named in `require_null` MUST be stored as `null`.
+- A `require` violation is reported as `missing_required_field`; a `require_null` violation is reported as `invalid_field_value`.
+- Condition rules are evaluated independently; every matching rule applies, and a note MUST satisfy all of them.
+- A field MUST NOT be named in `require` by one matching rule and in `require_null` by another matching rule for the same note; condition sets that allow this are invalid for that note and MUST be reported.
+- `conditions` participates in note-type inheritance through whole-key replacement, like `guidance`; property sets MUST NOT declare `conditions` in this specification version.
 
 ## Allowed Schema Kinds
 

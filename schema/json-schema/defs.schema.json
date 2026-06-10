@@ -1023,6 +1023,81 @@
           }
         }
       }
+    },
+    "frontmatter_predicate": {
+      "type": "object",
+      "minProperties": 1,
+      "properties": {
+        "exists": {
+          "type": "boolean"
+        },
+        "equals": {},
+        "regex": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "contains_any": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/non_empty_string"
+          }
+        },
+        "contains_all": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/non_empty_string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "frontmatter_predicate_block": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "$ref": "#/$defs/frontmatter_predicate"
+      }
+    },
+    "condition_rule": {
+      "$comment": "Field-name resolution against the effective frontmatter is a semantic check.",
+      "type": "object",
+      "required": [
+        "when",
+        "then"
+      ],
+      "properties": {
+        "description": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "when": {
+          "$ref": "#/$defs/frontmatter_predicate_block"
+        },
+        "then": {
+          "type": "object",
+          "minProperties": 1,
+          "properties": {
+            "require": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/field_name"
+              }
+            },
+            "require_null": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/field_name"
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
     }
   }
 }

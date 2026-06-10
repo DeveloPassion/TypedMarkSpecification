@@ -75,6 +75,13 @@ frontmatter:
     allowed_values: [draft, active, archived]
     nullable: true
     default_value: null
+  archived_reason:
+    label: Archived Reason
+    description: Why the topic was archived.
+    icon: note
+    type: text
+    nullable: true
+    default_value: null
   created_on:
     label: Created On
     description: Creation date; never changes once set.
@@ -131,6 +138,15 @@ headings:
   allow_other_h2: true
   require_order: false
   require_h1_title: true
+
+conditions:
+  - description: Archived topics need a reason.
+    when:
+      status:
+        equals: archived
+    then:
+      require:
+        - archived_reason
 
 guidance:
   when_to_use: "Use for a durable note about a specific topic."
