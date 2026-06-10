@@ -413,29 +413,69 @@ Rules:
 
 ### Note-Link Syntax and Resolution
 
+Internal note links connect collection notes. This section defines the supported link forms, the parsed link components, and the deterministic target-resolution algorithm. Two conforming tools MUST resolve the same internal note link, in the same collection, to the same result.
+
+#### Link Forms
+
 Rules:
 
-- Supported internal note-link forms include wikilinks and standard Markdown links.
-- Supported wikilink forms include at least:
+- The supported internal note-link forms are wikilinks and standard Markdown links.
+- Supported wikilink forms are:
   - `[[Target]]`
   - `[[Target|Display text]]`
   - `[[Target#Heading]]`
   - `[[Target#Heading|Display text]]`
   - `[[Target#^block-id]]`
   - `[[Target#^block-id|Display text]]`
-- Supported Markdown link forms include at least:
+- Supported Markdown link forms are:
   - `[Display text](Target)`
   - `[Display text](Target.md)`
   - `[Display text](Target.md#Heading)`
   - `[Display text](Target.md#^block-id)`
-- Markdown link destinations targeting managed notes SHOULD use wikilinks and MUST be URL encoded where required.
-- Note-link resolution MAY use note names, note paths, note aliases, headings, and block identifiers.
-- A syntactically valid internal note link MUST resolve unambiguously to at most one managed note.
-- Resolution to zero managed notes MAY occur and represents a link to a note that does not exist yet.
-- Display text, aliases, and other presentation details do not affect target resolution.
-- Managed note frontmatter fields with `type: link` and `format: note_link` store exactly one non-embed internal note-link string.
-- In note bodies, embed-prefixed wikilinks such as `![[Target]]` or `![[Target#^block-id]]` are supported internal note links.
-- Relationship conformance uses the resolved managed-note targets produced by these rules; counting and cardinality rules are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
+- An embed is any supported form prefixed with `!`, such as `![[Target]]` or `![Alt text](Target.md)`.
+- A Markdown link destination that contains an RFC 3986 URI scheme, such as `https:` or `mailto:`, is an external link, not an internal note link.
+- Markdown link destinations MUST be URL encoded where RFC 3986 requires it; notes linking to managed notes SHOULD prefer wikilinks.
+- Managed note frontmatter fields with `type: link` and `format: note_link` store exactly one non-embed internal note-link string in either supported form.
+- Link parsing and target resolution are the same wherever an internal note link appears, in frontmatter or in the note body.
+
+#### Link Parsing
+
+Rules:
+
+- An internal note link MUST parse into these components: the raw source string, the form (`wikilink` or `markdown`), the target, an optional anchor, an optional display text, and an embed flag.
+- In wikilinks, the segment after `|` is the display text and the segment after the first `#` is the anchor.
+- In Markdown links, the bracketed segment is the display text and the destination segment after the first `#` is the anchor; the destination before it is the target, URL decoded before resolution.
+- An anchor beginning with `^` is a block identifier; any other anchor is heading text.
+- Display text and the embed flag never affect target resolution.
+
+#### Target Resolution
+
+A parsed target resolves through the following algorithm. Path-formed targets resolve by path; simple wikilink names resolve by name.
+
+Rules:
+
+1. If the form is `markdown`: a target with a leading `/` resolves from the collection root with the leading `/` removed; any other target resolves relative to the containing note's directory.
+2. If the form is `wikilink`: a target starting with `./` or `../` resolves relative to the containing note's directory; a target with a leading `/` resolves from the collection root with the leading `/` removed; any other target containing `/` resolves from the collection root; a target with no `/` is a simple name and resolves by name under rule 5.
+3. Path resolution MUST normalize `.` and `..` segments before lookup. If the normalized path escapes the collection root, the link MUST NOT resolve and is an `invalid_note_link` failure.
+4. If a path-formed target does not end in `.md`, `.md` is appended. The link resolves to the collection note at exactly the resulting collection-relative path, or to zero notes when no such note exists.
+5. Name resolution considers collection notes that are not excluded by `exclude_paths`, in two passes:
+   - The id pass matches managed notes whose stored `id` equals the target. Exactly one match resolves the link. More than one match makes the link ambiguous.
+   - If the id pass has no match, the name pass matches collection notes whose file name without the `.md` extension equals the target. Exactly one match resolves the link. When several notes match, the candidates in the same directory as the containing note are preferred; among the remaining candidates, those whose path has the fewest segments are preferred. If more than one candidate still remains, the link is ambiguous.
+6. An ambiguous link MUST NOT resolve and is an `invalid_note_link` failure.
+7. Alias-based resolution is not defined in this specification version; a target that matches only an alias does not resolve.
+8. Target, `id`, and file-name comparisons in this algorithm are case-sensitive exact string comparisons.
+9. Resolution to zero notes MAY occur and represents a link to a note that does not exist yet; it is not by itself a failure.
+10. A note MAY link to itself; a self-link resolves to the containing note.
+
+#### Anchors
+
+Rules:
+
+- A heading anchor refers to heading text within the resolved note; a block anchor refers to a block identifier within the resolved note.
+- Anchors do not affect note-target resolution.
+- An anchor that does not match anything in the resolved note is not a conformance failure in this specification version; tools MAY report it.
+
+Relationship conformance uses the resolved managed-note targets produced by these rules; counting and cardinality rules are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 
 ### Canonical Field Materialization
 
