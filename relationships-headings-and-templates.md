@@ -50,9 +50,13 @@ Rules:
 - `relationships.related_to.allowed_note_types` declares the documented `related_to` target note types for the source note type.
 - Constraints are declared per target note type.
 - If a schema file physically declares `relationships`, it MUST define both `relationships.belongs_to.allowed_note_types` and `relationships.related_to.allowed_note_types`.
-- Every referenced target note type MUST be a concrete note type defined in the same collection.
+- Every referenced target note type MUST be a note type defined in the same collection; it MAY be abstract.
+- An abstract declared target means any concrete note type that extends it directly or transitively; a resolved target satisfies an abstract declared target when its concrete note type is such a descendant.
+- A target note type is declared when it appears directly in `allowed_note_types` or is a concrete descendant of a declared abstract target.
+- Cardinality for an abstract declared target counts the union of resolved targets across all of its concrete descendants.
+- When a resolved target's concrete note type matches more than one declared target within the same relationship kind, the instance counts toward the most specific declared target only: the concrete type itself when declared, and otherwise the nearest declared abstract ancestor.
 - Within a single relationship kind, a target note type identifier MUST appear at most once.
-- The target note type sets for `belongs_to` and `related_to` MUST be disjoint for a given source note type.
+- The target note type sets for `belongs_to` and `related_to` MUST be disjoint for a given source note type, after expanding abstract targets to their concrete descendants.
 - Each target note type MAY declare `min` and `max`.
 - `min` defaults to `0`.
 - If `max` is omitted, the cardinality is unbounded.
