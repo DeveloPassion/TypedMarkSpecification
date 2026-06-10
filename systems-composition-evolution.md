@@ -214,7 +214,7 @@ Rules:
 
 ## Change History
 
-`<metadata_directory>/history.yaml` is an append-only, event-sourced log of the structural changes a system has undergone. Replaying its events in order reconstructs the current effective schema state. It is the authoritative record of *what changed* between versions, including changes such as field renames that cannot be inferred from a structural comparison alone.
+`<metadata_directory>/history.yaml` is an append-only, event-sourced log of the structural changes a system has undergone. Replaying its events in order reconstructs how the current schema state came to be. It is the authoritative record of *what changed* between versions, including changes such as field renames that cannot be inferred from a structural comparison alone.
 
 History example:
 
@@ -247,11 +247,17 @@ Defined change operations:
 - `add_note_type` with `note_type`
 - `remove_note_type` with `note_type`
 - `rename_note_type` with `from` and `to`
-- `add_field` with `note_type` and `field`
-- `remove_field` with `note_type` and `field`
-- `rename_field` with `note_type`, `from`, and `to`
-- `retype_field` with `note_type`, `field`, `from_type`, and `to_type`
-- `change_field` with `note_type` and `field`, for constraint or metadata changes that are neither a rename nor a retype
+- `add_field` with `note_type` or `property_set`, and `field`
+- `remove_field` with `note_type` or `property_set`, and `field`
+- `rename_field` with `note_type` or `property_set`, `from`, and `to`
+- `retype_field` with `note_type` or `property_set`, `field`, `from_type`, and `to_type`
+- `change_field` with `note_type` or `property_set`, and `field`, for constraint or metadata changes that are neither a rename nor a retype
+- `change_storage` with `note_type`, for changes to the effective `storage` block
+- `change_template` with `note_type`, for changes to the effective `template` reference or to the canonical template content
+- `change_headings` with `note_type`, for changes to the effective `headings` block
+- `change_relationships` with `note_type`, for changes to the effective `relationships` block
+- `change_note_type` with `note_type`, for note-type-level changes that no more specific operation covers, such as changes to `kind`, `extends`, `property_sets`, `exclude_property_sets`, `frontmatter_remove`, or `guidance`
+- `change_collection`, for changes to the structural fields of `typedmark.yaml`, such as `note_type_mappings`, `default_property_sets`, `exclude_paths`, or `validation_defaults`
 - `add_property_set` with `property_set`
 - `remove_property_set` with `property_set`
 - `rename_property_set` with `from` and `to`
@@ -266,8 +272,11 @@ Rules:
 - Release entries MUST appear in ascending version order, and each `version` MUST be unique within `history`.
 - The last release entry's `version` MUST equal the collection's `version` in `typedmark.yaml` when the collection declares one.
 - Each entry in `changes` MUST declare `op` using one of the defined change operations.
+- A field operation MUST declare exactly one of `note_type` or `property_set`, naming the artifact that physically defines the field: `note_type` when the field is defined in a note-type schema, `property_set` when it is defined in a property set.
 - A `field` operand MAY be a dotted path to address a nested field inside an `object.fields` mapping.
-- Replaying `history` from the first entry to the last, applying each `changes` list in order, MUST reconstruct the system's current effective schema state.
+- A `change_*` operation records that the named block or artifact changed; it does not restate the new value, which lives in the governed artifacts themselves.
+- Every structural difference between two consecutive releases MUST be recorded by at least one change operation; a structural change that no operation records is a divergence between `history.yaml` and the current schemas.
+- Replaying `history` from the first entry to the last, applying each `changes` list in order, MUST reconstruct the system's current inventory of note types, property sets, and fields, and MUST account for every structural change between consecutive releases; the governed artifacts remain authoritative for the concrete content of each block.
 - A validator MAY check this reconstruction invariant and report a divergence between `history.yaml` and the current schemas.
 - When cutting a new release, a tool SHOULD generate candidate `changes` by comparing the previous version's state to the current state, and the author MUST confirm or correct any change that a structural comparison cannot classify unambiguously, in particular distinguishing a `rename_field` from a paired `remove_field` and `add_field`.
 

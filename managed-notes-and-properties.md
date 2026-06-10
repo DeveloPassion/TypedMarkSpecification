@@ -471,13 +471,18 @@ When a collection is updated to newer versions of its source systems, the migrat
 
 Rules:
 
-- A migration operation applies only to managed notes whose resolved note type is the note type named by the operation.
+- A migration operation that names `note_type` applies only to managed notes whose resolved note type is that note type.
+- A field operation that names `property_set` applies to managed notes of every note type whose effective schema composes that property set.
 - `add_field` MUST add the new field to every affected managed note, materialized to its `default_value` or to `null` under the Canonical Field Materialization rules.
 - `remove_field` MUST remove the named field from every affected managed note.
 - `rename_field` MUST move the stored value from the old field name to the new field name in every affected managed note, preserving the value unchanged.
 - `retype_field` MUST convert each stored value under the Field Type Conversions rules below: a defined lossless conversion is applied automatically, a conditional conversion is applied only when every affected value qualifies, and every other type pair MUST be reported for explicit resolution and MUST NOT be coerced destructively.
 - `change_field` MUST re-validate every affected managed note against the field's new constraints; a stored value that violates the new constraints MUST be reported rather than silently dropped or altered.
 - `rename_note_type` MUST update the stored `note_type` field when present, MUST re-resolve the note's storage path under the renamed type's effective storage rules, and MUST update internal note links and relationship-bearing fields that target the renamed type.
+- `change_storage` MUST re-resolve the storage path of every affected managed note under the new effective storage rules, MUST move each note whose stored path no longer conforms, and MUST update internal note links so moved notes still resolve; a move or link update that cannot be applied safely MUST be reported for explicit resolution.
+- `change_template` has no direct managed-note effect; tools MAY re-evaluate `template_drift` against the new canonical template.
+- `change_headings` and `change_relationships` MUST re-validate every affected managed note against the new effective heading and relationship rules; violations MUST be reported, and a migration MUST NOT restructure note body content automatically.
+- `change_note_type` and `change_collection` have the managed-note effect of the resulting change to each note's effective schema, evaluated through the operations above and re-validation.
 - `add_note_type`, `remove_note_type`, `add_property_set`, `remove_property_set`, and `rename_property_set` change which schemas and property sets exist; their effect on an individual managed note is only the resulting change to that note's effective schema, evaluated through the field operations above.
 - After a migration operation is applied, every affected managed note MUST satisfy the Canonical Field Materialization rules on this page.
 - A migration MUST NOT discard managed-note data silently; any operation that cannot preserve data MUST be reported for explicit resolution, as required by [Systems, Composition, and Evolution](systems-composition-evolution.md).
