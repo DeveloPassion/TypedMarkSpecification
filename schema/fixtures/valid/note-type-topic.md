@@ -42,6 +42,7 @@ frontmatter:
     icon: folder
     type: link
     format: note_link
+    targets: [domain]
     nullable: false
     default_value: ""
     relationship_kind: belongs_to

@@ -48,7 +48,7 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
   from `metadata_directory`
 - cross-file resolution: `extends` chains and cycle detection, property-set
   references, `exclude_property_sets` membership in `default_property_sets`,
-  `frontmatter_remove` targeting inherited fields, relationship targets resolving
+  `frontmatter_remove` targeting inherited fields, relationship and field `targets` resolving
   to concrete note types, composition source resolution
 - effective-schema computation: the evaluation pipeline, block merge rules, and
   the required effective keys for concrete note types

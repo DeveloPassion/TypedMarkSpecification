@@ -148,6 +148,14 @@
         "validate_exists": {
           "type": "boolean"
         },
+        "targets": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/slug"
+          }
+        },
         "generated": {
           "type": "boolean"
         },
@@ -586,6 +594,24 @@
           "if": {
             "required": [
               "validate_exists"
+            ]
+          },
+          "then": {
+            "required": [
+              "format"
+            ],
+            "properties": {
+              "format": {
+                "const": "note_link"
+              }
+            }
+          }
+        },
+        {
+          "$comment": "targets is valid only for note_link fields; identifier resolution to note types is a semantic check",
+          "if": {
+            "required": [
+              "targets"
             ]
           },
           "then": {

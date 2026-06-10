@@ -362,6 +362,21 @@ Rules:
 - A non-empty value that does not resolve violates `validate_exists` and is reported as `invalid_note_link`.
 - `validate_exists` does not change relationship counting; unresolved placeholders already fail minimum-cardinality requirements.
 
+#### `targets`
+
+Rules:
+
+- `targets` MAY be omitted.
+- If present, `targets` MUST be a non-empty list of unique note-type identifiers.
+- `targets` is valid only on field definitions that declare `format: note_link`, including `list.items`.
+- Each identifier in `targets` MUST resolve to a note type defined in the collection; it MAY name an abstract note type.
+- An abstract note type in `targets` means any concrete note type that extends it directly or transitively.
+- A non-empty stored value that resolves to a managed note MUST resolve to a note whose concrete note type satisfies `targets`; a value resolving to an untyped note violates `targets`.
+- A `targets` violation is an `invalid_field_value` failure.
+- An unresolved value does not violate `targets`; existence is governed by `validate_exists`.
+- For values stored in a field declaring `targets`, the id and name passes of name-based resolution consider only managed notes whose concrete note type satisfies `targets`; path-formed targets resolve normally and are then validated against `targets`.
+- A relationship-bearing field MAY declare `targets`; its declared targets SHOULD be consistent with the type-level relationship declarations, and a resolved typed relationship instance is validated against both.
+
 #### `not_empty`
 
 Rules:
