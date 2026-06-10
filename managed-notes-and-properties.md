@@ -477,6 +477,27 @@ Rules:
 
 Relationship conformance uses the resolved managed-note targets produced by these rules; counting and cardinality rules are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 
+#### Body Link Extraction
+
+The note body is the content after the frontmatter block. Body internal note links participate in structural reasoning, so what counts as a body link must be deterministic.
+
+Rules:
+
+- Internal note links are extracted from the note body wherever they appear, except in the excluded regions below.
+- Links are NOT extracted from fenced code blocks delimited by ``` or `~~~`, from indented code blocks as defined by CommonMark, or from inline code spans delimited by backticks.
+- A backslash immediately before `[[` escapes the wikilink: the backslash is consumed and the brackets are literal text. Markdown links follow standard CommonMark escaping.
+- Text inside an excluded region or escaped link is not an internal note link: it creates no relationship instance and is not evaluated by link validation.
+- Embeds are extracted as internal note links with the embed flag set; tools MUST be able to distinguish embeds from non-embed links.
+- Embeds participate in body-link relationship counting like non-embed body links.
+
+#### Inline Body Tags
+
+Rules:
+
+- This specification version assigns no structural meaning to inline `#tag` tokens in note bodies.
+- Managed tag metadata lives in frontmatter fields with `type: tags`.
+- Tools MAY index inline body tags for search or navigation, but MUST NOT use them for note-type mapping, field conformance, or relationship conformance.
+
 ### Canonical Field Materialization
 
 The canonical stored form of a managed note uses fully materialized frontmatter.
