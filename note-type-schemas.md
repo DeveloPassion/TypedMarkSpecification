@@ -416,7 +416,13 @@ Rules:
 - A required affix MUST be applied: the active note name MUST include the resolved affix in its position.
 - An optional affix, declared with `required: false`, MAY be applied: the active note name conforms both with and without the resolved affix.
 - Storage patterns are template strings composed of literal text plus zero or more placeholders.
-- A placeholder has the form `{field_name}` or `{field_name:format}`.
+- A placeholder has the form `{field_name}`, `{field_name:format}`, or the current-time form `{now:format}`.
+- `now` is a reserved placeholder name for the current time; a frontmatter field named `now` MUST NOT be referenced in storage patterns.
+- `{now:format}` is valid in every storage pattern, and its `format` MUST be one of `YYYY`, `MM`, `DD`, `YYYY-MM`, `YYYY-MM-DD`, `Q`, `WW`, or `GGGG`.
+- `Q` is the quarter number `1` through `4`, `WW` is the zero-padded ISO 8601 week number `01` through `53`, and `GGGG` is the four-digit ISO 8601 week-numbering year; week-based patterns SHOULD pair `WW` with `GGGG` rather than `YYYY`.
+- A tool that creates a managed note MUST resolve each `{now:format}` placeholder from the current instant in the collection timezone defined in [Collection Model](collection-model.md).
+- For storage conformance, a `{now:format}` placeholder matches any text that is a syntactically valid value of its format; the concrete value was fixed when the note was created and is not re-resolved.
+- Because `{now:format}` conformance is shape-only, note types SHOULD use it for coarse grouping such as year, quarter, or week folders, and SHOULD keep exact dates in stored fields, consistent with the `dated_record` guidance on this page.
 - `field_name` in a storage placeholder MUST refer to a top-level effective frontmatter field name.
 - Nested field references are not supported in storage patterns in this specification version.
 - `{field_name}` inserts the concrete stored scalar value of that field.
