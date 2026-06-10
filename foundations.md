@@ -1,12 +1,19 @@
 ---
 title: Foundations
 parent: TypedMark
-nav_order: 1
+nav_order: 2
+audience: essentials
 ---
 
 # Foundations
 
-This page introduces the high-level concepts of TypedMark, its purpose, design principles, artifacts, ...
+Audience: everyone — start here after the [Manifesto](manifesto.md).
+
+Authoritative for:
+
+- the core concepts and the vocabulary the other pages build on
+- specification versioning, parsing and matching baselines, and string comparison
+- the governed artifact format, the artifact map, and structural precedence
 
 ## Core Concepts
 
@@ -16,8 +23,8 @@ A TypedMark collection is a rooted set of Markdown notes plus the TypedMark-base
 
 Rules:
 
-- `collection` is the primary abstraction used by this specification.
-- A collection root is any directory that contains `typedmark.md`.
+- `FND-1` `collection` is the primary abstraction used by this specification.
+- `FND-2` A collection root is any directory that contains `typedmark.md`.
 
 ### Collection Configuration
 
@@ -45,11 +52,11 @@ An untyped note is a collection note that is not associated with any known note 
 
 ### Assets
 
-An asset is a collection file that is not a Markdown note and not a TypedMark artifact — an image, a PDF, an audio file, or any other resource referenced by notes. Assets are collection content, but they are not collection notes: they are not evaluated for note-type mapping, carry no frontmatter, and create no typed relationship instances. Asset links are defined in [Managed Notes and Properties](managed-notes-and-properties.md), and the optional `assets_directory` is defined in [Collection Model](collection-model.md).
+An asset is a collection file that is not a Markdown note and not a TypedMark artifact — an image, a PDF, an audio file, or any other resource referenced by notes. Assets are collection content, but they are not collection notes: they are not evaluated for note-type mapping, carry no frontmatter, and create no typed relationship instances. Asset links are defined in [Note Links](note-links.md), and the optional `assets_directory` is defined in [Collection Model](collection-model.md).
 
 ### Frontmatter and Fields (Metadata / Properties)
 
-A managed note's frontmatter is its YAML metadata surface. Field definitions describe the allowed metadata properties, their types, value constraints, defaulting and materialization behavior, and any typed-relationship contribution. These rules are authoritative on [Managed Notes and Properties](managed-notes-and-properties.md).
+A managed note's frontmatter is its YAML metadata surface. Field definitions describe the allowed metadata properties, their types, value constraints, defaulting and materialization behavior, and any typed-relationship contribution. The managed note contract is authoritative on [Managed Notes and Properties](managed-notes-and-properties.md); field-definition semantics are authoritative on [Field Definition Reference](field-definition-reference.md).
 
 ### Property Sets
 
@@ -77,8 +84,8 @@ The uppercase keywords `MUST`, `MUST NOT`, `SHOULD`, `SHOULD NOT`, `MAY`, `OPTIO
 
 Rules:
 
-- Uppercase normative keywords are normative everywhere in this specification.
-- Lowercase modal verbs such as "must", "should", "may", "can", and "could" are ordinary English unless they appear inside a quoted example.
+- `FND-3` Uppercase normative keywords are normative everywhere in this specification.
+- `FND-4` Lowercase modal verbs such as "must", "should", "may", "can", and "could" are ordinary English unless they appear inside a quoted example.
 
 ### Specification Versioning
 
@@ -92,17 +99,17 @@ The specification's own version uses Semantic Versioning change classes:
 
 Rules:
 
-- `specification_version` MUST be a Semantic Versioning x.y.z string.
-- Every governed artifact declares its own `specification_version` in its frontmatter, and each artifact is evaluated under the rules of the version it declares.
-- Governed artifacts in one collection MAY declare different `specification_version` values, because composition MAY combine artifacts authored against different specification versions; each artifact is evaluated under its own declared version.
-- A tool MUST advertise the specification major version, and the highest minor within it, that it implements.
-- Within a single major, the specification is additive and forward-compatible: a tool MUST evaluate an artifact whose declared minor is less than or equal to the tool's implemented minor under that artifact's declared version.
-- If an artifact declares a minor greater than the tool's implemented minor within a major the tool implements, the tool MUST evaluate it on a best-effort basis under the highest minor it implements, MUST NOT reject it solely because the minor is newer, and SHOULD report constructs it does not recognize as warnings rather than errors.
-- A construct introduced by a newer minor that a tool does not recognize MUST be reported under `unknown_field` or as an unrecognized construct; it MUST NOT be silently accepted as structure the tool understands.
-- If an artifact declares a major the tool does not implement, the tool MUST NOT assert conformance for that artifact and MUST report `unsupported_specification_version`, as defined in [Collection Model](collection-model.md).
-- The specification MAY mark a feature deprecated in a minor release and MAY remove it only in a subsequent major release.
-- A major release of the specification MUST document the breaking changes it introduces, so that migration tools can transform artifacts from the previous major to the new one.
-- Migrating a system's own schemas across its releases uses `history.md` and the migration flow defined in [Systems, Composition, and Evolution](systems-composition-evolution.md); that mechanism is independent of `specification_version`.
+- `FND-5` `specification_version` MUST be a Semantic Versioning x.y.z string.
+- `FND-6` Every governed artifact declares its own `specification_version` in its frontmatter, and each artifact is evaluated under the rules of the version it declares.
+- `FND-7` Governed artifacts in one collection MAY declare different `specification_version` values, because composition MAY combine artifacts authored against different specification versions; each artifact is evaluated under its own declared version.
+- `FND-8` A tool MUST advertise the specification major version, and the highest minor within it, that it implements.
+- `FND-9` Within a single major, the specification is additive and forward-compatible: a tool MUST evaluate an artifact whose declared minor is less than or equal to the tool's implemented minor under that artifact's declared version.
+- `FND-10` If an artifact declares a minor greater than the tool's implemented minor within a major the tool implements, the tool MUST evaluate it on a best-effort basis under the highest minor it implements, MUST NOT reject it solely because the minor is newer, and SHOULD report constructs it does not recognize as warnings rather than errors.
+- `FND-11` A construct introduced by a newer minor that a tool does not recognize MUST be reported under `unknown_field` or as an unrecognized construct; it MUST NOT be silently accepted as structure the tool understands.
+- `FND-12` If an artifact declares a major the tool does not implement, the tool MUST NOT assert conformance for that artifact and MUST report `unsupported_specification_version`, as defined in [Collection Model](collection-model.md).
+- `FND-13` The specification MAY mark a feature deprecated in a minor release and MAY remove it only in a subsequent major release.
+- `FND-14` A major release of the specification MUST document the breaking changes it introduces, so that migration tools can transform artifacts from the previous major to the new one.
+- `FND-15` Migrating a system's own schemas across its releases uses `history.md` and the migration flow defined in [Systems, Composition, and Evolution](systems-composition-evolution.md); that mechanism is independent of `specification_version`.
 
 
 ## Purpose
@@ -140,15 +147,15 @@ TypedMark defines names in several namespaces rather than in one global pool of 
 
 Rules:
 
-- A name is spec-defined when this specification assigns it structural meaning in a specific artifact position or metadata namespace.
-- Spec-defined names are scoped to the namespace where they are defined. The same spelling MAY be spec-defined in more than one namespace with different roles.
-- When this specification defines a name in a namespace, it MUST also define that name's role, where it may appear, and the validation or conformance semantics that follow from its use in that namespace.
-- `label`, `description`, and `icon` are already spec-defined in the `typedmark.md` top-level namespace, the note-type schema top-level namespace, and the field-definition metadata namespace.
-- `keywords` in `typedmark.md` and a managed-note frontmatter field named `tags` are different namespaces and MUST NOT be conflated.
-- `name` in the `typedmark.md` top-level namespace is the collection identity, while `name` under `publisher` is the publisher's name; they are different namespaces and MUST NOT be conflated.
-- A managed-note frontmatter field named `description`, a field-definition metadata key named `description`, the note-type schema top-level `description`, and the collection-level `description` in `typedmark.md` are different namespaces and MUST NOT be conflated.
-- Extensions, systems, collection models, property sets, and note-type schemas MUST NOT assign incompatible meanings to a spec-defined name in the namespace where the core specification defines it.
-- Mentioning a candidate or example name in prose does not by itself define that name normatively.
+- `FND-16` A name is spec-defined when this specification assigns it structural meaning in a specific artifact position or metadata namespace.
+- `FND-17` Spec-defined names are scoped to the namespace where they are defined. The same spelling MAY be spec-defined in more than one namespace with different roles.
+- `FND-18` When this specification defines a name in a namespace, it MUST also define that name's role, where it may appear, and the validation or conformance semantics that follow from its use in that namespace.
+- `FND-19` `label`, `description`, and `icon` are already spec-defined in the `typedmark.md` top-level namespace, the note-type schema top-level namespace, and the field-definition metadata namespace.
+- `FND-20` `keywords` in `typedmark.md` and a managed-note frontmatter field named `tags` are different namespaces and MUST NOT be conflated.
+- `FND-21` `name` in the `typedmark.md` top-level namespace is the collection identity, while `name` under `publisher` is the publisher's name; they are different namespaces and MUST NOT be conflated.
+- `FND-22` A managed-note frontmatter field named `description`, a field-definition metadata key named `description`, the note-type schema top-level `description`, and the collection-level `description` in `typedmark.md` are different namespaces and MUST NOT be conflated.
+- `FND-23` Extensions, systems, collection models, property sets, and note-type schemas MUST NOT assign incompatible meanings to a spec-defined name in the namespace where the core specification defines it.
+- `FND-24` Mentioning a candidate or example name in prose does not by itself define that name normatively.
 
 ## Parsing and Matching Baselines
 
@@ -158,18 +165,18 @@ Conforming tools must parse and match the same inputs the same way. This section
 
 Rules:
 
-- Governed artifact frontmatter and managed-note frontmatter are parsed as YAML 1.2 using the core schema.
-- YAML 1.1 boolean spellings such as `yes`, `no`, `on`, and `off` are strings under this baseline, not booleans.
-- A duplicate key within one YAML mapping makes the containing document invalid.
-- Governed artifacts and managed notes MUST be encoded as UTF-8; a leading byte-order mark, when present, MUST be ignored.
+- `FND-25` Governed artifact frontmatter and managed-note frontmatter are parsed as YAML 1.2 using the core schema.
+- `FND-26` YAML 1.1 boolean spellings such as `yes`, `no`, `on`, and `off` are strings under this baseline, not booleans.
+- `FND-27` A duplicate key within one YAML mapping makes the containing document invalid.
+- `FND-28` Governed artifacts and managed notes MUST be encoded as UTF-8; a leading byte-order mark, when present, MUST be ignored.
 
 ### Regular Expression Dialect
 
 Rules:
 
-- Every regular expression on a governed surface — the `regex` field constraint, `when.path.regex`, and `when.frontmatter` `regex` predicates — uses the ECMAScript (ECMA-262) regular expression dialect.
-- Whether a pattern is matched against the entire value or searched within it is defined by each declaring rule.
-- A pattern that is not a valid ECMA-262 regular expression makes its declaring artifact invalid.
+- `FND-29` Every regular expression on a governed surface — the `regex` field constraint, `when.path.regex`, and `when.frontmatter` `regex` predicates — uses the ECMAScript (ECMA-262) regular expression dialect.
+- `FND-30` Whether a pattern is matched against the entire value or searched within it is defined by each declaring rule.
+- `FND-31` A pattern that is not a valid ECMA-262 regular expression makes its declaring artifact invalid.
 
 ### Frontmatter Block Grammar
 
@@ -177,23 +184,23 @@ This grammar defines how the YAML frontmatter block of any Markdown file — man
 
 Rules:
 
-- A Markdown file has frontmatter when its first line is exactly `---`, ignoring a leading byte-order mark per the YAML baseline above.
-- The frontmatter block ends at the next subsequent line that is exactly `---` or `...`.
-- If no closing line exists, the file has no frontmatter.
-- A file has at most one frontmatter block; any later delimiter lines are ordinary body content.
-- The frontmatter block content MUST parse as a YAML mapping under the YAML baseline above; an empty block is an empty mapping.
-- If the block content parses as a non-mapping YAML document, the file has no valid frontmatter.
+- `FND-32` A Markdown file has frontmatter when its first line is exactly `---`, ignoring a leading byte-order mark per the YAML baseline above.
+- `FND-33` The frontmatter block ends at the next subsequent line that is exactly `---` or `...`.
+- `FND-34` If no closing line exists, the file has no frontmatter.
+- `FND-35` A file has at most one frontmatter block; any later delimiter lines are ordinary body content.
+- `FND-36` The frontmatter block content MUST parse as a YAML mapping under the YAML baseline above; an empty block is an empty mapping.
+- `FND-37` If the block content parses as a non-mapping YAML document, the file has no valid frontmatter.
 
 ### Unicode Normalization and String Comparison
 
 Rules:
 
-- Every exact string comparison defined by this specification compares Unicode code points after normalizing both operands to Normalization Form C (NFC).
-- This applies wherever this specification compares stored strings, including `unique` equality, `allowed_values` and `const_value` equality, frontmatter mapping `equals` predicates on strings, note-link target, `id`, file-name, and alias comparison, and heading-text comparison.
-- String comparisons are case-sensitive; this specification defines no case folding.
-- Code-point counts, such as `min` and `max` on text values, count the code points of the NFC-normalized value.
-- Spec-defined identifier grammars, such as collection names, slugs, and field names, restrict their values to ASCII, so normalization does not alter them.
-- Regular-expression matching operates on the NFC-normalized value.
+- `FND-38` Every exact string comparison defined by this specification compares Unicode code points after normalizing both operands to Normalization Form C (NFC).
+- `FND-39` This applies wherever this specification compares stored strings, including `unique` equality, `allowed_values` and `const_value` equality, frontmatter mapping `equals` predicates on strings, note-link target, `id`, file-name, and alias comparison, and heading-text comparison.
+- `FND-40` String comparisons are case-sensitive; this specification defines no case folding.
+- `FND-41` Code-point counts, such as `min` and `max` on text values, count the code points of the NFC-normalized value.
+- `FND-42` Spec-defined identifier grammars, such as collection names, slugs, and field names, restrict their values to ASCII, so normalization does not alter them.
+- `FND-43` Regular-expression matching operates on the NFC-normalized value.
 
 ## Governed Artifact Format
 
@@ -201,14 +208,14 @@ Every governed TypedMark artifact — `typedmark.md`, the note-type schemas, the
 
 Rules:
 
-- A governed artifact's frontmatter is its governed content. When this specification says an artifact contains, declares, or defines a key, it refers to that artifact's frontmatter.
-- A governed artifact MUST have a frontmatter block under the Frontmatter Block Grammar defined above; an artifact without valid frontmatter is invalid.
-- The artifact body is non-normative explanatory content for humans and agents. Tools MUST ignore it for structural reasoning and MUST preserve it when rewriting the artifact's frontmatter.
-- The artifact body MUST NOT be required to understand or evaluate collection structure; everything structural lives in frontmatter.
-- Governed artifact files are not collection notes: they are not evaluated for note-type mapping, are not candidates for note-link resolution, and are not validated as managed notes.
-- `typedmark.md` at the collection root is reserved for the collection configuration; a managed note MUST NOT resolve its storage path to `typedmark.md`.
-- Templates under `<metadata_directory>/templates/` are governed artifacts with their own contract: their frontmatter is starter note frontmatter and their body is starter note content, as defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
-- Examples of governed artifacts in this specification show frontmatter content unless frontmatter delimiters are shown.
+- `FND-44` A governed artifact's frontmatter is its governed content. When this specification says an artifact contains, declares, or defines a key, it refers to that artifact's frontmatter.
+- `FND-45` A governed artifact MUST have a frontmatter block under the Frontmatter Block Grammar defined above; an artifact without valid frontmatter is invalid.
+- `FND-46` The artifact body is non-normative explanatory content for humans and agents. Tools MUST ignore it for structural reasoning and MUST preserve it when rewriting the artifact's frontmatter.
+- `FND-47` The artifact body MUST NOT be required to understand or evaluate collection structure; everything structural lives in frontmatter.
+- `FND-48` Governed artifact files are not collection notes: they are not evaluated for note-type mapping, are not candidates for note-link resolution, and are not validated as managed notes.
+- `FND-49` `typedmark.md` at the collection root is reserved for the collection configuration; a managed note MUST NOT resolve its storage path to `typedmark.md`.
+- `FND-50` Templates under `<metadata_directory>/templates/` are governed artifacts with their own contract: their frontmatter is starter note frontmatter and their body is starter note content, as defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
+- `FND-51` Examples of governed artifacts in this specification show frontmatter content unless frontmatter delimiters are shown.
 
 A complete minimal `typedmark.md`, showing the governed frontmatter together with a free-form body:
 
@@ -257,7 +264,10 @@ The authoritative contract for each governed element lives in exactly one place,
 - `<metadata_directory>/property-sets/<property_set>.md`: [Collection Model](collection-model.md)
 - `<metadata_directory>/schemas/<note_type>.md`: [Note Type Schemas](note-type-schemas.md)
 - `<metadata_directory>/templates/<note_type_template>.md`: [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
-- managed note frontmatter, field definitions, note-link syntax, and field materialization: [Managed Notes and Properties](managed-notes-and-properties.md)
+- managed note contract, field names, core-defined fields, and field materialization: [Managed Notes and Properties](managed-notes-and-properties.md)
+- frontmatter property types and field-definition properties: [Field Definition Reference](field-definition-reference.md)
+- note-link syntax, resolution, and body extraction: [Note Links](note-links.md)
+- managed-note effects of migration operations: [Migration Effects](migration-effects.md)
 - relationship semantics, heading constraints, and template obligations: [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
 - conformance modes and required artifact sets: [Conformance and Roadmap](conformance-and-roadmap.md)
 
@@ -279,9 +289,9 @@ When two artifacts or surfaces appear to disagree, structural conflicts MUST be 
 
 Rules:
 
-- Agents MUST rely on `typedmark.md` and the configured metadata directory for structural understanding.
-- Agents MUST NOT infer note types or structural rules from prose guidance when authoritative artifacts exist.
-- Human-facing generated reference pages MAY restate the specification for convenience, but they are never authoritative.
-- The system fields of `typedmark.md` govern system identity, packaging, publishing, composition, and import semantics; they do not override the note-structure rules defined by the structural fields of `typedmark.md` and note-type schemas.
-- `<metadata_directory>/history.md` governs the system's change history and the migration of collections to newer versions; it does not override the live note-structure rules defined by `typedmark.md` and note-type schemas.
-- A collection's composition provenance in `typedmark.md` records how the collection was built but does not override any governed artifact physically present under the metadata directory.
+- `FND-52` Agents MUST rely on `typedmark.md` and the configured metadata directory for structural understanding.
+- `FND-53` Agents MUST NOT infer note types or structural rules from prose guidance when authoritative artifacts exist.
+- `FND-54` Human-facing generated reference pages MAY restate the specification for convenience, but they are never authoritative.
+- `FND-55` The system fields of `typedmark.md` govern system identity, packaging, publishing, composition, and import semantics; they do not override the note-structure rules defined by the structural fields of `typedmark.md` and note-type schemas.
+- `FND-56` `<metadata_directory>/history.md` governs the system's change history and the migration of collections to newer versions; it does not override the live note-structure rules defined by `typedmark.md` and note-type schemas.
+- `FND-57` A collection's composition provenance in `typedmark.md` records how the collection was built but does not override any governed artifact physically present under the metadata directory.

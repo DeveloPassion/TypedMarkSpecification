@@ -71,3 +71,21 @@ The prose specification is the single source of truth. The JSON Schemas under
   with `Closes #NN` in the body when a commit resolves one.
 - Spec work is tracked in GitHub issues; check existing issues before filing new
   ones, and cross-reference related issues.
+
+## Specification style
+
+- One normative statement per rule bullet; normative keywords appear only
+  inside `Rules:` lists, never in prose paragraphs.
+- Every rule bullet carries a stable identifier chip, e.g. `` `CM-12` ``,
+  using the page prefix (FND, CM, NTS, FDR, MN, NL, RHT, SCE, ME, CR).
+  When adding a rule, take the next unused number for that page; NEVER
+  renumber existing rules, and retire the ID of a removed rule instead of
+  reusing it. `bun run lint-rule-ids` MUST pass.
+- Each page opens with a compact preamble: an `Audience:` line, an
+  `Authoritative for:` list, and a `See also:` list. Pages declare
+  `audience: essentials | advanced | tool-authors` in their frontmatter.
+- Lead each major section with a short narrative paragraph before the
+  rule list, and give every major section at least one example.
+- Artifact-shaped example blocks in the spec pages are validated against
+  the JSON Schemas by `bun run validate-fixtures`; keep them valid.
+- Getting Started and Quick Reference are non-normative and must say so.

@@ -27,13 +27,18 @@ interface Page {
 const PAGES: Page[] = [
   { file: "index.md", out: "index.html", nav: "Overview", section: "Specification" },
   { file: "manifesto.md", out: "manifesto.html", nav: "Manifesto", section: "Specification" },
+  { file: "getting-started.md", out: "getting-started.html", nav: "Getting Started", section: "Specification" },
   { file: "foundations.md", out: "foundations.html", nav: "Foundations", section: "Specification" },
   { file: "collection-model.md", out: "collection-model.html", nav: "Collection Model", section: "Specification" },
   { file: "note-type-schemas.md", out: "note-type-schemas.html", nav: "Note Type Schemas", section: "Specification" },
+  { file: "field-definition-reference.md", out: "field-definition-reference.html", nav: "Field Definition Reference", section: "Specification" },
   { file: "managed-notes-and-properties.md", out: "managed-notes-and-properties.html", nav: "Managed Notes and Properties", section: "Specification" },
+  { file: "note-links.md", out: "note-links.html", nav: "Note Links", section: "Specification" },
   { file: "relationships-headings-and-templates.md", out: "relationships-headings-and-templates.html", nav: "Relationships, Headings, and Templates", section: "Specification" },
   { file: "systems-composition-evolution.md", out: "systems-composition-evolution.html", nav: "Systems, Composition, and Evolution", section: "Specification" },
+  { file: "migration-effects.md", out: "migration-effects.html", nav: "Migration Effects", section: "Specification" },
   { file: "conformance-and-roadmap.md", out: "conformance-and-roadmap.html", nav: "Conformance and Roadmap", section: "Specification" },
+  { file: "quick-reference.md", out: "quick-reference.html", nav: "Quick Reference", section: "Specification" },
   { file: "schema/docs/schema-boundary.md", out: "schema-boundary.html", nav: "Schema Boundary", section: "Resources" },
 ];
 
@@ -45,14 +50,15 @@ const RELATED = [
   { label: "Systems Marketplace", url: "https://github.com/DeveloPassion/TypedMarkSystemsMarketplace" },
 ];
 
-function stripFrontmatter(text: string): { body: string; title: string | null } {
+function stripFrontmatter(text: string): { body: string; title: string | null; audience: string | null } {
   const lines = text.split("\n");
-  if (lines[0] !== "---") return { body: text, title: null };
+  if (lines[0] !== "---") return { body: text, title: null, audience: null };
   const end = lines.findIndex((l, i) => i > 0 && (l === "---" || l === "..."));
-  if (end === -1) return { body: text, title: null };
+  if (end === -1) return { body: text, title: null, audience: null };
   const head = lines.slice(1, end).join("\n");
   const title = /^title:\s*(.+)$/m.exec(head)?.[1]?.trim() ?? null;
-  return { body: lines.slice(end + 1).join("\n"), title };
+  const audience = /^audience:\s*(.+)$/m.exec(head)?.[1]?.trim() ?? null;
+  return { body: lines.slice(end + 1).join("\n"), title, audience };
 }
 
 function slugify(text: string): string {
@@ -95,6 +101,10 @@ function renderPage(markdown: string): { html: string; toc: TocEntry[] } {
     return `<h${depth} id="${id}">${inner}<a class="anchor" href="#${id}" aria-label="Link to this section">#</a></h${depth}>`;
   });
 
+  // Turn rule identifiers into anchored, linkable chips.
+  html = html.replace(/<li><code>([A-Z]{2,3}-\d+)<\/code>/g,
+    '<li id="$1"><a class="rule-id" href="#$1">$1</a>');
+
   return { html, toc };
 }
 
@@ -126,7 +136,16 @@ function tocHtml(toc: TocEntry[]): string {
   return out + "</ul></nav>";
 }
 
-function shell(page: Page, title: string, content: string, toc: TocEntry[]): string {
+const AUDIENCE_LABELS: Record<string, string> = {
+  essentials: "Essentials",
+  advanced: "Advanced",
+  "tool-authors": "Tool authors",
+};
+
+function shell(page: Page, title: string, content: string, toc: TocEntry[], audience: string | null): string {
+  const badge = audience && AUDIENCE_LABELS[audience]
+    ? `<span class="badge badge-${audience}">${AUDIENCE_LABELS[audience]}</span>`
+    : "";
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -147,7 +166,7 @@ function shell(page: Page, title: string, content: string, toc: TocEntry[]): str
 <div class="layout">
 <nav class="sidebar" id="sidebar" aria-label="Specification">${navHtml(page)}</nav>
 <main class="content">
-<article>${content}</article>
+<article>${badge}${content}</article>
 <footer>Rendered from <a href="${REPO_URL}/blob/main/${page.file}"><code>${page.file}</code></a> — the Markdown sources are the specification.</footer>
 </main>
 <aside class="rail">${tocHtml(toc)}</aside>
@@ -166,10 +185,10 @@ const searchIndex: Array<{ page: string; heading: string | null; url: string }> 
 
 for (const page of PAGES) {
   const raw = readFileSync(join(ROOT, page.file), "utf8");
-  const { body, title } = stripFrontmatter(raw);
+  const { body, title, audience } = stripFrontmatter(raw);
   const { html, toc } = renderPage(body);
   const pageTitle = title ?? page.nav;
-  writeFileSync(join(DIST, page.out), shell(page, pageTitle, html, toc));
+  writeFileSync(join(DIST, page.out), shell(page, pageTitle, html, toc, audience));
   searchIndex.push({ page: pageTitle, heading: null, url: page.out });
   for (const entry of toc) {
     searchIndex.push({ page: pageTitle, heading: entry.text, url: `${page.out}#${entry.id}` });

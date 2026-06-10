@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "validate-fixtures": "bun schema/validate-fixtures.ts",
-    "build-site": "bun docs/build.ts"
+    "build-site": "bun docs/build.ts",
+    "lint-rule-ids": "bun scripts/lint-rule-ids.ts"
   },
   "devDependencies": {
     "ajv": "^8.20.0",

@@ -22,8 +22,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
-      - name: Validate fixtures against the JSON Schemas
+      - name: Validate fixtures and spec examples against the JSON Schemas
         run: bun run validate-fixtures
+      - name: Lint rule identifiers
+        run: bun run lint-rule-ids
       - name: Build the website from the specification sources
         run: bun run build-site
       - uses: actions/configure-pages@v5

@@ -1,7 +1,8 @@
 ---
 title: Manifesto
 parent: TypedMark
-nav_order: 0
+nav_order: 1
+audience: essentials
 ---
 
 # Note Types Matter

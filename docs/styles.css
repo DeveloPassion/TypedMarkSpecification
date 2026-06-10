@@ -258,3 +258,36 @@ li { margin: 0.18rem 0; }
   }
   .sidebar.open { display: block; }
 }
+
+.badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  margin-bottom: 0.4rem;
+}
+.badge-essentials { background: var(--accent-soft); color: var(--accent); }
+.badge-advanced { background: #fdf1df; color: #92600a; }
+.badge-tool-authors { background: #e8f6ee; color: #19744a; }
+@media (prefers-color-scheme: dark) {
+  .badge-advanced { background: #3a2d14; color: #e3b264; }
+  .badge-tool-authors { background: #14301f; color: #6fcf97; }
+}
+
+.rule-id {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--code-bg);
+  border-radius: 4px;
+  padding: 0.05rem 0.35rem;
+  margin-right: 0.45rem;
+  text-decoration: none;
+  vertical-align: 1px;
+}
+.rule-id:hover { color: var(--accent); }
+li:target { background: var(--accent-soft); border-radius: 6px; }
