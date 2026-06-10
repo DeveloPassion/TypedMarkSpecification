@@ -30,13 +30,19 @@ Repository scripts are TypeScript run with Bun (`bun install` once, then
 
 ## Related repositories
 
-- [TypedMarkExample](https://github.com/DeveloPassion/TypedMarkExample) — a
-  concrete system example built on this specification
 - [TypedMark](https://github.com/DeveloPassion/TypedMark) — the tooling,
   website, and documentation around the specification
+- [TypedMarkExample](https://github.com/DeveloPassion/TypedMarkExample) — a
+  concrete system example built on this specification
+- [TypedMarkSystemsMarketplace](https://github.com/DeveloPassion/TypedMarkSystemsMarketplace) —
+  the systems marketplace: it hosts systems, a website under `docs/` to browse,
+  download, and compose them, and the `marketplace.json` catalog listing all
+  known systems (in that repository or in others). The catalog's contract lives
+  in this specification (Systems, Composition, and Evolution → Marketplace
+  Catalog) and its JSON Schema in `schema/json-schema/marketplace.schema.json`.
 
-This repository holds only the specification and its schema layer; tooling and
-example-system work belongs in those repositories.
+This repository holds only the specification and its schema layer; tooling,
+example-system, and marketplace work belongs in those repositories.
 
 ## Hard rule: schemas stay aligned with the specification
 

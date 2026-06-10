@@ -31,3 +31,13 @@ If you want the motivation behind the spec, start with the [Manifesto](manifesto
 6. [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
 7. [Systems, Composition, and Evolution](systems-composition-evolution.md)
 8. [Conformance and Roadmap](conformance-and-roadmap.md)
+
+## Machine-Readable Schemas
+
+The governed artifacts have machine-readable JSON Schemas, fixtures, and a boundary document under [schema/](https://github.com/DeveloPassion/TypedMarkSpecification/tree/main/schema). The prose specification remains the single source of truth.
+
+## Related Repositories
+
+- [TypedMark](https://github.com/DeveloPassion/TypedMark): the tooling, website, and documentation around the specification
+- [TypedMarkExample](https://github.com/DeveloPassion/TypedMarkExample): a concrete system example built on this specification
+- [TypedMarkSystemsMarketplace](https://github.com/DeveloPassion/TypedMarkSystemsMarketplace): the systems marketplace, hosting systems, a browsing and composition website under `docs/`, and the `marketplace.json` catalog of known systems defined by this specification
