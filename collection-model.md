@@ -80,6 +80,12 @@ Rules:
 - `exclude_paths` does not support negation patterns in this specification version.
 - A note matched by `exclude_paths` is not a collection note: it is not evaluated for note-type mapping and is not a candidate for note-link resolution.
 - An `exclude_paths` entry that would exclude `typedmark.md` or content under the metadata directory has no effect on those paths.
+- `assets_directory` MAY be omitted.
+- If present, `assets_directory` MUST be a non-empty collection-relative directory path using forward slashes, MUST NOT start or end with `/`, MUST NOT contain `.` or `..` segments, and MUST NOT equal the `metadata_directory` value.
+- `assets_directory` names the folder where collection assets SHOULD live; tools that add assets to the collection SHOULD place them under it.
+- `assets_directory` does not change asset-link resolution; an asset resolves wherever it lives.
+- Tools MAY report assets stored outside `assets_directory`, and MAY report orphan assets that no collection note references; automated asset cleanup is not defined in this specification version.
+- This specification version defines no per-asset metadata mechanism.
 - `validation_defaults` provides default severity levels for collection-wide validation reporting.
 - Supported validation severities are `error`, `warn`, `info`, and `off`.
 - `validation_defaults` MAY omit individual severity keys and MAY be an empty mapping.

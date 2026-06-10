@@ -54,6 +54,18 @@
         "$ref": "defs.schema.json#/$defs/non_empty_string"
       }
     },
+    "assets_directory": {
+      "allOf": [
+        {
+          "$ref": "defs.schema.json#/$defs/collection_relative_path"
+        },
+        {
+          "not": {
+            "pattern": "/$"
+          }
+        }
+      ]
+    },
     "validation_defaults": {
       "type": "object",
       "properties": {

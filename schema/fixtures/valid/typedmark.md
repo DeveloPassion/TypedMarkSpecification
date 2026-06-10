@@ -9,6 +9,7 @@ keywords:
   - reference
 
 metadata_directory: .typedmark
+assets_directory: Assets
 exclude_paths:
   - .git/**
 validation_defaults:

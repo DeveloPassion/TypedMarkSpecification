@@ -33,7 +33,7 @@ A note type configuration is the schema file for one note type, stored under `<m
 
 ### Notes (Collection Content)
 
-The collection content is the set of Markdown notes that belong to the collection as content rather than as TypedMark artifacts. It can include both managed notes and untyped notes.
+The collection content is the set of Markdown notes and assets that belong to the collection as content rather than as TypedMark artifacts. Its notes can include both managed notes and untyped notes.
 
 ### Managed Notes
 
@@ -42,6 +42,10 @@ A managed note is a collection note that is associated with exactly one known no
 ### Untyped Notes
 
 An untyped note is a collection note that is not associated with any known note type. Untyped notes MAY exist in a TypedMark collection, but they are outside the managed-note contract and are not validated against note-type schema, storage, relationship, or heading rules unless a future specification version defines additional rules for them.
+
+### Assets
+
+An asset is a collection file that is not a Markdown note and not a TypedMark artifact — an image, a PDF, an audio file, or any other resource referenced by notes. Assets are collection content, but they are not collection notes: they are not evaluated for note-type mapping, carry no frontmatter, and create no typed relationship instances. Asset links are defined in [Managed Notes and Properties](managed-notes-and-properties.md), and the optional `assets_directory` is defined in [Collection Model](collection-model.md).
 
 ### Frontmatter and Fields (Metadata / Properties)
 

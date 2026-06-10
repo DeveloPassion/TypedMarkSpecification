@@ -523,11 +523,12 @@ Rules:
 1. If the form is `markdown`: a target with a leading `/` resolves from the collection root with the leading `/` removed; any other target resolves relative to the containing note's directory.
 2. If the form is `wikilink`: a target starting with `./` or `../` resolves relative to the containing note's directory; a target with a leading `/` resolves from the collection root with the leading `/` removed; any other target containing `/` resolves from the collection root; a target with no `/` is a simple name and resolves by name under rule 5.
 3. Path resolution MUST normalize `.` and `..` segments before lookup. If the normalized path escapes the collection root, the link MUST NOT resolve and is an `invalid_note_link` failure.
-4. If a path-formed target does not end in `.md`, `.md` is appended. The link resolves to the collection note at exactly the resulting collection-relative path, or to zero notes when no such note exists.
+4. A path-formed target ending in `.md` resolves to the collection note at exactly that collection-relative path, or to zero notes when no such note exists. Any other path-formed target resolves to the asset at exactly that collection-relative path when such an asset exists; otherwise `.md` is appended and the target resolves to the collection note at the resulting path, or to zero notes.
 5. Name resolution considers collection notes that are not excluded by `exclude_paths`, in three passes:
    - The id pass matches managed notes whose stored `id` equals the target. Exactly one match resolves the link. More than one match makes the link ambiguous.
    - If the id pass has no match, the name pass matches collection notes whose file name without the `.md` extension equals the target. Exactly one match resolves the link. When several notes match, the candidates in the same directory as the containing note are preferred; among the remaining candidates, those whose path has the fewest segments are preferred. If more than one candidate still remains, the link is ambiguous.
    - If the name pass has no match, the alias pass matches managed notes whose stored `aliases` value contains an entry equal to the target. Exactly one match resolves the link. When several notes match, the name-pass tiebreakers apply; if more than one candidate still remains, the link is ambiguous.
+   - If no note pass matches and the target contains a `.`, the asset pass matches assets whose full file name equals the target. Exactly one match resolves the link. When several assets match, the name-pass tiebreakers apply; if more than one candidate still remains, the link is ambiguous.
 6. An ambiguous link MUST NOT resolve and is an `invalid_note_link` failure.
 7. Aliases participate in resolution only through the alias pass, using the stored `aliases` values defined under Core-Defined Frontmatter Field Names; a note's file name always takes precedence over another note's alias.
 8. Target, `id`, file-name, and alias comparisons in this algorithm are case-sensitive exact string comparisons.
@@ -541,6 +542,18 @@ Rules:
 - A heading anchor refers to heading text within the resolved note; a block anchor refers to a block identifier within the resolved note.
 - Anchors do not affect note-target resolution.
 - An anchor that does not match anything in the resolved note is not a conformance failure in this specification version; tools MAY report it.
+
+#### Asset Links
+
+Rules:
+
+- An asset is a non-Markdown collection file, as defined in [Foundations](foundations.md); assets excluded by `exclude_paths` are not collection content.
+- An internal link or embed whose target resolves to an asset is an asset link.
+- Asset links resolve by exact path, or by full file name through the asset pass; assets have no frontmatter, so the id and alias passes never match them.
+- Asset links and embeds never create typed relationship instances and never satisfy relationship cardinality.
+- An asset link whose target does not resolve points to an asset that does not exist yet; it is not by itself a failure, and tools MAY report it.
+- Anchors on asset links have no defined meaning in this specification version.
+- Managed note frontmatter fields with `format: note_link` target notes; this specification version defines no field-level asset references.
 
 Relationship conformance uses the resolved managed-note targets produced by these rules; counting and cardinality rules are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 
