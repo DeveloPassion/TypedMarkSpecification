@@ -40,6 +40,22 @@
     "unknown_field": {
       "$ref": "defs.schema.json#/$defs/validation_severity"
     },
+    "count": {
+      "$comment": "min <= max is a semantic check.",
+      "type": "object",
+      "minProperties": 1,
+      "properties": {
+        "min": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
     "storage": {
       "$ref": "defs.schema.json#/$defs/storage_block"
     },

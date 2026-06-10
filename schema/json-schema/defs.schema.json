@@ -160,7 +160,14 @@
           "type": "boolean"
         },
         "unique": {
-          "type": "boolean"
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "const": "collection"
+            }
+          ]
         },
         "deprecated": {
           "type": "boolean"
@@ -522,11 +529,14 @@
           }
         },
         {
-          "$comment": "unique: true is valid only for scalar field types",
+          "$comment": "unique: true and unique: collection are valid only for scalar field types",
           "if": {
             "properties": {
               "unique": {
-                "const": true
+                "enum": [
+                  true,
+                  "collection"
+                ]
               }
             },
             "required": [

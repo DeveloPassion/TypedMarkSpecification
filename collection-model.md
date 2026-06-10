@@ -35,6 +35,7 @@ validation_defaults:
   unknown_field: warn
   invalid_field_value: error
   duplicate_unique_value: error
+  invalid_note_count: error
   invalid_property_set: error
   invalid_note_type_mapping: error
   invalid_composition: error
@@ -104,7 +105,8 @@ Rules:
 - `missing_declared_field` applies when a field declared in `frontmatter` is absent from stored note frontmatter.
 - `unknown_field` applies when an undeclared field appears in the frontmatter of `typedmark.md` or any other governed artifact, or in managed note frontmatter; a note-type schema MAY override its severity for managed notes of that type, as defined in [Note Type Schemas](note-type-schemas.md).
 - `invalid_field_value` applies when a field value violates a declared field-level value constraint such as `format`, `regex`, `not_empty`, `not_blank`, `min`, `max`, `allowed_values`, or `targets`, or a matching conditional `require_null` constraint defined in [Note Type Schemas](note-type-schemas.md). `format: note_link` syntax and resolution failures still use `invalid_note_link`.
-- `duplicate_unique_value` applies when a field declared with `unique: true` repeats a non-null stored value in more than one managed note of the same note type.
+- `duplicate_unique_value` applies when a field declared with `unique: true` repeats a non-null stored value in more than one managed note of the same note type, when a field declared with `unique: collection` repeats a non-null stored value across any managed notes, or when the core-defined `id` field repeats a value across managed notes.
+- `invalid_note_count` applies when the number of managed notes of a note type violates that type's effective `count` constraint, as defined in [Note Type Schemas](note-type-schemas.md).
 - `invalid_property_set` applies when a property set file, a `typedmark.md` `default_property_sets` reference, or a note-type schema `property_sets` or `exclude_property_sets` reference violates the property-set rules defined in this page.
 - `invalid_note_type_mapping` applies when a note-type mapping rule in `typedmark.md` violates the mapping-rule contract defined in this page.
 - `invalid_composition` applies when the `composition` block in `typedmark.md` violates the composition-provenance rules defined in this page, including a source that does not resolve to exactly one system at the declared version.

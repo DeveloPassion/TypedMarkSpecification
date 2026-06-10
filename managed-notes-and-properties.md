@@ -108,6 +108,7 @@ Rules:
 - Schemas MAY declare `id` when they require stable note-level identifiers.
 - If a schema declares `id`, it MUST declare `type: text` and `format: slug`.
 - If a schema declares `id`, it MUST NOT declare `optional: true` or `nullable: true`.
+- Stored `id` values MUST be unique across all managed notes in the collection, regardless of note type; a repeated `id` value is a `duplicate_unique_value` failure.
 - `deleted` is an optional core-defined managed-note field name in this specification version.
 - `deleted` MAY appear in stored frontmatter even when it is not declared in the effective schema, because it is core-defined rather than user-defined.
 - If stored, `deleted` MUST be a YAML boolean.
@@ -262,11 +263,12 @@ Rules:
 Rules:
 
 - `unique` MAY be omitted.
-- `unique` MUST be a boolean.
+- `unique` MUST be a boolean or the string `collection`.
 - If omitted, `unique` defaults to `false`.
 - `unique` MAY be declared only on top-level frontmatter fields.
-- `unique: true` is valid only for scalar field types: `text`, `integer`, `number`, `checkbox`, `date`, `time`, `datetime`, and `link`.
+- `unique: true` and `unique: collection` are valid only for scalar field types: `text`, `integer`, `number`, `checkbox`, `date`, `time`, `datetime`, and `link`.
 - `unique: true` means every non-null stored value for that field MUST be distinct across all managed notes of the same note type.
+- `unique: collection` means every non-null stored value for that field MUST be distinct across all managed notes in the collection, regardless of note type, comparing fields that share this field name.
 - Uniqueness is evaluated using exact stored-value equality after normal YAML parsing, under the string comparison rules defined in [Foundations](foundations.md), not by note-link resolution.
 - Multiple `null` values do not violate uniqueness.
 - A repeated non-null value for a field with `unique: true` is a `duplicate_unique_value` validation failure, as defined in [Collection Model](collection-model.md).

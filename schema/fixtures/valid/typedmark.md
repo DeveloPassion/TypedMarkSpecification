@@ -20,6 +20,7 @@ validation_defaults:
   unknown_field: warn
   invalid_field_value: error
   duplicate_unique_value: error
+  invalid_note_count: error
   invalid_property_set: error
   invalid_note_type_mapping: error
   invalid_composition: error

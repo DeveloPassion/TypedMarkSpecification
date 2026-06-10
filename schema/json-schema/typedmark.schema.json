@@ -91,6 +91,9 @@
         "duplicate_unique_value": {
           "$ref": "defs.schema.json#/$defs/validation_severity"
         },
+        "invalid_note_count": {
+          "$ref": "defs.schema.json#/$defs/validation_severity"
+        },
         "invalid_property_set": {
           "$ref": "defs.schema.json#/$defs/validation_severity"
         },
