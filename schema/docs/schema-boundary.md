@@ -17,6 +17,7 @@ specification wins and the schema has a bug.
 | `<metadata_directory>/schemas/<note_type>.md` | `note-type.schema.json` |
 | `<metadata_directory>/property-sets/<property_set>.md` | `property-set.schema.json` |
 | `<metadata_directory>/history.md` | `history.schema.json` |
+| `marketplace.json` (marketplace repository root; plain JSON, not Markdown) | `marketplace.schema.json` |
 | shared blocks (field definitions, storage, relationships, headings, …) | `defs.schema.json` |
 
 Managed notes are deliberately **not** covered: their frontmatter is validated
@@ -80,7 +81,9 @@ bun run validate-fixtures
 ```
 
 Fixtures are mapped to artifact schemas by filename prefix (`typedmark-*`,
-`note-type-*`, `property-set-*`, `history*`).
+`note-type-*`, `property-set-*`, `history*`, `marketplace*`). Markdown fixtures
+are validated through their extracted frontmatter; `.json` fixtures, the
+marketplace catalog, are validated directly.
 
 ## Recommended validation workflow for implementations
 

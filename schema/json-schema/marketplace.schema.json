@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developassion.github.io/TypedMarkSpecification/schema/marketplace.schema.json",
+  "title": "TypedMark marketplace catalog (marketplace.json)",
+  "description": "Document shape of a marketplace catalog. Unlike collection artifacts, the catalog is plain JSON, not Markdown with frontmatter. Authoritative semantics: systems-composition-evolution.md (Marketplace Catalog). Semantic-layer checks include: name+version uniqueness across entries, source resolution to a folder whose typedmark.md matches the entry, and discovery-metadata consistency with the listed system.",
+  "type": "object",
+  "required": ["specification_version", "systems"],
+  "properties": {
+    "specification_version": { "$ref": "defs.schema.json#/$defs/specification_version" },
+    "label": { "$ref": "defs.schema.json#/$defs/non_empty_string" },
+    "description": { "$ref": "defs.schema.json#/$defs/non_empty_string" },
+    "systems": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "version", "source"],
+        "properties": {
+          "name": { "$ref": "defs.schema.json#/$defs/collection_name" },
+          "version": { "$ref": "defs.schema.json#/$defs/semver" },
+          "label": { "$ref": "defs.schema.json#/$defs/non_empty_string" },
+          "description": { "$ref": "defs.schema.json#/$defs/non_empty_string" },
+          "keywords": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "$ref": "defs.schema.json#/$defs/non_empty_string" }
+          },
+          "audiences": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "$ref": "defs.schema.json#/$defs/non_empty_string" }
+          },
+          "publisher": {
+            "type": "object",
+            "properties": {
+              "name": { "$ref": "defs.schema.json#/$defs/non_empty_string" }
+            },
+            "additionalProperties": false
+          },
+          "license": { "$ref": "defs.schema.json#/$defs/non_empty_string" },
+          "source": {
+            "oneOf": [
+              {
+                "type": "object",
+                "required": ["path"],
+                "properties": {
+                  "path": { "$ref": "defs.schema.json#/$defs/collection_relative_path" }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "required": ["repository"],
+                "properties": {
+                  "repository": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "^[a-z][a-z0-9+.-]*:"
+                  },
+                  "path": { "$ref": "defs.schema.json#/$defs/collection_relative_path" },
+                  "ref": { "$ref": "defs.schema.json#/$defs/non_empty_string" }
+                },
+                "additionalProperties": false
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

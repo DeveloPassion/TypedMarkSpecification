@@ -3,9 +3,9 @@
  * Validate the TypedMark fixture files against the JSON Schemas.
  *
  * Fixtures are governed artifacts: Markdown files whose YAML frontmatter is the
- * governed content. The frontmatter is extracted per the Frontmatter Block
+ * governed content (the frontmatter is extracted per the Frontmatter Block
  * Grammar and validated against the matching artifact schema; the body is
- * ignored.
+ * ignored), plus the marketplace catalog, which is plain JSON.
  *
  * Expectations:
  * - every fixture under fixtures/valid/ passes its artifact schema
@@ -30,6 +30,7 @@ const ARTIFACT_SCHEMAS: Record<string, string> = {
   "note-type": "note-type.schema.json",
   "property-set": "property-set.schema.json",
   history: "history.schema.json",
+  marketplace: "marketplace.schema.json",
 };
 
 function buildValidators(): Record<string, ValidateFunction> {
@@ -86,11 +87,11 @@ function main(): number {
   for (const [bucket, mustPass] of buckets) {
     const dir = join(FIXTURE_DIR, bucket);
     for (const fixture of readdirSync(dir).sort()) {
-      if (!fixture.endsWith(".md") || fixture === "README.md") continue;
+      const isJson = fixture.endsWith(".json");
+      if ((!fixture.endsWith(".md") && !isJson) || fixture === "README.md") continue;
       checked += 1;
-      const document = extractFrontmatter(
-        readFileSync(join(dir, fixture), "utf8"),
-      );
+      const text = readFileSync(join(dir, fixture), "utf8");
+      const document = isJson ? JSON.parse(text) : extractFrontmatter(text);
       const validate = validatorFor(validators, fixture);
       const passed = validate(document);
       if (passed !== mustPass) {

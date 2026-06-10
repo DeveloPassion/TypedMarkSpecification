@@ -1,0 +1,30 @@
+{
+  "specification_version": "0.0.1",
+  "label": "TypedMark Systems Marketplace",
+  "description": "Community catalog of reusable TypedMark systems.",
+  "systems": [
+    {
+      "name": "@acme/para-system",
+      "version": "1.2.0",
+      "label": "PARA System",
+      "description": "PARA-style organization system.",
+      "keywords": ["para", "organization"],
+      "license": "MIT",
+      "source": {
+        "path": "systems/para-system"
+      }
+    },
+    {
+      "name": "dev-team-ai-context",
+      "version": "0.3.0",
+      "description": "AI context system for development teams.",
+      "publisher": {
+        "name": "Example Publisher"
+      },
+      "source": {
+        "repository": "https://github.com/example/dev-team-ai-context",
+        "ref": "v0.3.0"
+      }
+    }
+  ]
+}
