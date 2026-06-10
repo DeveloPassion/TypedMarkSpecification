@@ -365,6 +365,13 @@ Rules:
 - `note_name_pattern` MUST be a non-empty string.
 - `note_name_pattern` MUST NOT contain `/` or `\`.
 - `note_name_pattern` MUST NOT include the `.md` extension.
+- `note_name_prefix` and `note_name_suffix` MAY each be declared to govern an affix around the resolved `note_name_pattern`.
+- If present, `note_name_prefix` and `note_name_suffix` MUST each be a mapping that physically contains `pattern`.
+- An affix `pattern` MUST be a non-empty string and follows the same syntax, placeholder, and resolution rules as `note_name_pattern`, including the prohibition of `/` and `\` and of the `.md` extension.
+- An affix mapping MAY declare `required`; if present, `required` MUST be a boolean, and if omitted, `required` defaults to `true`.
+- The conforming active note name is the resolved `note_name_pattern`, preceded by the resolved `note_name_prefix` when that affix is applied, and followed by the resolved `note_name_suffix` when that affix is applied.
+- A required affix MUST be applied: the active note name MUST include the resolved affix in its position.
+- An optional affix, declared with `required: false`, MAY be applied: the active note name conforms both with and without the resolved affix.
 - Storage patterns are template strings composed of literal text plus zero or more placeholders.
 - A placeholder has the form `{field_name}` or `{field_name:format}`.
 - `field_name` in a storage placeholder MUST refer to a top-level effective frontmatter field name.
@@ -374,17 +381,19 @@ Rules:
 - Storage placeholders MUST resolve from physically stored frontmatter values, not from note body content, inferred values, or template prose.
 - A field used in a storage pattern MUST resolve to a concrete non-null scalar value when the managed note path is evaluated.
 - List, tags, object, and `any` values MUST NOT be used in storage patterns.
-- The active managed-note path is the resolved `folder_pattern` plus `/` plus the resolved `note_name_pattern` plus `.md`, unless `folder_pattern` is empty, in which case the active managed-note path is the resolved `note_name_pattern` plus `.md`.
+- The active managed-note path is the resolved `folder_pattern` plus `/` plus the conforming active note name plus `.md`, unless `folder_pattern` is empty, in which case the active managed-note path is the conforming active note name plus `.md`.
 - A managed note is active or archived according to its stored `archived` value, the core-defined field contract defined in [Managed Notes and Properties](managed-notes-and-properties.md).
 - Validators MUST ensure an active managed note's path matches the resolved active storage path for its note type.
 - If `archive.policy` is `mirror_under_archives` or `fixed`, the schema MUST also define `archive.folder_pattern` and `archive.note_name_pattern`.
 - `archive.folder_pattern` and `archive.note_name_pattern` follow the same syntax and resolution rules as the active storage patterns.
+- The `archive` block MAY declare `archive.note_name_prefix` and `archive.note_name_suffix`, which follow the same affix rules as `note_name_prefix` and `note_name_suffix` and govern the archived note name.
 - If `archive.policy` is `in_place_historical`, `archive.folder_pattern` and `archive.note_name_pattern` MUST be omitted.
 - If a note is archived under `mirror_under_archives` or `fixed`, its archived path is resolved using `archive.folder_pattern` and `archive.note_name_pattern`, and validators MUST ensure the archived note's path matches that resolved archived path.
 - If a note is archived under `in_place_historical`, it remains at its resolved active storage path, and validators MUST ensure its path still matches that active path.
 - A managed note whose path does not match the storage path required by its archived state violates the `path` rule defined in [Collection Model](collection-model.md).
 - Archiving a note means setting `archived: true` and, under `mirror_under_archives` or `fixed`, moving the note to its resolved archived path.
 - Tools that create managed notes MUST derive the initial note folder and note name from `storage.folder_pattern` and `storage.note_name_pattern` using the stored frontmatter values they are writing.
+- A tool that creates a managed note MUST apply every required affix to the created note name and MAY apply each optional affix, for example based on user choice.
 - A tool that creates a managed note MUST obtain every concrete value needed to resolve the storage patterns before writing the note.
 - If required storage-pattern values are not yet known, a tool MUST ask for them or otherwise obtain them before claiming the created note conforms.
 - If a note is archived, its `note_type` MUST remain unchanged.
@@ -396,9 +405,12 @@ Example creation-oriented storage rules:
 ```yaml
 storage:
   folder_pattern: "Meetings/{meeting_date:YYYY}/{meeting_date:MM}"
-  note_name_pattern: "{meeting_date:YYYY-MM-DD} - Meeting - {title}"
+  note_name_pattern: "{meeting_date:YYYY-MM-DD} - {title}"
+  note_name_suffix:
+    pattern: " (Meeting)"
+    required: false
   archive:
     policy: in_place_historical
 ```
 
-Using that storage block, a tool creating a `meeting` note with `meeting_date: 2026-06-08` and `title: foo` MUST create the note at `Meetings/2026/06/2026-06-08 - Meeting - foo.md`.
+Using that storage block, a tool creating a `meeting` note with `meeting_date: 2026-06-08` and `title: foo` MUST create the note at `Meetings/2026/06/2026-06-08 - foo.md`, and MAY instead create it at `Meetings/2026/06/2026-06-08 - foo (Meeting).md`, because the suffix is optional; both paths conform.
