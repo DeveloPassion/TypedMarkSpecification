@@ -25,14 +25,17 @@ The relationship model has two layers:
 - type-level relationship declarations on note-type schemas
 - concrete note-to-note relationship instances realized through internal note links in managed notes
 
+TypedMark does not constrain which collection notes may link to which. Internal note links between collection notes are always permitted, whether or not the linked note types are declared in any relationship block. Relationship declarations document the expected type-level relationship graph and define how typed relationships between note types are expressed; the constraints they carry apply only to the typed relationship instances derived for declared target note types, never to internal note links as such.
+
 Rules:
 
 - Relationship declarations are part of note-type schemas.
 - Relationship declarations relate one source note type to one or more target note types.
+- An internal note link between collection notes is never, by itself, a relationship violation.
 - Concrete note-to-note relationship instances are part of instantiated collection conformance.
 - Concrete relationship instances are computed from resolved internal note links using the rules in [Managed Notes and Properties](managed-notes-and-properties.md).
 - Metadata properties contribute typed relationship instances only when their field definitions declare `relationship_kind`.
-- Body internal note links participate only in the `related_to` relationship model.
+- Body internal note links participate only in the `related_to` relationship model, and contribute typed relationship instances only for target note types declared under `related_to`; every other body link is purely navigational.
 - Body note links are navigational and relational.
 - `belongs_to` relationship instances MUST be represented in relationship-bearing metadata properties and MUST NOT be satisfied only by body links.
 - Inverse views MAY be derived by tooling and MUST NOT require duplicate schema declarations.
@@ -43,8 +46,8 @@ Each concrete note type's effective schema MUST define `relationships.belongs_to
 
 Rules:
 
-- `relationships.belongs_to.allowed_note_types` defines the note types that MAY appear under `belongs_to`.
-- `relationships.related_to.allowed_note_types` defines the note types that MAY appear under `related_to`.
+- `relationships.belongs_to.allowed_note_types` declares the documented `belongs_to` target note types for the source note type.
+- `relationships.related_to.allowed_note_types` declares the documented `related_to` target note types for the source note type.
 - Constraints are declared per target note type.
 - If a schema file physically declares `relationships`, it MUST define both `relationships.belongs_to.allowed_note_types` and `relationships.related_to.allowed_note_types`.
 - Every referenced target note type MUST be a concrete note type defined in the same system.
@@ -55,10 +58,11 @@ Rules:
 - If `max` is omitted, the cardinality is unbounded.
 - If present, `min` and `max` MUST be non-negative integers.
 - If both are present, `max` MUST be greater than or equal to `min`.
-- If a target note type is omitted, it is not allowed.
+- If a target note type is not declared, no typed-relationship constraint applies to links targeting notes of that type; such links remain valid internal note links and do not create typed relationship instances.
+- A relationship-bearing field whose resolved target's note type is not declared under its relationship kind creates no typed relationship instance; the link itself remains valid.
 - Cardinality is defined per source note type and target note type pair.
 - Schema-definition validation MUST validate declaration shape, referenced note types, cardinality values, and disjointness of relationship kinds.
-- Concrete relationship instance validation MUST validate resolved targets against the source note type schema.
+- Concrete relationship instance validation MUST evaluate the resolved typed relationship instances against the declared targets and cardinality of the source note type's effective schema.
 - For `belongs_to`, concrete relationship instances are the unique resolved targets referenced by frontmatter fields with `relationship_kind: belongs_to`.
 - For `related_to`, concrete relationship instances are the union of:
   - unique resolved targets referenced by frontmatter fields with `relationship_kind: related_to`
@@ -67,7 +71,7 @@ Rules:
 - Unresolved placeholders do not satisfy minimum-cardinality requirements until they resolve to concrete targets.
 - Duplicate concrete links from the same source note to the same target note under the same relationship kind are semantically idempotent and count once.
 - The same source note and target note pair MUST NOT be counted under both `belongs_to` and `related_to`.
-- Link validity failures are reported as `invalid_note_link`; target-type and cardinality failures are reported as `invalid_relationship_instance`, as defined in [Collection Model](collection-model.md).
+- Link validity failures are reported as `invalid_note_link`; cardinality failures on declared targets are reported as `invalid_relationship_instance`, as defined in [Collection Model](collection-model.md).
 - A Markdown link in body content with a destination that is not a supported internal note-link form does not participate in typed relationship conformance.
 - Temporary draft states during authoring or UI workflows are outside persisted conformance.
 - Applications MAY allow transient draft states during authoring, but a persisted note or instantiated collection claimed as conforming MUST satisfy the cardinality rules derived from its note type.
@@ -77,6 +81,7 @@ Using the `topic` schema example in [Note Type Schemas](note-type-schemas.md), t
 - a `topic` MUST belong to exactly one `domain`
 - a `topic` MUST include at least one concrete `related_to` link to a `source`, whether in relationship-bearing metadata, in the body, or both
 - a `topic` MAY be related to any number of `concept` and `topic` notes
+- links from a `topic` to notes of any other note type, or to untyped notes, are ordinary internal note links and are not relationship violations
 
 ## Heading Rules
 
