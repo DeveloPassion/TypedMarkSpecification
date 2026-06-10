@@ -53,6 +53,9 @@
             },
             "archived": {
               "$ref": "defs.schema.json#/$defs/state_flag_field_contract"
+            },
+            "aliases": {
+              "$ref": "defs.schema.json#/$defs/aliases_field_contract"
             }
           }
         }

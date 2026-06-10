@@ -185,7 +185,7 @@ Rules:
 Rules:
 
 - Every exact string comparison defined by this specification compares Unicode code points after normalizing both operands to Normalization Form C (NFC).
-- This applies wherever this specification compares stored strings, including `unique` equality, `allowed_values` and `const_value` equality, frontmatter mapping `equals` predicates on strings, note-link target, `id`, and file-name comparison, and heading-text comparison.
+- This applies wherever this specification compares stored strings, including `unique` equality, `allowed_values` and `const_value` equality, frontmatter mapping `equals` predicates on strings, note-link target, `id`, file-name, and alias comparison, and heading-text comparison.
 - String comparisons are case-sensitive; this specification defines no case folding.
 - Code-point counts, such as `min` and `max` on text values, count the code points of the NFC-normalized value.
 - Spec-defined identifier grammars, such as collection names, slugs, and field names, restrict their values to ASCII, so normalization does not alter them.

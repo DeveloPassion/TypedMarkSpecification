@@ -138,8 +138,16 @@ Rules:
 - If a property set or a note-type schema declares `archived`, it MUST declare `type: checkbox`.
 - If a property set or a note-type schema declares `archived`, it MUST declare `default_value: false`.
 - If a property set or a note-type schema declares `archived`, it MUST NOT declare `optional: true` or `nullable: true`.
+- `aliases` is an optional core-defined managed-note field name in this specification version.
+- `aliases` MAY appear in stored frontmatter even when it is not declared in the effective schema, because it is core-defined rather than user-defined.
+- If stored, `aliases` MUST be a YAML sequence of unique non-empty strings.
+- An alias MUST NOT contain `/`, `\`, `#`, `^`, `|`, or line breaks, because those characters cannot appear in a simple wikilink target.
+- Aliases are alternative names for the note and participate in note-link resolution through the alias pass defined under Target Resolution on this page.
+- Two managed notes SHOULD NOT share an alias; a link using a shared alias is ambiguous and cannot resolve, and tools SHOULD report shared aliases.
+- A property set or a note-type schema MAY declare `aliases` when they want canonical materialization of aliases.
+- If a property set or a note-type schema declares `aliases`, it MUST declare `type: list` and `items` with `type: text`.
 - A core-defined managed-note field name MUST NOT be repurposed as an ordinary user-defined field in a property set or a note-type schema unless the core field contract explicitly permits schema-level declaration of that field.
-- Field names such as `title`, `description`, `tags`, `aliases`, `created_at`, and `updated_at` are ordinary schema-defined managed-note field names in this specification version unless a rule explicitly defines them otherwise.
+- Field names such as `title`, `description`, `tags`, `created_at`, and `updated_at` are ordinary schema-defined managed-note field names in this specification version unless a rule explicitly defines them otherwise.
 - The `tags` property type defined below remains a first-class supported property type.
 - The generic property-type and field-definition rules in this page apply to ordinary schema-defined fields unless a dedicated core field rule says otherwise.
 
@@ -379,7 +387,7 @@ Rules:
 - A non-empty stored value that resolves to a managed note MUST resolve to a note whose concrete note type satisfies `targets`; a value resolving to an untyped note violates `targets`.
 - A `targets` violation is an `invalid_field_value` failure.
 - An unresolved value does not violate `targets`; existence is governed by `validate_exists`.
-- For values stored in a field declaring `targets`, the id and name passes of name-based resolution consider only managed notes whose concrete note type satisfies `targets`; path-formed targets resolve normally and are then validated against `targets`.
+- For values stored in a field declaring `targets`, the id, name, and alias passes of name-based resolution consider only managed notes whose concrete note type satisfies `targets`; path-formed targets resolve normally and are then validated against `targets`.
 - A relationship-bearing field MAY declare `targets`; its declared targets SHOULD be consistent with the type-level relationship declarations, and a resolved typed relationship instance is validated against both.
 
 #### `not_empty`
@@ -516,12 +524,13 @@ Rules:
 2. If the form is `wikilink`: a target starting with `./` or `../` resolves relative to the containing note's directory; a target with a leading `/` resolves from the collection root with the leading `/` removed; any other target containing `/` resolves from the collection root; a target with no `/` is a simple name and resolves by name under rule 5.
 3. Path resolution MUST normalize `.` and `..` segments before lookup. If the normalized path escapes the collection root, the link MUST NOT resolve and is an `invalid_note_link` failure.
 4. If a path-formed target does not end in `.md`, `.md` is appended. The link resolves to the collection note at exactly the resulting collection-relative path, or to zero notes when no such note exists.
-5. Name resolution considers collection notes that are not excluded by `exclude_paths`, in two passes:
+5. Name resolution considers collection notes that are not excluded by `exclude_paths`, in three passes:
    - The id pass matches managed notes whose stored `id` equals the target. Exactly one match resolves the link. More than one match makes the link ambiguous.
    - If the id pass has no match, the name pass matches collection notes whose file name without the `.md` extension equals the target. Exactly one match resolves the link. When several notes match, the candidates in the same directory as the containing note are preferred; among the remaining candidates, those whose path has the fewest segments are preferred. If more than one candidate still remains, the link is ambiguous.
+   - If the name pass has no match, the alias pass matches managed notes whose stored `aliases` value contains an entry equal to the target. Exactly one match resolves the link. When several notes match, the name-pass tiebreakers apply; if more than one candidate still remains, the link is ambiguous.
 6. An ambiguous link MUST NOT resolve and is an `invalid_note_link` failure.
-7. Alias-based resolution is not defined in this specification version; a target that matches only an alias does not resolve.
-8. Target, `id`, and file-name comparisons in this algorithm are case-sensitive exact string comparisons.
+7. Aliases participate in resolution only through the alias pass, using the stored `aliases` values defined under Core-Defined Frontmatter Field Names; a note's file name always takes precedence over another note's alias.
+8. Target, `id`, file-name, and alias comparisons in this algorithm are case-sensitive exact string comparisons.
 9. Resolution to zero notes MAY occur and represents a link to a note that does not exist yet; it is not by itself a failure, unless the declaring field requires existence through `validate_exists`.
 10. A note MAY link to itself; a self-link resolves to the containing note.
 
@@ -593,7 +602,7 @@ Rules:
 - The same optionality distinction applies recursively within object field definitions.
 - Unknown fields are evaluated using the `unknown_field` rule defined in [Collection Model](collection-model.md), at the effective severity for the note's resolved note type as defined in [Note Type Schemas](note-type-schemas.md).
 - Unknown nested fields inside object values are also evaluated using the `unknown_field` rule defined in [Collection Model](collection-model.md).
-- A field is unknown when it is absent from the note's effective note-type schema; the core-defined managed-note field names `note_type`, `deleted`, and `archived` are never unknown fields, whether or not the effective schema declares them.
+- A field is unknown when it is absent from the note's effective note-type schema; the core-defined managed-note field names `note_type`, `deleted`, `archived`, and `aliases` are never unknown fields, whether or not the effective schema declares them.
 - If the effective `frontmatter` block declares `note_type`, `note_type` MUST be physically present in stored frontmatter.
 - If the effective `frontmatter` block declares `note_type`, `note_type` MUST NOT declare `optional: true`.
 - If `frontmatter` declares `id`, `id` MUST NOT declare `optional: true`.

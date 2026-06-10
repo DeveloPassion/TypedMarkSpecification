@@ -999,6 +999,30 @@
         }
       },
       "additionalProperties": false
+    },
+    "aliases_field_contract": {
+      "$comment": "Core-defined aliases field: a list of text items. Alias string constraints (forbidden wikilink metacharacters) are value semantics on managed notes.",
+      "allOf": [
+        {
+          "$ref": "#/$defs/field_definition"
+        }
+      ],
+      "required": [
+        "type",
+        "items"
+      ],
+      "properties": {
+        "type": {
+          "const": "list"
+        },
+        "items": {
+          "properties": {
+            "type": {
+              "const": "text"
+            }
+          }
+        }
+      }
     }
   }
 }

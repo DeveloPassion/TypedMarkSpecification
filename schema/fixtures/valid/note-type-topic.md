@@ -36,6 +36,16 @@ frontmatter:
     type: text
     not_blank: true
     nullable: false
+  aliases:
+    label: Aliases
+    description: Alternative names used by note-link resolution.
+    icon: tag
+    type: list
+    items:
+      type: text
+      not_blank: true
+    nullable: false
+    default_value: []
   domain:
     label: Domain
     description: Domain note this topic belongs to.
