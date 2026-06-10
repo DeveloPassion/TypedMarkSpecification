@@ -464,6 +464,17 @@ Rules:
 - Text and link `allowed_values` comparisons are case-sensitive and use exact string equality under the string comparison rules defined in [Foundations](foundations.md).
 - Non-text scalar `allowed_values` comparisons use exact scalar equality after normal YAML parsing and type validation.
 
+#### `allowed_values_from`
+
+Rules:
+
+- `allowed_values_from` MAY be omitted.
+- If present, `allowed_values_from` MUST be a non-empty slug naming a vocabulary defined in `typedmark.md` `vocabularies`, as defined in [Collection Model](collection-model.md); a reference that does not resolve makes the declaring artifact invalid.
+- `allowed_values_from` and `allowed_values` MUST NOT both be present on the same field definition.
+- `allowed_values_from` is valid wherever `allowed_values` is valid, and additionally on `type: tags`.
+- For every type except `tags`, `allowed_values_from` has the same semantics as declaring `allowed_values` with the referenced vocabulary's values.
+- For `type: tags`, every stored entry MUST equal a vocabulary value or be a descendant of one under the tag hierarchy rules; an entry outside the vocabulary is an `invalid_field_value` failure.
+
 #### `const_value`
 
 Rules:

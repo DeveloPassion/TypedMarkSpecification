@@ -208,6 +208,9 @@
           "minItems": 1,
           "uniqueItems": true
         },
+        "allowed_values_from": {
+          "$ref": "#/$defs/slug"
+        },
         "const_value": {},
         "value_from_schema": {
           "const": "note_type"
@@ -631,6 +634,41 @@
             "properties": {
               "format": {
                 "const": "note_link"
+              }
+            }
+          }
+        },
+        {
+          "$comment": "allowed_values and allowed_values_from are mutually exclusive",
+          "not": {
+            "required": [
+              "allowed_values",
+              "allowed_values_from"
+            ]
+          }
+        },
+        {
+          "$comment": "allowed_values_from is valid for the allowed_values types plus tags",
+          "if": {
+            "required": [
+              "allowed_values_from"
+            ]
+          },
+          "then": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "text",
+                  "integer",
+                  "number",
+                  "checkbox",
+                  "date",
+                  "time",
+                  "datetime",
+                  "link",
+                  "list",
+                  "tags"
+                ]
               }
             }
           }

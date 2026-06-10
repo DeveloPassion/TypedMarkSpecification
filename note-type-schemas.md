@@ -46,7 +46,7 @@ Rules:
 8. If `frontmatter_remove` is present on the selected concrete note type, it MUST be applied next to the accumulated inherited frontmatter.
 9. The `frontmatter`, `relationships`, and `headings` blocks contributed by the opt-in property sets named in `property_sets`, if any, MUST be applied next in the selected concrete schema's declared `property_sets` order, as defined in [Collection Model](collection-model.md).
 10. Local `frontmatter`, `relationships`, and `headings` definitions in the selected concrete note-type schema file MUST be applied last.
-11. The resulting `frontmatter`, `relationships`, and `headings` blocks, together with the direct top-level values from the selected concrete schema file and the effective inherited values of `kind`, `storage`, `template`, and `guidance`, are the effective note-type schema for that note type.
+11. The resulting `frontmatter`, `relationships`, and `headings` blocks, together with the direct top-level values from the selected concrete schema file and the effective inherited values of `kind`, `storage`, `template`, `guidance`, `unknown_field`, `conditions`, and `count`, are the effective note-type schema for that note type.
 12. Managed-note, relationship, heading, template, and storage conformance MUST be evaluated against that effective note-type schema using the rule pages linked from this page.
 13. This specification MUST NOT be interpreted as requiring a separate serialized effective-schema artifact on disk.
 

@@ -75,6 +75,14 @@ frontmatter:
     allowed_values: [draft, active, archived]
     nullable: true
     default_value: null
+  tags:
+    label: Tags
+    description: Controlled topic tags.
+    icon: tag
+    type: tags
+    allowed_values_from: topic-tags
+    nullable: false
+    default_value: []
   archived_reason:
     label: Archived Reason
     description: Why the topic was archived.

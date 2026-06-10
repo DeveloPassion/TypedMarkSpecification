@@ -70,6 +70,32 @@
       "$comment": "IANA Time Zone Database identifier; identifier validity is a semantic check.",
       "$ref": "defs.schema.json#/$defs/non_empty_string"
     },
+    "vocabularies": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "defs.schema.json#/$defs/slug"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "values"
+        ],
+        "properties": {
+          "description": {
+            "$ref": "defs.schema.json#/$defs/non_empty_string"
+          },
+          "values": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "defs.schema.json#/$defs/non_empty_string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
     "validation_defaults": {
       "type": "object",
       "properties": {

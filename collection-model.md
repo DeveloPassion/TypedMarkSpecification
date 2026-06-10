@@ -198,6 +198,32 @@ Rules:
 - If the winning mapping rule yields a candidate note type that does not resolve to exactly one concrete schema file under `<metadata_directory>/schemas/`, the note is untyped.
 - Because `note_type_mappings` is ordered, more specific rules SHOULD appear before more general rules.
 
+### Vocabularies
+
+`typedmark.md` MAY define `vocabularies` to declare named, reusable value sets that field definitions reference through `allowed_values_from`, instead of repeating the same `allowed_values` list across note types.
+
+Example:
+
+```yaml
+vocabularies:
+  workflow-state:
+    description: Editorial lifecycle states.
+    values: [draft, in_review, published]
+  topic-tags:
+    description: Controlled tag tree for topics.
+    values: [area, area/work, reference]
+```
+
+Rules:
+
+- `vocabularies` MAY be omitted.
+- If present, `vocabularies` MUST be a mapping from vocabulary name to vocabulary definition.
+- A vocabulary name MUST be a non-empty slug.
+- Each vocabulary definition MUST physically contain `values` and MAY contain `description`; if present, `description` MUST be a non-empty string.
+- `values` MUST be a non-empty list of unique non-empty strings.
+- A vocabulary referenced from a `tags` field MUST contain only values that satisfy the tags value grammar defined in [Managed Notes and Properties](managed-notes-and-properties.md).
+- Field-level vocabulary references through `allowed_values_from` are defined in [Managed Notes and Properties](managed-notes-and-properties.md).
+
 ### Composition Provenance
 
 `typedmark.md` MAY define `composition` to record the systems this collection's structure was composed from. The lineage is both provenance and the reproducible recipe: re-composing the same sources at the same versions reconstructs the same collection. It is also the input the update flow uses to migrate a collection to newer system versions. System composition, its deterministic merge semantics, and the migration flow are defined in [Systems, Composition, and Evolution](systems-composition-evolution.md).

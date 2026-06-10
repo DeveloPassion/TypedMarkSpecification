@@ -158,7 +158,7 @@ Rules:
 - A composing tool MUST report each scoping exclusion it materializes, identifying the note type, the excluded property set, and the sources involved.
 - Relationship target note types referenced by a source's property sets and note-type schemas are resolved against the composed result, not against the source in isolation.
 - `typedmark.md` `note_type_mappings` merge by concatenation in merge order; because mapping rules are evaluated in order, earlier sources' rules are evaluated before later sources' rules unless the target overrides them.
-- `typedmark.md` `validation_defaults` and `exclude_paths` merge by key, with later inputs overriding earlier inputs per key, and the target overriding all.
+- `typedmark.md` `validation_defaults`, `exclude_paths`, and `vocabularies` merge by key, with later inputs overriding earlier inputs per key, and the target overriding all.
 - The composing collection's own `name`, `version`, and other system fields are authored on the result; they are never inherited from a source.
 - A composing tool MUST report every collision it resolves, identifying the artifact, the contributing sources, and the winner.
 - `history.md` from each source MAY be retained for update reasoning, as defined under Migration and Updates; composition itself does not require merging source histories into a single log.

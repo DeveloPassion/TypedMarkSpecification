@@ -11,6 +11,10 @@ keywords:
 metadata_directory: .typedmark
 assets_directory: Assets
 timezone: Europe/Brussels
+vocabularies:
+  topic-tags:
+    description: Controlled tag tree for topics.
+    values: [area, area/work, reference]
 exclude_paths:
   - .git/**
 validation_defaults:
