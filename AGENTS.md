@@ -20,10 +20,14 @@ second page; link to the authoritative page instead.
 
 ## Layout
 
-- `*.md` at the root — the specification pages (Jekyll site)
+- `*.md` at the root — the specification pages (the single source of truth)
 - `schema/json-schema/` — machine-readable JSON Schemas for the governed artifacts
 - `schema/fixtures/` — valid / invalid-shape / invalid-semantic fixtures
 - `schema/docs/schema-boundary.md` — what the schemas enforce vs. the semantic layer
+- `docs/` — the website builder (`bun run build-site`). It renders the actual
+  root spec files into `dist/` and is deployed by `.github/workflows/pages.yml`.
+  NEVER copy spec content into `docs/`; the website must always render the
+  sources.
 
 Repository scripts are TypeScript run with Bun (`bun install` once, then
 `bun run <script>`); do not add Python or shell scripts.

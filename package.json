@@ -3,10 +3,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "validate-fixtures": "bun schema/validate-fixtures.ts"
+    "validate-fixtures": "bun schema/validate-fixtures.ts",
+    "build-site": "bun docs/build.ts"
   },
   "devDependencies": {
     "ajv": "^8.20.0",
+    "marked": "^18.0.5",
     "yaml": "^2.9.0"
   }
 }

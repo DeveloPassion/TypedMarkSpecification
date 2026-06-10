@@ -2,7 +2,7 @@
 
 TypedMark is an open specification for typed Markdown note systems.
 
-Start with [index.md](index.md) for the navigable specification website. Machine-readable JSON Schemas for the governed artifacts live under [schema/](schema/).
+Read the specification at **<https://developassion.github.io/TypedMarkSpecification/>** — the website is built from the Markdown sources in this repository, which remain the single source of truth. Start with [index.md](index.md) to read it as plain files. Machine-readable JSON Schemas for the governed artifacts live under [schema/](schema/).
 
 ## Related repositories
 
