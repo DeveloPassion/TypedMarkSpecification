@@ -152,6 +152,11 @@ Rules:
 - When two inputs contribute the same keyed artifact, the later input in the merge order replaces the earlier one completely, and the local collection's artifact overrides every source.
 - `typedmark.yaml` `metadata_directory` MUST be identical across all sources and the target; a mismatch is a composition error.
 - `typedmark.yaml` `default_property_sets` merge by concatenation in merge order with duplicate identifiers removed, keeping the first occurrence.
+- A source's `default_property_sets` are scoped to that source: they apply only to the note types whose winning schema was contributed by that source, so one source's defaults MUST NOT silently change the effective schemas of another source's note types.
+- A composing tool MUST materialize that scoping using the existing composition constructs: for each concrete note type in the composed result, every merged default property set that is named neither in the defaults of the source that contributed the winning schema for that note type nor in the target collection's own `default_property_sets` MUST be added to that note type's `exclude_property_sets`, preserving any exclusions the schema already declares.
+- The target collection's own `default_property_sets` apply to every concrete note type in the composed result, including note types contributed by sources, unless a note type excludes them explicitly.
+- A composing tool MUST report each scoping exclusion it materializes, identifying the note type, the excluded property set, and the sources involved.
+- Relationship target note types referenced by a source's property sets and note-type schemas are resolved against the composed result, not against the source in isolation.
 - `typedmark.yaml` `note_type_mappings` merge by concatenation in merge order; because mapping rules are evaluated in order, earlier sources' rules are evaluated before later sources' rules unless the target overrides them.
 - `typedmark.yaml` `validation_defaults` and `exclude_paths` merge by key, with later inputs overriding earlier inputs per key, and the target overriding all.
 - The composing collection's own `name`, `version`, and other system fields are authored on the result; they are never inherited from a source.
