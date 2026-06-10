@@ -372,11 +372,15 @@ Rules:
 - A field used in a storage pattern MUST resolve to a concrete non-null scalar value when the managed note path is evaluated.
 - List, tags, object, and `any` values MUST NOT be used in storage patterns.
 - The active managed-note path is the resolved `folder_pattern` plus `/` plus the resolved `note_name_pattern` plus `.md`, unless `folder_pattern` is empty, in which case the active managed-note path is the resolved `note_name_pattern` plus `.md`.
-- Validators MUST ensure a managed note path matches the resolved active storage path for its note type.
+- A managed note is active or archived according to its stored `archived` value, the core-defined field contract defined in [Managed Notes and Properties](managed-notes-and-properties.md).
+- Validators MUST ensure an active managed note's path matches the resolved active storage path for its note type.
 - If `archive.policy` is `mirror_under_archives` or `fixed`, the schema MUST also define `archive.folder_pattern` and `archive.note_name_pattern`.
 - `archive.folder_pattern` and `archive.note_name_pattern` follow the same syntax and resolution rules as the active storage patterns.
 - If `archive.policy` is `in_place_historical`, `archive.folder_pattern` and `archive.note_name_pattern` MUST be omitted.
-- If a note is archived under `mirror_under_archives` or `fixed`, its archived path is resolved using `archive.folder_pattern` and `archive.note_name_pattern`.
+- If a note is archived under `mirror_under_archives` or `fixed`, its archived path is resolved using `archive.folder_pattern` and `archive.note_name_pattern`, and validators MUST ensure the archived note's path matches that resolved archived path.
+- If a note is archived under `in_place_historical`, it remains at its resolved active storage path, and validators MUST ensure its path still matches that active path.
+- A managed note whose path does not match the storage path required by its archived state violates the `path` rule defined in [Collection Model](collection-model.md).
+- Archiving a note means setting `archived: true` and, under `mirror_under_archives` or `fixed`, moving the note to its resolved archived path.
 - Tools that create managed notes MUST derive the initial note folder and note name from `storage.folder_pattern` and `storage.note_name_pattern` using the stored frontmatter values they are writing.
 - A tool that creates a managed note MUST obtain every concrete value needed to resolve the storage patterns before writing the note.
 - If required storage-pattern values are not yet known, a tool MUST ask for them or otherwise obtain them before claiming the created note conforms.

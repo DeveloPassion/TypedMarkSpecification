@@ -334,7 +334,7 @@ Rules:
 - If a property set declares `headings`, it MUST follow the heading shape required by [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - A property set's `frontmatter` MUST follow the core-defined managed-note field-name rules defined in [Managed Notes and Properties](managed-notes-and-properties.md).
 - A property set MAY declare the core-defined `note_type` field; if it does, it MUST use `value_from_schema: note_type`.
-- A property set MAY declare the core-defined `deleted` field under the rules defined in [Managed Notes and Properties](managed-notes-and-properties.md).
+- A property set MAY declare the core-defined `deleted` and `archived` fields under the rules defined in [Managed Notes and Properties](managed-notes-and-properties.md).
 - A property set MUST NOT define `id`.
 - A property set MUST NOT define any other core-defined managed-note field name unless this specification version explicitly permits schema-level declaration of that field.
 - A property set MUST NOT define storage, template, or guidance settings.

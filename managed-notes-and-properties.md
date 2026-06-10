@@ -115,8 +115,21 @@ Rules:
 - If a property set or a note-type schema declares `deleted`, it MUST declare `type: checkbox`.
 - If a property set or a note-type schema declares `deleted`, it MUST declare `default_value: false`.
 - If a property set or a note-type schema declares `deleted`, it MUST NOT declare `optional: true` or `nullable: true`.
+- `archived` is an optional core-defined managed-note field name in this specification version.
+- `archived` MAY appear in stored frontmatter even when it is not declared in the effective schema, because it is core-defined rather than user-defined.
+- If stored, `archived` MUST be a YAML boolean.
+- If omitted or stored as `false`, the note is active.
+- If stored as `true`, the note is archived.
+- `archived` is the single marker of archived state; the storage rules in [Note Type Schemas](note-type-schemas.md) define where an archived note lives.
+- Archived state changes which storage patterns govern the note's path, as defined in [Note Type Schemas](note-type-schemas.md); it does not by itself change relationship, heading, or field-conformance evaluation in this specification version.
+- An archived note remains a managed note and continues to use its resolved concrete note type in this specification version.
+- Archiving is distinct from logical deletion; `archived` and `deleted` are independent states and MAY both be `true` on the same note.
+- A property set or a note-type schema MAY declare `archived` when they want canonical materialization of archived state.
+- If a property set or a note-type schema declares `archived`, it MUST declare `type: checkbox`.
+- If a property set or a note-type schema declares `archived`, it MUST declare `default_value: false`.
+- If a property set or a note-type schema declares `archived`, it MUST NOT declare `optional: true` or `nullable: true`.
 - A core-defined managed-note field name MUST NOT be repurposed as an ordinary user-defined field in a property set or a note-type schema unless the core field contract explicitly permits schema-level declaration of that field.
-- Field names such as `title`, `description`, `tags`, `aliases`, `created_at`, `updated_at`, and `archived` are ordinary schema-defined managed-note field names in this specification version unless a rule explicitly defines them otherwise.
+- Field names such as `title`, `description`, `tags`, `aliases`, `created_at`, and `updated_at` are ordinary schema-defined managed-note field names in this specification version unless a rule explicitly defines them otherwise.
 - The `tags` property type defined below remains a first-class supported property type.
 - The generic property-type and field-definition rules in this page apply to ordinary schema-defined fields unless a dedicated core field rule says otherwise.
 
