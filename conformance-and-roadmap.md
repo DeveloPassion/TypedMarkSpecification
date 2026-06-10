@@ -10,9 +10,17 @@ This page is authoritative for conformance modes, non-goals, and the RECOMMENDED
 
 ## Non-Goals
 
-This specification does not:
+This specification defines the structural contract for typed Markdown note collections. It deliberately does not define:
 
-- enforce a specific schema for note types. It describes how to define/document one
+- **A specific schema for note types.** TypedMark describes how to define and document note types; concrete note sets, starter content, and house conventions belong to systems layered on top of the core, as stated in [Foundations](foundations.md).
+- **Rendering and presentation.** How notes, fields, views, or icons are displayed is tool-defined; `icon` is an opaque token, and presentation hints remain an open decision tracked separately.
+- **Editor user experience.** Forms, pickers, autocomplete behavior, and authoring workflows are application concerns.
+- **Sync, storage backends, and version control.** TypedMark governs files at rest; how they move between machines — Git, sync services, backups — is out of scope.
+- **Body prose.** Markdown content outside the governed surfaces — frontmatter, H2 headings, internal note links — is free; TypedMark does not constrain writing style or block-level structure.
+- **Value coercion.** TypedMark is strictly typed: a stored value either satisfies its declared property type or it does not. Tools MUST NOT coerce values on read, such as reading the string `"5"` as the integer `5`.
+- **Query and index engine internals.** Execution strategy, caching internals, and performance characteristics are implementation concerns, even where future versions define portable query or index contracts.
+- **AI behavior.** Agents consume the structural contract; prompts, models, and agent workflows are outside the specification.
+- **Identity, authentication, and permissions.** Multi-user access control is out of scope; visibility metadata is tracked separately as a possible future addition.
 
 ## Conformance
 
