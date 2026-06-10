@@ -82,6 +82,9 @@ Rules:
 - An `exclude_paths` entry that would exclude `typedmark.yaml` or content under the metadata directory has no effect on those paths.
 - `validation_defaults` provides default severity levels for collection-wide validation reporting.
 - Supported validation severities are `error`, `warn`, `info`, and `off`.
+- `validation_defaults` MAY omit individual severity keys and MAY be an empty mapping.
+- An omitted severity key takes its core default severity: `unknown_field` and `template_drift` default to `warn`, and every other severity key defined on this page defaults to `error`.
+- The severity keys defined on this page are the complete set for this specification version; an undeclared key inside `validation_defaults` is evaluated under `unknown_field`.
 - A note or artifact with any `error` violation is non-conforming.
 - A note or artifact with only `warn` or `info` issues remains structurally usable.
 - Validators SHOULD report the artifact path, note type when applicable, rule name, and failing field, relationship, or heading.
