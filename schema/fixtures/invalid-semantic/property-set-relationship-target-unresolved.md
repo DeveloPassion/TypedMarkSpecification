@@ -1,5 +1,4 @@
-# VALID SHAPE, INVALID SEMANTICS: relationship targets must resolve to concrete note
-# types in the composed collection; no "ghost" note type exists in this fixture set.
+---
 specification_version: 0.0.1
 property_set: haunted
 description: Property set whose relationship target does not resolve.
@@ -12,3 +11,7 @@ relationships:
         max: 1
   related_to:
     allowed_note_types: {}
+---
+
+VALID SHAPE, INVALID SEMANTICS: relationship targets must resolve to concrete note types in the composed collection; no "ghost" note type exists in this fixture set.
+This body is non-normative documentation; tools ignore it for structural reasoning.

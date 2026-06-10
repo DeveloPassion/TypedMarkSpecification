@@ -1,4 +1,4 @@
-# Valid typedmark.yaml for a publishable system composed from one source.
+---
 specification_version: 0.0.1
 name: "@example/knowledge-system"
 label: Example Knowledge System
@@ -79,3 +79,7 @@ scaffold:
       from_template: "glossary.md"
       values:
         note_type: glossary
+---
+
+Valid typedmark.yaml for a publishable system composed from one source.
+This body is non-normative documentation; tools ignore it for structural reasoning.

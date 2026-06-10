@@ -1,4 +1,4 @@
-# INVALID SHAPE: a field definition with type: list must declare items.
+---
 specification_version: 0.0.1
 note_type: reading-list
 abstract: false
@@ -30,3 +30,7 @@ headings:
 guidance:
   when_to_use: "Use for curated reading lists."
   when_not_to_use: "Do not use for individual sources."
+---
+
+INVALID SHAPE: a field definition with type: list must declare items.
+This body is non-normative documentation; tools ignore it for structural reasoning.

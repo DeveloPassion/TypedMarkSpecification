@@ -1,5 +1,4 @@
-# Valid change history exercising note-type, field (both scopes), block, and collection operations.
-# In a real collection this file lives at <metadata_directory>/history.yaml.
+---
 specification_version: 0.0.1
 history:
   - version: 0.1.0
@@ -36,3 +35,7 @@ history:
       - op: rename_note_type
         from: topic
         to: subject
+---
+
+Valid change history exercising note-type, field (both scopes), block, and collection operations. In a real collection this file lives at <metadata_directory>/history.yaml.
+This body is non-normative documentation; tools ignore it for structural reasoning.

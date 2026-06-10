@@ -6,9 +6,9 @@ nav_order: 2
 
 # Collection Model
 
-This page is authoritative for `typedmark.yaml`, the collection identity, the configurable metadata directory, ordered note-type mappings, named property sets, default property sets, property-set composition, the collection's composition provenance, effective block-merge rules, and validation defaults. It is not authoritative for the optional system fields of `typedmark.yaml` — release version, publishing metadata, and scaffold — nor for system composition or change history; those live in [Systems, Composition, and Evolution](systems-composition-evolution.md). It is also not authoritative for relationship and template semantics; those live in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). Managed note field semantics still live in [Managed Notes and Properties](managed-notes-and-properties.md), even when field definitions are contributed through property sets, abstract note types, or note-type schemas. The combined result of those contributions is the effective note-type schema described in [Note Type Schemas](note-type-schemas.md).
+This page is authoritative for `typedmark.md`, the collection identity, the configurable metadata directory, ordered note-type mappings, named property sets, default property sets, property-set composition, the collection's composition provenance, effective block-merge rules, and validation defaults. It is not authoritative for the optional system fields of `typedmark.md` — release version, publishing metadata, and scaffold — nor for system composition or change history; those live in [Systems, Composition, and Evolution](systems-composition-evolution.md). It is also not authoritative for relationship and template semantics; those live in [Relationships, Headings, and Templates](relationships-headings-and-templates.md). Managed note field semantics still live in [Managed Notes and Properties](managed-notes-and-properties.md), even when field definitions are contributed through property sets, abstract note types, or note-type schemas. The combined result of those contributions is the effective note-type schema described in [Note Type Schemas](note-type-schemas.md).
 
-Property sets are the single composition mechanism for reusable `frontmatter`, `relationships`, and `headings`. A property set is a named bundle stored under `<metadata_directory>/property-sets/`. A collection applies property sets to note types in two ways: `typedmark.yaml` MAY name default property sets that apply to every note type, and a concrete note-type schema MAY name additional property sets to compose.
+Property sets are the single composition mechanism for reusable `frontmatter`, `relationships`, and `headings`. A property set is a named bundle stored under `<metadata_directory>/property-sets/`. A collection applies property sets to note types in two ways: `typedmark.md` MAY name default property sets that apply to every note type, and a concrete note-type schema MAY name additional property sets to compose.
 
 A concrete note type's own `frontmatter`, `relationships`, and `headings` blocks are not a second kind of frontmatter source. They are the note type's inline, note-type-scoped contribution to the same composition, applied last as the terminal layer of the merge. Reusable fields live in named property sets; one-off, note-type-specific fields live inline. There is one composition mechanism, with the inline blocks as its highest-precedence layer.
 
@@ -16,7 +16,7 @@ Note-type inheritance through `extends` is a distinct axis defined in [Note Type
 
 ## Collection Model Specification
 
-`typedmark.yaml` defines collection-model-wide rules, including the metadata directory, the ordered note-type mappings, and the governed TypedMark artifacts.
+`typedmark.md` defines collection-model-wide rules, including the metadata directory, the ordered note-type mappings, and the governed TypedMark artifacts.
 
 Required fields:
 
@@ -46,12 +46,12 @@ validation_defaults:
   template_drift: warn
 ```
 
-In path notation on this page, `<metadata_directory>` means the directory name declared by `typedmark.yaml` `metadata_directory`.
+In path notation on this page, `<metadata_directory>` means the directory name declared by `typedmark.md` `metadata_directory`.
 
 Rules:
 
-- `typedmark.yaml` MUST exist at the root of every conforming managed collection.
-- `typedmark.yaml` MUST physically contain `specification_version`, `name`, `description`, `metadata_directory`, `exclude_paths`, and `validation_defaults`.
+- `typedmark.md` MUST exist at the root of every conforming managed collection.
+- `typedmark.md` MUST physically contain `specification_version`, `name`, `description`, `metadata_directory`, `exclude_paths`, and `validation_defaults`.
 - The semantics of `specification_version` are defined in [Foundations](foundations.md).
 - `name` is the collection's single identity. It identifies the collection's structural model and, when the collection is a publishable system, is the distribution identity a marketplace and `composition.sources` resolve against.
 - `name` MUST be a non-empty string of at most 214 characters, including any scope.
@@ -68,7 +68,7 @@ Rules:
 - `description` MUST be a non-empty string; it is concise human-facing explanatory metadata for the collection.
 - `keywords` MAY be omitted; if present, it MUST be a list of unique non-empty strings.
 - `keywords` is discovery metadata that catalogs and marketplaces use to index and search collections.
-- `typedmark.yaml` MAY declare the optional system fields, including `version`, `scaffold`, and discovery metadata, defined in [Systems, Composition, and Evolution](systems-composition-evolution.md). `version` is what makes a collection a publishable system.
+- `typedmark.md` MAY declare the optional system fields, including `version`, `scaffold`, and discovery metadata, defined in [Systems, Composition, and Evolution](systems-composition-evolution.md). `version` is what makes a collection a publishable system.
 - `metadata_directory` MUST be a non-empty string.
 - `metadata_directory` MUST name a single directory at the collection root.
 - `metadata_directory` MUST NOT be `.` or `..` and MUST NOT contain path separators.
@@ -79,7 +79,7 @@ Rules:
 - In `exclude_paths` globs, `*` matches any number of characters within one path segment, `?` matches exactly one character within a segment, and `**` matches any number of path segments including none.
 - `exclude_paths` does not support negation patterns in this specification version.
 - A note matched by `exclude_paths` is not a collection note: it is not evaluated for note-type mapping and is not a candidate for note-link resolution.
-- An `exclude_paths` entry that would exclude `typedmark.yaml` or content under the metadata directory has no effect on those paths.
+- An `exclude_paths` entry that would exclude `typedmark.md` or content under the metadata directory has no effect on those paths.
 - `validation_defaults` provides default severity levels for collection-wide validation reporting.
 - Supported validation severities are `error`, `warn`, `info`, and `off`.
 - `validation_defaults` MAY omit individual severity keys and MAY be an empty mapping.
@@ -91,12 +91,12 @@ Rules:
 - `path` applies when a managed note path violates the storage rules defined in [Note Type Schemas](note-type-schemas.md).
 - `missing_required_field` applies when a field declared in `frontmatter` with `optional: false` lacks a concrete value required for conformance after applying the rules in [Managed Notes and Properties](managed-notes-and-properties.md).
 - `missing_declared_field` applies when a field declared in `frontmatter` is absent from stored note frontmatter.
-- `unknown_field` applies when an undeclared field appears in `typedmark.yaml`, any governed YAML artifact, or managed note frontmatter.
+- `unknown_field` applies when an undeclared field appears in the frontmatter of `typedmark.md` or any other governed artifact, or in managed note frontmatter.
 - `invalid_field_value` applies when a field value violates a declared field-level value constraint such as `format`, `regex`, `not_empty`, `not_blank`, `min`, `max`, or `allowed_values`. `format: note_link` syntax and resolution failures still use `invalid_note_link`.
 - `duplicate_unique_value` applies when a field declared with `unique: true` repeats a non-null stored value in more than one managed note of the same note type.
-- `invalid_property_set` applies when a property set file, a `typedmark.yaml` `default_property_sets` reference, or a note-type schema `property_sets` or `exclude_property_sets` reference violates the property-set rules defined in this page.
-- `invalid_note_type_mapping` applies when a note-type mapping rule in `typedmark.yaml` violates the mapping-rule contract defined in this page.
-- `invalid_composition` applies when the `composition` block in `typedmark.yaml` violates the composition-provenance rules defined in this page, including a source that does not resolve to exactly one system at the declared version.
+- `invalid_property_set` applies when a property set file, a `typedmark.md` `default_property_sets` reference, or a note-type schema `property_sets` or `exclude_property_sets` reference violates the property-set rules defined in this page.
+- `invalid_note_type_mapping` applies when a note-type mapping rule in `typedmark.md` violates the mapping-rule contract defined in this page.
+- `invalid_composition` applies when the `composition` block in `typedmark.md` violates the composition-provenance rules defined in this page, including a source that does not resolve to exactly one system at the declared version.
 - `unsupported_specification_version` applies when a governed artifact declares a `specification_version` whose major version the tool does not implement; the tool MUST report it and MUST NOT assert conformance for that artifact, as defined in [Foundations](foundations.md).
 - `invalid_note_link` applies when an internal note link violates the syntax or resolution rules defined in [Managed Notes and Properties](managed-notes-and-properties.md).
 - `invalid_relationship_definition` applies when relationship declarations violate the relationship model defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
@@ -106,7 +106,7 @@ Rules:
 
 ### Note-Type Mappings
 
-`typedmark.yaml` MAY define `note_type_mappings` to control how collection notes are associated with note types.
+`typedmark.md` MAY define `note_type_mappings` to control how collection notes are associated with note types.
 
 Example:
 
@@ -178,7 +178,7 @@ Rules:
 
 ### Composition Provenance
 
-`typedmark.yaml` MAY define `composition` to record the systems this collection's structure was composed from. The lineage is both provenance and the reproducible recipe: re-composing the same sources at the same versions reconstructs the same collection. It is also the input the update flow uses to migrate a collection to newer system versions. System composition, its deterministic merge semantics, and the migration flow are defined in [Systems, Composition, and Evolution](systems-composition-evolution.md).
+`typedmark.md` MAY define `composition` to record the systems this collection's structure was composed from. The lineage is both provenance and the reproducible recipe: re-composing the same sources at the same versions reconstructs the same collection. It is also the input the update flow uses to migrate a collection to newer system versions. System composition, its deterministic merge semantics, and the migration flow are defined in [Systems, Composition, and Evolution](systems-composition-evolution.md).
 
 Example:
 
@@ -208,7 +208,7 @@ Rules:
 
 ### Default Property Sets
 
-`typedmark.yaml` MAY define `default_property_sets` to name the property sets that apply to every note type by default. This is how a collection declares shared `frontmatter`, `relationships`, and `headings` without repeating them in each schema.
+`typedmark.md` MAY define `default_property_sets` to name the property sets that apply to every note type by default. This is how a collection declares shared `frontmatter`, `relationships`, and `headings` without repeating them in each schema.
 
 Example:
 
@@ -330,9 +330,9 @@ headings:
 Rules:
 
 - `<metadata_directory>/property-sets/` MAY be omitted when no property sets are defined.
-- Every YAML file directly under `<metadata_directory>/property-sets/` defines one property set.
+- Every Markdown file directly under `<metadata_directory>/property-sets/` defines one property set; its frontmatter is the property set definition, per the governed artifact format in [Foundations](foundations.md).
 - No separate registry file is maintained for property sets.
-- The property set file basename MUST equal the file's `property_set` value.
+- The property set file name without the `.md` extension MUST equal the file's `property_set` value.
 - `property_set` MUST be a non-empty slug.
 - Each property set file MUST physically contain `specification_version`, `property_set`, `description`, and `frontmatter`.
 - A property set MAY also declare `relationships` and `headings`.

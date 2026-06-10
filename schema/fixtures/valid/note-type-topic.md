@@ -1,5 +1,4 @@
-# Valid concrete note-type schema (the topic example from note-type-schemas.md).
-# In a real collection this file lives at <metadata_directory>/schemas/topic.yaml.
+---
 specification_version: 0.0.1
 note_type: topic
 abstract: false
@@ -114,3 +113,7 @@ headings:
 guidance:
   when_to_use: "Use for a durable note about a specific topic."
   when_not_to_use: "Do not use for broad groupings, source material, or dated logs."
+---
+
+Valid concrete note-type schema (the topic example from note-type-schemas.md). In a real collection this file lives at <metadata_directory>/schemas/topic.yaml.
+This body is non-normative documentation; tools ignore it for structural reasoning.

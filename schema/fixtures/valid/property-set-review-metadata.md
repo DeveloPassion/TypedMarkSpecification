@@ -1,5 +1,4 @@
-# Valid property set (the review-metadata example from collection-model.md).
-# In a real collection this file lives at <metadata_directory>/property-sets/review-metadata.yaml.
+---
 specification_version: 0.0.1
 property_set: review-metadata
 description: Reusable review and publication fields.
@@ -75,3 +74,7 @@ headings:
   optional_h2: []
   allow_other_h2: true
   require_order: false
+---
+
+Valid property set (the review-metadata example from collection-model.md). In a real collection this file lives at <metadata_directory>/property-sets/review-metadata.yaml.
+This body is non-normative documentation; tools ignore it for structural reasoning.

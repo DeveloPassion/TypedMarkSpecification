@@ -70,12 +70,8 @@ Rules:
 
 Rules:
 
-- A note has frontmatter when its first line is exactly `---`, ignoring a leading byte-order mark per the YAML baseline in [Foundations](foundations.md).
-- The frontmatter block ends at the next subsequent line that is exactly `---` or `...`.
-- If no closing line exists, the note has no frontmatter.
-- A note has at most one frontmatter block; any later delimiter lines are ordinary body content.
-- The frontmatter block content MUST parse as a YAML mapping under the YAML baseline defined in [Foundations](foundations.md); an empty block is an empty mapping.
-- If the block content parses as a non-mapping YAML document, the note has no valid frontmatter and cannot satisfy the managed note contract.
+- A note's frontmatter block is recognized under the Frontmatter Block Grammar defined in [Foundations](foundations.md).
+- A note whose frontmatter block content parses as a non-mapping YAML document has no valid frontmatter and cannot satisfy the managed note contract.
 
 A managed-note frontmatter field name is the YAML key under which a field definition stores its value. The same field-name rules apply wherever this specification declares field definitions: the `frontmatter` block of a note-type schema, the `frontmatter` block of a property set, and any nested `object.fields` mapping.
 
@@ -555,7 +551,7 @@ Rules:
 
 ## Migrating Managed Notes
 
-When a collection is updated to newer versions of its source systems, the migration plan defined in [Systems, Composition, and Evolution](systems-composition-evolution.md) is applied to managed notes. Each system change operation recorded in `history.yaml` has a defined effect on managed-note frontmatter, defined here. The migration plan determines the order in which these operations are applied; this page defines what each one does to a note.
+When a collection is updated to newer versions of its source systems, the migration plan defined in [Systems, Composition, and Evolution](systems-composition-evolution.md) is applied to managed notes. Each system change operation recorded in `history.md` has a defined effect on managed-note frontmatter, defined here. The migration plan determines the order in which these operations are applied; this page defines what each one does to a note.
 
 Rules:
 

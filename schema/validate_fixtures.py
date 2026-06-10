@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """Validate the TypedMark fixture files against the JSON Schemas.
 
+Fixtures are governed artifacts: Markdown files whose YAML frontmatter is the
+governed content. The frontmatter is extracted per the Frontmatter Block Grammar
+and validated against the matching artifact schema; the body is ignored.
+
 Expectations:
 - every fixture under fixtures/valid/ passes its artifact schema
 - every fixture under fixtures/invalid-shape/ fails its artifact schema
@@ -48,15 +52,27 @@ def schema_for(fixture: Path):
     raise SystemExit(f"cannot map fixture {fixture} to an artifact schema")
 
 
+def extract_frontmatter(text: str):
+    lines = text.splitlines()
+    if not lines or lines[0].lstrip("﻿") != "---":
+        raise SystemExit("fixture has no frontmatter block")
+    for index, line in enumerate(lines[1:], start=1):
+        if line in ("---", "..."):
+            return yaml.safe_load("\n".join(lines[1:index]))
+    raise SystemExit("fixture frontmatter block is not closed")
+
+
 def main() -> int:
     registry = build_registry()
     failures = []
     checked = 0
 
     for bucket, must_pass in (("valid", True), ("invalid-shape", False), ("invalid-semantic", True)):
-        for fixture in sorted((FIXTURE_DIR / bucket).glob("*.yaml")):
+        for fixture in sorted((FIXTURE_DIR / bucket).glob("*.md")):
+            if fixture.name == "README.md":
+                continue
             checked += 1
-            document = yaml.safe_load(fixture.read_text(encoding="utf-8"))
+            document = extract_frontmatter(fixture.read_text(encoding="utf-8"))
             validator = Draft202012Validator(schema_for(fixture), registry=registry)
             errors = sorted(validator.iter_errors(document), key=lambda e: e.json_path)
             passed = not errors

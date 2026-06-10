@@ -1,4 +1,4 @@
-# INVALID SHAPE: "journal" is not an allowed schema kind (singleton | entity | dated_record | rule_set).
+---
 specification_version: 0.0.1
 note_type: journal-entry
 abstract: false
@@ -27,3 +27,7 @@ headings:
 guidance:
   when_to_use: "Use for dated journal entries."
   when_not_to_use: "Do not use for durable topics."
+---
+
+INVALID SHAPE: "journal" is not an allowed schema kind (singleton | entity | dated_record | rule_set).
+This body is non-normative documentation; tools ignore it for structural reasoning.

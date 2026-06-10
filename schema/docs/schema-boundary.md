@@ -13,10 +13,10 @@ specification wins and the schema has a bug.
 
 | Governed artifact | JSON Schema |
 | --- | --- |
-| `typedmark.yaml` | `typedmark.schema.json` |
-| `<metadata_directory>/schemas/<note_type>.yaml` | `note-type.schema.json` |
-| `<metadata_directory>/property-sets/<property_set>.yaml` | `property-set.schema.json` |
-| `<metadata_directory>/history.yaml` | `history.schema.json` |
+| `typedmark.md` | `typedmark.schema.json` |
+| `<metadata_directory>/schemas/<note_type>.md` | `note-type.schema.json` |
+| `<metadata_directory>/property-sets/<property_set>.md` | `property-set.schema.json` |
+| `<metadata_directory>/history.md` | `history.schema.json` |
 | shared blocks (field definitions, storage, relationships, headings, …) | `defs.schema.json` |
 
 Managed notes are deliberately **not** covered: their frontmatter is validated
@@ -84,7 +84,7 @@ Fixtures are mapped to artifact schemas by filename prefix (`typedmark-*`,
 
 ## Recommended validation workflow for implementations
 
-1. parse the governed artifact as YAML
+1. extract the governed artifact's frontmatter per the Frontmatter Block Grammar and parse it as YAML
 2. validate document shape with the matching JSON Schema
 3. build effective models (composition, inheritance, property sets)
 4. run semantic validation against the prose rules

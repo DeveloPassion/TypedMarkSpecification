@@ -1,5 +1,4 @@
-# VALID SHAPE, INVALID SEMANTICS: note_type is "topic", but this file's basename is
-# "note-type-basename-mismatch"; in a real collection the file must be named topic.yaml.
+---
 specification_version: 0.0.1
 note_type: topic
 abstract: false
@@ -28,3 +27,7 @@ headings:
 guidance:
   when_to_use: "Use for a durable note about a specific topic."
   when_not_to_use: "Do not use for dated logs."
+---
+
+VALID SHAPE, INVALID SEMANTICS: note_type is "topic", but this file's basename is "note-type-basename-mismatch"; in a real collection the file must be named topic.yaml.
+This body is non-normative documentation; tools ignore it for structural reasoning.

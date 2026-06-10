@@ -6,7 +6,7 @@ nav_order: 4
 
 # Note Type Schemas
 
-This page is authoritative for note type registration, abstract note types, note-type inheritance through `extends`, the required top-level contract of `<metadata_directory>/schemas/<note_type>.yaml`, the effective note-type schema, optional property-set composition references, schema kinds, and storage rules. Field semantics and managed-note note-type association live in [Managed Notes and Properties](managed-notes-and-properties.md), relationship, heading, and template semantics live in [Relationships, Headings, and Templates](relationships-headings-and-templates.md), and default property sets, property-set definitions, and property-set composition live in [Collection Model](collection-model.md).
+This page is authoritative for note type registration, abstract note types, note-type inheritance through `extends`, the required top-level contract of `<metadata_directory>/schemas/<note_type>.md`, the effective note-type schema, optional property-set composition references, schema kinds, and storage rules. Field semantics and managed-note note-type association live in [Managed Notes and Properties](managed-notes-and-properties.md), relationship, heading, and template semantics live in [Relationships, Headings, and Templates](relationships-headings-and-templates.md), and default property sets, property-set definitions, and property-set composition live in [Collection Model](collection-model.md).
 
 ## Note Type Registry
 
@@ -14,10 +14,10 @@ The note type registry is implicit.
 
 Rules:
 
-- Every YAML file directly under `<metadata_directory>/schemas/` defines one note type.
+- Every Markdown file directly under `<metadata_directory>/schemas/` defines one note type; its frontmatter is the note-type schema, per the governed artifact format in [Foundations](foundations.md).
 - No separate registry file is maintained for note types.
 - A note type MUST NOT be defined in more than one schema file.
-- The schema file basename MUST equal the schema's `note_type` value.
+- The schema file name without the `.md` extension MUST equal the schema's `note_type` value.
 - Every schema file MUST physically declare `abstract`.
 - If `abstract: true`, the schema defines an abstract note type.
 - If `abstract: false`, the schema defines a concrete note type.
@@ -40,7 +40,7 @@ Rules:
 2. If the selected concrete note type declares `extends`, the tool or validator MUST load the full abstract ancestor chain, starting with the farthest abstract ancestor and ending with the selected concrete note type.
 3. The selected concrete note-type schema file provides the direct top-level values for `specification_version`, `note_type`, `abstract`, `label`, `icon`, and `description`.
 4. For `kind`, `storage`, `template`, and `guidance`, note-type inheritance uses whole-key replacement along the abstract ancestor chain. The last schema in that chain order that physically defines one of those keys determines the effective value of that key.
-5. The tool or validator MUST determine which property sets apply to the selected concrete note type by taking the `default_property_sets` declared in `typedmark.yaml`, removing any named in the concrete note type's `exclude_property_sets`, and then appending the property sets named in the concrete note type's `property_sets`, using the composition rules in [Collection Model](collection-model.md).
+5. The tool or validator MUST determine which property sets apply to the selected concrete note type by taking the `default_property_sets` declared in `typedmark.md`, removing any named in the concrete note type's `exclude_property_sets`, and then appending the property sets named in the concrete note type's `property_sets`, using the composition rules in [Collection Model](collection-model.md).
 6. The `frontmatter`, `relationships`, and `headings` blocks contributed by the applied default property sets MUST be applied first, in `default_property_sets` order.
 7. Local `frontmatter`, `relationships`, and `headings` blocks declared by abstract ancestors, if any, MUST be applied next in abstract-ancestor order using the merge rules defined in [Collection Model](collection-model.md).
 8. If `frontmatter_remove` is present on the selected concrete note type, it MUST be applied next to the accumulated inherited frontmatter.
@@ -52,7 +52,7 @@ Rules:
 
 ### Schema File Contract
 
-Each `<metadata_directory>/schemas/<note_type>.yaml` MUST define exactly one note type and MUST follow this shape when it defines a concrete note type:
+Each `<metadata_directory>/schemas/<note_type>.md` MUST define exactly one note type and MUST follow this shape when it defines a concrete note type:
 
 ```yaml
 specification_version: 0.0.1
@@ -228,7 +228,7 @@ Rules:
 - If present, `property_sets` MUST be a non-empty list of unique property set identifiers.
 - `property_sets` is the opt-in part of the single property-set composition mechanism; property sets named in `default_property_sets` apply without being restated here.
 - Property sets MAY contribute `frontmatter`, `relationships`, and `headings`, but they do not make the effective `frontmatter`, `relationships`, or `headings` blocks optional.
-- `exclude_property_sets` opts the concrete note type out of specific default property sets; each named identifier MUST appear in `typedmark.yaml` `default_property_sets`.
+- `exclude_property_sets` opts the concrete note type out of specific default property sets; each named identifier MUST appear in `typedmark.md` `default_property_sets`.
 - `frontmatter_remove` subtracts individual frontmatter fields contributed by applied default property sets or abstract ancestors, before opt-in property sets and local concrete schema definitions are applied.
 - Property-set definitions, default property sets, composition, and merge rules are defined in [Collection Model](collection-model.md).
 - Note-type inheritance is defined only by `extends`; `property_sets`, `exclude_property_sets`, and `frontmatter_remove` do not affect the abstract ancestor chain.
@@ -237,7 +237,7 @@ Rules:
 ### Abstract Inheritance Example
 
 ```yaml
-# <metadata_directory>/schemas/person.yaml
+# <metadata_directory>/schemas/person.md
 specification_version: 0.0.1
 note_type: person
 abstract: true
@@ -283,7 +283,7 @@ guidance:
 ```
 
 ```yaml
-# <metadata_directory>/schemas/customer.yaml
+# <metadata_directory>/schemas/customer.md
 specification_version: 0.0.1
 note_type: customer
 abstract: false

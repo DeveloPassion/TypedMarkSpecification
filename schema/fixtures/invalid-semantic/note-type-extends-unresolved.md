@@ -1,5 +1,4 @@
-# VALID SHAPE, INVALID SEMANTICS: extends must resolve to exactly one abstract note
-# type under <metadata_directory>/schemas/; no person.yaml exists in this fixture set.
+---
 specification_version: 0.0.1
 note_type: customer
 abstract: false
@@ -16,3 +15,7 @@ frontmatter:
   customer_tier:
     type: text
     nullable: false
+---
+
+VALID SHAPE, INVALID SEMANTICS: extends must resolve to exactly one abstract note type under <metadata_directory>/schemas/; no person.yaml exists in this fixture set.
+This body is non-normative documentation; tools ignore it for structural reasoning.
