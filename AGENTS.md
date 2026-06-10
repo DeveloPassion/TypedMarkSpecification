@@ -28,6 +28,16 @@ second page; link to the authoritative page instead.
 Repository scripts are TypeScript run with Bun (`bun install` once, then
 `bun run <script>`); do not add Python or shell scripts.
 
+## Related repositories
+
+- [TypedMarkExample](https://github.com/DeveloPassion/TypedMarkExample) — a
+  concrete system example built on this specification
+- [TypedMark](https://github.com/DeveloPassion/TypedMark) — the tooling,
+  website, and documentation around the specification
+
+This repository holds only the specification and its schema layer; tooling and
+example-system work belongs in those repositories.
+
 ## Hard rule: schemas stay aligned with the specification
 
 The prose specification is the single source of truth. The JSON Schemas under
