@@ -42,7 +42,7 @@ Rules:
 
 ## Relationship Constraints
 
-Each concrete note type's effective schema MUST define `relationships.belongs_to.allowed_note_types` and `relationships.related_to.allowed_note_types`. Each mapping MAY be empty.
+A concrete note type's effective schema MAY define `relationships.belongs_to.allowed_note_types` and `relationships.related_to.allowed_note_types`. Each mapping MAY be empty. An effective schema without a `relationships` block is equivalent to one declaring both mappings empty, as defined in [Note Type Schemas](note-type-schemas.md): no documented relationships and no relationship constraints.
 
 Rules:
 
@@ -86,7 +86,7 @@ Using the `topic` schema example in [Note Type Schemas](note-type-schemas.md), t
 
 ## Heading Rules
 
-Each concrete note type's effective schema MUST define a `headings` block. That block MAY impose no mandatory H2 headings.
+A concrete note type's effective schema MAY define a `headings` block. That block MAY impose no mandatory H2 headings. An effective schema without a `headings` block is equivalent to one declaring `required_h2: []`, `optional_h2: []`, `allow_other_h2: true`, and `require_order: false`, as defined in [Note Type Schemas](note-type-schemas.md): no heading constraints.
 
 Rules:
 

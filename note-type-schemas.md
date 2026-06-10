@@ -181,9 +181,8 @@ Required effective keys for concrete note types:
 - `storage`
 - `template`
 - `frontmatter`
-- `relationships`
-- `headings`
-- `guidance`
+
+`relationships`, `headings`, and `guidance` MAY be absent from a concrete note type's effective schema; an absent block takes the empty defaults defined below.
 
 Rules:
 
@@ -220,14 +219,17 @@ Rules:
 - Frontmatter field names declared in a note-type schema MUST follow the core-defined managed-note field-name rules defined in [Managed Notes and Properties](managed-notes-and-properties.md).
 - The `relationships` block semantics are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - If a schema physically declares `relationships`, it MUST contain both `belongs_to.allowed_note_types` and `related_to.allowed_note_types`, even when those mappings are empty.
+- An effective schema without `relationships` is equivalent to one declaring empty `belongs_to.allowed_note_types` and `related_to.allowed_note_types`: no documented relationships and no relationship constraints.
 - The `headings` block semantics are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - If a schema physically declares `headings`, it MUST follow the heading shape required by [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
+- An effective schema without `headings` is equivalent to one declaring `required_h2: []`, `optional_h2: []`, `allow_other_h2: true`, and `require_order: false`: no heading constraints.
+- An effective schema without `guidance` simply provides no usage guidance; this has no structural effect.
 - `guidance` is human-facing explanatory content and MUST NOT override structural rules.
 - `property_sets`, `exclude_property_sets`, and `frontmatter_remove` MAY each be omitted.
 - Only concrete note types MAY declare `property_sets`, `exclude_property_sets`, or `frontmatter_remove`.
 - If present, `property_sets` MUST be a non-empty list of unique property set identifiers.
 - `property_sets` is the opt-in part of the single property-set composition mechanism; property sets named in `default_property_sets` apply without being restated here.
-- Property sets MAY contribute `frontmatter`, `relationships`, and `headings`, but they do not make the effective `frontmatter`, `relationships`, or `headings` blocks optional.
+- Property sets MAY contribute `frontmatter`, `relationships`, and `headings`; the effective `frontmatter` block remains mandatory.
 - `exclude_property_sets` opts the concrete note type out of specific default property sets; each named identifier MUST appear in `typedmark.md` `default_property_sets`.
 - `frontmatter_remove` subtracts individual frontmatter fields contributed by applied default property sets or abstract ancestors, before opt-in property sets and local concrete schema definitions are applied.
 - Property-set definitions, default property sets, composition, and merge rules are defined in [Collection Model](collection-model.md).
@@ -264,12 +266,6 @@ frontmatter:
     nullable: true
     default_value: null
 
-relationships:
-  belongs_to:
-    allowed_note_types: {}
-  related_to:
-    allowed_note_types: {}
-
 headings:
   required_h2: []
   optional_h2:
@@ -304,7 +300,7 @@ frontmatter:
     nullable: false
 ```
 
-In that example, `customer` inherits `kind`, `template`, `guidance`, `note_type`, `title`, `email`, `relationships`, and `headings` from `person`, while adding its own concrete storage rule and local `customer_tier` field.
+In that example, `customer` inherits `kind`, `template`, `guidance`, `note_type`, `title`, `email`, and `headings` from `person`, while adding its own concrete storage rule and local `customer_tier` field. Because no schema in the chain declares `relationships`, the effective relationships take the empty defaults.
 
 ## Allowed Schema Kinds
 
