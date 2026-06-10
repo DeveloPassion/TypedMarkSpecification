@@ -206,6 +206,27 @@ Rules:
 - Templates under `<metadata_directory>/templates/` are governed artifacts with their own contract: their frontmatter is starter note frontmatter and their body is starter note content, as defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - Examples of governed artifacts in this specification show frontmatter content unless frontmatter delimiters are shown.
 
+A complete minimal `typedmark.md`, showing the governed frontmatter together with a free-form body:
+
+```markdown
+---
+specification_version: 0.0.1
+name: example-knowledge-base
+description: Personal knowledge base.
+metadata_directory: .typedmark
+exclude_paths:
+  - .git/**
+validation_defaults: {}
+---
+
+# Example Knowledge Base
+
+Everything above the closing delimiter is the governed collection
+configuration. This body is free Markdown: use it to explain the
+collection to humans and agents. Tools ignore it for structural
+reasoning and preserve it when they rewrite the frontmatter.
+```
+
 ## Authoritative Artifact Map
 
 A conforming TypedMark collection uses this artifact layout:

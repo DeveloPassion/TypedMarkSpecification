@@ -17,6 +17,12 @@
     "property_set": {
       "$ref": "defs.schema.json#/$defs/slug"
     },
+    "label": {
+      "$ref": "defs.schema.json#/$defs/non_empty_string"
+    },
+    "icon": {
+      "$ref": "defs.schema.json#/$defs/non_empty_string"
+    },
     "description": {
       "$ref": "defs.schema.json#/$defs/non_empty_string"
     },

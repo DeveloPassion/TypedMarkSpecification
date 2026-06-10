@@ -931,8 +931,12 @@
       "additionalProperties": false
     },
     "guidance_block": {
-      "$comment": "The guidance block shape is not yet fully pinned by the specification (see issue #104); when_to_use and when_not_to_use are the documented keys.",
+      "$comment": "Closed shape; undeclared keys are evaluated under unknown_field.",
       "type": "object",
+      "required": [
+        "when_to_use",
+        "when_not_to_use"
+      ],
       "properties": {
         "when_to_use": {
           "$ref": "#/$defs/non_empty_string"
@@ -941,7 +945,7 @@
           "$ref": "#/$defs/non_empty_string"
         }
       },
-      "additionalProperties": true
+      "additionalProperties": false
     }
   }
 }

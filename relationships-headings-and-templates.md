@@ -50,7 +50,7 @@ Rules:
 - `relationships.related_to.allowed_note_types` declares the documented `related_to` target note types for the source note type.
 - Constraints are declared per target note type.
 - If a schema file physically declares `relationships`, it MUST define both `relationships.belongs_to.allowed_note_types` and `relationships.related_to.allowed_note_types`.
-- Every referenced target note type MUST be a concrete note type defined in the same system.
+- Every referenced target note type MUST be a concrete note type defined in the same collection.
 - Within a single relationship kind, a target note type identifier MUST appear at most once.
 - The target note type sets for `belongs_to` and `related_to` MUST be disjoint for a given source note type.
 - Each target note type MAY declare `min` and `max`.

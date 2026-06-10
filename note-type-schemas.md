@@ -225,6 +225,9 @@ Rules:
 - An effective schema without `headings` is equivalent to one declaring `required_h2: []`, `optional_h2: []`, `allow_other_h2: true`, and `require_order: false`: no heading constraints.
 - An effective schema without `guidance` simply provides no usage guidance; this has no structural effect.
 - `guidance` is human-facing explanatory content and MUST NOT override structural rules.
+- If a schema physically declares `guidance`, it MUST be a mapping that physically contains `when_to_use` and `when_not_to_use`.
+- `guidance.when_to_use` and `guidance.when_not_to_use` MUST be non-empty strings.
+- This specification version defines no other `guidance` keys; an undeclared key inside `guidance` is evaluated under `unknown_field`.
 - `unknown_field` MAY be declared on a note-type schema to override the collection's `validation_defaults.unknown_field` severity for managed notes of that type.
 - If present, `unknown_field` MUST be one of the validation severities `error`, `warn`, `info`, or `off`.
 - The effective `unknown_field` severity for a managed note is its note type's effective `unknown_field` value when declared, and the collection's `validation_defaults.unknown_field` value otherwise.

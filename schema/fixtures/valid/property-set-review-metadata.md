@@ -1,6 +1,8 @@
 ---
 specification_version: 0.0.1
 property_set: review-metadata
+label: Review Metadata
+icon: badge
 description: Reusable review and publication fields.
 frontmatter:
   note_type:

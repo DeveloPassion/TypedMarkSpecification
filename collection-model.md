@@ -335,6 +335,8 @@ Rules:
 - The property set file name without the `.md` extension MUST equal the file's `property_set` value.
 - `property_set` MUST be a non-empty slug.
 - Each property set file MUST physically contain `specification_version`, `property_set`, `description`, and `frontmatter`.
+- A property set MAY declare `label` and `icon`; if present, each MUST be a non-empty string.
+- `label` is the human-facing display name of the property set and `icon` is an opaque presentation token, with the same semantics as the note-type schema `label` and `icon` defined in [Note Type Schemas](note-type-schemas.md).
 - A property set MAY also declare `relationships` and `headings`.
 - `frontmatter` in a property set MUST be a field-definition mapping, even when it is empty.
 - The semantics of frontmatter field definitions in property sets, including flat human-facing field metadata such as `label`, `description`, and `icon`, are the same as in note-type schemas.
