@@ -16,6 +16,7 @@ Authoritative for:
 
 See also:
 
+- [Foundations](foundations.md): the shared expression language, parsing baselines, and string comparison
 - [Managed Notes and Properties](managed-notes-and-properties.md): the managed note contract, field names, core-defined fields, materialization, and optionality
 - [Note Links](note-links.md): the link forms and resolution used by `format: note_link` fields
 - [Collection Model](collection-model.md): property sets and vocabularies
@@ -149,7 +150,7 @@ Generation behavior rules:
 
 ### `computed`
 
-`computed` defines a stored text field whose value is derived from sibling frontmatter fields instead of being authored directly. Unlike `generated`, it is not about value origination from time, randomness, identity, or tool-specific automation; it is the single schema-defined mechanism for sibling-field derivation in this specification version. Its syntax is intentionally close to JavaScript template interpolation, but it is not full JavaScript.
+`computed` defines a stored text field whose value is derived from sibling frontmatter fields instead of being authored directly. Unlike `generated`, it is not about value origination from time, randomness, identity, or tool-specific automation; it is the single schema-defined mechanism for sibling-field derivation in this specification version. It uses the shared text-template expression context defined in [Foundations](foundations.md).
 
 Example:
 
@@ -169,7 +170,7 @@ full_name:
 Rules:
 
 - `FDR-218` `computed` MAY be omitted.
-- `FDR-219` If present, `computed` MUST be a non-empty string.
+- `FDR-219` If present, `computed` MUST be a non-empty string in the shared text-template expression context defined in [Foundations](foundations.md).
 - `FDR-220` `computed` MAY be declared only on top-level frontmatter fields.
 - `FDR-221` `computed` is the single schema-defined mechanism for deriving a field value from sibling fields of the same managed note.
 - `FDR-222` `generated` and `computed` are distinct: `generated` covers value origination without sibling-field inputs; `computed` covers sibling-field derivation.
@@ -177,19 +178,18 @@ Rules:
 - `FDR-224` A field declaring `computed` MUST NOT declare `generated`, `default_value`, `const_value`, or `value_from_schema`; the computed expression is the field's materialization behavior.
 - `FDR-225` A field declaring `computed` MUST NOT declare `immutable: true`, because its stored value is recomputed from its dependencies.
 - `FDR-226` `computed` does not make a field virtual. Computed fields still follow the same type validation, optionality, stored-frontmatter, and canonical materialization rules as other declared fields.
-- `FDR-227` A computed expression is a template string composed of literal text plus zero or more placeholders of the form `${field_name}` or `${transform(field_name)}`.
-- `FDR-228` `field_name` in a computed placeholder MUST refer to a sibling top-level field declared in the same effective `frontmatter`, and MUST NOT refer to the declaring field itself or to a field that itself declares `computed`.
-- `FDR-229` Every field referenced by a computed placeholder MUST declare `type: text`.
-- `FDR-230` The supported transform names in this specification version are `uppercase`, `lowercase`, and `capitalize`.
-- `FDR-231` `uppercase(field_name)` and `lowercase(field_name)` each take exactly one field reference argument and return the referenced string converted to uppercase or lowercase respectively.
-- `FDR-232` `capitalize(field_name)` takes exactly one field reference argument and returns the referenced string with its first code point converted to uppercase and its remaining code points converted to lowercase; the empty string remains empty.
-- `FDR-233` A computed expression is evaluated against the managed note's materialized sibling-field values after non-computed defaults, schema-derived values, and generation strategies have been applied.
-- `FDR-234` Every referenced field MUST hold a concrete non-null string when the computed expression is evaluated; otherwise the computed field has no conforming value and MUST be reported as `invalid_field_value`.
-- `FDR-235` Tools that create, scaffold, import, normalize, or otherwise write managed-note frontmatter MUST evaluate every computed expression and store the resulting value before writing the note.
-- `FDR-236` A stored computed value MUST equal the result of its expression; a mismatch is an `invalid_field_value` failure.
-- `FDR-237` The computed result MUST satisfy the field's declared constraints; a schema MUST NOT combine `computed` with constraints its expression cannot satisfy.
-- `FDR-238` This specification version defines no other placeholder forms, operators, functions, methods, dot access, bracket access, list indexing, conditionals, or date arithmetic inside `computed`.
-- `FDR-239` A syntactically invalid computed expression, an unresolved field reference, or an unknown transform name makes the declaring artifact invalid.
+- `FDR-227` For `computed`, the shared expression-language scope is the managed note's sibling top-level fields in the effective `frontmatter`.
+- `FDR-228` Every reference name used by a `computed` expression MUST resolve to a sibling top-level field declared in the same effective `frontmatter`, and MUST NOT resolve to the declaring field itself or to a field that itself declares `computed`.
+- `FDR-229` Every field referenced by a `computed` expression MUST declare `type: text`.
+- `FDR-230` `computed` uses the shared expression-language syntax and shared transform semantics defined in [Foundations](foundations.md); it defines no local syntax extensions.
+- `FDR-231` A `computed` expression is evaluated against the managed note's materialized sibling-field values after non-computed defaults, schema-derived values, and generation strategies have been applied.
+- `FDR-232` Every referenced field MUST hold a concrete non-null string when the `computed` expression is evaluated; otherwise the computed field has no conforming value and MUST be reported as `invalid_field_value`.
+- `FDR-233` Tools that create, scaffold, import, normalize, or otherwise write managed-note frontmatter MUST evaluate every `computed` expression and store the resulting value before writing the note.
+- `FDR-234` A stored computed value MUST equal the result of its `computed` expression; a mismatch is an `invalid_field_value` failure.
+- `FDR-235` The computed result MUST satisfy the field's declared constraints; a schema MUST NOT combine `computed` with constraints its expression cannot satisfy.
+- `FDR-236` `computed` MUST NOT depend on the note body, resolved note links, query results, collection-global state, or any data outside the sibling-field scope defined above.
+- `FDR-237` A `computed` field whose stored value disagrees with its evaluated expression is a note-level `invalid_field_value` failure, not a schema-shape failure.
+- `FDR-238` A syntactically invalid shared expression, an unresolved sibling-field reference, a type-incompatible reference, or an unknown transform name makes the declaring artifact invalid.
 
 ### `unique`
 

@@ -56,9 +56,9 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
   the required effective keys for concrete note types
 - value semantics: `default_value`/`const_value`/`allowed_values` conformance to
   the declared type, `min <= max`, regex dialect, storage placeholder resolution,
-  generation-strategy value production, and computed-expression template syntax,
-  reference resolution, transform validity, null handling, and stored-value
-  agreement (all tool / validator-time behaviors)
+  generation-strategy value production, shared expression-language syntax,
+  consumer-specific reference resolution, transform validity, null handling, and
+  stored-value agreement (all tool / validator-time behaviors)
 - managed-note conformance: note-type association, canonical field
   materialization, note-link syntax and resolution, allowed unresolved
   placeholder links, relationship instance counting and cardinality, heading

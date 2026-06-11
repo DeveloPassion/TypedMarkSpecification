@@ -71,7 +71,7 @@ Recommended implementation order:
 1. create `typedmark.md` and decide note-type mappings, validation defaults, and default property sets using [Collection Model](collection-model.md)
 2. create any reusable property sets and the initial abstract and concrete note type schemas using [Collection Model](collection-model.md) and [Note Type Schemas](note-type-schemas.md)
 3. create canonical templates and heading and relationship rules using [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
-4. implement managed note parsing, field materialization, and note-link resolution using [Managed Notes and Properties](managed-notes-and-properties.md), [Field Definition Reference](field-definition-reference.md), and [Note Links](note-links.md)
+4. implement managed note parsing, field materialization, shared-expression evaluation, and note-link resolution using [Managed Notes and Properties](managed-notes-and-properties.md), [Field Definition Reference](field-definition-reference.md), [Foundations](foundations.md), and [Note Links](note-links.md)
 5. populate the system fields in `typedmark.md`, and add a `<metadata_directory>/history.md` change log, if you are packaging a reusable, versioned system, using [Systems, Composition, and Evolution](systems-composition-evolution.md)
 6. add a validator and importer that evaluate the conformance modes defined on this page
 7. implement deterministic system composition that materializes a self-contained collection and records its lineage in `typedmark.md` `composition`, using [Systems, Composition, and Evolution](systems-composition-evolution.md)

@@ -12,7 +12,7 @@ Audience: everyone — start here after the [Manifesto](manifesto.md).
 Authoritative for:
 
 - the core concepts and the vocabulary the other pages build on
-- specification versioning, parsing and matching baselines, and string comparison
+- specification versioning, parsing and matching baselines, the shared expression language, and string comparison
 - the governed artifact format, the artifact map, and structural precedence
 
 ## Core Concepts
@@ -295,3 +295,32 @@ Rules:
 - `FND-55` The system fields of `typedmark.md` govern system identity, packaging, publishing, composition, and import semantics; they do not override the note-structure rules defined by the structural fields of `typedmark.md` and note-type schemas.
 - `FND-56` `<metadata_directory>/history.md` governs the system's change history and the migration of collections to newer versions; it does not override the live note-structure rules defined by `typedmark.md` and note-type schemas.
 - `FND-57` A collection's composition provenance in `typedmark.md` records how the collection was built but does not override any governed artifact physically present under the metadata directory.
+
+## Shared Expression Language
+
+Several governed surfaces need to derive values from structured data. Rather than defining separate mini-languages for each feature, TypedMark defines one shared expression language and lets each consumer define its own input scope, required result type, and evaluation timing.
+
+Example:
+
+```yaml
+computed: '${capitalize(note_type)}: ${title}'
+```
+
+Rules:
+
+- `FND-58` TypedMark defines one shared expression language. A governed surface uses it only when another rule explicitly says so.
+- `FND-59` This specification version defines exactly one shared expression context: the text-template context.
+- `FND-60` A text-template expression is a string composed of literal text plus zero or more placeholders.
+- `FND-61` A placeholder has the form `${name}` or `${transform(name)}`.
+- `FND-62` `name` and `transform` in the shared expression language MUST each match the field-name grammar `^[a-z][a-z0-9_]*$`.
+- `FND-63` The shared expression parser operates on the decoded string value after YAML parsing. Within that string, `\\` represents a literal backslash and `\${` represents a literal `${`; any other backslash escape is invalid.
+- `FND-64` Shared-expression evaluation MUST be deterministic and side-effect free.
+- `FND-65` Shared expressions MUST NOT read the current time, random sources, the filesystem, the network, or any state outside the consumer-defined input scope.
+- `FND-66` The shared transform library in this specification version contains exactly `uppercase`, `lowercase`, and `capitalize`.
+- `FND-67` `uppercase(name)` and `lowercase(name)` each take exactly one reference-name argument and return the referenced string converted to uppercase or lowercase respectively, using locale-independent Unicode case mapping.
+- `FND-68` `capitalize(name)` takes exactly one reference-name argument and returns the referenced string with its first Unicode code point converted to uppercase and its remaining code points converted to lowercase; the empty string remains empty.
+- `FND-69` This specification version defines no other placeholder forms, no nested transform calls, and no transform arguments other than one reference name.
+- `FND-70` This specification version defines no dot access, bracket access, arithmetic, comparisons, boolean operators, conditionals, list indexing, link traversal, regex operators, or date arithmetic in the shared expression language.
+- `FND-71` Every consumer of the shared expression language MUST define the expression's available reference names, required result type, evaluation timing, and how absent or null input values are handled.
+- `FND-72` A consumer MAY narrow the shared language's available reference names or result types, but it MUST NOT redefine the shared syntax or transform semantics.
+- `FND-73` A syntactically invalid shared expression or an unknown transform name makes the declaring artifact invalid.
