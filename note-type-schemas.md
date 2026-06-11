@@ -146,6 +146,13 @@ frontmatter:
     optional: true
     nullable: true
     default_value: ""
+  display_title:
+    label: Display Title
+    description: Derived label used in references and previews.
+    icon: text
+    type: text
+    computed: '${capitalize(note_type)}: ${title}'
+    nullable: false
 
 relationships:
   belongs_to:

@@ -124,7 +124,7 @@
       ]
     },
     "field_definition": {
-      "$comment": "One frontmatter field definition. Semantic rules not enforced here: default_value/const_value/allowed_values conformance to the declared type, min <= max, and regex dialect. unique and relationship_kind are only valid on top-level frontmatter fields; use nested_field_definition or list_items_field_definition for nested positions.",
+      "$comment": "One frontmatter field definition. Semantic rules not enforced here: default_value/const_value/allowed_values conformance to the declared type, min <= max, regex dialect, and computed-expression validity. unique, relationship_kind, and computed are only valid on top-level frontmatter fields; use nested_field_definition or list_items_field_definition for nested positions.",
       "type": "object",
       "required": [
         "type"
@@ -207,6 +207,9 @@
               "additionalProperties": false
             }
           ]
+        },
+        "computed": {
+          "$ref": "#/$defs/non_empty_string"
         },
         "unique": {
           "anyOf": [
@@ -819,6 +822,48 @@
           }
         },
         {
+          "$comment": "computed is valid only for top-level text fields and excludes generation/defaulting mechanisms",
+          "if": {
+            "required": [
+              "computed"
+            ]
+          },
+          "then": {
+            "properties": {
+              "type": {
+                "const": "text"
+              },
+              "immutable": {
+                "const": false
+              }
+            },
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "generated"
+                  ]
+                },
+                {
+                  "required": [
+                    "default_value"
+                  ]
+                },
+                {
+                  "required": [
+                    "const_value"
+                  ]
+                },
+                {
+                  "required": [
+                    "value_from_schema"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
           "$comment": "a generation strategy excludes default_value, const_value and value_from_schema",
           "if": {
             "properties": {
@@ -877,19 +922,7 @@
       ]
     },
     "nested_field_definition": {
-      "$comment": "Field definition in a nested position (inside object.fields): unique and relationship_kind are top-level-only.",
-      "allOf": [
-        {
-          "$ref": "#/$defs/field_definition"
-        }
-      ],
-      "properties": {
-        "unique": false,
-        "relationship_kind": false
-      }
-    },
-    "list_items_field_definition": {
-      "$comment": "Field definition for list.items: anonymous list elements are not materialized independently, so default_value, nullable, and immutable are forbidden, and unique/relationship_kind are top-level-only. generated on items must remain a boolean.",
+      "$comment": "Field definition in a nested position (inside object.fields): unique, relationship_kind, and computed are top-level-only.",
       "allOf": [
         {
           "$ref": "#/$defs/field_definition"
@@ -898,6 +931,20 @@
       "properties": {
         "unique": false,
         "relationship_kind": false,
+        "computed": false
+      }
+    },
+    "list_items_field_definition": {
+      "$comment": "Field definition for list.items: anonymous list elements are not materialized independently, so default_value, nullable, and immutable are forbidden, and unique/relationship_kind/computed are top-level-only. generated on items must remain a boolean.",
+      "allOf": [
+        {
+          "$ref": "#/$defs/field_definition"
+        }
+      ],
+      "properties": {
+        "unique": false,
+        "relationship_kind": false,
+        "computed": false,
         "default_value": false,
         "nullable": false,
         "immutable": false,

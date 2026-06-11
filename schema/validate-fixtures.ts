@@ -74,7 +74,7 @@ function validatorFor(
 }
 
 function extractFrontmatter(text: string): unknown {
-  const lines = text.split("\n");
+  const lines = text.split(/\r?\n/);
   if (lines[0]?.replace(/^﻿/, "") !== "---") {
     throw new Error("fixture has no frontmatter block");
   }
@@ -100,7 +100,7 @@ function classify(document: unknown): string | null {
 /** Extract fenced yaml/json/markdown example blocks from a spec page. */
 function extractExamples(text: string): Array<{ lang: string; body: string }> {
   const blocks: Array<{ lang: string; body: string }> = [];
-  const fence = /^```(yaml|json|markdown)\n([\s\S]*?)^```$/gm;
+  const fence = /^```(yaml|json|markdown)\r?\n([\s\S]*?)^```\r?$/gm;
   let match: RegExpExecArray | null;
   while ((match = fence.exec(text)) !== null) {
     blocks.push({ lang: match[1]!, body: match[2]! });

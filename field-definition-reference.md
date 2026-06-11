@@ -7,6 +7,8 @@ audience: essentials
 
 # Field Definition Reference
 
+Audience: collection authors.
+
 Authoritative for:
 
 - frontmatter property types
@@ -20,7 +22,7 @@ See also:
 
 ## Frontmatter Property Types
 
-Every field definition is a YAML mapping. Every field definition MUST declare `type`, and it MAY declare additional field-definition properties such as `label`, `description`, `icon`, `format`, `generated`, `unique`, `deprecated`, `immutable`, `optional`, `nullable`, `default_value`, `validate_exists`, `not_empty`, `not_blank`, `regex`, `min`, `max`, and `allowed_values`.
+Every field definition is a YAML mapping. Every field definition MUST declare `type`, and it MAY declare additional field-definition properties such as `label`, `description`, `icon`, `format`, `generated`, `computed`, `unique`, `deprecated`, `immutable`, `optional`, `nullable`, `default_value`, `validate_exists`, `not_empty`, `not_blank`, `regex`, `min`, `max`, and `allowed_values`.
 
 ## Field Definition Property Reference
 
@@ -127,7 +129,7 @@ Rules:
 - `FDR-64` A field declaring a generation strategy MUST NOT declare `default_value`, `const_value`, or `value_from_schema`; the strategy is the field's defaulting behavior.
 - `FDR-65` A generated value MUST satisfy the field's declared type and constraints; a schema MUST NOT combine a strategy with constraints the strategy's values cannot satisfy.
 - `FDR-66` `items` MUST NOT declare a generation strategy, because anonymous list elements are not materialized independently; `generated` on `items` MUST be a boolean.
-- `FDR-67` Deriving a value from other fields is not a generation strategy; this specification version defines no derivation mechanism on `generated`.
+- `FDR-67` Deriving a value from other fields is not a generation strategy on `generated`; sibling-field derivation uses `computed`, defined below.
 
 Supported generation strategies:
 
@@ -144,6 +146,50 @@ Generation behavior rules:
 - `FDR-75` Generation alone guarantees no uniqueness: random values MAY collide and hard deletion MAY free sequence values. When the field also declares `unique`, the tool MUST verify the generated value against the field's uniqueness scope and regenerate on collision.
 - `FDR-76` A note authored without a tool MAY lack generated values; the field's normal optionality and nullability rules decide whether the note conforms, and a tool that later normalizes the note MUST generate the missing values of once-produced strategies.
 - `FDR-77` The once-produced strategies pair naturally with `immutable: true` when manual edits should be prevented as well.
+
+### `computed`
+
+`computed` defines a stored text field whose value is derived from sibling frontmatter fields instead of being authored directly. Unlike `generated`, it is not about value origination from time, randomness, identity, or tool-specific automation; it is the single schema-defined mechanism for sibling-field derivation in this specification version. Its syntax is intentionally close to JavaScript template interpolation, but it is not full JavaScript.
+
+Example:
+
+```yaml
+first_name:
+  type: text
+  nullable: false
+last_name:
+  type: text
+  nullable: false
+full_name:
+  type: text
+  computed: '${capitalize(first_name)} ${capitalize(last_name)}'
+  nullable: false
+```
+
+Rules:
+
+- `FDR-218` `computed` MAY be omitted.
+- `FDR-219` If present, `computed` MUST be a non-empty string.
+- `FDR-220` `computed` MAY be declared only on top-level frontmatter fields.
+- `FDR-221` `computed` is the single schema-defined mechanism for deriving a field value from sibling fields of the same managed note.
+- `FDR-222` `generated` and `computed` are distinct: `generated` covers value origination without sibling-field inputs; `computed` covers sibling-field derivation.
+- `FDR-223` A field declaring `computed` MUST declare `type: text`.
+- `FDR-224` A field declaring `computed` MUST NOT declare `generated`, `default_value`, `const_value`, or `value_from_schema`; the computed expression is the field's materialization behavior.
+- `FDR-225` A field declaring `computed` MUST NOT declare `immutable: true`, because its stored value is recomputed from its dependencies.
+- `FDR-226` `computed` does not make a field virtual. Computed fields still follow the same type validation, optionality, stored-frontmatter, and canonical materialization rules as other declared fields.
+- `FDR-227` A computed expression is a template string composed of literal text plus zero or more placeholders of the form `${field_name}` or `${transform(field_name)}`.
+- `FDR-228` `field_name` in a computed placeholder MUST refer to a sibling top-level field declared in the same effective `frontmatter`, and MUST NOT refer to the declaring field itself or to a field that itself declares `computed`.
+- `FDR-229` Every field referenced by a computed placeholder MUST declare `type: text`.
+- `FDR-230` The supported transform names in this specification version are `uppercase`, `lowercase`, and `capitalize`.
+- `FDR-231` `uppercase(field_name)` and `lowercase(field_name)` each take exactly one field reference argument and return the referenced string converted to uppercase or lowercase respectively.
+- `FDR-232` `capitalize(field_name)` takes exactly one field reference argument and returns the referenced string with its first code point converted to uppercase and its remaining code points converted to lowercase; the empty string remains empty.
+- `FDR-233` A computed expression is evaluated against the managed note's materialized sibling-field values after non-computed defaults, schema-derived values, and generation strategies have been applied.
+- `FDR-234` Every referenced field MUST hold a concrete non-null string when the computed expression is evaluated; otherwise the computed field has no conforming value and MUST be reported as `invalid_field_value`.
+- `FDR-235` Tools that create, scaffold, import, normalize, or otherwise write managed-note frontmatter MUST evaluate every computed expression and store the resulting value before writing the note.
+- `FDR-236` A stored computed value MUST equal the result of its expression; a mismatch is an `invalid_field_value` failure.
+- `FDR-237` The computed result MUST satisfy the field's declared constraints; a schema MUST NOT combine `computed` with constraints its expression cannot satisfy.
+- `FDR-238` This specification version defines no other placeholder forms, operators, functions, methods, dot access, bracket access, list indexing, conditionals, or date arithmetic inside `computed`.
+- `FDR-239` A syntactically invalid computed expression, an unresolved field reference, or an unknown transform name makes the declaring artifact invalid.
 
 ### `unique`
 

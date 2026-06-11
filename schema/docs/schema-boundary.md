@@ -34,9 +34,10 @@ express them.
 - local conditional rules: `type: list` requires `items`, `type: link`/`time`
   require a matching `format`, `const_value`/`value_from_schema` exclusivity,
   per-type constraint applicability (`not_blank`, `regex`, `min`/`max`,
-  `allowed_values`, `unique`), abstract types not declaring composition
-  references, archive-policy-dependent required keys, `version` requiring
-  `scaffold`, field operations declaring exactly one of `note_type`/`property_set`
+  `allowed_values`, `unique`, `computed`), abstract types not declaring
+  composition references, archive-policy-dependent required keys, `version`
+  requiring `scaffold`, field operations declaring exactly one of
+  `note_type`/`property_set`
 - the core-defined field contracts for `note_type`, `id`, `deleted`, and
   `archived` where schemas or property sets declare them
 
@@ -55,7 +56,9 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
   the required effective keys for concrete note types
 - value semantics: `default_value`/`const_value`/`allowed_values` conformance to
   the declared type, `min <= max`, regex dialect, storage placeholder resolution,
-  and generation-strategy value production (a tool write-time behavior)
+  generation-strategy value production, and computed-expression template syntax,
+  reference resolution, transform validity, null handling, and stored-value
+  agreement (all tool / validator-time behaviors)
 - managed-note conformance: note-type association, canonical field
   materialization, note-link syntax and resolution, allowed unresolved
   placeholder links, relationship instance counting and cardinality, heading

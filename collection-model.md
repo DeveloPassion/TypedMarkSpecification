@@ -171,7 +171,7 @@ Rules:
 - `CM-74` After a mapping rule wins for a note, later mapping rules MUST NOT be used as fallback for that note.
 - `CM-75` Note-type mapping is evaluated before schema selection, property-set composition, note-type inheritance, field defaulting, field materialization, relationship derivation, or template comparison.
 - `CM-76` Mapping rules MAY inspect only the collection-relative note path and the stored frontmatter physically present in the note file.
-- `CM-77` Mapping rules MUST NOT depend on the effective note-type schema, generated field values, or template content.
+- `CM-77` Mapping rules MUST NOT depend on the effective note-type schema, generated field values, computed field values, or template content.
 - `CM-78` `kind: frontmatter_field` MUST physically contain `field`.
 - `CM-79` In this specification version, the only supported `field` value is `note_type`.
 - `CM-80` A `kind: frontmatter_field` rule matches when the named field is physically present in stored frontmatter.
