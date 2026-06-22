@@ -7,10 +7,7 @@
   "required": [
     "specification_version",
     "name",
-    "description",
-    "metadata_directory",
-    "exclude_paths",
-    "validation_defaults"
+    "description"
   ],
   "dependentRequired": {
     "version": [
@@ -39,6 +36,7 @@
     },
     "metadata_directory": {
       "type": "string",
+      "default": ".typedmark",
       "minLength": 1,
       "pattern": "^[^/\\\\]+$",
       "not": {
@@ -50,6 +48,9 @@
     },
     "exclude_paths": {
       "type": "array",
+      "default": [
+        ".git/**"
+      ],
       "items": {
         "$ref": "defs.schema.json#/$defs/non_empty_string"
       }
@@ -98,6 +99,7 @@
     },
     "validation_defaults": {
       "type": "object",
+      "default": {},
       "properties": {
         "path": {
           "$ref": "defs.schema.json#/$defs/validation_severity"

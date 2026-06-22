@@ -14,6 +14,7 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | Term | Meaning | Defined in |
 | --- | --- | --- |
 | Collection | A rooted set of Markdown notes plus the TypedMark artifacts that structure them | [Foundations](foundations.md#collection) |
+| Core Profile | The minimal authoring profile for a conforming typed collection | [Foundations](foundations.md#authoring-profiles-and-canonical-expansion) |
 | Governed artifact | `typedmark.md`, a note-type schema, a property set, or `history.md` — Markdown files whose frontmatter is the contract | [Foundations](foundations.md#governed-artifact-format) |
 | Note type | A named structural class notes are associated with; abstract or concrete | [Foundations](foundations.md#note-types) |
 | Managed note | A note associated with exactly one concrete note type and governed by its schema | [Managed Notes and Properties](managed-notes-and-properties.md) |
@@ -33,6 +34,7 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 
 | I want to… | Use | Defined in |
 | --- | --- | --- |
+| start with the smallest conforming setup | Core Profile defaults in `typedmark.md` and note-type schemas | [Conformance](conformance-and-roadmap.md#conformance) |
 | require a field to always hold a value | `optional: false` with `nullable: false` | [Field optionality](managed-notes-and-properties.md#field-optionality) |
 | require a field only in some states | `conditions` with `require` / `require_null` | [Conditional constraints](note-type-schemas.md#conditional-field-constraints) |
 | restrict a field to fixed values | `allowed_values`, or `allowed_values_from` with a vocabulary | [Field Definition Reference](field-definition-reference.md#allowed_values) |

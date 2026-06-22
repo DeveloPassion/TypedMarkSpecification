@@ -9,7 +9,7 @@ permalink: /
 
 TypedMark is an open specification for typed Markdown note systems.
 
-New here? Read the [Manifesto](manifesto.md) for the why, then follow [Getting Started](getting-started.md) to build your first typed collection in five minutes. The [Quick Reference](quick-reference.md) maps terms and everyday tasks to the rules that govern them.
+New here? Read the [Manifesto](manifesto.md) for the why, then follow [Getting Started](getting-started.md) to build your first Core Profile collection in five minutes. The [Quick Reference](quick-reference.md) maps terms and everyday tasks to the rules that govern them.
 
 ## The Pages
 
@@ -29,25 +29,30 @@ New here? Read the [Manifesto](manifesto.md) for the why, then follow [Getting S
 
 ## Reading Paths
 
-**Essentials** — enough to build and maintain a typed collection:
+**Core Profile** — the shortest conforming path:
 
 1. [Manifesto](manifesto.md)
 2. [Getting Started](getting-started.md)
 3. [Foundations](foundations.md)
-4. [Collection Model](collection-model.md)
-5. [Note Type Schemas](note-type-schemas.md)
+4. [Collection Model](collection-model.md) for `typedmark.md` identity and defaults
+5. [Note Type Schemas](note-type-schemas.md) for one concrete note type and the effective schema
 6. [Managed Notes and Properties](managed-notes-and-properties.md), with the [Field Definition Reference](field-definition-reference.md) at hand
-7. [Note Links](note-links.md) and [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
+7. [Note Links](note-links.md) and [Relationships, Headings, and Templates](relationships-headings-and-templates.md) when the collection needs links, headings, or template checks
+
+**Essentials plus reuse** — for larger personal or team collections:
+
+8. [Collection Model](collection-model.md) sections on property sets, vocabularies, and advanced note-type mappings
+9. [Note Type Schemas](note-type-schemas.md) sections on abstract inheritance, conditions, counts, and storage variations
 
 **Advanced** — for publishing, composing, and migrating systems:
 
-8. [Systems, Composition, and Evolution](systems-composition-evolution.md)
-9. [Migration Effects](migration-effects.md)
+10. [Systems, Composition, and Evolution](systems-composition-evolution.md)
+11. [Migration Effects](migration-effects.md)
 
 **Tool authors** — for implementing validators, importers, and editors:
 
-10. [Conformance and Roadmap](conformance-and-roadmap.md)
-11. The parsing and matching baselines in [Foundations](foundations.md) and the [machine-readable schemas](https://github.com/DeveloPassion/TypedMarkSpecification/tree/main/schema)
+12. [Conformance and Roadmap](conformance-and-roadmap.md)
+13. The parsing and matching baselines in [Foundations](foundations.md) and the [machine-readable schemas](https://github.com/DeveloPassion/TypedMarkSpecification/tree/main/schema)
 
 ## Machine-Readable Schemas
 

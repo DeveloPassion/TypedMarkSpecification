@@ -33,6 +33,14 @@ This specification defines the structural contract for typed Markdown note colle
 
 Conformance evaluates a collection root, represented on disk as a directory tree, against the authoritative artifact contracts defined in [Collection Model](collection-model.md), [Systems, Composition, and Evolution](systems-composition-evolution.md), [Note Type Schemas](note-type-schemas.md), [Managed Notes and Properties](managed-notes-and-properties.md), and [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 
+Conformance modes:
+
+| Mode | Audience | Minimum artifact set | Advanced features required |
+| --- | --- | --- | --- |
+| Core Profile instantiated collection | collection authors | `typedmark.md`, at least one concrete schema, referenced or defaulted templates, and managed notes | none |
+| Valid instantiated collection | collection authors and tools | all artifacts used by the collection, including optional reuse and composition metadata when present | only the features physically used |
+| Valid system definition | system publishers | collection model plus system fields, scaffold, schemas, templates, and optional history | publishing, composition, and migration support |
+
 ### Valid System Definition
 
 A collection root conforms as a valid system definition when:
@@ -63,17 +71,20 @@ Additional rules:
 - `CR-16` A single collection root MAY conform simultaneously as both a valid system definition and a valid instantiated collection.
 - `CR-17` Untyped notes MAY exist in an instantiated collection and do not by themselves make the collection non-conforming.
 - `CR-18` Structural precedence across artifacts remains defined in [Foundations](foundations.md).
+- `CR-19` A Core Profile instantiated collection is a valid instantiated collection that omits system fields, composition provenance, `history.md`, property sets, vocabularies, and non-default note-type mappings.
+- `CR-20` Validators MUST apply the defaulted shorthand values defined in [Collection Model](collection-model.md) and [Note Type Schemas](note-type-schemas.md) before evaluating any conformance mode.
 
 ## Recommended Next Steps
 
 Recommended implementation order:
 
-1. create `typedmark.md` and decide note-type mappings, validation defaults, and default property sets using [Collection Model](collection-model.md)
-2. create any reusable property sets and the initial abstract and concrete note type schemas using [Collection Model](collection-model.md) and [Note Type Schemas](note-type-schemas.md)
-3. create canonical templates and heading and relationship rules using [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
+1. create a Core Profile `typedmark.md` using the defaults in [Collection Model](collection-model.md)
+2. create the initial concrete note type schemas and let [Note Type Schemas](note-type-schemas.md) compute each effective schema
+3. create canonical templates using the defaulted or explicit `template.file` paths in [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
 4. implement managed note parsing, field materialization, shared-expression evaluation, and note-link resolution using [Managed Notes and Properties](managed-notes-and-properties.md), [Field Definition Reference](field-definition-reference.md), [Foundations](foundations.md), and [Note Links](note-links.md)
-5. populate the system fields in `typedmark.md`, and add a `<metadata_directory>/history.md` change log, if you are packaging a reusable, versioned system, using [Systems, Composition, and Evolution](systems-composition-evolution.md)
+5. add reusable property sets, abstract schemas, vocabularies, advanced mappings, heading rules, and relationship rules only when the collection needs them
 6. add a validator and importer that evaluate the conformance modes defined on this page
-7. implement deterministic system composition that materializes a self-contained collection and records its lineage in `typedmark.md` `composition`, using [Systems, Composition, and Evolution](systems-composition-evolution.md)
-8. implement the migration and update flow that recomposes a collection at newer source versions and applies the resulting change operations to managed notes
-9. generate the human-facing reference pages from the authoritative artifacts
+7. populate the system fields in `typedmark.md`, and add a `<metadata_directory>/history.md` change log, if you are packaging a reusable, versioned system, using [Systems, Composition, and Evolution](systems-composition-evolution.md)
+8. implement deterministic system composition that materializes a self-contained collection and records its lineage in `typedmark.md` `composition`, using [Systems, Composition, and Evolution](systems-composition-evolution.md)
+9. implement the migration and update flow that recomposes a collection at newer source versions and applies the resulting change operations to managed notes
+10. generate the human-facing reference pages from the authoritative artifacts

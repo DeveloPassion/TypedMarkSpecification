@@ -129,6 +129,14 @@ Rules:
 
 Each concrete note type's effective schema MUST define a template reference.
 
+Shape at a glance:
+
+| Surface | Physical requirement | Effective default | Purpose |
+| --- | --- | --- | --- |
+| `template.file` in a schema | Optional | `<note_type>.md` | Names the canonical template under `<metadata_directory>/templates/` |
+| template frontmatter | Required in the template file | none | Starter managed-note metadata |
+| template body | Optional | empty body | Starter Markdown content |
+
 Rules:
 
 - `RHT-65` The effective `template.file` of a concrete note type MUST point to the canonical template for that note type.
@@ -141,3 +149,4 @@ Rules:
 - `RHT-72` Templates SHOULD include the canonical required H2 headings.
 - `RHT-73` System-definition conformance requires every referenced template to exist and be valid; see [Conformance and Roadmap](conformance-and-roadmap.md).
 - `RHT-74` Validators MAY warn when a note drifts materially from the canonical template structure.
+- `RHT-75` When a concrete note type uses the defaulted `template.file`, the corresponding template path is resolved exactly like an explicit `template.file`.

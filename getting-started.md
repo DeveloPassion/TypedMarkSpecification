@@ -7,7 +7,7 @@ audience: essentials
 
 # Getting Started
 
-This page is a non-normative tutorial. It shows how little is needed to turn a folder of Markdown notes into a typed collection: one configuration file, one note type, one template, one note. Every step links to the section that governs it.
+This page is a non-normative tutorial. It shows how little is needed to turn a folder of Markdown notes into a Core Profile typed collection: one configuration file, one note type, one template, one note. Every step links to the section that governs it.
 
 ## 1. Create `typedmark.md`
 
@@ -18,10 +18,6 @@ At the root of your notes folder, create `typedmark.md`. The frontmatter is the 
 specification_version: 0.0.1
 name: my-notes
 description: My personal notes.
-metadata_directory: .typedmark
-exclude_paths:
-  - .git/**
-validation_defaults: {}
 ---
 
 # My Notes
@@ -29,7 +25,7 @@ validation_defaults: {}
 Meeting notes live in Meetings/ and are typed as `meeting`.
 ```
 
-Those six frontmatter keys are the only required ones ([Collection Model](collection-model.md)). An empty `validation_defaults` mapping uses the core default severities.
+Those three frontmatter keys are enough for the Core Profile ([Collection Model](collection-model.md)). The omitted collection defaults expand to `metadata_directory: .typedmark`, `exclude_paths: [.git/**]`, and `validation_defaults: {}`.
 
 ## 2. Define a note type
 
@@ -39,7 +35,6 @@ Create `.typedmark/schemas/meeting.md`. The file name (without `.md`) must equal
 ---
 specification_version: 0.0.1
 note_type: meeting
-abstract: false
 label: Meeting
 icon: calendar
 kind: dated_record
@@ -47,10 +42,6 @@ description: Notes for one meeting.
 storage:
   folder_pattern: "Meetings"
   note_name_pattern: "{meeting_date} - {title}"
-  archive:
-    policy: in_place_historical
-template:
-  file: "meeting.md"
 frontmatter:
   note_type:
     type: text
@@ -70,6 +61,8 @@ A meeting note records one meeting: who, what, decisions.
 ```
 
 This declares where meeting notes live and how they are named ([storage rules](note-type-schemas.md#storage-rules)), and which frontmatter fields they carry ([Field Definition Reference](field-definition-reference.md)). `relationships`, `headings`, and `guidance` are optional and default to "no constraints".
+
+The omitted schema defaults expand to `abstract: false`, `template.file: "meeting.md"`, and `storage.archive.policy: in_place_historical`.
 
 ## 3. Create the template
 

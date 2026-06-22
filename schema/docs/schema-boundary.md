@@ -27,8 +27,8 @@ express them.
 
 ## What the schemas enforce
 
-- required and allowed keys per artifact, with `additionalProperties: false`
-  wherever the specification closes the key set
+- required, defaultable, and allowed keys per artifact, with
+  `additionalProperties: false` wherever the specification closes the key set
 - scalar types, identifier grammars (`name`, slugs, field names), and enums
   (`kind`, property types, formats, severities, archive policies, history ops)
 - local conditional rules: `type: list` requires `items`, `type: link`/`time`
@@ -38,8 +38,8 @@ express them.
   composition references, archive-policy-dependent required keys, `version`
   requiring `scaffold`, field operations declaring exactly one of
   `note_type`/`property_set`
-- the core-defined field contracts for `note_type`, `id`, `deleted`, and
-  `archived` where schemas or property sets declare them
+- the core-defined field contracts for `note_type`, `id`, `deleted`,
+  `archived`, and `aliases` where schemas or property sets declare them
 
 ## What stays in the semantic layer
 
@@ -54,6 +54,9 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
   to note types, composition source resolution
 - effective-schema computation: the evaluation pipeline, block merge rules, and
   the required effective keys for concrete note types
+- canonical expansion: applying effective defaults for omitted
+  `metadata_directory`, `exclude_paths`, `validation_defaults`, `abstract`,
+  `template.file`, and `storage.archive.policy`
 - value semantics: `default_value`/`const_value`/`allowed_values` conformance to
   the declared type, `min <= max`, regex dialect, storage placeholder resolution,
   generation-strategy value production, shared expression-language syntax,
