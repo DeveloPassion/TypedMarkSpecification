@@ -14,6 +14,7 @@ Authoritative for:
 - the core concepts and the vocabulary the other pages build on
 - specification versioning, parsing and matching baselines, the shared expression language, and string comparison
 - the governed artifact format, the artifact map, and structural precedence
+- the authoring profiles and the distinction between authored shorthand and effective canonical values
 
 ## Core Concepts
 
@@ -126,6 +127,29 @@ TypedMark defines:
 - how conformance is evaluated
 
 TypedMark is the structural contract for a note collection. Artifact-specific rules are authoritative only where this specification says they are.
+
+## Authoring Profiles and Canonical Expansion
+
+TypedMark separates the authoring surface from the values tools evaluate. Authors can start with the Core Profile and omit deterministic boilerplate; tools expand omitted defaults before computing conformance. Larger collections add reuse, publishing, composition, and migration without replacing the core model.
+
+| Profile | Purpose | Requires | Defers |
+| --- | --- | --- | --- |
+| Core Profile | A minimal conforming typed collection | `typedmark.md`, one concrete schema, one template for each concrete schema, and managed notes that resolve to those schemas | property sets, vocabularies, advanced mappings, systems, composition, history, and migration |
+| Reuse Profile | Shared structure across multiple note types | Core Profile plus property sets, abstract schemas, vocabularies, or conditional constraints as needed | publishing, catalogs, composition, and migration |
+| System Profile | Shareable, versioned, composable systems | Reuse Profile plus the system fields, scaffold, composition, and optional history | none; this is the advanced publishing layer |
+
+Rules:
+
+- `FND-74` The Core Profile is the minimal authoring profile for a conforming instantiated collection.
+- `FND-75` A Core Profile collection MUST declare `typedmark.md`.
+- `FND-76` A Core Profile collection MUST declare at least one concrete note-type schema.
+- `FND-77` A Core Profile collection MUST provide every template referenced or defaulted by its concrete schemas.
+- `FND-78` A Core Profile collection MAY omit property sets, vocabularies, explicit note-type mappings, system fields, composition provenance, and `history.md`.
+- `FND-79` Authoring shorthand is a governed artifact shape that omits a value only when the authoritative rule for that key defines one deterministic effective default.
+- `FND-80` A conforming tool MUST expand omitted shorthand defaults before computing effective note-type schemas, storage paths, template paths, validation severities, relationship constraints, heading constraints, or conformance results.
+- `FND-81` Canonical expansion MUST NOT invent domain content, note types, fields, relationships, headings, templates, scaffold notes, or migration history.
+- `FND-82` When a shorthand key is physically present, its stored value overrides the default defined for that key.
+- `FND-83` Canonical serialization of governed artifacts MAY write expanded defaults physically, but handwritten artifacts are not required to store defaulted keys unless an artifact-specific rule says the key is physically required.
 
 ## Design Principles
 

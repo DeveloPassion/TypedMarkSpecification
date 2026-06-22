@@ -1162,6 +1162,7 @@
       ],
       "properties": {
         "policy": {
+          "default": "in_place_historical",
           "enum": [
             "mirror_under_archives",
             "in_place_historical",
@@ -1248,8 +1249,7 @@
       "type": "object",
       "required": [
         "folder_pattern",
-        "note_name_pattern",
-        "archive"
+        "note_name_pattern"
       ],
       "properties": {
         "folder_pattern": {
@@ -1265,6 +1265,9 @@
           "$ref": "#/$defs/note_name_affix"
         },
         "archive": {
+          "default": {
+            "policy": "in_place_historical"
+          },
           "$ref": "#/$defs/archive_block"
         }
       },

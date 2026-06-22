@@ -32,9 +32,9 @@ Rules:
 - `NTS-2` No separate registry file is maintained for note types.
 - `NTS-3` A note type MUST NOT be defined in more than one schema file.
 - `NTS-4` The schema file name without the `.md` extension MUST equal the schema's `note_type` value.
-- `NTS-5` Every schema file MUST physically declare `abstract`.
+- `NTS-5` A schema file MAY omit `abstract`; omitted `abstract` has the effective value `false`.
 - `NTS-6` If `abstract: true`, the schema defines an abstract note type.
-- `NTS-7` If `abstract: false`, the schema defines a concrete note type.
+- `NTS-7` If `abstract` is omitted or `abstract: false`, the schema defines a concrete note type.
 - `NTS-8` A managed note MUST conform to exactly one concrete note type.
 - `NTS-9` The conformance requirements that determine when schema files MUST exist are defined in [Conformance and Roadmap](conformance-and-roadmap.md).
 
@@ -46,13 +46,25 @@ The effective note-type schema is not a separate stored artifact. It is the norm
 
 A note type's own `frontmatter`, `relationships`, and `headings` blocks are not a separate kind of definition. They are the note type's inline, note-type-scoped property set, and they participate in the same composition as named property sets, applied last as its highest-precedence layer. Reusable fields belong in named property sets; one-off fields belong inline.
 
+Effective-schema layers:
+
+| Order | Layer | Carries | Merge behavior |
+| --- | --- | --- | --- |
+| 1 | collection defaults | default property sets and defaulted collection fields | establishes the collection-wide base |
+| 2 | default property sets | `frontmatter`, `relationships`, `headings` | applied in `default_property_sets` order |
+| 3 | abstract ancestors | reusable schema structure | applied from farthest ancestor to nearest ancestor |
+| 4 | `frontmatter_remove` | inherited field subtraction | removes selected inherited fields |
+| 5 | opt-in property sets | additional reusable blocks | applied in `property_sets` order |
+| 6 | local concrete schema | note-type-specific blocks and top-level values | applied last and wins conflicts |
+| 7 | effective defaults | omitted `template.file`, empty relationship/headings defaults, and defaulted storage archive policy | fills deterministic omissions |
+
 ### Normative Evaluation Pipeline
 
 Rules:
 
 1. `NTS-10` A tool or validator MUST resolve the note's note type using the note-type association rules defined in [Managed Notes and Properties](managed-notes-and-properties.md) and MUST select exactly one concrete note-type schema file from `<metadata_directory>/schemas/` using that resolved identifier.
 2. `NTS-11` If the selected concrete note type declares `extends`, the tool or validator MUST load the full abstract ancestor chain, starting with the farthest abstract ancestor and ending with the selected concrete note type.
-3. `NTS-12` The selected concrete note-type schema file provides the direct top-level values for `specification_version`, `note_type`, `abstract`, `label`, `icon`, and `description`.
+3. `NTS-12` The selected concrete note-type schema file provides the direct or defaulted top-level values for `specification_version`, `note_type`, `abstract`, `label`, `icon`, and `description`.
 4. `NTS-13` For `kind`, `storage`, `template`, `guidance`, `unknown_field`, `conditions`, and `count`, note-type inheritance uses whole-key replacement along the abstract ancestor chain. The last schema in that chain order that physically defines one of those keys determines the effective value of that key.
 5. `NTS-14` The tool or validator MUST determine which property sets apply to the selected concrete note type by taking the `default_property_sets` declared in `typedmark.md`, removing any named in the concrete note type's `exclude_property_sets`, and then appending the property sets named in the concrete note type's `property_sets`, using the composition rules in [Collection Model](collection-model.md).
 6. `NTS-15` The `frontmatter`, `relationships`, and `headings` blocks contributed by the applied default property sets MUST be applied first, in `default_property_sets` order.
@@ -60,13 +72,30 @@ Rules:
 8. `NTS-17` If `frontmatter_remove` is present on the selected concrete note type, it MUST be applied next to the accumulated inherited frontmatter.
 9. `NTS-18` The `frontmatter`, `relationships`, and `headings` blocks contributed by the opt-in property sets named in `property_sets`, if any, MUST be applied next in the selected concrete schema's declared `property_sets` order, as defined in [Collection Model](collection-model.md).
 10. `NTS-19` Local `frontmatter`, `relationships`, and `headings` definitions in the selected concrete note-type schema file MUST be applied last.
-11. `NTS-20` The resulting `frontmatter`, `relationships`, and `headings` blocks, together with the direct top-level values from the selected concrete schema file and the effective inherited values of `kind`, `storage`, `template`, `guidance`, `unknown_field`, `conditions`, and `count`, are the effective note-type schema for that note type.
+11. `NTS-20` The resulting `frontmatter`, `relationships`, and `headings` blocks, together with the direct top-level values from the selected concrete schema file, the effective inherited values of `kind`, `storage`, `template`, `guidance`, `unknown_field`, `conditions`, and `count`, and the effective defaults defined on this page, are the effective note-type schema for that note type.
 12. `NTS-21` Managed-note, relationship, heading, template, and storage conformance MUST be evaluated against that effective note-type schema using the rule pages linked from this page.
 13. `NTS-22` This specification MUST NOT be interpreted as requiring a separate serialized effective-schema artifact on disk.
 
 ### Schema File Contract
 
-Each `<metadata_directory>/schemas/<note_type>.md` MUST define exactly one note type and MUST follow this shape when it defines a concrete note type:
+Each `<metadata_directory>/schemas/<note_type>.md` defines one note type and follows this shape when it defines a concrete note type:
+
+| Key | Physical requirement | Effective default | Purpose |
+| --- | --- | --- | --- |
+| `specification_version` | Required | none | Selects the TypedMark specification version |
+| `note_type` | Required | none | Schema identifier and file basename |
+| `abstract` | Optional | `false` | Abstract or concrete classification |
+| `label` | Required | none | Display name |
+| `icon` | Required | none | Presentation token |
+| `description` | Required | none | Human-facing summary |
+| `kind` | Required effectively for concrete types | inherited if declared by an abstract ancestor | Broad note-type category |
+| `storage` | Required effectively for concrete types | inherited if declared by an abstract ancestor | Storage and archive paths |
+| `template` | Optional | `<note_type>.md` | Canonical template reference |
+| `frontmatter` | Required effectively for concrete types | inherited or locally declared | Field definitions |
+| `relationships` | Optional | empty relationship defaults | Typed relationship constraints |
+| `headings` | Optional | empty heading defaults | H1/H2 heading constraints |
+| `guidance` | Optional | none | Human-facing usage guidance |
+| `property_sets`, `exclude_property_sets`, `frontmatter_remove` | Optional on concrete types | none | Reuse and subtraction controls |
 
 ```yaml
 specification_version: 0.0.1
@@ -191,7 +220,6 @@ Required top-level keys in every schema:
 
 - `specification_version`
 - `note_type`
-- `abstract`
 - `label`
 - `icon`
 - `description`
@@ -208,7 +236,7 @@ Required effective keys for concrete note types:
 Rules:
 
 - `NTS-23` Every top-level key listed for every schema MUST be physically present in each note-type schema.
-- `NTS-24` `abstract` MUST be a boolean.
+- `NTS-24` If physically present, `abstract` MUST be a boolean.
 - `NTS-25` The effective note-type schema MUST be computed using the normative evaluation pipeline defined above.
 - `NTS-26` The semantics of `specification_version` are defined in [Foundations](foundations.md).
 - `NTS-27` In schema files, `note_type` is the identifier of the note type being defined.
@@ -412,7 +440,7 @@ Required effective storage fields for concrete note types:
 
 - `folder_pattern`
 - `note_name_pattern`
-- `archive.policy`
+- `archive.policy`, defaulting to `in_place_historical` when the archive block is omitted
 
 Allowed archive policies:
 
@@ -422,7 +450,7 @@ Allowed archive policies:
 
 Rules:
 
-- `NTS-97` If a schema physically declares `storage`, it MUST physically contain `folder_pattern`, `note_name_pattern`, and `archive.policy`.
+- `NTS-97` If a schema physically declares `storage`, it MUST physically contain `folder_pattern` and `note_name_pattern`.
 - `NTS-98` Note-type inheritance uses whole-block replacement for `storage`. A descendant schema that physically defines `storage` replaces any inherited `storage` block completely.
 - `NTS-99` `folder_pattern` is the collection-relative folder rule for active notes of that type.
 - `NTS-100` `note_name_pattern` is the file-name rule for active notes of that type, without the `.md` extension.
@@ -484,6 +512,9 @@ Rules:
 - `NTS-156` If a note is archived, its `note_type` MUST remain unchanged.
 - `NTS-157` If a note declares `id`, its `id` MUST remain unchanged when the note is archived.
 - `NTS-158` `dated_record` note types SHOULD encode the date in both storage patterns and metadata when practical.
+- `NTS-159` If no schema in the concrete note type's inheritance chain physically declares `template`, the effective `template.file` defaults to `<note_type>.md`, using the selected concrete note type identifier.
+- `NTS-160` If a physically declared `storage` block omits `archive`, the effective archive block is `policy: in_place_historical`.
+- `NTS-161` The effective defaults for `abstract`, `template.file`, and `storage.archive.policy` participate in conformance exactly as if their default values had been physically written in the selected schema.
 
 Example creation-oriented storage rules:
 

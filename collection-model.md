@@ -21,6 +21,8 @@ See also:
 - [Note Type Schemas](note-type-schemas.md): the effective note-type schema the merge rules feed
 - [Field Definition Reference](field-definition-reference.md): the semantics of the field definitions property sets contribute
 
+Core Profile authors usually need only `specification_version`, `name`, and `description` in `typedmark.md`; deterministic defaults provide the metadata directory, ignored Git content, validation severities, and frontmatter-based note-type mapping. Property sets, vocabularies, composition provenance, and advanced mappings are optional layers for larger collections.
+
 Property sets are the single composition mechanism for reusable `frontmatter`, `relationships`, and `headings`. A property set is a named bundle stored under `<metadata_directory>/property-sets/`. A collection applies property sets to note types in two ways: `typedmark.md` MAY name default property sets that apply to every note type, and a concrete note-type schema MAY name additional property sets to compose.
 
 A concrete note type's own `frontmatter`, `relationships`, and `headings` blocks are not a second kind of frontmatter source. They are the note type's inline, note-type-scoped contribution to the same composition, applied last as the terminal layer of the merge. Reusable fields live in named property sets; one-off, note-type-specific fields live inline. There is one composition mechanism, with the inline blocks as its highest-precedence layer.
@@ -31,7 +33,26 @@ Note-type inheritance through `extends` is a distinct axis defined in [Note Type
 
 `typedmark.md` defines collection-model-wide rules, including the metadata directory, the ordered note-type mappings, and the governed TypedMark artifacts.
 
-Required fields:
+Shape at a glance:
+
+| Key | Physical requirement | Effective default | Purpose |
+| --- | --- | --- | --- |
+| `specification_version` | Required | none | Selects the TypedMark specification version |
+| `name` | Required | none | Collection identity |
+| `description` | Required | none | Human-facing summary |
+| `label` | Optional | application fallback to `name` | Display name |
+| `keywords` | Optional | none | Discovery metadata |
+| `metadata_directory` | Optional | `.typedmark` | Governed artifact subtree |
+| `exclude_paths` | Optional | `[.git/**]` | Paths ignored as collection content |
+| `assets_directory` | Optional | none | Preferred asset folder |
+| `timezone` | Optional | `UTC` | Date/time localization |
+| `validation_defaults` | Optional | `{}` plus core severity defaults | Validation severity overrides |
+| `note_type_mappings` | Optional | frontmatter `note_type` mapping | Note-type association |
+| `vocabularies` | Optional | none | Reusable value sets |
+| `composition` | Optional | none | Advanced provenance and update lineage |
+| `default_property_sets` | Optional | none | Shared structure applied to every concrete note type |
+
+Expanded example:
 
 ```yaml
 specification_version: 0.0.1
@@ -65,7 +86,7 @@ In path notation on this page, `<metadata_directory>` means the directory name d
 Rules:
 
 - `CM-1` `typedmark.md` MUST exist at the root of every conforming managed collection.
-- `CM-2` `typedmark.md` MUST physically contain `specification_version`, `name`, `description`, `metadata_directory`, `exclude_paths`, and `validation_defaults`.
+- `CM-2` `typedmark.md` MUST physically contain `specification_version`, `name`, and `description`.
 - `CM-3` The semantics of `specification_version` are defined in [Foundations](foundations.md).
 - `CM-4` `name` is the collection's single identity. It identifies the collection's structural model and, when the collection is a publishable system, is the distribution identity a marketplace and `composition.sources` resolve against.
 - `CM-5` `name` MUST be a non-empty string of at most 214 characters, including any scope.
@@ -83,12 +104,12 @@ Rules:
 - `CM-17` `keywords` MAY be omitted; if present, it MUST be a list of unique non-empty strings.
 - `CM-18` `keywords` is discovery metadata that catalogs and marketplaces use to index and search collections.
 - `CM-19` `typedmark.md` MAY declare the optional system fields, including `version`, `scaffold`, and discovery metadata, defined in [Systems, Composition, and Evolution](systems-composition-evolution.md). `version` is what makes a collection a publishable system.
-- `CM-20` `metadata_directory` MUST be a non-empty string.
+- `CM-20` `metadata_directory` MAY be omitted, and when omitted its effective value is `.typedmark`.
 - `CM-21` `metadata_directory` MUST name a single directory at the collection root.
 - `CM-22` `metadata_directory` MUST NOT be `.` or `..` and MUST NOT contain path separators.
 - `CM-23` `metadata_directory` identifies the governed-artifact subtree for the collection, including the change history, property sets, note-type schemas, and templates.
 - `CM-24` Validators and agents MUST derive governed artifact locations from `metadata_directory`.
-- `CM-25` `exclude_paths` defines additional content that validators and agents MUST ignore for structural reasoning. It does not redefine or relocate the metadata directory.
+- `CM-25` `exclude_paths` MAY be omitted, and when omitted its effective value is a list containing `.git/**`.
 - `CM-26` Each `exclude_paths` entry is a glob pattern matched against the entire normalized collection-relative path, using forward slashes.
 - `CM-27` In `exclude_paths` globs, `*` matches any number of characters within one path segment, `?` matches exactly one character within a segment, and `**` matches any number of path segments including none.
 - `CM-28` `exclude_paths` does not support negation patterns in this specification version.
@@ -105,7 +126,7 @@ Rules:
 - `CM-39` If `timezone` is omitted, the collection timezone is `UTC`.
 - `CM-40` The collection timezone defines how the current instant is converted to local dates and times wherever this specification refers to the current time, including the current-time storage placeholders defined in [Note Type Schemas](note-type-schemas.md), and how `datetime` instants are localized, as defined in [Managed Notes and Properties](managed-notes-and-properties.md).
 - `CM-41` Collections whose authors work in a single zone SHOULD declare `timezone` explicitly.
-- `CM-42` `validation_defaults` provides default severity levels for collection-wide validation reporting.
+- `CM-42` `validation_defaults` MAY be omitted, and when omitted it is equivalent to an empty mapping.
 - `CM-43` Supported validation severities are `error`, `warn`, `info`, and `off`.
 - `CM-44` `validation_defaults` MAY omit individual severity keys and MAY be an empty mapping.
 - `CM-45` An omitted severity key takes its core default severity: `unknown_field` and `template_drift` default to `warn`, and every other severity key defined on this page defaults to `error`.
@@ -129,10 +150,21 @@ Rules:
 - `CM-63` `invalid_relationship_instance` applies when resolved typed relationship instances violate the declared relationship cardinality constraints defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - `CM-64` `invalid_heading` applies when a managed note violates the effective heading rules defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - `CM-65` `template_drift` applies when a validator chooses to compare a managed note to its canonical template and detects material divergence that is not itself a core conformance failure.
+- `CM-200` The effective `metadata_directory`, `exclude_paths`, and `validation_defaults` values participate in conformance exactly as if their default values had been physically written in `typedmark.md`.
 
 ### Note-Type Mappings
 
 `typedmark.md` MAY define `note_type_mappings` to control how collection notes are associated with note types.
+
+Shape at a glance:
+
+| Mapping kind | Required keys | Matches from | Core Profile use |
+| --- | --- | --- | --- |
+| omitted | none | stored `note_type` frontmatter | Default |
+| `frontmatter_field` | `kind`, `field` | stored `note_type` frontmatter | Explicit default |
+| `tag` | `kind`, `tag`, `note_type` | top-level stored `tags` | Advanced |
+| `folder` | `kind`, `folder`, `note_type` | collection-relative path | Advanced |
+| `fixed` | `kind`, `note_type`, `when` | path and/or stored frontmatter predicates | Advanced |
 
 Example:
 
@@ -215,6 +247,8 @@ Rules:
 
 `typedmark.md` MAY define `vocabularies` to declare named, reusable value sets that field definitions reference through `allowed_values_from`, instead of repeating the same `allowed_values` list across note types.
 
+Core Profile collections can skip vocabularies and use direct `allowed_values` until reuse becomes useful.
+
 Example:
 
 ```yaml
@@ -240,6 +274,8 @@ Rules:
 ### Composition Provenance
 
 `typedmark.md` MAY define `composition` to record the systems this collection's structure was composed from. The lineage is both provenance and the reproducible recipe: re-composing the same sources at the same versions reconstructs the same collection. It is also the input the update flow uses to migrate a collection to newer system versions. System composition, its deterministic merge semantics, and the migration flow are defined in [Systems, Composition, and Evolution](systems-composition-evolution.md).
+
+This is an advanced system concern. Hand-authored Core Profile collections omit `composition`.
 
 Example:
 
@@ -290,6 +326,19 @@ Rules:
 ### Property Set Definitions
 
 A property set is the single named reusable bundle for `frontmatter`, `relationships`, and `headings`. A collection applies a property set either by naming it in `default_property_sets` or by naming it in a concrete note-type schema's `property_sets`.
+
+Shape at a glance:
+
+| Key | Physical requirement | Effective default | Purpose |
+| --- | --- | --- | --- |
+| `specification_version` | Required | none | Selects the TypedMark specification version |
+| `property_set` | Required | none | Property set identifier |
+| `description` | Required | none | Human-facing summary |
+| `frontmatter` | Required | none | Reusable field definitions |
+| `label` | Optional | none | Display name |
+| `icon` | Optional | none | Presentation token |
+| `relationships` | Optional | empty relationship defaults | Reusable relationship target declarations |
+| `headings` | Optional | empty heading defaults | Reusable heading settings |
 
 Property set file shape:
 
