@@ -77,13 +77,15 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
 
 ## Fixtures
 
-`schema/fixtures/` contains three buckets:
+`schema/fixtures/` contains three artifact buckets and one end-to-end suite:
 
 - `valid/` — artifacts that MUST pass their schema
 - `invalid-shape/` — artifacts that MUST fail their schema; each file's body
   names the violated rule
 - `invalid-semantic/` — artifacts that MUST pass their schema but are invalid
   under the semantic layer; see the README in that folder
+- `golden/` — self-contained collection trees paired with expected portable
+  validation reports for implementers; see the README in that folder
 
 Run the expectations with:
 
@@ -96,6 +98,11 @@ Fixtures are mapped to artifact schemas by filename prefix (`typedmark-*`,
 `validation-report-*`). Markdown fixtures are validated through their extracted
 frontmatter; `.json` fixtures such as the marketplace catalog and validation
 reports are validated directly.
+
+The golden-vector check validates collection layout, governed-artifact shapes,
+schema basenames, referenced template existence, report shape, and canonical
+result ordering. It deliberately does not infer semantic findings; that behavior
+belongs to an executable conformance runner.
 
 ## Recommended validation workflow for implementations
 

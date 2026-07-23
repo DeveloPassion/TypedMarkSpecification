@@ -1,0 +1,16 @@
+{
+  "specification_version": "0.0.1",
+  "mode": "instantiated_collection",
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_field_value",
+      "severity": "error",
+      "path": "Meetings/tomorrow - Kickoff.md",
+      "rule_id": "FDR-13",
+      "message": "meeting_date must use RFC 3339 full-date format YYYY-MM-DD",
+      "note_type": "meeting",
+      "field": "meeting_date"
+    }
+  ]
+}

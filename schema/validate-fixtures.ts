@@ -17,17 +17,20 @@
  * - every fixture under fixtures/invalid-semantic/ passes its artifact schema
  *   (they are invalid only under the semantic layer described in
  *   docs/schema-boundary.md)
+ * - every collection under fixtures/golden/ has a valid self-contained layout
+ *   and a shape-valid, canonically ordered expected validation report
  *
  * Usage: bun schema/validate-fixtures.ts (or: bun run validate-fixtures)
  */
 
-import { readdirSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { basename, extname, join } from "node:path";
 import { Ajv2020, type ValidateFunction } from "ajv/dist/2020";
 import { parse as parseYaml } from "yaml";
 
 const SCHEMA_DIR = join(import.meta.dir, "json-schema");
 const FIXTURE_DIR = join(import.meta.dir, "fixtures");
+const GOLDEN_DIR = join(FIXTURE_DIR, "golden");
 const ROOT = join(import.meta.dir, "..");
 
 const SPEC_PAGES = [
@@ -144,6 +147,201 @@ function validateSpecExamples(
   return checked;
 }
 
+function objectValue(value: unknown): Record<string, unknown> | null {
+  return typeof value === "object" && value !== null && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : null;
+}
+
+function collectFiles(directory: string): string[] {
+  const files: string[] = [];
+  for (const entry of readdirSync(directory, { withFileTypes: true })) {
+    const path = join(directory, entry.name);
+    if (entry.isDirectory()) files.push(...collectFiles(path));
+    else files.push(path);
+  }
+  return files.sort();
+}
+
+function compareCodePoints(left: string, right: string): number {
+  const leftPoints = Array.from(left, (char) => char.codePointAt(0)!);
+  const rightPoints = Array.from(right, (char) => char.codePointAt(0)!);
+  for (let index = 0; index < Math.min(leftPoints.length, rightPoints.length); index += 1) {
+    if (leftPoints[index] !== rightPoints[index]) return leftPoints[index]! - rightPoints[index]!;
+  }
+  return leftPoints.length - rightPoints.length;
+}
+
+function compareReportResults(left: unknown, right: unknown): number {
+  const leftResult = objectValue(left) ?? {};
+  const rightResult = objectValue(right) ?? {};
+  const keys = [
+    "path", "rule_id", "code", "note_type", "field", "relationship", "heading",
+  ];
+  for (const key of keys) {
+    const compared = compareCodePoints(
+      typeof leftResult[key] === "string" ? leftResult[key] : "",
+      typeof rightResult[key] === "string" ? rightResult[key] : "",
+    );
+    if (compared !== 0) return compared;
+  }
+  return 0;
+}
+
+function validateShape(
+  validate: ValidateFunction,
+  document: unknown,
+  label: string,
+  failures: string[],
+): void {
+  if (validate(document)) return;
+  failures.push(`${label}: expected to pass shape validation`);
+  for (const error of (validate.errors ?? []).slice(0, 3)) {
+    failures.push(`  ${error.instancePath || "/"}: ${error.message}`);
+  }
+}
+
+function validateGoldenVectors(
+  validators: Record<string, ValidateFunction>,
+  failures: string[],
+): number {
+  if (!existsSync(GOLDEN_DIR)) {
+    failures.push("golden fixtures: expected schema/fixtures/golden to exist");
+    return 0;
+  }
+  const vectors = readdirSync(GOLDEN_DIR, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name)
+    .sort();
+  if (vectors.length === 0) {
+    failures.push("golden fixtures: expected at least one collection vector");
+  }
+
+  for (const vector of vectors) {
+    const failureCount = failures.length;
+    const vectorRoot = join(GOLDEN_DIR, vector);
+    const collectionRoot = join(vectorRoot, "collection");
+    const reportPath = join(vectorRoot, "expected-validation-report.json");
+    const typedmarkPath = join(collectionRoot, "typedmark.md");
+
+    if (!existsSync(collectionRoot)) {
+      failures.push(`golden/${vector}: missing collection/ directory`);
+      continue;
+    }
+    if (!existsSync(reportPath)) {
+      failures.push(`golden/${vector}: missing expected-validation-report.json`);
+      continue;
+    }
+    if (!existsSync(typedmarkPath)) {
+      failures.push(`golden/${vector}: missing collection/typedmark.md`);
+      continue;
+    }
+
+    let report: unknown;
+    let typedmark: unknown;
+    try {
+      report = JSON.parse(readFileSync(reportPath, "utf8"));
+      typedmark = extractFrontmatter(readFileSync(typedmarkPath, "utf8"));
+    } catch (error) {
+      failures.push(`golden/${vector}: ${error instanceof Error ? error.message : String(error)}`);
+      continue;
+    }
+
+    validateShape(
+      validators["validation-report"]!, report,
+      `golden/${vector}/expected-validation-report.json`, failures,
+    );
+    validateShape(
+      validators.typedmark!, typedmark,
+      `golden/${vector}/collection/typedmark.md`, failures,
+    );
+
+    const reportObject = objectValue(report);
+    const results = Array.isArray(reportObject?.results) ? reportObject.results : [];
+    const sortedResults = [...results].sort(compareReportResults);
+    if (results.some((result, index) => result !== sortedResults[index])) {
+      failures.push(`golden/${vector}: expected report results to use canonical order`);
+    }
+
+    const typedmarkObject = objectValue(typedmark);
+    const metadataDirectory = typeof typedmarkObject?.metadata_directory === "string"
+      ? typedmarkObject.metadata_directory
+      : ".typedmark";
+    const metadataRoot = join(collectionRoot, metadataDirectory);
+    const schemaRoot = join(metadataRoot, "schemas");
+    const templateRoot = join(metadataRoot, "templates");
+
+    if (!existsSync(schemaRoot)) {
+      failures.push(`golden/${vector}: missing ${metadataDirectory}/schemas/`);
+      continue;
+    }
+    if (!existsSync(templateRoot)) {
+      failures.push(`golden/${vector}: missing ${metadataDirectory}/templates/`);
+      continue;
+    }
+
+    const schemaPaths = collectFiles(schemaRoot).filter((path) => extname(path) === ".md");
+    if (schemaPaths.length === 0) {
+      failures.push(`golden/${vector}: expected at least one note-type schema`);
+    }
+    for (const schemaPath of schemaPaths) {
+      try {
+        const schema = extractFrontmatter(readFileSync(schemaPath, "utf8"));
+        validateShape(validators["note-type"]!, schema, `golden/${vector}/${basename(schemaPath)}`, failures);
+        const schemaObject = objectValue(schema);
+        const noteType = schemaObject?.note_type;
+        if (typeof noteType === "string" && basename(schemaPath, ".md") !== noteType) {
+          failures.push(`golden/${vector}: schema basename does not match note_type ${noteType}`);
+        }
+        if (schemaObject?.abstract !== true && typeof noteType === "string") {
+          const templateObject = objectValue(schemaObject.template);
+          const templateFile = typeof templateObject?.file === "string"
+            ? templateObject.file
+            : `${noteType}.md`;
+          if (!existsSync(join(templateRoot, ...templateFile.split("/")))) {
+            failures.push(`golden/${vector}: missing template ${templateFile}`);
+          }
+        }
+      } catch (error) {
+        failures.push(`golden/${vector}/${basename(schemaPath)}: ${error instanceof Error ? error.message : String(error)}`);
+      }
+    }
+
+    const propertySetRoot = join(metadataRoot, "property-sets");
+    if (existsSync(propertySetRoot)) {
+      for (const propertySetPath of collectFiles(propertySetRoot).filter((path) => extname(path) === ".md")) {
+        try {
+          const propertySet = extractFrontmatter(readFileSync(propertySetPath, "utf8"));
+          validateShape(validators["property-set"]!, propertySet, `golden/${vector}/${basename(propertySetPath)}`, failures);
+        } catch (error) {
+          failures.push(`golden/${vector}/${basename(propertySetPath)}: ${error instanceof Error ? error.message : String(error)}`);
+        }
+      }
+    }
+
+    const historyPath = join(metadataRoot, "history.md");
+    if (existsSync(historyPath)) {
+      try {
+        const history = extractFrontmatter(readFileSync(historyPath, "utf8"));
+        validateShape(validators.history!, history, `golden/${vector}/history.md`, failures);
+      } catch (error) {
+        failures.push(`golden/${vector}/history.md: ${error instanceof Error ? error.message : String(error)}`);
+      }
+    }
+
+    for (const markdownPath of collectFiles(collectionRoot).filter((path) => extname(path) === ".md")) {
+      try {
+        extractFrontmatter(readFileSync(markdownPath, "utf8"));
+      } catch (error) {
+        failures.push(`golden/${vector}/${basename(markdownPath)}: ${error instanceof Error ? error.message : String(error)}`);
+      }
+    }
+
+    if (failures.length === failureCount) console.log(`ok golden/${vector}`);
+  }
+  return vectors.length;
+}
+
 function main(): number {
   const validators = buildValidators();
   const failures: string[] = [];
@@ -180,6 +378,7 @@ function main(): number {
   }
 
   checked += validateSpecExamples(validators, failures);
+  checked += validateGoldenVectors(validators, failures);
 
   if (failures.length > 0) {
     console.log();
