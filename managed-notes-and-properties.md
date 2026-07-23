@@ -13,6 +13,7 @@ Authoritative for:
 
 - the managed note contract and note-type association
 - field names and the core-defined fields: `note_type`, `id`, `deleted`, `archived`, and `aliases`
+- mandatory-tag conformance and materialization
 - canonical field materialization and field optionality
 
 See also:
@@ -57,6 +58,9 @@ Common frontmatter shape:
 
 ```yaml
 note_type: topic
+tags:
+  - managed
+  - type/topic
 title: Note Taking
 description: ""
 domain: ""
@@ -170,6 +174,33 @@ Rules:
 - `MN-88` Field names such as `title`, `description`, `tags`, `created_at`, and `updated_at` are ordinary schema-defined managed-note field names in this specification version unless a rule explicitly defines them otherwise.
 - `MN-89` The `tags` property type defined below remains a first-class supported property type.
 - `MN-90` The generic property-type and field-definition rules in this page apply to ordinary schema-defined fields unless a dedicated core field rule says otherwise.
+
+### Mandatory Tags
+
+Mandatory tags are value requirements on the ordinary top-level `tags` field. They do not turn `tags` into a core-defined field, and they do not authorize tools to overwrite author-added tags. A conforming note contains the effective policy values alongside any other tags allowed by its field definition.
+
+```yaml
+tags:
+  - personal
+  - managed
+  - context/meeting
+  - type/meeting
+```
+
+In this example, `personal` is author-added and the remaining entries are mandatory at collection, folder, and note-type scope. Their stored order need not mirror policy order when some were already present; membership is the conformance requirement.
+
+Rules:
+
+- `MN-125` A managed note's effective mandatory tags MUST be computed under the ordered merge rules in [Collection Model](collection-model.md).
+- `MN-126` A conforming managed note MUST store every effective mandatory tag as an exact entry in its top-level `tags` sequence.
+- `MN-127` Stored tags that are not mandatory remain valid when they satisfy the effective `tags` field definition.
+- `MN-128` A validator MUST report each absent effective mandatory tag as an `invalid_field_value` failure on `tags`, as defined in [Collection Model](collection-model.md).
+- `MN-129` A tool that creates, imports, scaffolds, normalizes, or modifies managed-note frontmatter MUST append every missing effective mandatory tag before saving.
+- `MN-130` Missing mandatory tags MUST be appended after the existing stored tags and in effective mandatory-tag order.
+- `MN-131` Mandatory-tag materialization MUST preserve the values and relative order of all existing stored tags.
+- `MN-132` Mandatory-tag materialization MUST NOT introduce a duplicate tag under the string comparison rules in [Foundations](foundations.md).
+- `MN-133` A tool MUST NOT remove a stored tag solely because the tag is not mandatory or is no longer mandatory.
+- `MN-134` Mandatory-tag materialization MUST still satisfy every constraint of the effective `tags` field definition.
 
 ### Canonical Field Materialization
 

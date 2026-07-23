@@ -35,7 +35,7 @@ Rules:
 
 ### Collection Configuration
 
-The collection configuration is the collection-wide structural contract defined in `typedmark.md`. It declares the collection's identity (`name`, an optional `label`, `description`, and `keywords`) and collection-level rules such as the metadata directory, note-type mappings, validation defaults, excluded paths, default property sets, composition provenance, and other defaults that apply across note types. Details: [Collection Model](collection-model.md).
+The collection configuration is the collection-wide structural contract defined in `typedmark.md`. It declares the collection's identity (`name`, an optional `label`, `description`, and `keywords`) and collection-level rules such as the metadata directory, note-type mappings, validation defaults, excluded paths, mandatory tags, default property sets, composition provenance, and other defaults that apply across note types. Details: [Collection Model](collection-model.md).
 
 ### Note Types
 

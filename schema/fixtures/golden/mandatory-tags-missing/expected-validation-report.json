@@ -1,0 +1,16 @@
+{
+  "specification_version": "0.0.1",
+  "mode": "instantiated_collection",
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_field_value",
+      "severity": "error",
+      "path": "Projects/Launch.md",
+      "rule_id": "MN-128",
+      "message": "tags is missing the effective mandatory tag project",
+      "note_type": "project",
+      "field": "tags"
+    }
+  ]
+}

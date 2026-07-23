@@ -20,6 +20,18 @@
       "type": "string",
       "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
     },
+    "tag": {
+      "type": "string",
+      "pattern": "^[\\p{L}\\p{N}_][\\p{L}\\p{N}_-]*(?:/[\\p{L}\\p{N}_][\\p{L}\\p{N}_-]*)*$"
+    },
+    "mandatory_tags": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/tag"
+      }
+    },
     "field_name": {
       "type": "string",
       "pattern": "^[a-z][a-z0-9_]*$"

@@ -131,7 +131,7 @@ Each concrete note type's effective schema has a template reference.
 
 A template is pre-instantiation starter state, not a persisted managed note. Its frontmatter has the complete field shape of the effective schema, but it can hold the explicit placeholder values defined below until a tool supplies generated, computed, scaffolded, defaulted, or user-provided values. The instantiated note must satisfy the full managed-note contract before a tool claims that it conforms.
 
-Folder-scoped property sets are resolved only after an instantiated note has a target collection-relative path. The canonical template therefore represents the path-independent note-type shape; an instantiating tool adds any path-selected fields before it writes the managed note.
+Folder-scoped property sets and folder-scoped mandatory tags are resolved only after an instantiated note has a target collection-relative path. The canonical template therefore represents the path-independent note-type shape and mandatory-tag policy; an instantiating tool adds path-selected fields and tags before it writes the managed note.
 
 Shape at a glance:
 
@@ -166,3 +166,8 @@ Rules:
 - `RHT-85` A template MUST NOT include a frontmatter field solely because a `folder_scopes` property set declares it.
 - `RHT-86` Before writing an instantiated managed note, a tool MUST resolve its target path and apply every matching folder scope.
 - `RHT-87` A tool MUST materialize the resulting effective frontmatter fields before writing the instantiated managed note.
+- `RHT-88` A template's path-independent mandatory tags are the collection-level mandatory tags followed by the effective note-type-level mandatory tags, with duplicates removed under the rules in [Collection Model](collection-model.md).
+- `RHT-89` When the path-independent mandatory-tag sequence is non-empty, template frontmatter MUST store every entry in its `tags` value.
+- `RHT-90` A `null` template placeholder MUST NOT stand in for a non-empty path-independent mandatory-tag sequence.
+- `RHT-91` Before writing an instantiated managed note, a tool MUST add the mandatory tags contributed by every folder scope matching the resolved target path.
+- `RHT-92` The instantiated note's final `tags` value MUST satisfy the mandatory-tag materialization rules in [Managed Notes and Properties](managed-notes-and-properties.md).

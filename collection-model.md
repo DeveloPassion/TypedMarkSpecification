@@ -11,7 +11,7 @@ Audience: collection authors.
 
 Authoritative for:
 
-- the structural fields of `typedmark.md`: identity, metadata directory, excluded paths, assets directory, timezone, validation defaults, folder scopes, and vocabularies
+- the structural fields of `typedmark.md`: identity, metadata directory, excluded paths, assets directory, timezone, validation defaults, mandatory tags, folder scopes, and vocabularies
 - note-type mappings and composition provenance
 - property sets, default property sets, and the block-merge rules of composition
 
@@ -21,7 +21,7 @@ See also:
 - [Note Type Schemas](note-type-schemas.md): the effective note-type schema the merge rules feed
 - [Field Definition Reference](field-definition-reference.md): the semantics of the field definitions property sets contribute
 
-Core Profile authors usually need only `specification_version`, `name`, and `description` in `typedmark.md`; deterministic defaults provide the metadata directory, ignored Git content, validation severities, and frontmatter-based note-type mapping. Property sets, folder scopes, vocabularies, composition provenance, and advanced mappings are optional layers for larger collections.
+Core Profile authors usually need only `specification_version`, `name`, and `description` in `typedmark.md`; deterministic defaults provide the metadata directory, ignored Git content, validation severities, and frontmatter-based note-type mapping. Mandatory tags, property sets, folder scopes, vocabularies, composition provenance, and advanced mappings are optional layers for larger collections.
 
 Property sets are the single composition mechanism for reusable `frontmatter`, `relationships`, and `headings`. A property set is a named bundle stored under `<metadata_directory>/property-sets/`. Collections apply them through collection-wide defaults, managed-note folder scopes, and property sets named by concrete note-type schemas.
 
@@ -51,7 +51,8 @@ Shape at a glance:
 | `vocabularies` | Optional | none | Reusable value sets |
 | `composition` | Optional | none | Advanced provenance and update lineage |
 | `default_property_sets` | Optional | none | Shared structure applied to every concrete note type |
-| `folder_scopes` | Optional | none | Shared structure selected by managed-note path |
+| `mandatory_tags` | Optional | none | Tags required on every managed note |
+| `folder_scopes` | Optional | none | Structure and tags selected by managed-note path |
 
 Expanded example:
 
@@ -60,6 +61,8 @@ specification_version: 0.0.1
 name: example-knowledge-base
 label: Example Knowledge Base
 description: Personal knowledge base.
+mandatory_tags:
+  - managed
 metadata_directory: .typedmark
 exclude_paths:
   - .git/**
@@ -139,7 +142,7 @@ Rules:
 - `CM-51` `missing_required_field` applies when a field declared in `frontmatter` with `optional: false` lacks a concrete value required for conformance after applying the rules in [Managed Notes and Properties](managed-notes-and-properties.md), or when a matching conditional constraint defined in [Note Type Schemas](note-type-schemas.md) requires a concrete value the note does not hold.
 - `CM-52` `missing_declared_field` applies when a field declared in `frontmatter` is absent from stored note frontmatter.
 - `CM-53` `unknown_field` applies when an undeclared field appears in the frontmatter of `typedmark.md` or any other governed artifact, or in managed note frontmatter; a note-type schema MAY override its severity for managed notes of that type, as defined in [Note Type Schemas](note-type-schemas.md).
-- `CM-54` `invalid_field_value` applies when a field value violates a declared field-level value constraint such as `format`, `regex`, `not_empty`, `not_blank`, `min`, `max`, `allowed_values`, or `targets`, or a matching conditional `require_null` constraint defined in [Note Type Schemas](note-type-schemas.md). `format: note_link` syntax and resolution failures still use `invalid_note_link`.
+- `CM-54` `invalid_field_value` applies when a field value violates a declared field-level value constraint such as `format`, `regex`, `not_empty`, `not_blank`, `min`, `max`, `allowed_values`, or `targets`, when a matching conditional `require_null` constraint defined in [Note Type Schemas](note-type-schemas.md) is violated, or when a managed note lacks an effective mandatory tag. `format: note_link` syntax and resolution failures still use `invalid_note_link`.
 - `CM-55` `duplicate_unique_value` applies when a field declared with `unique: true` repeats a non-null stored value in more than one managed note of the same note type, when a field declared with `unique: collection` repeats a non-null stored value across any managed notes, or when the core-defined `id` field repeats a value across managed notes.
 - `CM-56` `invalid_note_count` applies when the number of managed notes of a note type violates that type's effective `count` constraint, as defined in [Note Type Schemas](note-type-schemas.md).
 - `CM-57` `invalid_property_set` applies when a property set file, a `typedmark.md` `default_property_sets` or `folder_scopes` declaration, or a note-type schema `property_sets` or `exclude_property_sets` reference violates the property-set rules defined on this page.
@@ -326,7 +329,7 @@ Rules:
 
 ### Folder Scopes
 
-Folder scopes select managed notes by their actual collection-relative paths and add reusable property sets to those notes. They do not choose a note type: note-type mapping wins first, then matching folder scopes refine the effective schema used for that managed note.
+Folder scopes select managed notes by their actual collection-relative paths and contribute reusable property sets, mandatory tags, or both. They do not choose a note type: note-type mapping wins first, then matching folder scopes refine the effective schema and mandatory-tag policy used for that managed note.
 
 ```yaml
 folder_scopes:
@@ -334,18 +337,20 @@ folder_scopes:
       under: Meetings/
     property_sets:
       - meeting-base
+    mandatory_tags:
+      - context/meeting
   - path:
       regex: "^Archive/[0-9]{4}/.*\\.md$"
-    property_sets:
-      - archive-metadata
+    mandatory_tags:
+      - state/archived
 ```
 
 Rules:
 
 - `CM-201` `folder_scopes` MAY be omitted.
 - `CM-202` If present, `folder_scopes` MUST be a non-empty ordered list.
-- `CM-203` Each folder-scope entry MUST physically contain `path` and `property_sets`.
-- `CM-204` A folder-scope `property_sets` value MUST be a non-empty ordered list of unique property set identifiers.
+- `CM-203` Each folder-scope entry MUST physically contain `path` and at least one of `property_sets` or `mandatory_tags`.
+- `CM-204` If present, a folder-scope `property_sets` value MUST be a non-empty ordered list of unique property set identifiers.
 - `CM-205` Each property set identifier in `folder_scopes` MUST resolve to exactly one file under `<metadata_directory>/property-sets/`.
 - `CM-206` A folder-scope `path` MUST declare exactly one of `equals`, `under`, or `regex`.
 - `CM-207` Folder-scope path matching MUST use the managed note's normalized collection-relative path, including its `.md` extension and using forward slashes.
@@ -359,10 +364,46 @@ Rules:
 - `CM-215` If matching folder scopes contribute the same property set more than once, only its first folder-scope occurrence applies.
 - `CM-216` A matching folder-scope occurrence of a non-excluded default property set MUST have no additional effect because that property set already applies in the earlier default layer.
 - `CM-217` A matching folder-scope occurrence of a property set named in the selected concrete note type's `property_sets` MUST have no effect in the folder layer because that property set applies later in the explicit opt-in layer.
-- `CM-218` Managed notes of the same concrete note type MAY have different effective `frontmatter`, `relationships`, or `headings` blocks when they match different folder scopes.
+- `CM-218` Managed notes of the same concrete note type MAY have different effective `frontmatter`, `relationships`, `headings`, or mandatory-tag policies when they match different folder scopes.
 - `CM-219` Folder-scope matching MUST depend only on the managed note's stored path and MUST NOT depend on frontmatter, generated values, computed values, or template content.
-- `CM-220` A folder-scope entry MUST NOT declare an action other than `property_sets` in this specification version.
+- `CM-220` A folder-scope entry MUST NOT declare an action other than `property_sets` or `mandatory_tags` in this specification version.
 - `CM-224` Folder-scope paths MUST NOT use template or storage-pattern interpolation; dynamic folder families are expressed with `path.regex`.
+
+### Mandatory Tags
+
+Mandatory-tag declarations constrain the ordinary top-level managed-note field named `tags`. They do not create that field implicitly and they do not participate in note-type mapping. The ordered policy is assembled from collection, folder, and note-type scopes so tools can validate and materialize it deterministically.
+
+```yaml
+mandatory_tags:
+  - managed
+  - knowledge/base
+folder_scopes:
+  - path:
+      under: Projects/
+    mandatory_tags:
+      - project
+      - managed
+```
+
+For a `project` note type whose effective `mandatory_tags` is `[type/project]`, a managed note under `Projects/` has the effective sequence `[managed, knowledge/base, project, type/project]`. The repeated `managed` entry keeps its first position.
+
+Rules:
+
+- `CM-225` `mandatory_tags` in `typedmark.md` MAY be omitted, and when omitted it is equivalent to an empty list.
+- `CM-226` If present, `mandatory_tags` in `typedmark.md` MUST be a non-empty ordered list of unique tag strings that satisfy the stored tags-entry grammar in [Field Definition Reference](field-definition-reference.md).
+- `CM-227` If present, a folder-scope `mandatory_tags` value MUST be a non-empty ordered list of unique tag strings that satisfy the same stored tags-entry grammar.
+- `CM-228` The collection-level mandatory tags for a managed note are the entries in `typedmark.md` `mandatory_tags`, in declared order.
+- `CM-229` The folder-level mandatory tags for a managed note are contributed by every matching folder scope, in `folder_scopes` order and then in each scope's `mandatory_tags` order.
+- `CM-230` The note-type-level mandatory tags for a managed note are the effective `mandatory_tags` of its resolved concrete schema, as defined in [Note Type Schemas](note-type-schemas.md).
+- `CM-231` A managed note's effective mandatory tags are the collection-level sequence followed by the folder-level sequence followed by the note-type-level sequence, with duplicate strings removed and the first occurrence retained.
+- `CM-232` Mandatory-tag equality and duplicate removal MUST use the exact NFC-normalized, case-sensitive string comparison defined in [Foundations](foundations.md).
+- `CM-233` A descendant tag such as `project/alpha` MUST NOT satisfy a mandatory tag of `project` unless `project` itself is also stored.
+- `CM-234` Mandatory-tag declarations apply only to managed notes and MUST NOT make an otherwise untyped note managed.
+- `CM-235` When a managed note has at least one effective mandatory tag, its effective `frontmatter` MUST declare a top-level field named `tags` with `type: tags`.
+- `CM-236` A `tags` field governed by a non-empty effective mandatory-tag policy MUST NOT declare `optional: true`.
+- `CM-237` Every effective mandatory tag MUST satisfy the individual-entry constraints of the managed note's effective `tags` field, including `allowed_values_from` when declared.
+- `CM-238` The number of distinct effective mandatory tags MUST NOT exceed the effective `tags` field's `max` constraint when one is declared.
+- `CM-239` Mandatory-tag declarations constrain stored values and MUST NOT add, replace, or remove a field definition in the effective `frontmatter` block.
 
 ### Property Set Definitions
 

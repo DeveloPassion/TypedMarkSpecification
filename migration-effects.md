@@ -12,6 +12,7 @@ Audience: system publishers and tool authors.
 Authoritative for:
 
 - the managed-note effect of every `history.md` change operation
+- mandatory-tag policy changes during collection and note-type migrations
 - field type conversions during `retype_field` migrations
 
 See also:
@@ -36,11 +37,15 @@ Rules:
 - `ME-9` `change_storage` MUST re-resolve the storage path of every affected managed note under the new effective storage rules, MUST move each note whose stored path no longer conforms, and MUST update internal note links so moved notes still resolve; a move or link update that cannot be applied safely MUST be reported for explicit resolution.
 - `ME-10` `change_template` has no direct managed-note effect; tools MAY re-evaluate `template_drift` against the new canonical template.
 - `ME-11` `change_headings` and `change_relationships` MUST re-validate every affected managed note against the new effective heading and relationship rules; violations MUST be reported, and a migration MUST NOT restructure note body content automatically.
-- `ME-12` `change_note_type` and `change_collection` have the managed-note effect of the resulting change to each note's effective schema, evaluated through the operations above and re-validation.
+- `ME-12` `change_note_type` and `change_collection` have the managed-note effect of the resulting change to each note's effective schema and mandatory-tag policy, evaluated through the operations above and re-validation.
 - `ME-13` `add_note_type`, `remove_note_type`, `add_property_set`, `remove_property_set`, and `rename_property_set` change which schemas and property sets exist; their effect on an individual managed note is only the resulting change to that note's effective schema, evaluated through the field operations above.
 - `ME-14` After a migration operation is applied, every affected managed note MUST satisfy the Canonical Field Materialization rules defined in [Managed Notes and Properties](managed-notes-and-properties.md).
 - `ME-15` A migration MUST NOT discard managed-note data silently; any operation that cannot preserve data MUST be reported for explicit resolution, as required by [Systems, Composition, and Evolution](systems-composition-evolution.md).
 - `ME-16` A field whose name is changed by `rename_field` follows the managed-note field-name rules defined in [Managed Notes and Properties](managed-notes-and-properties.md); a rename whose target name violates those rules is invalid.
+- `ME-20` When `change_note_type` or `change_collection` changes an affected note's effective mandatory tags, the migration MUST recompute that sequence from the migrated collection state.
+- `ME-21` A migration MUST append every newly missing mandatory tag under the materialization rules in [Managed Notes and Properties](managed-notes-and-properties.md).
+- `ME-22` A migration MUST NOT remove a stored tag solely because the migrated policy no longer mandates it.
+- `ME-23` After mandatory-tag materialization, a migration MUST re-validate the complete stored `tags` value against the migrated effective field definition.
 
 ### Field Type Conversions
 
@@ -65,4 +70,3 @@ Rules:
 - `ME-17` Any source and target type pair not listed above MUST be reported for explicit resolution and MUST NOT be coerced destructively.
 - `ME-18` A conversion changes only the stored representation; after conversion, each value MUST satisfy the new field definition's constraints under the rules on this page, and a value that fails is reported rather than silently altered.
 - `ME-19` A conversion to a non-nullable target MUST NOT introduce `null`; a value that cannot be converted to a conforming non-null value is reported for explicit resolution.
-

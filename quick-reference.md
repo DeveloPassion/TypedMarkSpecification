@@ -58,6 +58,7 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | file notes by date, quarter, or week | storage patterns with `{field:format}` or `{now:format}` | [Storage rules](note-type-schemas.md#storage-rules) |
 | add an optional name suffix like " (Meeting)" | `note_name_suffix` with `required: false` | [Storage rules](note-type-schemas.md#storage-rules) |
 | map notes to types by tag or folder | `note_type_mappings` with `kind: tag` or `kind: folder` | [Note-type mappings](collection-model.md#note-type-mappings) |
+| require tags collection-wide, by folder, or by note type | `mandatory_tags` in `typedmark.md`, `folder_scopes`, or a note-type schema | [Mandatory tags](collection-model.md#mandatory-tags) |
 | share fields across many note types | property sets and `default_property_sets` | [Collection Model](collection-model.md#composing-property-sets) |
 | apply shared structure by note path | `folder_scopes` | [Collection Model](collection-model.md#folder-scopes) |
 | tolerate unknown fields on one type only | per-type `unknown_field` severity | [Note Type Schemas](note-type-schemas.md#schema-file-contract) |

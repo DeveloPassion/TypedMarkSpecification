@@ -37,8 +37,9 @@ express them.
   per-type constraint applicability (`not_blank`, `regex`, `min`/`max`,
   `allowed_values`, `unique`, `computed`), abstract types not declaring
   composition references, archive-policy-dependent required keys, `version`
-  requiring `scaffold`, folder scopes declaring exactly one path matcher, field
-  operations declaring exactly one of `note_type`/`property_set`
+  requiring `scaffold`, mandatory-tag declaration grammar and uniqueness,
+  folder scopes declaring exactly one path matcher and at least one action,
+  field operations declaring exactly one of `note_type`/`property_set`
 - the core-defined field contracts for `note_type`, `id`, `deleted`,
   `archived`, and `aliases` where schemas or property sets declare them
 - validation-report codes, severities, required context, and consistency between
@@ -58,6 +59,9 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
   to note types, composition source resolution
 - effective-schema computation: folder-scope matching, the evaluation pipeline,
   block merge rules, and the required effective keys for concrete note types
+- mandatory-tag semantics: collection/folder/note-type merge order, exact
+  duplicate removal, compatibility with the effective `tags` field, template
+  obligations, managed-note membership, and append-only materialization
 - canonical expansion: applying effective defaults for omitted
   `metadata_directory`, `exclude_paths`, `validation_defaults`, `abstract`,
   `template.file`, and `storage.archive.policy`

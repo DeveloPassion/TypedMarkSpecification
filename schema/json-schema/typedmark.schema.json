@@ -185,8 +185,7 @@
                 "const": "tag"
               },
               "tag": {
-                "type": "string",
-                "pattern": "^[\\p{L}\\p{N}_][\\p{L}\\p{N}_-]*(?:/[\\p{L}\\p{N}_][\\p{L}\\p{N}_-]*)*$"
+                "$ref": "defs.schema.json#/$defs/tag"
               },
               "note_type": {
                 "$ref": "defs.schema.json#/$defs/slug"
@@ -321,14 +320,17 @@
         "$ref": "defs.schema.json#/$defs/slug"
       }
     },
+    "mandatory_tags": {
+      "$comment": "Effective merge order, tags-field compatibility, and managed-note membership are semantic checks.",
+      "$ref": "defs.schema.json#/$defs/mandatory_tags"
+    },
     "folder_scopes": {
       "type": "array",
       "minItems": 1,
       "items": {
         "type": "object",
         "required": [
-          "path",
-          "property_sets"
+          "path"
         ],
         "properties": {
           "path": {
@@ -376,9 +378,25 @@
             "items": {
               "$ref": "defs.schema.json#/$defs/slug"
             }
+          },
+          "mandatory_tags": {
+            "$comment": "Folder matching and effective mandatory-tag merge order are semantic checks.",
+            "$ref": "defs.schema.json#/$defs/mandatory_tags"
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "anyOf": [
+          {
+            "required": [
+              "property_sets"
+            ]
+          },
+          {
+            "required": [
+              "mandatory_tags"
+            ]
+          }
+        ]
       }
     },
     "version": {

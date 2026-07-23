@@ -13,6 +13,7 @@ Authoritative for:
 
 - note type registration, abstract note types, and inheritance through `extends`
 - the schema file contract, the effective note-type schema, and the evaluation pipeline
+- note-type-level mandatory tags and their inheritance
 - conditional field constraints, schema kinds, note counts, and storage rules
 
 See also:
@@ -46,17 +47,17 @@ The effective note-type schema is not a separate stored artifact. It is the norm
 
 A note type's own `frontmatter`, `relationships`, and `headings` blocks are not a separate kind of definition. They are the note type's inline, note-type-scoped property set, and they participate in the same composition as named property sets, applied last as its highest-precedence layer. Reusable fields belong in named property sets; one-off fields belong inline.
 
-Effective-schema layers:
+Effective-schema and policy layers:
 
 | Order | Layer | Carries | Merge behavior |
 | --- | --- | --- | --- |
-| 1 | collection defaults | default property sets and defaulted collection fields | establishes the collection-wide base |
+| 1 | collection defaults | default property sets, mandatory tags, and defaulted collection fields | establishes the collection-wide base |
 | 2 | default property sets | `frontmatter`, `relationships`, `headings` | applied in `default_property_sets` order |
-| 3 | matching folder scopes | path-selected reusable blocks | applied in `folder_scopes` order |
-| 4 | abstract ancestors | reusable schema structure | applied from farthest ancestor to nearest ancestor |
+| 3 | matching folder scopes | path-selected reusable blocks and mandatory tags | applied in `folder_scopes` order |
+| 4 | abstract ancestors | reusable schema structure and note-type mandatory tags | applied from farthest ancestor to nearest ancestor |
 | 5 | `frontmatter_remove` | inherited field subtraction | removes selected inherited fields |
 | 6 | opt-in property sets | additional reusable blocks | applied in `property_sets` order |
-| 7 | local concrete schema | note-type-specific blocks and top-level values | applied last and wins conflicts |
+| 7 | local concrete schema | note-type-specific blocks, mandatory tags, and top-level values | applied last and wins conflicts |
 | 8 | effective defaults | omitted `template.file`, empty relationship/headings defaults, and defaulted storage archive policy | fills deterministic omissions |
 
 ### Normative Evaluation Pipeline
@@ -66,7 +67,7 @@ Rules:
 1. `NTS-10` A tool or validator MUST resolve the note's note type using the note-type association rules defined in [Managed Notes and Properties](managed-notes-and-properties.md) and MUST select exactly one concrete note-type schema file from `<metadata_directory>/schemas/` using that resolved identifier.
 2. `NTS-11` If the selected concrete note type declares `extends`, the tool or validator MUST load the full abstract ancestor chain, starting with the farthest abstract ancestor and ending with the selected concrete note type.
 3. `NTS-12` The selected concrete note-type schema file provides the direct or defaulted top-level values for `specification_version`, `note_type`, `abstract`, `label`, `icon`, and `description`.
-4. `NTS-13` For `kind`, `storage`, `template`, `guidance`, `unknown_field`, `conditions`, and `count`, note-type inheritance uses whole-key replacement along the abstract ancestor chain. The last schema in that chain order that physically defines one of those keys determines the effective value of that key.
+4. `NTS-13` For `kind`, `storage`, `template`, `mandatory_tags`, `guidance`, `unknown_field`, `conditions`, and `count`, note-type inheritance uses whole-key replacement along the abstract ancestor chain. The last schema in that chain order that physically defines one of those keys determines the effective value of that key.
 5. `NTS-14` The tool or validator MUST determine which property sets apply to the managed note by evaluating `default_property_sets`, its matching `folder_scopes`, the selected concrete note type's `exclude_property_sets`, and that concrete note type's `property_sets` under the composition rules in [Collection Model](collection-model.md).
 6. `NTS-15` The `frontmatter`, `relationships`, and `headings` blocks contributed by the applied default property sets MUST be applied first, in `default_property_sets` order.
 7. `NTS-167` The `frontmatter`, `relationships`, and `headings` blocks contributed by matching folder-scope property sets MUST be applied next in their effective order from [Collection Model](collection-model.md).
@@ -74,9 +75,9 @@ Rules:
 9. `NTS-17` If `frontmatter_remove` is present on the selected concrete note type, it MUST be applied next to the accumulated inherited frontmatter.
 10. `NTS-18` The `frontmatter`, `relationships`, and `headings` blocks contributed by the opt-in property sets named in `property_sets`, if any, MUST be applied next in the selected concrete schema's declared `property_sets` order, as defined in [Collection Model](collection-model.md).
 11. `NTS-19` Local `frontmatter`, `relationships`, and `headings` definitions in the selected concrete note-type schema file MUST be applied last.
-12. `NTS-20` The resulting `frontmatter`, `relationships`, and `headings` blocks, together with the direct top-level values from the selected concrete schema file, the effective inherited values of `kind`, `storage`, `template`, `guidance`, `unknown_field`, `conditions`, and `count`, and the effective defaults defined on this page, are the effective note-type schema for that managed note.
-13. `NTS-21` Managed-note, relationship, heading, and storage conformance MUST be evaluated against that effective note-type schema using the rule pages linked from this page.
-14. `NTS-168` Template conformance MUST be evaluated against the path-independent effective frontmatter defined by `RHT-84` in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
+12. `NTS-20` The resulting `frontmatter`, `relationships`, and `headings` blocks, together with the direct top-level values from the selected concrete schema file, the effective inherited values of `kind`, `storage`, `template`, `mandatory_tags`, `guidance`, `unknown_field`, `conditions`, and `count`, and the effective defaults defined on this page, are the effective note-type schema for that managed note.
+13. `NTS-21` Managed-note, mandatory-tag, relationship, heading, and storage conformance MUST be evaluated against that effective note-type schema using the rule pages linked from this page.
+14. `NTS-168` Template conformance MUST be evaluated against the path-independent effective frontmatter and mandatory-tag policy defined by `RHT-84` and `RHT-88` in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 15. `NTS-22` This specification MUST NOT be interpreted as requiring a separate serialized effective-schema artifact on disk.
 
 ### Schema File Contract
@@ -94,6 +95,7 @@ Each `<metadata_directory>/schemas/<note_type>.md` defines one note type and fol
 | `kind` | Required effectively for concrete types | inherited if declared by an abstract ancestor | Broad note-type category |
 | `storage` | Required effectively for concrete types | inherited if declared by an abstract ancestor | Storage and archive paths |
 | `template` | Optional | `<note_type>.md` | Canonical template reference |
+| `mandatory_tags` | Optional | inherited or empty | Tags required by this note type |
 | `frontmatter` | Required effectively for concrete types | inherited or locally declared | Field definitions |
 | `relationships` | Optional | empty relationship defaults | Typed relationship constraints |
 | `headings` | Optional | empty heading defaults | H1/H2 heading constraints |
@@ -108,6 +110,9 @@ label: Topic
 icon: note
 kind: entity
 description: Durable note about a specific topic.
+
+mandatory_tags:
+  - type/topic
 
 property_sets:
   - workflow
@@ -127,6 +132,10 @@ frontmatter:
   note_type:
     type: text
     const_value: topic
+  tags:
+    type: tags
+    default_value:
+      - type/topic
   title:
     label: Title
     description: Human-readable note title.
@@ -254,9 +263,9 @@ Rules:
 - `NTS-36` If present, `extends` MUST be a non-empty slug and MUST resolve to exactly one abstract note type under `<metadata_directory>/schemas/`.
 - `NTS-37` A note type MUST NOT extend itself directly or transitively.
 - `NTS-38` Because `extends` is singular, a note type MUST inherit from at most one parent.
-- `NTS-39` Abstract note types MAY declare `kind`, `storage`, `template`, `frontmatter`, `relationships`, `headings`, `guidance`, `unknown_field`, `conditions`, and `count` to contribute reusable structure, but they are not required to declare them.
+- `NTS-39` Abstract note types MAY declare `kind`, `storage`, `template`, `mandatory_tags`, `frontmatter`, `relationships`, `headings`, `guidance`, `unknown_field`, `conditions`, and `count` to contribute reusable structure, but they are not required to declare them.
 - `NTS-40` If an abstract note type declares the core-defined `note_type` field in `frontmatter`, it MUST use `value_from_schema: note_type`.
-- `NTS-41` Concrete note types MAY inherit `kind`, `storage`, `template`, `guidance`, `unknown_field`, `conditions`, `count`, `frontmatter`, `relationships`, and `headings` from abstract ancestors and therefore MAY omit those keys locally.
+- `NTS-41` Concrete note types MAY inherit `kind`, `storage`, `template`, `mandatory_tags`, `guidance`, `unknown_field`, `conditions`, `count`, `frontmatter`, `relationships`, and `headings` from abstract ancestors and therefore MAY omit those keys locally.
 - `NTS-42` A concrete note type's effective schema MUST contain every top-level key listed above as required for concrete note types.
 - `NTS-43` All templates live under `<metadata_directory>/templates/`; `template.file` is resolved from within that folder.
 - `NTS-44` If a schema physically declares `template`, `template.file` MUST be a relative path resolved against `<metadata_directory>/templates/`; the referenced template file is located at `<metadata_directory>/templates/` plus the `template.file` value.
@@ -297,6 +306,30 @@ Rules:
 - `NTS-79` Property-set definitions, default property sets, composition, and merge rules are defined in [Collection Model](collection-model.md).
 - `NTS-80` Note-type inheritance is defined only by `extends`; `property_sets`, `exclude_property_sets`, and `frontmatter_remove` do not affect the abstract ancestor chain.
 - `NTS-81` A concrete note type MAY omit individual inherited field definitions, relationship target definitions, or heading settings that remain unchanged.
+
+### Mandatory Tags
+
+A note type can require tags beyond the collection-wide and path-selected policies. The declaration is a top-level note-type policy rather than a field definition; the effective `tags` field remains explicit in `frontmatter`.
+
+```yaml
+mandatory_tags:
+  - type/project
+  - actionable
+frontmatter:
+  tags:
+    type: tags
+    default_value:
+      - type/project
+      - actionable
+```
+
+Rules:
+
+- `NTS-169` `mandatory_tags` MAY be omitted from an abstract or concrete note-type schema.
+- `NTS-170` If present, `mandatory_tags` MUST be a non-empty ordered list of unique tag strings that satisfy the stored tags-entry grammar in [Field Definition Reference](field-definition-reference.md).
+- `NTS-171` The effective note-type-level mandatory tags are the value from the last schema in abstract-ancestor-to-concrete order that physically declares `mandatory_tags`, or an empty list when none declares it.
+- `NTS-172` Effective note-type-level mandatory tags contribute the final scope of the effective mandatory-tag sequence defined in [Collection Model](collection-model.md).
+- `NTS-173` The effect of a note-type-level `mandatory_tags` declaration on `frontmatter` is defined by `CM-239` in [Collection Model](collection-model.md).
 
 ### Abstract Inheritance Example
 
