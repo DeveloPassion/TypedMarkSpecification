@@ -102,7 +102,7 @@ A collection root conforms as a valid system definition when:
 1. `CR-1` `typedmark.md` is present at the root and valid under [Collection Model](collection-model.md).
 2. `CR-2` `typedmark.md` declares the system fields `version` and `scaffold`, valid under [Systems, Composition, and Evolution](systems-composition-evolution.md).
 3. `CR-3` `<metadata_directory>/history.md`, if present, is valid under [Systems, Composition, and Evolution](systems-composition-evolution.md) and reconstructs the current schema state when replayed.
-4. `CR-4` Every property set file under `<metadata_directory>/property-sets/`, if present, is valid under [Collection Model](collection-model.md), and every property set reference from a note-type schema resolves.
+4. `CR-4` Every property set file under `<metadata_directory>/property-sets/`, if present, is valid under [Collection Model](collection-model.md), and every property set reference from `typedmark.md` or a note-type schema resolves.
 5. `CR-5` Every schema file under `<metadata_directory>/schemas/`, if present, is valid under [Note Type Schemas](note-type-schemas.md).
 6. `CR-6` Every template referenced by a schema file exists and satisfies the template-frontmatter contract in [Relationships, Headings, and Templates](relationships-headings-and-templates.md) for its note type's effective schema.
 
@@ -112,7 +112,7 @@ A collection root conforms as a valid instantiated collection when:
 
 1. `CR-7` `typedmark.md` is present at the collection root and valid under [Collection Model](collection-model.md).
 2. `CR-8` If `typedmark.md` declares `composition`, it is valid under [Collection Model](collection-model.md), and the collection is self-contained so that conformance does not require re-resolving its sources.
-3. `CR-9` Every property set file under `<metadata_directory>/property-sets/`, if present, is valid under [Collection Model](collection-model.md), and every property set reference from a note type used by managed notes resolves.
+3. `CR-9` Every property set file under `<metadata_directory>/property-sets/`, if present, is valid under [Collection Model](collection-model.md), and every property set reference from `typedmark.md` or a note type used by managed notes resolves.
 4. `CR-10` Every schema file under `<metadata_directory>/schemas/`, if present, is valid under [Note Type Schemas](note-type-schemas.md), and every concrete note type used by managed notes resolves to exactly one such schema file.
 5. `CR-21` Every template referenced or defaulted by a concrete schema exists and satisfies the template-frontmatter contract in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 6. `CR-11` Managed notes resolve to valid concrete note types under the configured note-type mapping rules and satisfy the managed note contract under [Managed Notes and Properties](managed-notes-and-properties.md).
@@ -126,7 +126,7 @@ Additional rules:
 - `CR-16` A single collection root MAY conform simultaneously as both a valid system definition and a valid instantiated collection.
 - `CR-17` Untyped notes MAY exist in an instantiated collection and do not by themselves make the collection non-conforming.
 - `CR-18` Structural precedence across artifacts remains defined in [Foundations](foundations.md).
-- `CR-19` A Core Profile instantiated collection is a valid instantiated collection that omits system fields, composition provenance, `history.md`, property sets, vocabularies, and non-default note-type mappings.
+- `CR-19` A Core Profile instantiated collection is a valid instantiated collection that omits system fields, composition provenance, `history.md`, property sets, `folder_scopes`, vocabularies, and non-default note-type mappings.
 - `CR-20` Validators MUST apply the defaulted shorthand values defined in [Collection Model](collection-model.md) and [Note Type Schemas](note-type-schemas.md) before evaluating any conformance mode.
 - `CR-22` Validators MUST evaluate every winning note-type mapping candidate under `CM-114`, including candidates that do not resolve to a concrete schema.
 

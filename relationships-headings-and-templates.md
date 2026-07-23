@@ -131,6 +131,8 @@ Each concrete note type's effective schema has a template reference.
 
 A template is pre-instantiation starter state, not a persisted managed note. Its frontmatter has the complete field shape of the effective schema, but it can hold the explicit placeholder values defined below until a tool supplies generated, computed, scaffolded, defaulted, or user-provided values. The instantiated note must satisfy the full managed-note contract before a tool claims that it conforms.
 
+Folder-scoped property sets are resolved only after an instantiated note has a target collection-relative path. The canonical template therefore represents the path-independent note-type shape; an instantiating tool adds any path-selected fields before it writes the managed note.
+
 Shape at a glance:
 
 | Surface | Physical requirement | Effective default | Purpose |
@@ -160,3 +162,7 @@ Rules:
 - `RHT-81` A tool that instantiates a template MUST apply scaffold values, defaults, schema-derived values, generation strategies, computed expressions, and user-provided values as applicable before writing the managed note.
 - `RHT-82` A tool MUST NOT claim that an instantiated note conforms while any unresolved template placeholder violates the note's effective schema.
 - `RHT-83` Template validity does not evaluate storage-path conformance, relationship cardinality, or managed-note heading conformance; those rules apply to the instantiated note.
+- `RHT-84` Template-frontmatter validation MUST compute the note type's effective frontmatter without applying `folder_scopes` because a canonical template has no managed-note path.
+- `RHT-85` A template MUST NOT include a frontmatter field solely because a `folder_scopes` property set declares it.
+- `RHT-86` Before writing an instantiated managed note, a tool MUST resolve its target path and apply every matching folder scope.
+- `RHT-87` A tool MUST materialize the resulting effective frontmatter fields before writing the instantiated managed note.

@@ -11,7 +11,7 @@ Audience: collection authors.
 
 Authoritative for:
 
-- the structural fields of `typedmark.md`: identity, metadata directory, excluded paths, assets directory, timezone, validation defaults, and vocabularies
+- the structural fields of `typedmark.md`: identity, metadata directory, excluded paths, assets directory, timezone, validation defaults, folder scopes, and vocabularies
 - note-type mappings and composition provenance
 - property sets, default property sets, and the block-merge rules of composition
 
@@ -21,9 +21,9 @@ See also:
 - [Note Type Schemas](note-type-schemas.md): the effective note-type schema the merge rules feed
 - [Field Definition Reference](field-definition-reference.md): the semantics of the field definitions property sets contribute
 
-Core Profile authors usually need only `specification_version`, `name`, and `description` in `typedmark.md`; deterministic defaults provide the metadata directory, ignored Git content, validation severities, and frontmatter-based note-type mapping. Property sets, vocabularies, composition provenance, and advanced mappings are optional layers for larger collections.
+Core Profile authors usually need only `specification_version`, `name`, and `description` in `typedmark.md`; deterministic defaults provide the metadata directory, ignored Git content, validation severities, and frontmatter-based note-type mapping. Property sets, folder scopes, vocabularies, composition provenance, and advanced mappings are optional layers for larger collections.
 
-Property sets are the single composition mechanism for reusable `frontmatter`, `relationships`, and `headings`. A property set is a named bundle stored under `<metadata_directory>/property-sets/`. Collections apply them through collection-wide defaults and through property sets named by concrete note-type schemas.
+Property sets are the single composition mechanism for reusable `frontmatter`, `relationships`, and `headings`. A property set is a named bundle stored under `<metadata_directory>/property-sets/`. Collections apply them through collection-wide defaults, managed-note folder scopes, and property sets named by concrete note-type schemas.
 
 A concrete note type's own `frontmatter`, `relationships`, and `headings` blocks are not a second kind of frontmatter source. They are the note type's inline, note-type-scoped contribution to the same composition, applied last as the terminal layer of the merge. Reusable fields live in named property sets; one-off, note-type-specific fields live inline. There is one composition mechanism, with the inline blocks as its highest-precedence layer.
 
@@ -51,6 +51,7 @@ Shape at a glance:
 | `vocabularies` | Optional | none | Reusable value sets |
 | `composition` | Optional | none | Advanced provenance and update lineage |
 | `default_property_sets` | Optional | none | Shared structure applied to every concrete note type |
+| `folder_scopes` | Optional | none | Shared structure selected by managed-note path |
 
 Expanded example:
 
@@ -141,7 +142,7 @@ Rules:
 - `CM-54` `invalid_field_value` applies when a field value violates a declared field-level value constraint such as `format`, `regex`, `not_empty`, `not_blank`, `min`, `max`, `allowed_values`, or `targets`, or a matching conditional `require_null` constraint defined in [Note Type Schemas](note-type-schemas.md). `format: note_link` syntax and resolution failures still use `invalid_note_link`.
 - `CM-55` `duplicate_unique_value` applies when a field declared with `unique: true` repeats a non-null stored value in more than one managed note of the same note type, when a field declared with `unique: collection` repeats a non-null stored value across any managed notes, or when the core-defined `id` field repeats a value across managed notes.
 - `CM-56` `invalid_note_count` applies when the number of managed notes of a note type violates that type's effective `count` constraint, as defined in [Note Type Schemas](note-type-schemas.md).
-- `CM-57` `invalid_property_set` applies when a property set file, a `typedmark.md` `default_property_sets` reference, or a note-type schema `property_sets` or `exclude_property_sets` reference violates the property-set rules defined in this page.
+- `CM-57` `invalid_property_set` applies when a property set file, a `typedmark.md` `default_property_sets` or `folder_scopes` declaration, or a note-type schema `property_sets` or `exclude_property_sets` reference violates the property-set rules defined on this page.
 - `CM-58` `invalid_note_type_mapping` applies when a note-type mapping rule violates the mapping-rule contract or when a winning rule produces a candidate note type that does not resolve to exactly one concrete schema.
 - `CM-59` `invalid_composition` applies when the `composition` block in `typedmark.md` violates the composition-provenance rules defined in this page, including a source that does not resolve to exactly one system at the declared version.
 - `CM-60` `unsupported_specification_version` applies when a governed artifact declares a `specification_version` whose major version the tool does not implement; the tool MUST report it and MUST NOT assert conformance for that artifact, as defined in [Foundations](foundations.md).
@@ -321,11 +322,51 @@ Rules:
 - `CM-137` Each identifier in `default_property_sets` MUST resolve to exactly one file under `<metadata_directory>/property-sets/`.
 - `CM-138` Default property sets are applied to every concrete note type unless that note type excludes them with `exclude_property_sets`.
 - `CM-139` The order of identifiers in `default_property_sets` is significant for the effective merge order.
-- `CM-140` If `default_property_sets` is omitted, no property set applies by default and a note type composes only the property sets it names in `property_sets`.
+- `CM-140` If `default_property_sets` is omitted, no property set applies globally; a managed note may still receive property sets from matching `folder_scopes` and from its concrete note type's `property_sets`.
+
+### Folder Scopes
+
+Folder scopes select managed notes by their actual collection-relative paths and add reusable property sets to those notes. They do not choose a note type: note-type mapping wins first, then matching folder scopes refine the effective schema used for that managed note.
+
+```yaml
+folder_scopes:
+  - path:
+      under: Meetings/
+    property_sets:
+      - meeting-base
+  - path:
+      regex: "^Archive/[0-9]{4}/.*\\.md$"
+    property_sets:
+      - archive-metadata
+```
+
+Rules:
+
+- `CM-201` `folder_scopes` MAY be omitted.
+- `CM-202` If present, `folder_scopes` MUST be a non-empty ordered list.
+- `CM-203` Each folder-scope entry MUST physically contain `path` and `property_sets`.
+- `CM-204` A folder-scope `property_sets` value MUST be a non-empty ordered list of unique property set identifiers.
+- `CM-205` Each property set identifier in `folder_scopes` MUST resolve to exactly one file under `<metadata_directory>/property-sets/`.
+- `CM-206` A folder-scope `path` MUST declare exactly one of `equals`, `under`, or `regex`.
+- `CM-207` Folder-scope path matching MUST use the managed note's normalized collection-relative path, including its `.md` extension and using forward slashes.
+- `CM-208` `path.equals` MUST be a non-empty collection-relative path and matches only that exact path.
+- `CM-209` `path.under` MUST be a non-empty collection-relative directory ending in `/` and matches the same subtree defined for `when.path.under` under [Note-Type Mappings](#note-type-mappings).
+- `CM-210` `path.regex` MUST be a non-empty ECMA-262 regular expression matched against the entire normalized collection-relative note path.
+- `CM-211` Folder scopes MUST be evaluated after note-type mapping and before the managed note's effective schema is computed.
+- `CM-212` Folder scopes apply only to managed notes and MUST NOT make an otherwise untyped note managed.
+- `CM-213` Matching folder scopes MUST contribute property sets in `folder_scopes` list order and then in each entry's `property_sets` order.
+- `CM-214` A property set named in the selected concrete note type's `exclude_property_sets` MUST be removed from the matching folder-scope contributions for that note.
+- `CM-215` If matching folder scopes contribute the same property set more than once, only its first folder-scope occurrence applies.
+- `CM-216` A matching folder-scope occurrence of a non-excluded default property set MUST have no additional effect because that property set already applies in the earlier default layer.
+- `CM-217` A matching folder-scope occurrence of a property set named in the selected concrete note type's `property_sets` MUST have no effect in the folder layer because that property set applies later in the explicit opt-in layer.
+- `CM-218` Managed notes of the same concrete note type MAY have different effective `frontmatter`, `relationships`, or `headings` blocks when they match different folder scopes.
+- `CM-219` Folder-scope matching MUST depend only on the managed note's stored path and MUST NOT depend on frontmatter, generated values, computed values, or template content.
+- `CM-220` A folder-scope entry MUST NOT declare an action other than `property_sets` in this specification version.
+- `CM-224` Folder-scope paths MUST NOT use template or storage-pattern interpolation; dynamic folder families are expressed with `path.regex`.
 
 ### Property Set Definitions
 
-A property set is the single named reusable bundle for `frontmatter`, `relationships`, and `headings`. A collection applies a property set either by naming it in `default_property_sets` or by naming it in a concrete note-type schema's `property_sets`.
+A property set is the single named reusable bundle for `frontmatter`, `relationships`, and `headings`. A collection applies a property set globally through `default_property_sets`, by managed-note path through `folder_scopes`, or explicitly through a concrete note-type schema's `property_sets`.
 
 Shape at a glance:
 
@@ -458,11 +499,11 @@ Rules:
 - `CM-157` A property set MUST NOT define `id`.
 - `CM-158` A property set MUST NOT define any other core-defined managed-note field name unless this specification version explicitly permits schema-level declaration of that field.
 - `CM-159` A property set MUST NOT define storage, template, or guidance settings.
-- `CM-160` A property set MUST NOT reference other property sets and MUST NOT name `default_property_sets`, `property_sets`, `exclude_property_sets`, or `frontmatter_remove`.
+- `CM-160` A property set MUST NOT reference other property sets and MUST NOT name `default_property_sets`, `folder_scopes`, `property_sets`, `exclude_property_sets`, or `frontmatter_remove`.
 
 ### Composing Property Sets
 
-A concrete note-type schema composes property sets through `property_sets`, opts out of default property sets through `exclude_property_sets`, and subtracts individual inherited fields through `frontmatter_remove`.
+A managed note receives collection-controlled property sets through `default_property_sets` and matching `folder_scopes`. Its concrete note-type schema opts out through `exclude_property_sets`, adds explicit sets through `property_sets`, and subtracts individual inherited fields through `frontmatter_remove`.
 
 Example opt-in composition:
 
@@ -506,10 +547,10 @@ Rules:
 - `CM-163` If present, `property_sets` MUST be a non-empty list of unique property set identifiers.
 - `CM-164` If present, `exclude_property_sets` MUST be a non-empty list of unique property set identifiers.
 - `CM-165` Each identifier in `property_sets` and `exclude_property_sets` MUST resolve to exactly one file under `<metadata_directory>/property-sets/`.
-- `CM-166` Each identifier in `exclude_property_sets` MUST be named in `default_property_sets`.
+- `CM-166` Each identifier in `exclude_property_sets` MUST be named in `default_property_sets` or in at least one `folder_scopes.property_sets` list.
 - `CM-167` A property set MUST NOT appear in both `default_property_sets` (after exclusions) and `property_sets` for the same note type.
 - `CM-168` The order of identifiers in `property_sets` is significant for the effective merge order.
-- `CM-169` A concrete note type's applied property sets are the default property sets in `default_property_sets` order, minus those named in `exclude_property_sets`, followed by the property sets named in `property_sets`.
+- `CM-169` A managed note's applied property sets are the non-excluded default property sets in `default_property_sets` order, followed by its matching folder-scope property sets after applying `CM-214` through `CM-217`, followed by the property sets named in its concrete note type's `property_sets`.
 - `CM-170` If present, `frontmatter_remove` MUST be a non-empty list of unique frontmatter field names.
 - `CM-171` Each field named in `frontmatter_remove` MUST resolve to a field contributed by an applied default property set or by an abstract ancestor.
 - `CM-172` If no frontmatter is contributed by default property sets or abstract ancestors, `frontmatter_remove` MUST be omitted.
@@ -520,26 +561,29 @@ Effective note-type schema merge rules:
 - `CM-174` The note type's own inline `frontmatter`, `relationships`, and `headings` blocks are the terminal layer of this same composition; they are applied last and take precedence over every applied property set.
 - `CM-175` Frontmatter merges by field name within `frontmatter`.
 - `CM-176` Default property set frontmatter, in `default_property_sets` order and after applying `exclude_property_sets`, is applied first.
+- `CM-221` Frontmatter from matching folder-scope property sets is applied after default property sets and before abstract ancestors.
 - `CM-177` Frontmatter declared by abstract ancestors, if any, is applied next from the farthest abstract ancestor to the nearest abstract ancestor.
-- `CM-178` If a later abstract ancestor defines a field already defined by a default property set or by a more distant abstract ancestor, the later abstract ancestor definition replaces the earlier inherited definition completely and determines whether the field is effectively optional.
-- `CM-179` If `frontmatter_remove` is present, the named fields are removed from accumulated inherited frontmatter after default-property-set and abstract-ancestor frontmatter has been applied and before any opt-in property set or local concrete note-type frontmatter is applied.
+- `CM-178` If a later abstract ancestor defines a field already defined by a default or folder-scoped property set or by a more distant abstract ancestor, the later abstract ancestor definition replaces the earlier inherited definition completely and determines whether the field is effectively optional.
+- `CM-179` If `frontmatter_remove` is present, the named fields are removed from accumulated inherited frontmatter after default-property-set, folder-scoped-property-set, and abstract-ancestor frontmatter has been applied and before any opt-in property set or local concrete note-type frontmatter is applied.
 - `CM-180` Opt-in property sets named in `property_sets` are then applied in declared order.
 - `CM-181` If two applied property sets define the same field name, the later property set in the applied order replaces the earlier definition completely.
-- `CM-182` If a property set defines a field already defined by a default property set or abstract-ancestor frontmatter, the property set definition replaces the inherited definition completely and determines whether the field is effectively optional.
+- `CM-182` If an opt-in property set defines a field already defined by a default or folder-scoped property set or abstract-ancestor frontmatter, the opt-in property set definition replaces the inherited definition completely and determines whether the field is effectively optional.
 - `CM-183` If a local concrete note-type schema defines a field already contributed by inherited frontmatter or property sets, the local definition replaces the earlier definition completely and determines whether the field is effectively optional.
 - `CM-184` A field removed by `frontmatter_remove` does not appear in the effective schema unless an opt-in property set or the local note-type schema defines that field later.
 - `CM-185` Because replacement is complete, any property-set-provided or inherited field metadata such as `label`, `description`, or `icon` is replaced too unless the overriding definition restates it.
 - `CM-186` Local concrete note-type schema frontmatter is applied last.
 - `CM-187` `relationships.belongs_to.allowed_note_types` and `relationships.related_to.allowed_note_types` merge by target note type.
 - `CM-188` Default property set relationships, in `default_property_sets` order and after applying `exclude_property_sets`, are applied first.
+- `CM-222` Relationships from matching folder-scope property sets are applied after default property sets and before abstract ancestors.
 - `CM-189` Relationship targets declared by abstract ancestors, if any, are applied next from the farthest abstract ancestor to the nearest abstract ancestor.
 - `CM-190` Relationship targets declared by opt-in property sets are applied next in declared `property_sets` order.
 - `CM-191` If a relationship target is defined both earlier in the merge stack and later in the merge stack or locally, the later definition replaces the earlier definition for that target.
 - `CM-192` Default property set headings, in `default_property_sets` order and after applying `exclude_property_sets`, are applied first.
+- `CM-223` Headings from matching folder-scope property sets are applied after default property sets and before abstract ancestors.
 - `CM-193` Headings declared by abstract ancestors, if any, are applied next from the farthest abstract ancestor to the nearest abstract ancestor.
 - `CM-194` Headings declared by opt-in property sets are applied next in declared `property_sets` order.
 - `CM-195` `headings.required_h2` and `headings.optional_h2` use replace semantics across the merge stack and the local concrete schema: if a later list is present, it replaces the earlier list; otherwise the earlier list applies unchanged.
 - `CM-196` Scalar heading settings such as `allow_other_h2` and `require_order` use replace semantics across the merge stack and the local concrete schema: a later value replaces the earlier value; otherwise the earlier value applies unchanged.
-- `CM-197` Property-set composition and abstract note-type inheritance operate within the effective `frontmatter`, `relationships`, and `headings` blocks of the selected concrete note type; the effective `frontmatter` block remains mandatory, while absent `relationships` and `headings` blocks take the empty defaults defined in [Note Type Schemas](note-type-schemas.md).
+- `CM-197` Default, folder-scoped, and opt-in property-set composition and abstract note-type inheritance operate within the effective `frontmatter`, `relationships`, and `headings` blocks of the selected concrete note type; the effective `frontmatter` block remains mandatory, while absent `relationships` and `headings` blocks take the empty defaults defined in [Note Type Schemas](note-type-schemas.md).
 - `CM-198` A concrete note-type schema MAY omit individual property-set-provided or inherited field definitions, relationship target definitions, or heading settings that remain unchanged.
 - `CM-199` Property-set composition affects only how the effective note-type schema is computed; it does not create a second schema file or a separate persisted artifact.

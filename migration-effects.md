@@ -26,7 +26,7 @@ When a collection is updated to newer versions of its source systems, the migrat
 Rules:
 
 - `ME-1` A migration operation that names `note_type` applies only to managed notes whose resolved note type is that note type.
-- `ME-2` A field operation that names `property_set` applies to managed notes of every note type whose effective schema composes that property set.
+- `ME-2` A field operation that names `property_set` applies to every managed note whose path-dependent effective schema composes that property set.
 - `ME-3` `add_field` MUST add the new field to every affected managed note, materialized to a freshly generated value when the field declares a generation strategy, and otherwise to its `default_value` or to `null` under the Canonical Field Materialization rules defined in [Managed Notes and Properties](managed-notes-and-properties.md).
 - `ME-4` `remove_field` MUST remove the named field from every affected managed note.
 - `ME-5` `rename_field` MUST move the stored value from the old field name to the new field name in every affected managed note, preserving the value unchanged.

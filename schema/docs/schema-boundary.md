@@ -37,8 +37,8 @@ express them.
   per-type constraint applicability (`not_blank`, `regex`, `min`/`max`,
   `allowed_values`, `unique`, `computed`), abstract types not declaring
   composition references, archive-policy-dependent required keys, `version`
-  requiring `scaffold`, field operations declaring exactly one of
-  `note_type`/`property_set`
+  requiring `scaffold`, folder scopes declaring exactly one path matcher, field
+  operations declaring exactly one of `note_type`/`property_set`
 - the core-defined field contracts for `note_type`, `id`, `deleted`,
   `archived`, and `aliases` where schemas or property sets declare them
 - validation-report codes, severities, required context, and consistency between
@@ -52,11 +52,12 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
   files exist under `<metadata_directory>/templates/`, artifact locations derive
   from `metadata_directory`
 - cross-file resolution: `extends` chains and cycle detection, property-set
-  references, `exclude_property_sets` membership in `default_property_sets`,
+  references, `exclude_property_sets` membership in `default_property_sets` or
+  `folder_scopes`,
   `frontmatter_remove` targeting inherited fields, relationship and field `targets` resolving
   to note types, composition source resolution
-- effective-schema computation: the evaluation pipeline, block merge rules, and
-  the required effective keys for concrete note types
+- effective-schema computation: folder-scope matching, the evaluation pipeline,
+  block merge rules, and the required effective keys for concrete note types
 - canonical expansion: applying effective defaults for omitted
   `metadata_directory`, `exclude_paths`, `validation_defaults`, `abstract`,
   `template.file`, and `storage.archive.policy`

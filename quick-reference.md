@@ -59,6 +59,7 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | add an optional name suffix like " (Meeting)" | `note_name_suffix` with `required: false` | [Storage rules](note-type-schemas.md#storage-rules) |
 | map notes to types by tag or folder | `note_type_mappings` with `kind: tag` or `kind: folder` | [Note-type mappings](collection-model.md#note-type-mappings) |
 | share fields across many note types | property sets and `default_property_sets` | [Collection Model](collection-model.md#composing-property-sets) |
+| apply shared structure by note path | `folder_scopes` | [Collection Model](collection-model.md#folder-scopes) |
 | tolerate unknown fields on one type only | per-type `unknown_field` severity | [Note Type Schemas](note-type-schemas.md#schema-file-contract) |
 | require exactly one Home note | `kind: singleton` with `count: {min: 1}` | [Schema kinds](note-type-schemas.md#allowed-schema-kinds) |
 | enforce the H1 matches the title | `headings.require_h1_title: true` | [Heading rules](relationships-headings-and-templates.md#heading-rules) |

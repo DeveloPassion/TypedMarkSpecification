@@ -51,6 +51,7 @@ Rules:
 - `MN-121` A managed note MUST satisfy exactly one effective note-type schema as defined in [Note Type Schemas](note-type-schemas.md).
 - `MN-122` A managed note MUST satisfy the field and materialization rules defined on this page.
 - `MN-123` A managed note MUST satisfy the storage, relationship, and heading rules linked from its resolved note type.
+- `MN-124` Each conformance evaluation MUST use the managed note's current normalized collection-relative path when resolving `folder_scopes`.
 
 Common frontmatter shape:
 
@@ -78,7 +79,7 @@ Rules:
 - `MN-16` `title` is human-facing and MAY change unless its field definition declares `immutable: true`.
 - `MN-17` Display-oriented fields such as `title` and `description` are human-facing note metadata and MAY differ from the note's file name and storage path unless a schema rule explicitly couples them.
 - `MN-18` A conforming managed note MUST remain usable as a normal Markdown note without preprocessing, transpilation, or note-local sidecar metadata.
-- `MN-19` Managed-note conformance uses the effective note-type schema after default property sets, abstract-ancestor application, composed property sets, and local concrete schema definitions have been applied.
+- `MN-19` Managed-note conformance uses the effective note-type schema after default property sets, matching folder-scoped property sets, abstract-ancestor application, opt-in property sets, and local concrete schema definitions have been applied.
 - `MN-20` The meanings of `relationship_kind`, `belongs_to`, and `related_to` are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - `MN-21` Managed note frontmatter MUST follow the canonical field materialization rules defined on this page.
 

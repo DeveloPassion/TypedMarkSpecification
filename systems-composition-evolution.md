@@ -241,6 +241,8 @@ Rules:
 - `SCE-63` A composing tool MUST report each scoping exclusion it materializes, identifying the note type, the excluded property set, and the sources involved.
 - `SCE-64` Relationship target note types referenced by a source's property sets and note-type schemas are resolved against the composed result, not against the source in isolation.
 - `SCE-65` `typedmark.md` `note_type_mappings` merge by concatenation in merge order; because mapping rules are evaluated in order, earlier sources' rules are evaluated before later sources' rules unless the target overrides them.
+- `SCE-141` `typedmark.md` `folder_scopes` merge by concatenation in source merge order followed by the target collection's entries.
+- `SCE-142` A source system's folder scope applies to every matching managed note in the composed collection, regardless of which source contributed that note's winning schema.
 - `SCE-66` `typedmark.md` `validation_defaults`, `exclude_paths`, and `vocabularies` merge by key, with later inputs overriding earlier inputs per key, and the target overriding all.
 - `SCE-67` The composing collection's own `name`, `version`, and other system fields are authored on the result; they are never inherited from a source.
 - `SCE-68` A composing tool MUST report every collision it resolves, identifying the artifact, the contributing sources, and the winner.
@@ -276,7 +278,7 @@ Key and element order:
 
 - `SCE-79` Order-significant mappings preserve their defined order; every other mapping serializes its keys sorted ascending by Unicode code point.
 - `SCE-80` The `frontmatter` mapping and every `object.fields` mapping are order-significant and MUST preserve the effective field order defined by the merge rules.
-- `SCE-81` `property_sets`, `default_property_sets`, `composition.sources`, `history`, and every `changes` list are sequences and MUST preserve their defined order.
+- `SCE-81` `property_sets`, `default_property_sets`, `folder_scopes`, each folder scope's `property_sets`, `composition.sources`, `history`, and every `changes` list are sequences and MUST preserve their defined order.
 - `SCE-82` Every other mapping, including a field definition's property keys and the `storage`, `relationships`, `headings`, and `typedmark.md` top-level mappings, MUST serialize its keys in ascending Unicode code-point order.
 
 Scalars:
@@ -351,7 +353,7 @@ Defined change operations:
 - `change_headings` with `note_type`, for changes to the effective `headings` block
 - `change_relationships` with `note_type`, for changes to the effective `relationships` block
 - `change_note_type` with `note_type`, for note-type-level changes that no more specific operation covers, such as changes to `kind`, `extends`, `property_sets`, `exclude_property_sets`, `frontmatter_remove`, or `guidance`
-- `change_collection`, for changes to the structural fields of `typedmark.md`, such as `note_type_mappings`, `default_property_sets`, `exclude_paths`, or `validation_defaults`
+- `change_collection`, for changes to the structural fields of `typedmark.md`, such as `note_type_mappings`, `default_property_sets`, `folder_scopes`, `exclude_paths`, or `validation_defaults`
 - `add_property_set` with `property_set`
 - `remove_property_set` with `property_set`
 - `rename_property_set` with `from` and `to`

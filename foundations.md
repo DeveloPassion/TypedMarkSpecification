@@ -148,7 +148,7 @@ Rules:
 - `FND-75` A Core Profile collection MUST declare `typedmark.md`.
 - `FND-76` A Core Profile collection MUST declare at least one concrete note-type schema.
 - `FND-77` A Core Profile collection MUST provide every template referenced or defaulted by its concrete schemas.
-- `FND-78` A Core Profile collection MAY omit property sets, vocabularies, explicit note-type mappings, system fields, composition provenance, and `history.md`.
+- `FND-78` A Core Profile collection MAY omit property sets, `folder_scopes`, vocabularies, explicit note-type mappings, system fields, composition provenance, and `history.md`.
 - `FND-79` Authoring shorthand is a governed artifact shape that omits a value only when the authoritative rule for that key defines one deterministic effective default.
 - `FND-80` A conforming tool MUST expand omitted shorthand defaults before computing effective note-type schemas, storage paths, template paths, validation severities, relationship constraints, heading constraints, or conformance results.
 - `FND-81` Canonical expansion MUST NOT invent domain content, note types, fields, relationships, headings, templates, scaffold notes, or migration history.

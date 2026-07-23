@@ -42,7 +42,7 @@ Rules:
 
 A managed note is evaluated against one effective note-type schema.
 
-The effective note-type schema is not a separate stored artifact. It is the normative result of taking one concrete note-type schema file, its abstract ancestor chain, and the default-property-set, property-set composition, and block-merge rules defined by this specification before evaluating note conformance.
+The effective note-type schema is not a separate stored artifact. It is the normative result of taking one concrete note-type schema file, its abstract ancestor chain, the managed note's matching folder scopes, and the property-set composition and block-merge rules defined by this specification before evaluating note conformance.
 
 A note type's own `frontmatter`, `relationships`, and `headings` blocks are not a separate kind of definition. They are the note type's inline, note-type-scoped property set, and they participate in the same composition as named property sets, applied last as its highest-precedence layer. Reusable fields belong in named property sets; one-off fields belong inline.
 
@@ -52,11 +52,12 @@ Effective-schema layers:
 | --- | --- | --- | --- |
 | 1 | collection defaults | default property sets and defaulted collection fields | establishes the collection-wide base |
 | 2 | default property sets | `frontmatter`, `relationships`, `headings` | applied in `default_property_sets` order |
-| 3 | abstract ancestors | reusable schema structure | applied from farthest ancestor to nearest ancestor |
-| 4 | `frontmatter_remove` | inherited field subtraction | removes selected inherited fields |
-| 5 | opt-in property sets | additional reusable blocks | applied in `property_sets` order |
-| 6 | local concrete schema | note-type-specific blocks and top-level values | applied last and wins conflicts |
-| 7 | effective defaults | omitted `template.file`, empty relationship/headings defaults, and defaulted storage archive policy | fills deterministic omissions |
+| 3 | matching folder scopes | path-selected reusable blocks | applied in `folder_scopes` order |
+| 4 | abstract ancestors | reusable schema structure | applied from farthest ancestor to nearest ancestor |
+| 5 | `frontmatter_remove` | inherited field subtraction | removes selected inherited fields |
+| 6 | opt-in property sets | additional reusable blocks | applied in `property_sets` order |
+| 7 | local concrete schema | note-type-specific blocks and top-level values | applied last and wins conflicts |
+| 8 | effective defaults | omitted `template.file`, empty relationship/headings defaults, and defaulted storage archive policy | fills deterministic omissions |
 
 ### Normative Evaluation Pipeline
 
@@ -66,15 +67,17 @@ Rules:
 2. `NTS-11` If the selected concrete note type declares `extends`, the tool or validator MUST load the full abstract ancestor chain, starting with the farthest abstract ancestor and ending with the selected concrete note type.
 3. `NTS-12` The selected concrete note-type schema file provides the direct or defaulted top-level values for `specification_version`, `note_type`, `abstract`, `label`, `icon`, and `description`.
 4. `NTS-13` For `kind`, `storage`, `template`, `guidance`, `unknown_field`, `conditions`, and `count`, note-type inheritance uses whole-key replacement along the abstract ancestor chain. The last schema in that chain order that physically defines one of those keys determines the effective value of that key.
-5. `NTS-14` The tool or validator MUST determine which property sets apply to the selected concrete note type by taking the `default_property_sets` declared in `typedmark.md`, removing any named in the concrete note type's `exclude_property_sets`, and then appending the property sets named in the concrete note type's `property_sets`, using the composition rules in [Collection Model](collection-model.md).
+5. `NTS-14` The tool or validator MUST determine which property sets apply to the managed note by evaluating `default_property_sets`, its matching `folder_scopes`, the selected concrete note type's `exclude_property_sets`, and that concrete note type's `property_sets` under the composition rules in [Collection Model](collection-model.md).
 6. `NTS-15` The `frontmatter`, `relationships`, and `headings` blocks contributed by the applied default property sets MUST be applied first, in `default_property_sets` order.
-7. `NTS-16` Local `frontmatter`, `relationships`, and `headings` blocks declared by abstract ancestors, if any, MUST be applied next in abstract-ancestor order using the merge rules defined in [Collection Model](collection-model.md).
-8. `NTS-17` If `frontmatter_remove` is present on the selected concrete note type, it MUST be applied next to the accumulated inherited frontmatter.
-9. `NTS-18` The `frontmatter`, `relationships`, and `headings` blocks contributed by the opt-in property sets named in `property_sets`, if any, MUST be applied next in the selected concrete schema's declared `property_sets` order, as defined in [Collection Model](collection-model.md).
-10. `NTS-19` Local `frontmatter`, `relationships`, and `headings` definitions in the selected concrete note-type schema file MUST be applied last.
-11. `NTS-20` The resulting `frontmatter`, `relationships`, and `headings` blocks, together with the direct top-level values from the selected concrete schema file, the effective inherited values of `kind`, `storage`, `template`, `guidance`, `unknown_field`, `conditions`, and `count`, and the effective defaults defined on this page, are the effective note-type schema for that note type.
-12. `NTS-21` Managed-note, relationship, heading, template, and storage conformance MUST be evaluated against that effective note-type schema using the rule pages linked from this page.
-13. `NTS-22` This specification MUST NOT be interpreted as requiring a separate serialized effective-schema artifact on disk.
+7. `NTS-167` The `frontmatter`, `relationships`, and `headings` blocks contributed by matching folder-scope property sets MUST be applied next in their effective order from [Collection Model](collection-model.md).
+8. `NTS-16` Local `frontmatter`, `relationships`, and `headings` blocks declared by abstract ancestors, if any, MUST be applied next in abstract-ancestor order using the merge rules defined in [Collection Model](collection-model.md).
+9. `NTS-17` If `frontmatter_remove` is present on the selected concrete note type, it MUST be applied next to the accumulated inherited frontmatter.
+10. `NTS-18` The `frontmatter`, `relationships`, and `headings` blocks contributed by the opt-in property sets named in `property_sets`, if any, MUST be applied next in the selected concrete schema's declared `property_sets` order, as defined in [Collection Model](collection-model.md).
+11. `NTS-19` Local `frontmatter`, `relationships`, and `headings` definitions in the selected concrete note-type schema file MUST be applied last.
+12. `NTS-20` The resulting `frontmatter`, `relationships`, and `headings` blocks, together with the direct top-level values from the selected concrete schema file, the effective inherited values of `kind`, `storage`, `template`, `guidance`, `unknown_field`, `conditions`, and `count`, and the effective defaults defined on this page, are the effective note-type schema for that managed note.
+13. `NTS-21` Managed-note, relationship, heading, and storage conformance MUST be evaluated against that effective note-type schema using the rule pages linked from this page.
+14. `NTS-168` Template conformance MUST be evaluated against the path-independent effective frontmatter defined by `RHT-84` in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
+15. `NTS-22` This specification MUST NOT be interpreted as requiring a separate serialized effective-schema artifact on disk.
 
 ### Schema File Contract
 
@@ -287,9 +290,9 @@ Rules:
 - `NTS-72` `property_sets`, `exclude_property_sets`, and `frontmatter_remove` MAY each be omitted.
 - `NTS-73` Only concrete note types MAY declare `property_sets`, `exclude_property_sets`, or `frontmatter_remove`.
 - `NTS-74` If present, `property_sets` MUST be a non-empty list of unique property set identifiers.
-- `NTS-75` `property_sets` is the opt-in part of the single property-set composition mechanism; property sets named in `default_property_sets` apply without being restated here.
+- `NTS-75` `property_sets` is the note-type opt-in part of the single property-set composition mechanism; property sets supplied by `default_property_sets` or matching `folder_scopes` apply without being restated here.
 - `NTS-76` Property sets MAY contribute `frontmatter`, `relationships`, and `headings`; the effective `frontmatter` block remains mandatory.
-- `NTS-77` `exclude_property_sets` opts the concrete note type out of specific default property sets; each named identifier MUST appear in `typedmark.md` `default_property_sets`.
+- `NTS-77` `exclude_property_sets` opts the concrete note type out of specific default or folder-scoped property sets; each named identifier MUST appear in `typedmark.md` `default_property_sets` or in at least one `folder_scopes.property_sets` list.
 - `NTS-78` `frontmatter_remove` subtracts individual frontmatter fields contributed by applied default property sets or abstract ancestors, before opt-in property sets and local concrete schema definitions are applied.
 - `NTS-79` Property-set definitions, default property sets, composition, and merge rules are defined in [Collection Model](collection-model.md).
 - `NTS-80` Note-type inheritance is defined only by `extends`; `property_sets`, `exclude_property_sets`, and `frontmatter_remove` do not affect the abstract ancestor chain.
