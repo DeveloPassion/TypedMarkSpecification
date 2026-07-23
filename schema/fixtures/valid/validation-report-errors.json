@@ -1,0 +1,24 @@
+{
+  "specification_version": "0.0.1",
+  "mode": "instantiated_collection",
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_field_value",
+      "severity": "error",
+      "path": "notes/typed-mark.md",
+      "rule_id": "FDR-198",
+      "message": "priority must be one of low, medium, or high",
+      "note_type": "topic",
+      "field": "priority"
+    },
+    {
+      "code": "template_drift",
+      "severity": "warn",
+      "path": "notes/typed-mark.md",
+      "rule_id": "RHT-74",
+      "message": "note body differs from the canonical template",
+      "note_type": "topic"
+    }
+  ]
+}

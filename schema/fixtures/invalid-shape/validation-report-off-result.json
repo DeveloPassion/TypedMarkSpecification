@@ -1,0 +1,14 @@
+{
+  "specification_version": "0.0.1",
+  "mode": "instantiated_collection",
+  "valid": true,
+  "results": [
+    {
+      "code": "template_drift",
+      "severity": "off",
+      "path": "notes/typed-mark.md",
+      "rule_id": "RHT-74",
+      "message": "disabled diagnostics must not be emitted"
+    }
+  ]
+}

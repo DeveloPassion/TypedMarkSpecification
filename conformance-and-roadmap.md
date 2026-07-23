@@ -13,6 +13,7 @@ Authoritative for:
 
 - the specification's non-goals
 - conformance modes and their required artifact sets
+- the portable validation-report format
 - the recommended implementation order
 
 See also:
@@ -50,6 +51,49 @@ Conformance modes:
 | Core Profile instantiated collection | collection authors | `typedmark.md`, at least one concrete schema, referenced or defaulted templates, and managed notes | none |
 | Valid instantiated collection | collection authors and tools | all artifacts used by the collection, including optional reuse and composition metadata when present | only the features physically used |
 | Valid system definition | system publishers | collection model plus system fields, scaffold, schemas, templates, and optional history | publishing, composition, and migration support |
+
+### Validation Reports
+
+Validators can serialize their findings as one portable JSON report for editors, CI pipelines, and other tools. The report states what was evaluated and whether any configured error remains; individual results identify both a stable diagnostic category and the exact normative rule that produced it.
+
+```json
+{
+  "specification_version": "0.0.1",
+  "mode": "instantiated_collection",
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_field_value",
+      "severity": "error",
+      "path": "notes/typed-mark.md",
+      "rule_id": "FDR-198",
+      "message": "priority must be one of low, medium, or high",
+      "note_type": "topic",
+      "field": "priority"
+    }
+  ]
+}
+```
+
+Rules:
+
+- `CR-24` A tool that serializes validation findings for interchange MUST encode the report as UTF-8 JSON with the top-level keys `specification_version`, `mode`, `valid`, and `results`.
+- `CR-25` `specification_version` MUST identify the TypedMark specification version under which the validator evaluated the target.
+- `CR-26` `mode` MUST be `system_definition`, `instantiated_collection`, or `both`, corresponding to the conformance targets defined on this page.
+- `CR-27` `valid` MUST be `true` exactly when `results` contains no result whose `severity` is `error`.
+- `CR-28` `results` MUST be a list containing zero or more validation-result objects.
+- `CR-29` Each validation result MUST contain `code`, `severity`, `path`, `rule_id`, and `message`.
+- `CR-30` `code` MUST be one of the validation keys defined authoritatively under `validation_defaults` in [Collection Model](collection-model.md).
+- `CR-31` `severity` MUST be the result's effective configured severity after applying the defaults and overrides defined in [Collection Model](collection-model.md) and [Note Type Schemas](note-type-schemas.md).
+- `CR-32` A validator MUST NOT emit a result whose effective configured severity is `off`.
+- `CR-33` `path` MUST be the normalized collection-relative path of the governed artifact or managed note that the result describes, using forward slashes.
+- `CR-34` `rule_id` MUST identify the stable rule whose violation produced the result.
+- `CR-35` `message` MUST be a non-empty human-readable explanation of the specific finding.
+- `CR-36` Consumers MUST NOT use `message` as a machine-stable identifier.
+- `CR-37` A result MAY include `note_type`, `field`, `relationship`, or `heading` when that context applies.
+- `CR-38` A nested field context MUST use `field` as a dot-separated path from its top-level frontmatter field.
+- `CR-39` Validators MUST order results by `path`, then `rule_id`, then `code`, then the optional context values, comparing each component as exact Unicode code points.
+- `CR-40` Validation MUST NOT modify the collection or any governed artifact it evaluates.
 
 ### Valid System Definition
 

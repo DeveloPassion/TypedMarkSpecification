@@ -1,0 +1,14 @@
+{
+  "specification_version": "0.0.1",
+  "mode": "both",
+  "valid": true,
+  "results": [
+    {
+      "code": "unknown_field",
+      "severity": "warn",
+      "path": "typedmark.md",
+      "rule_id": "CM-53",
+      "message": "unrecognized top-level field: x_local"
+    }
+  ]
+}

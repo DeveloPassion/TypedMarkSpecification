@@ -5,7 +5,8 @@
  * Fixtures are governed artifacts: Markdown files whose YAML frontmatter is the
  * governed content (the frontmatter is extracted per the Frontmatter Block
  * Grammar and validated against the matching artifact schema; the body is
- * ignored), plus the marketplace catalog, which is plain JSON.
+ * ignored), plus plain-JSON contracts such as the marketplace catalog and
+ * portable validation reports.
  *
  * It also extracts artifact-shaped example blocks from the specification pages
  * and validates them, so the prose examples can never drift from the schemas.
@@ -43,6 +44,7 @@ const ARTIFACT_SCHEMAS: Record<string, string> = {
   "property-set": "property-set.schema.json",
   history: "history.schema.json",
   marketplace: "marketplace.schema.json",
+  "validation-report": "validation-report.schema.json",
 };
 
 function buildValidators(): Record<string, ValidateFunction> {
@@ -93,6 +95,7 @@ function classify(document: unknown): string | null {
   if ("property_set" in doc) return "property-set";
   if ("history" in doc) return "history";
   if ("systems" in doc) return "marketplace";
+  if ("mode" in doc && "valid" in doc && "results" in doc) return "validation-report";
   if ("metadata_directory" in doc || "name" in doc) return "typedmark";
   return null;
 }

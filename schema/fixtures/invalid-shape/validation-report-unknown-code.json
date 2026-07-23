@@ -1,0 +1,14 @@
+{
+  "specification_version": "0.0.1",
+  "mode": "instantiated_collection",
+  "valid": false,
+  "results": [
+    {
+      "code": "other_failure",
+      "severity": "error",
+      "path": "notes/typed-mark.md",
+      "rule_id": "MN-98",
+      "message": "codes outside the catalog are invalid"
+    }
+  ]
+}

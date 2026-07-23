@@ -1,0 +1,14 @@
+{
+  "specification_version": "0.0.1",
+  "mode": "instantiated_collection",
+  "valid": false,
+  "results": [
+    {
+      "code": "template_drift",
+      "severity": "warn",
+      "path": "notes/typed-mark.md",
+      "rule_id": "RHT-74",
+      "message": "warnings alone do not make the report invalid"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "specification_version": "0.0.1",
+  "mode": "instantiated_collection",
+  "valid": true,
+  "results": [
+    {
+      "code": "invalid_field_value",
+      "severity": "error",
+      "path": "notes/typed-mark.md",
+      "rule_id": "FDR-198",
+      "message": "an error result makes the report invalid"
+    }
+  ]
+}

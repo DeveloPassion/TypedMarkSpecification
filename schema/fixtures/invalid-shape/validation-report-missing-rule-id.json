@@ -1,0 +1,13 @@
+{
+  "specification_version": "0.0.1",
+  "mode": "system_definition",
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_property_set",
+      "severity": "error",
+      "path": ".typedmark/property-sets/review.md",
+      "message": "rule_id is required"
+    }
+  ]
+}

@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developassion.github.io/TypedMarkSpecification/schema/validation-report.schema.json",
+  "title": "TypedMark validation report",
+  "description": "Portable JSON output from validation. Authoritative semantics: conformance-and-roadmap.md (Validation Reports). Validation-code meanings and effective severities remain authoritative in collection-model.md.",
+  "type": "object",
+  "required": [
+    "specification_version",
+    "mode",
+    "valid",
+    "results"
+  ],
+  "properties": {
+    "specification_version": {
+      "$ref": "defs.schema.json#/$defs/specification_version"
+    },
+    "mode": {
+      "enum": [
+        "system_definition",
+        "instantiated_collection",
+        "both"
+      ]
+    },
+    "valid": {
+      "type": "boolean"
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/result"
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "valid": {
+            "const": true
+          }
+        },
+        "required": [
+          "valid"
+        ]
+      },
+      "then": {
+        "properties": {
+          "results": {
+            "not": {
+              "contains": {
+                "properties": {
+                  "severity": {
+                    "const": "error"
+                  }
+                },
+                "required": [
+                  "severity"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "valid": {
+            "const": false
+          }
+        },
+        "required": [
+          "valid"
+        ]
+      },
+      "then": {
+        "properties": {
+          "results": {
+            "contains": {
+              "properties": {
+                "severity": {
+                  "const": "error"
+                }
+              },
+              "required": [
+                "severity"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "result": {
+      "type": "object",
+      "required": [
+        "code",
+        "severity",
+        "path",
+        "rule_id",
+        "message"
+      ],
+      "properties": {
+        "code": {
+          "enum": [
+            "path",
+            "missing_required_field",
+            "missing_declared_field",
+            "unknown_field",
+            "invalid_field_value",
+            "duplicate_unique_value",
+            "invalid_note_count",
+            "invalid_property_set",
+            "invalid_note_type_mapping",
+            "invalid_composition",
+            "unsupported_specification_version",
+            "invalid_note_link",
+            "invalid_relationship_definition",
+            "invalid_relationship_instance",
+            "invalid_heading",
+            "template_drift"
+          ]
+        },
+        "severity": {
+          "enum": [
+            "error",
+            "warn",
+            "info"
+          ]
+        },
+        "path": {
+          "$ref": "defs.schema.json#/$defs/collection_relative_path"
+        },
+        "rule_id": {
+          "type": "string",
+          "pattern": "^(FND|CM|NTS|FDR|MN|NL|RHT|SCE|ME|CR)-[1-9][0-9]*$"
+        },
+        "message": {
+          "$ref": "defs.schema.json#/$defs/non_empty_string"
+        },
+        "note_type": {
+          "$ref": "defs.schema.json#/$defs/slug"
+        },
+        "field": {
+          "$ref": "defs.schema.json#/$defs/dotted_field_path"
+        },
+        "relationship": {
+          "$ref": "defs.schema.json#/$defs/field_name"
+        },
+        "heading": {
+          "$ref": "defs.schema.json#/$defs/non_empty_string"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
