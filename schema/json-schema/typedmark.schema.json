@@ -360,7 +360,10 @@
                 "$ref": "defs.schema.json#/$defs/relative_md_path"
               },
               "values": {
-                "type": "object"
+                "type": "object",
+                "propertyNames": {
+                  "$ref": "defs.schema.json#/$defs/field_name"
+                }
               }
             },
             "additionalProperties": false
@@ -378,6 +381,9 @@
     },
     "publisher": {
       "type": "object",
+      "required": [
+        "name"
+      ],
       "properties": {
         "name": {
           "$ref": "defs.schema.json#/$defs/non_empty_string"

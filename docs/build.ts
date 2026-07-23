@@ -10,8 +10,8 @@
  * Usage: bun docs/build.ts  (or: bun run build-site)
  */
 
-import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { isAbsolute, join, relative, resolve } from "node:path";
 import { marked } from "marked";
 
 const ROOT = join(import.meta.dir, "..");
@@ -66,7 +66,7 @@ function slugify(text: string): string {
     .toLowerCase()
     .replace(/<[^>]+>/g, "")
     .replace(/&[a-z]+;/g, "")
-    .replace(/[^\p{L}\p{N}\s-]/gu, "")
+    .replace(/[^\p{L}\p{N}\s_-]/gu, "")
     .trim()
     .replace(/\s+/g, "-");
 }
@@ -136,6 +136,39 @@ function tocHtml(toc: TocEntry[]): string {
   return out + "</ul></nav>";
 }
 
+function validateInternalLinks(): void {
+  const htmlByPath = new Map<string, string>();
+
+  for (const page of PAGES) {
+    htmlByPath.set(page.out, readFileSync(join(DIST, page.out), "utf8"));
+  }
+
+  for (const page of PAGES) {
+    const html = htmlByPath.get(page.out)!;
+    for (const match of html.matchAll(/href="([^"]+)"/g)) {
+      const href = match[1]!;
+      if (/^[a-z][a-z0-9+.-]*:/i.test(href)) continue;
+
+      const [targetPart, fragment] = href.split("#", 2);
+      const target = targetPart || page.out;
+      const targetPath = resolve(DIST, target);
+      const relativeTarget = relative(DIST, targetPath);
+      if (relativeTarget.startsWith("..") || isAbsolute(relativeTarget)) {
+        throw new Error(`${page.out}: internal link escapes the built site: ${href}`);
+      }
+      if (!existsSync(targetPath)) {
+        throw new Error(`${page.out}: internal link target does not exist: ${href}`);
+      }
+
+      if (!fragment || !target.endsWith(".html")) continue;
+      const targetHtml = htmlByPath.get(target) ?? readFileSync(targetPath, "utf8");
+      if (!targetHtml.includes(`id="${fragment}"`)) {
+        throw new Error(`${page.out}: internal link anchor does not exist: ${href}`);
+      }
+    }
+  }
+}
+
 const AUDIENCE_LABELS: Record<string, string> = {
   essentials: "Essentials",
   advanced: "Advanced",
@@ -201,4 +234,5 @@ cpSync(join(import.meta.dir, "styles.css"), join(DIST, "styles.css"));
 cpSync(join(import.meta.dir, "site.js"), join(DIST, "site.js"));
 cpSync(join(ROOT, "schema"), join(DIST, "schema"), { recursive: true });
 writeFileSync(join(DIST, ".nojekyll"), "");
+validateInternalLinks();
 console.log(`built ${PAGES.length} pages into dist/`);

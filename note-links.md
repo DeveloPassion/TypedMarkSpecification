@@ -7,6 +7,8 @@ audience: essentials
 
 # Note Links
 
+Audience: collection authors and tool authors.
+
 Authoritative for:
 
 - internal note-link forms and parsing
@@ -21,7 +23,7 @@ See also:
 
 ## Note-Link Syntax and Resolution
 
-Internal note links connect collection notes. This section defines the supported link forms, the parsed link components, and the deterministic target-resolution algorithm. Two conforming tools MUST resolve the same internal note link, in the same collection, to the same result.
+Internal note links connect collection notes. This section defines the supported link forms, the parsed link components, and the deterministic target-resolution algorithm so conforming tools produce the same result for the same link and collection.
 
 ### Link Forms
 

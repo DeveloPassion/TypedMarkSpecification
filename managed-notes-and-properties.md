@@ -33,22 +33,24 @@ Rules:
 - `MN-3` The ordered note-type mapping rules are defined in [Collection Model](collection-model.md).
 - `MN-4` The first matching note-type mapping rule determines the note's candidate note type.
 - `MN-5` A collection note is managed only when the candidate note type from the winning mapping rule resolves to exactly one known concrete schema.
-- `MN-6` A collection note is untyped when no mapping rule matches or when the winning mapping rule does not resolve to exactly one known concrete schema.
+- `MN-6` A collection note is untyped when no mapping rule matches or when the winning mapping rule does not resolve to exactly one known concrete schema; the latter case is an `invalid_note_type_mapping` diagnostic under [Collection Model](collection-model.md).
 - `MN-7` Untyped notes MAY exist in a collection.
 - `MN-8` Untyped notes are outside the managed-note contract on this page and are not validated against note-type storage, relationship, heading, or frontmatter field-definition rules.
 - `MN-9` Rules on this page apply only to managed notes unless a rule explicitly says otherwise.
 
 ## Managed Note Contract
 
-Every managed note MUST:
+The managed-note contract combines file format, note-type resolution, effective-schema conformance, and the governed note surfaces.
 
-- be a Markdown file
-- contain YAML frontmatter
-- use YAML frontmatter as the note's metadata
-- resolve to exactly one known concrete note type under the configured note-type mapping rules
-- satisfy exactly one effective note-type schema as defined in [Note Type Schemas](note-type-schemas.md)
-- satisfy the field and materialization rules defined in this page
-- satisfy the storage, relationship, and heading rules linked from its resolved note type
+Rules:
+
+- `MN-117` A managed note MUST be a Markdown file.
+- `MN-118` A managed note MUST contain valid YAML frontmatter.
+- `MN-119` A managed note MUST use YAML frontmatter as its metadata surface.
+- `MN-120` A managed note MUST resolve to exactly one known concrete note type under the configured note-type mapping rules.
+- `MN-121` A managed note MUST satisfy exactly one effective note-type schema as defined in [Note Type Schemas](note-type-schemas.md).
+- `MN-122` A managed note MUST satisfy the field and materialization rules defined on this page.
+- `MN-123` A managed note MUST satisfy the storage, relationship, and heading rules linked from its resolved note type.
 
 Common frontmatter shape:
 
@@ -189,9 +191,7 @@ Rules:
 
 ## Field Optionality
 
-Each schema MUST declare:
-
-- `frontmatter`
+Field optionality is evaluated within the effective `frontmatter` block required by [Note Type Schemas](note-type-schemas.md).
 
 Rules:
 

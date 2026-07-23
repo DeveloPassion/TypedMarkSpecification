@@ -15,6 +15,12 @@ Authoritative for:
 - conformance modes and their required artifact sets
 - the recommended implementation order
 
+See also:
+
+- [Foundations](foundations.md): authoring profiles and shared baselines
+- [Collection Model](collection-model.md): collection-level validation severities
+- [Systems, Composition, and Evolution](systems-composition-evolution.md): system-definition and migration contracts
+
 ## Non-Goals
 
 This specification defines the structural contract for typed Markdown note collections. It deliberately does not define:
@@ -24,10 +30,14 @@ This specification defines the structural contract for typed Markdown note colle
 - **Editor user experience.** Forms, pickers, autocomplete behavior, and authoring workflows are application concerns.
 - **Sync, storage backends, and version control.** TypedMark governs files at rest; how they move between machines — Git, sync services, backups — is out of scope.
 - **Body prose.** Markdown content outside the governed surfaces — frontmatter, H2 headings, internal note links — is free; TypedMark does not constrain writing style or block-level structure.
-- **Value coercion.** TypedMark is strictly typed: a stored value either satisfies its declared property type or it does not. Tools MUST NOT coerce values on read, such as reading the string `"5"` as the integer `5`.
+- **Value coercion.** TypedMark is strictly typed: a stored value either satisfies its declared property type or it does not. Reading the string `"5"` as the integer `5` is coercion.
 - **Query and index engine internals.** Execution strategy, caching internals, and performance characteristics are implementation concerns, even where future versions define portable query or index contracts.
 - **AI behavior.** Agents consume the structural contract; prompts, models, and agent workflows are outside the specification.
 - **Identity, authentication, and permissions.** Multi-user access control is out of scope; visibility metadata is tracked separately as a possible future addition.
+
+Rules:
+
+- `CR-23` Tools MUST NOT coerce stored values while reading them.
 
 ## Conformance
 
@@ -50,7 +60,7 @@ A collection root conforms as a valid system definition when:
 3. `CR-3` `<metadata_directory>/history.md`, if present, is valid under [Systems, Composition, and Evolution](systems-composition-evolution.md) and reconstructs the current schema state when replayed.
 4. `CR-4` Every property set file under `<metadata_directory>/property-sets/`, if present, is valid under [Collection Model](collection-model.md), and every property set reference from a note-type schema resolves.
 5. `CR-5` Every schema file under `<metadata_directory>/schemas/`, if present, is valid under [Note Type Schemas](note-type-schemas.md).
-6. `CR-6` Every template referenced by a schema file exists, is valid under [Relationships, Headings, and Templates](relationships-headings-and-templates.md), and has starter frontmatter that conforms to its note type's effective schema.
+6. `CR-6` Every template referenced by a schema file exists and satisfies the template-frontmatter contract in [Relationships, Headings, and Templates](relationships-headings-and-templates.md) for its note type's effective schema.
 
 ### Valid Instantiated Collection
 
@@ -60,9 +70,10 @@ A collection root conforms as a valid instantiated collection when:
 2. `CR-8` If `typedmark.md` declares `composition`, it is valid under [Collection Model](collection-model.md), and the collection is self-contained so that conformance does not require re-resolving its sources.
 3. `CR-9` Every property set file under `<metadata_directory>/property-sets/`, if present, is valid under [Collection Model](collection-model.md), and every property set reference from a note type used by managed notes resolves.
 4. `CR-10` Every schema file under `<metadata_directory>/schemas/`, if present, is valid under [Note Type Schemas](note-type-schemas.md), and every concrete note type used by managed notes resolves to exactly one such schema file.
-5. `CR-11` Managed notes resolve to valid concrete note types under the configured note-type mapping rules and satisfy the managed note contract under [Managed Notes and Properties](managed-notes-and-properties.md).
-6. `CR-12` Managed notes satisfy their schema storage rules under [Note Type Schemas](note-type-schemas.md).
-7. `CR-13` Managed notes satisfy their schema relationship and heading rules under [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
+5. `CR-21` Every template referenced or defaulted by a concrete schema exists and satisfies the template-frontmatter contract in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
+6. `CR-11` Managed notes resolve to valid concrete note types under the configured note-type mapping rules and satisfy the managed note contract under [Managed Notes and Properties](managed-notes-and-properties.md).
+7. `CR-12` Managed notes satisfy their schema storage rules under [Note Type Schemas](note-type-schemas.md).
+8. `CR-13` Managed notes satisfy their schema relationship and heading rules under [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 
 Additional rules:
 
@@ -73,6 +84,7 @@ Additional rules:
 - `CR-18` Structural precedence across artifacts remains defined in [Foundations](foundations.md).
 - `CR-19` A Core Profile instantiated collection is a valid instantiated collection that omits system fields, composition provenance, `history.md`, property sets, vocabularies, and non-default note-type mappings.
 - `CR-20` Validators MUST apply the defaulted shorthand values defined in [Collection Model](collection-model.md) and [Note Type Schemas](note-type-schemas.md) before evaluating any conformance mode.
+- `CR-22` Validators MUST evaluate every winning note-type mapping candidate under `CM-114`, including candidates that do not resolve to a concrete schema.
 
 ## Recommended Next Steps
 

@@ -1,11 +1,13 @@
 #!/usr/bin/env bun
 /**
- * Lint the stable rule identifiers in the specification pages.
+ * Lint rule identifiers, normative-keyword placement, and page preambles.
  *
  * Every top-level item of a normative rule list must start with a rule ID
  * chip (e.g. `CM-12`) using the page's prefix, and every ID must be unique
  * across the whole specification. IDs are append-only: never renumber, and
  * retire the ID of a removed rule instead of reusing it.
+ * Normative keywords belong only on identified rule lines, and each published
+ * page carries the compact Audience / Authoritative for / See also preamble.
  *
  * Usage: bun scripts/lint-rule-ids.ts (or: bun run lint-rule-ids)
  */
@@ -28,6 +30,14 @@ const PREFIXES: Record<string, string> = {
   "conformance-and-roadmap.md": "CR",
 };
 
+const PREAMBLE_PAGES = [
+  "index.md",
+  "manifesto.md",
+  "getting-started.md",
+  ...Object.keys(PREFIXES),
+  "quick-reference.md",
+];
+
 const EXTRA_TRIGGERS = new Set([
   "Encoding and layout:",
   "Key and element order:",
@@ -35,6 +45,8 @@ const EXTRA_TRIGGERS = new Set([
   "Supported generation strategies:",
   "The update flow:",
 ]);
+
+const NORMATIVE_KEYWORD = /\b(?:MUST|SHOULD|MAY|OPTIONAL|RECOMMENDED|REQUIRED)\b/;
 
 export function isTrigger(line: string): boolean {
   const trimmed = line.trim();
@@ -82,7 +94,8 @@ const seen = new Map<string, string>();
 for (const [page, prefix] of Object.entries(PREFIXES)) {
   const text = readFileSync(join(ROOT, page), "utf8");
   const lines = text.split("\n");
-  for (const lineNo of ruleLines(text)) {
+  const identifiedRuleLines = new Set(ruleLines(text));
+  for (const lineNo of identifiedRuleLines) {
     const line = lines[lineNo]!;
     const match = /^(?:- |\d+\. )`([A-Z]{2,3}-\d+)` /.exec(line);
     if (!match) {
@@ -102,10 +115,38 @@ for (const [page, prefix] of Object.entries(PREFIXES)) {
     }
     seen.set(id, `${page}:${lineNo + 1}`);
   }
+
+  let inFence = false;
+  for (let lineNo = 0; lineNo < lines.length; lineNo++) {
+    const line = lines[lineNo]!;
+    if (/^```/.test(line)) {
+      inFence = !inFence;
+      continue;
+    }
+    if (inFence || !NORMATIVE_KEYWORD.test(line)) continue;
+    if (identifiedRuleLines.has(lineNo)) continue;
+    console.error(`${page}:${lineNo + 1}: normative keyword outside an identified rule`);
+    failures++;
+  }
+}
+
+for (const page of PREAMBLE_PAGES) {
+  const text = readFileSync(join(ROOT, page), "utf8");
+  const requiredMarkers = [
+    ["frontmatter audience", /^audience:\s+\S+/m],
+    ["Audience line", /^Audience:\s+\S+/m],
+    ["Authoritative for list", /^Authoritative for:\s*$/m],
+    ["See also list", /^See also:\s*$/m],
+  ] as const;
+  for (const [label, pattern] of requiredMarkers) {
+    if (pattern.test(text)) continue;
+    console.error(`${page}: missing required preamble element: ${label}`);
+    failures++;
+  }
 }
 
 if (failures > 0) {
-  console.error(`\n${failures} rule identifier problem(s)`);
+  console.error(`\n${failures} specification rule lint problem(s)`);
   process.exit(1);
 }
 console.log(`all ${seen.size} rule identifiers are present and unique`);

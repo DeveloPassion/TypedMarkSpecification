@@ -7,6 +7,18 @@ audience: essentials
 
 # Getting Started
 
+Audience: first-time collection authors.
+
+Authoritative for:
+
+- no governed artifact contract; this page is a non-normative tutorial
+
+See also:
+
+- [Foundations](foundations.md): core concepts and parsing baselines
+- [Collection Model](collection-model.md): the authoritative `typedmark.md` contract
+- [Note Type Schemas](note-type-schemas.md): the authoritative schema contract
+
 This page is a non-normative tutorial. It shows how little is needed to turn a folder of Markdown notes into a Core Profile typed collection: one configuration file, one note type, one template, one note. Every step links to the section that governs it.
 
 ## 1. Create `typedmark.md`
@@ -79,6 +91,8 @@ meeting_date: null
 
 ## Decisions
 ```
+
+The empty `title` and `null` `meeting_date` are template placeholders. A tool instantiating the template replaces them with user-provided and generated values before writing a conforming managed note ([template placeholder rules](relationships-headings-and-templates.md#templates)).
 
 ## 4. Write a note
 

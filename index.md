@@ -3,9 +3,22 @@ title: TypedMark
 nav_order: 0
 has_children: true
 permalink: /
+audience: essentials
 ---
 
 # TypedMark
+
+Audience: everyone.
+
+Authoritative for:
+
+- navigation and reading paths only; this page defines no normative artifact contract
+
+See also:
+
+- [Manifesto](manifesto.md): the motivation for TypedMark
+- [Getting Started](getting-started.md): a non-normative first collection
+- [Foundations](foundations.md): the first normative specification page
 
 TypedMark is an open specification for typed Markdown note systems.
 

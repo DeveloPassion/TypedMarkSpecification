@@ -16,6 +16,12 @@ Authoritative for:
 - the governed artifact format, the artifact map, and structural precedence
 - the authoring profiles and the distinction between authored shorthand and effective canonical values
 
+See also:
+
+- [Collection Model](collection-model.md): the structural fields of `typedmark.md`
+- [Note Type Schemas](note-type-schemas.md): effective note-type schemas
+- [Conformance and Roadmap](conformance-and-roadmap.md): conformance modes and artifact sets
+
 ## Core Concepts
 
 ### Collection
@@ -49,7 +55,7 @@ A managed note is a collection note that is associated with exactly one known no
 
 ### Untyped Notes
 
-An untyped note is a collection note that is not associated with any known note type. Untyped notes MAY exist in a TypedMark collection, but they are outside the managed-note contract and are not validated against note-type schema, storage, relationship, or heading rules unless a future specification version defines additional rules for them.
+An untyped note is a collection note that is not associated with any known note type. TypedMark collections can contain untyped notes, but those notes are outside the managed-note contract and are not validated against note-type schema, storage, relationship, or heading rules unless a future specification version defines additional rules for them.
 
 ### Assets
 
@@ -61,7 +67,7 @@ A managed note's frontmatter is its YAML metadata surface. Field definitions des
 
 ### Property Sets
 
-A property set is the single named reusable bundle for shared `frontmatter`, `relationships`, and `headings`, defined under `<metadata_directory>/property-sets/`. A collection applies a property set in two ways: `typedmark.md` MAY name default property sets that apply to every note type, and a concrete note-type schema MAY name additional property sets to compose, opt out of specific default property sets, and subtract individual inherited fields. Property sets are authoritative on [Collection Model](collection-model.md).
+A property set is the single named reusable bundle for shared `frontmatter`, `relationships`, and `headings`, defined under `<metadata_directory>/property-sets/`. A collection applies property sets through collection defaults and through concrete note-type composition, exclusions, and field subtraction. Property sets are authoritative on [Collection Model](collection-model.md).
 
 ### Effective Note-Type Schema
 
@@ -73,7 +79,7 @@ A note type governs more than metadata fields. It also defines typed relationshi
 
 ### Systems, Composition, and Evolution
 
-The specification distinguishes collection structure from the systems that package and evolve it. A system is the domain layer of TypedMark: a collection becomes a reusable, versioned, publishable system by declaring the optional system fields of `typedmark.md` — release version, publishing metadata, and scaffold — on top of the domain-agnostic core. There is no separate system manifest. A collection MAY be composed from several systems; the resulting collection is materialized self-contained, and its composition lineage is recorded as provenance in `typedmark.md`. `<metadata_directory>/history.md` records the event-sourced change history that drives migrating a collection to newer system versions. These rules are authoritative on [Systems, Composition, and Evolution](systems-composition-evolution.md).
+The specification distinguishes collection structure from the systems that package and evolve it. A system is the domain layer of TypedMark: a collection becomes a reusable, versioned, publishable system by declaring the optional system fields of `typedmark.md` — release version, publishing metadata, and scaffold — on top of the domain-agnostic core. There is no separate system manifest. Several systems can be composed into one self-contained collection whose lineage is recorded as provenance in `typedmark.md`. `<metadata_directory>/history.md` records the event-sourced change history that drives migrating a collection to newer system versions. These rules are authoritative on [Systems, Composition, and Evolution](systems-composition-evolution.md).
 
 ### Conformance
 
@@ -81,11 +87,9 @@ Conformance is the process of evaluating whether the required artifacts exist an
 
 ### Keywords
 
-The uppercase keywords `MUST`, `MUST NOT`, `SHOULD`, `SHOULD NOT`, `MAY`, `OPTIONAL`, and `RECOMMENDED` in this specification are to be interpreted as described in RFC 2119 and RFC 8174.
-
 Rules:
 
-- `FND-3` Uppercase normative keywords are normative everywhere in this specification.
+- `FND-3` The uppercase keywords `MUST`, `MUST NOT`, `SHOULD`, `SHOULD NOT`, `MAY`, `OPTIONAL`, and `RECOMMENDED` are normative and are interpreted as described in RFC 2119 and RFC 8174.
 - `FND-4` Lowercase modal verbs such as "must", "should", "may", "can", and "could" are ordinary English unless they appear inside a quoted example.
 
 ### Specification Versioning
@@ -94,7 +98,7 @@ Rules:
 
 The specification's own version uses Semantic Versioning change classes:
 
-- MAJOR: a breaking change to the specification. An artifact valid under an earlier major MAY be invalid under a new major.
+- MAJOR: a breaking change to the specification. An artifact valid under an earlier major can be invalid under a new major.
 - MINOR: a backward-compatible addition, such as a new optional field, property type, or construct. An artifact valid under `x.y` remains valid under `x.(y+1)`.
 - PATCH: an editorial clarification that does not change structural requirements.
 
@@ -156,13 +160,13 @@ Rules:
 - The authoritative contract lives in `typedmark.md` and the metadata directory named by `typedmark.md`.
 - One schema file defines one note type.
 - TypedMark is strongly typed.
-- Agents and tools MUST be able to understand collection structure from `typedmark.md` and the configured metadata directory alone.
-- Managed notes MUST remain directly readable and editable in any Markdown editor without transformation.
-- Managed note metadata MUST live in YAML frontmatter and MUST use property types supported by this specification.
+- Collection structure is understandable from `typedmark.md` and the configured metadata directory alone.
+- Managed notes remain directly readable and editable in any Markdown editor without transformation.
+- Managed note metadata lives in YAML frontmatter and uses property types supported by this specification.
 - The core specification defines reusable structure, not domain content.
 - Concrete note sets, starter content, and house conventions belong to systems layered on top of the core specification.
 - A collection composed from several systems is materialized self-contained, so it remains understandable from `typedmark.md` and the metadata directory alone, without re-resolving its sources.
-- Composing the same systems at the same versions MUST reproduce the same collection.
+- Composition of the same systems at the same versions is reproducible.
 - Examples in this specification are illustrative and non-normative unless a rule explicitly says otherwise.
 
 ### Spec-Defined Names and Namespaces
@@ -295,15 +299,17 @@ The authoritative contract for each governed element lives in exactly one place,
 - relationship semantics, heading constraints, and template obligations: [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
 - conformance modes and required artifact sets: [Conformance and Roadmap](conformance-and-roadmap.md)
 
-`typedmark.md` MUST live at the root of the managed collection.
+`typedmark.md` lives at the root of the managed collection, as required by [Collection Model](collection-model.md).
 
-When this specification fixes an artifact location by artifact kind, governed artifacts MUST derive that location from the authoritative artifact map above and the `typedmark.md` `metadata_directory` value. They MUST NOT restate the same path redundantly elsewhere unless an artifact-specific rule explicitly requires the restated path.
+Rules:
 
-Files outside `typedmark.md` and the configured metadata directory MAY exist for humans, publishing, or navigation, but they are not authoritative for structure.
+- `FND-84` When this specification fixes an artifact location by artifact kind, governed artifacts MUST derive that location from the authoritative artifact map and the `typedmark.md` `metadata_directory` value.
+- `FND-85` Governed artifacts MUST NOT restate a fixed artifact path elsewhere unless an artifact-specific rule requires it.
+- `FND-86` Files outside `typedmark.md` and the configured metadata directory MAY exist for humans, publishing, or navigation, but they are not authoritative for structure.
 
 ## Authority and Precedence
 
-When two artifacts or surfaces appear to disagree, structural conflicts MUST be resolved in this order:
+The following order resolves structural conflicts between artifacts or surfaces:
 
 1. `typedmark.md`
 2. `<metadata_directory>/schemas/<note_type>.md`
@@ -313,6 +319,7 @@ When two artifacts or surfaces appear to disagree, structural conflicts MUST be 
 
 Rules:
 
+- `FND-87` Structural conflicts MUST be resolved using the precedence order above.
 - `FND-52` Agents MUST rely on `typedmark.md` and the configured metadata directory for structural understanding.
 - `FND-53` Agents MUST NOT infer note types or structural rules from prose guidance when authoritative artifacts exist.
 - `FND-54` Human-facing generated reference pages MAY restate the specification for convenience, but they are never authoritative.

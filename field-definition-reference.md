@@ -23,7 +23,32 @@ See also:
 
 ## Frontmatter Property Types
 
-Every field definition is a YAML mapping. Every field definition MUST declare `type`, and it MAY declare additional field-definition properties such as `label`, `description`, `icon`, `format`, `generated`, `computed`, `unique`, `deprecated`, `immutable`, `optional`, `nullable`, `default_value`, `validate_exists`, `not_empty`, `not_blank`, `regex`, `min`, `max`, and `allowed_values`.
+Every field definition is a YAML mapping with `type` and any applicable field-definition properties, such as `label`, `description`, `icon`, `format`, `generated`, `computed`, `unique`, `deprecated`, `immutable`, `optional`, `nullable`, `default_value`, `validate_exists`, `not_empty`, `not_blank`, `regex`, `min`, `max`, and `allowed_values`.
+
+Property applicability at a glance:
+
+| Property | Applies to | Default or key restriction |
+| --- | --- | --- |
+| `type` | every field definition | physically required |
+| `items` | `list` | required for lists; absent elsewhere |
+| `fields` | `object` | required for objects; absent elsewhere |
+| `label`, `description`, `icon` | any declared field | optional human-facing metadata |
+| `generated` | declared fields | `false`; strategies are unavailable on anonymous `items` |
+| `computed` | top-level `text` fields | sibling-field derivation only |
+| `unique` | top-level scalar fields | `false`; per-note-type or collection scope |
+| `deprecated` | declared fields | `false` |
+| `immutable` | top-level and nested object fields | `false`; unavailable on anonymous `items` |
+| `optional` | declared fields | `false`; changes value requirements, not storage shape |
+| `nullable` | declared fields except anonymous `items` | derived from `optional` when omitted |
+| `default_value` | declared fields except anonymous `items` | unavailable with generation strategies or `computed` |
+| `relationship_kind` | top-level note-link fields | `belongs_to` or `related_to` |
+| `format` | `text`, `link`, and `time` where supported | required for `link` and `time` |
+| `validate_exists`, `targets` | note-link definitions | existence and target-type checks |
+| `not_empty` | text, link, list, tags, object | `false` |
+| `not_blank`, `regex` | text and link | `false` / absent |
+| `min`, `max` | scalar, temporal, list, and tags types listed below | absent |
+| `allowed_values`, `allowed_values_from` | supported scalar/list types; vocabularies additionally support tags | mutually exclusive |
+| `const_value`, `value_from_schema` | declared fields | mutually exclusive with each other and with `computed` or a generation strategy |
 
 ## Field Definition Property Reference
 
@@ -33,6 +58,19 @@ Rules:
 - `FDR-2` Human-facing field metadata MUST NOT change field identity, storage keys, type validation, optionality semantics, relationship semantics, or materialization behavior.
 - `FDR-3` Constraint properties other than `nullable` and `optional` are evaluated only when the stored value is non-null.
 - `FDR-4` A non-null `default_value` MUST satisfy all declared field constraints.
+
+### Field Value Equality
+
+Several field features compare values. These rules define one type-aware equality model so uniqueness, constants, and allowed values cannot disagree.
+
+Rules:
+
+- `FDR-239` Every field-value comparison that this page defines as exact equality MUST compare parsed values under the declared field definition.
+- `FDR-240` `text` and `link` strings are equal when their NFC-normalized code points are equal with case preserved.
+- `FDR-241` `integer` and `number` values are equal when their numeric values are equal, and `checkbox` values are equal when their boolean values are equal.
+- `FDR-242` `date` and `time` values are equal when they denote the same calendar date or wall-clock time, and `datetime` values are equal when they denote the same instant regardless of offset notation.
+- `FDR-243` `list` and `tags` values are equal when they have the same length and their entries are pairwise equal in sequence order under the applicable item definition.
+- `FDR-244` `object` values are equal when they have the same keys and their field values are equal recursively; `any` values use the same scalar, sequence, and mapping equality rules recursively after YAML parsing.
 
 ### `type`
 
@@ -134,7 +172,11 @@ Rules:
 
 Supported generation strategies:
 
-- `FDR-68` `now` is valid for `date`, `time`, and `datetime` fields. When a tool creates the note, or first materializes the field without a concrete value, it MUST set the field to the current instant in the collection timezone defined in [Collection Model](collection-model.md), rendered according to the field's type and declared `format`; generated `datetime` values SHOULD carry the collection timezone's offset at that instant. The value is produced once: a tool MUST NOT overwrite an existing concrete non-null value.
+- `FDR-68` `now` is valid for `date`, `time`, and `datetime` fields.
+- `FDR-245` When a tool creates a note or first materializes a `now` field without a concrete value, it MUST use the current instant in the collection timezone defined in [Collection Model](collection-model.md).
+- `FDR-246` A tool MUST render a `now` value according to the field's declared type and `format`.
+- `FDR-247` A generated `datetime` value SHOULD carry the collection timezone's offset at the generated instant.
+- `FDR-248` A tool MUST NOT overwrite an existing concrete non-null value of a `now` field.
 - `FDR-69` `now_on_write` is valid for `date`, `time`, and `datetime` fields. Every tool that writes changes to the managed note MUST set the field to the current instant in the collection timezone as part of that write; the refresh itself does not count as a further change. A field with `now_on_write` MUST NOT declare `immutable: true`.
 - `FDR-70` `uuid` is valid for `text` fields. The tool MUST generate an RFC 4122 version 4 UUID in lowercase form, once; it MUST NOT overwrite an existing concrete non-null value. Lowercase UUIDs satisfy `format: slug`, so `uuid` MAY be used for the core-defined `id` field.
 - `FDR-71` `ulid` is valid for `text` fields. The tool MUST generate a ULID written in lowercase, so the value satisfies `format: slug`, once; it MUST NOT overwrite an existing concrete non-null value.
@@ -202,7 +244,7 @@ Rules:
 - `FDR-82` `unique: true` and `unique: collection` are valid only for scalar field types: `text`, `integer`, `number`, `checkbox`, `date`, `time`, `datetime`, and `link`.
 - `FDR-83` `unique: true` means every non-null stored value for that field MUST be distinct across all managed notes of the same note type.
 - `FDR-84` `unique: collection` means every non-null stored value for that field MUST be distinct across all managed notes in the collection, regardless of note type, comparing fields that share this field name.
-- `FDR-85` Uniqueness is evaluated using exact stored-value equality after normal YAML parsing, under the string comparison rules defined in [Foundations](foundations.md), not by note-link resolution.
+- `FDR-85` Uniqueness is evaluated using the type-aware Field Value Equality rules on this page, not by note-link resolution.
 - `FDR-86` Multiple `null` values do not violate uniqueness.
 - `FDR-87` A repeated non-null value for a field with `unique: true` is a `duplicate_unique_value` validation failure, as defined in [Collection Model](collection-model.md).
 - `FDR-88` If a unique value may be assigned later, the RECOMMENDED pattern is `nullable: true` with `default_value: null`.
@@ -394,8 +436,8 @@ Rules:
 - `FDR-199` For `type: list`, `allowed_values` is valid only when `items.type` is one of `text`, `integer`, `number`, `checkbox`, `date`, `time`, `datetime`, or `link`, and each `allowed_values` entry MUST be compatible with that item type.
 - `FDR-200` For `type: list`, every stored item value MUST be one of the declared `allowed_values`.
 - `FDR-201` `allowed_values` MUST NOT be used with `type: tags`, `type: object`, or `type: any`.
-- `FDR-202` Text and link `allowed_values` comparisons are case-sensitive and use exact string equality under the string comparison rules defined in [Foundations](foundations.md).
-- `FDR-203` Non-text scalar `allowed_values` comparisons use exact scalar equality after normal YAML parsing and type validation.
+- `FDR-202` Text and link `allowed_values` comparisons use the Field Value Equality rules on this page.
+- `FDR-203` Non-text scalar `allowed_values` comparisons use the Field Value Equality rules after normal YAML parsing and type validation.
 
 ### `allowed_values_from`
 
@@ -415,7 +457,7 @@ Rules:
 - `FDR-210` `const_value` MAY be omitted.
 - `FDR-211` `const_value` MUST conform to the declared property type.
 - `FDR-212` `const_value` and `value_from_schema` MUST NOT both be present on the same field definition.
-- `FDR-213` If `const_value` is present, the stored value MUST equal it exactly.
+- `FDR-213` If `const_value` is present, the stored value MUST equal it under the Field Value Equality rules on this page.
 
 ### `value_from_schema`
 

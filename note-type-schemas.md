@@ -231,7 +231,7 @@ Required effective keys for concrete note types:
 - `template`
 - `frontmatter`
 
-`relationships`, `headings`, and `guidance` MAY be absent from a concrete note type's effective schema; an absent block takes the empty defaults defined below.
+`relationships`, `headings`, and `guidance` can be absent from a concrete note type's effective schema; an absent block takes the empty defaults defined below.
 
 Rules:
 
@@ -363,7 +363,7 @@ In that example, `customer` inherits `kind`, `template`, `guidance`, `note_type`
 
 ## Conditional Field Constraints
 
-A note-type schema MAY declare `conditions` to express cross-field conditional requirements that unconditional field definitions cannot: a field that must hold a value only when another field has a given value, or a field that must stay empty in certain states.
+A note-type schema can declare `conditions` to express cross-field requirements that unconditional field definitions cannot: a field that needs a value only when another field has a given value, or a field that stays empty in certain states.
 
 Example:
 
@@ -402,7 +402,7 @@ Rules:
 
 ## Allowed Schema Kinds
 
-Each concrete note type's effective schema MUST declare one of these `kind` values:
+Each concrete note type's effective schema declares one of these `kind` values:
 
 - `singleton`
 - `entity`
@@ -421,20 +421,19 @@ Rules:
 - `NTS-94` If an abstract note type physically declares `kind`, it MUST use one of the values listed above.
 - `NTS-95` A `singleton` note type has an implicit effective `count` of `max: 1`; it MAY declare `count` with `min: 1` to require the note to exist.
 - `NTS-96` A `singleton` note type's storage patterns MUST NOT contain placeholders, so its note resolves to one fixed path.
+- `NTS-162` A concrete note type's effective `kind` MUST use one of the values listed above.
+- `NTS-163` Fixed-path notes SHOULD be modeled as `singleton` note types.
+- `NTS-164` A fixed-path singleton MAY omit `title` if the title is implied by the schema.
+- `NTS-165` A fixed-path singleton MAY use `frontmatter_remove: [title]` when it inherits `title` but does not use that field.
+- `NTS-166` A fixed-path singleton MAY omit stored `note_type` when the collection's mapping rules and effective schema do not require it.
 
-Special-case guidance:
-
-- Fixed-path notes SHOULD be modeled as `singleton` note types.
-- Examples include `Home.md`, `Guide.md`, and `Glossary.md`.
-- A fixed-path singleton MAY omit `title` if the title is implied by the schema.
-- A fixed-path singleton that inherits most default-property-set or abstract frontmatter but does not want `title` MAY use `frontmatter_remove: [title]`.
-- A fixed-path singleton MAY omit stored `note_type` when the collection's mapping rules and effective schema do not require it to be present.
+Examples include `Home.md`, `Guide.md`, and `Glossary.md`.
 
 ## Storage Rules
 
-Every concrete note type MUST define storage rules in its effective schema.
+Every concrete note type has storage rules in its effective schema.
 
-Abstract note types MAY declare a `storage` block to contribute reusable storage defaults, but they are not required to.
+Abstract note types can declare a `storage` block to contribute reusable storage defaults, but they are not required to.
 
 Required effective storage fields for concrete note types:
 
@@ -529,4 +528,4 @@ storage:
     policy: in_place_historical
 ```
 
-Using that storage block, a tool creating a `meeting` note with `meeting_date: 2026-06-08` and `title: foo` MUST create the note at `Meetings/2026/06/2026-06-08 - foo.md`, and MAY instead create it at `Meetings/2026/06/2026-06-08 - foo (Meeting).md`, because the suffix is optional; both paths conform.
+Using that storage block, a tool creating a `meeting` note with `meeting_date: 2026-06-08` and `title: foo` creates it at `Meetings/2026/06/2026-06-08 - foo.md` or, because the suffix is optional, at `Meetings/2026/06/2026-06-08 - foo (Meeting).md`; both paths conform.

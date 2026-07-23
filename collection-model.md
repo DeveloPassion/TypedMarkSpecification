@@ -23,7 +23,7 @@ See also:
 
 Core Profile authors usually need only `specification_version`, `name`, and `description` in `typedmark.md`; deterministic defaults provide the metadata directory, ignored Git content, validation severities, and frontmatter-based note-type mapping. Property sets, vocabularies, composition provenance, and advanced mappings are optional layers for larger collections.
 
-Property sets are the single composition mechanism for reusable `frontmatter`, `relationships`, and `headings`. A property set is a named bundle stored under `<metadata_directory>/property-sets/`. A collection applies property sets to note types in two ways: `typedmark.md` MAY name default property sets that apply to every note type, and a concrete note-type schema MAY name additional property sets to compose.
+Property sets are the single composition mechanism for reusable `frontmatter`, `relationships`, and `headings`. A property set is a named bundle stored under `<metadata_directory>/property-sets/`. Collections apply them through collection-wide defaults and through property sets named by concrete note-type schemas.
 
 A concrete note type's own `frontmatter`, `relationships`, and `headings` blocks are not a second kind of frontmatter source. They are the note type's inline, note-type-scoped contribution to the same composition, applied last as the terminal layer of the merge. Reusable fields live in named property sets; one-off, note-type-specific fields live inline. There is one composition mechanism, with the inline blocks as its highest-precedence layer.
 
@@ -142,7 +142,7 @@ Rules:
 - `CM-55` `duplicate_unique_value` applies when a field declared with `unique: true` repeats a non-null stored value in more than one managed note of the same note type, when a field declared with `unique: collection` repeats a non-null stored value across any managed notes, or when the core-defined `id` field repeats a value across managed notes.
 - `CM-56` `invalid_note_count` applies when the number of managed notes of a note type violates that type's effective `count` constraint, as defined in [Note Type Schemas](note-type-schemas.md).
 - `CM-57` `invalid_property_set` applies when a property set file, a `typedmark.md` `default_property_sets` reference, or a note-type schema `property_sets` or `exclude_property_sets` reference violates the property-set rules defined in this page.
-- `CM-58` `invalid_note_type_mapping` applies when a note-type mapping rule in `typedmark.md` violates the mapping-rule contract defined in this page.
+- `CM-58` `invalid_note_type_mapping` applies when a note-type mapping rule violates the mapping-rule contract or when a winning rule produces a candidate note type that does not resolve to exactly one concrete schema.
 - `CM-59` `invalid_composition` applies when the `composition` block in `typedmark.md` violates the composition-provenance rules defined in this page, including a source that does not resolve to exactly one system at the declared version.
 - `CM-60` `unsupported_specification_version` applies when a governed artifact declares a `specification_version` whose major version the tool does not implement; the tool MUST report it and MUST NOT assert conformance for that artifact, as defined in [Foundations](foundations.md).
 - `CM-61` `invalid_note_link` applies when an internal note link violates the syntax or resolution rules defined in [Note Links](note-links.md).
@@ -154,7 +154,7 @@ Rules:
 
 ### Note-Type Mappings
 
-`typedmark.md` MAY define `note_type_mappings` to control how collection notes are associated with note types.
+`typedmark.md` can define `note_type_mappings` to control how collection notes are associated with note types.
 
 Shape at a glance:
 
@@ -240,12 +240,12 @@ Rules:
 - `CM-111` `regex` MUST be a non-empty string and is valid only when the stored field value is a string.
 - `CM-112` `contains_any` and `contains_all` MUST be non-empty lists of non-empty strings.
 - `CM-113` `contains_any` and `contains_all` are valid only when the stored field value is a YAML sequence of strings.
-- `CM-114` If the winning mapping rule yields a candidate note type that does not resolve to exactly one concrete schema file under `<metadata_directory>/schemas/`, the note is untyped.
+- `CM-114` If the winning mapping rule yields a candidate note type that does not resolve to exactly one concrete schema file under `<metadata_directory>/schemas/`, the note is untyped and a validator MUST report `invalid_note_type_mapping`.
 - `CM-115` Because `note_type_mappings` is ordered, more specific rules SHOULD appear before more general rules.
 
 ### Vocabularies
 
-`typedmark.md` MAY define `vocabularies` to declare named, reusable value sets that field definitions reference through `allowed_values_from`, instead of repeating the same `allowed_values` list across note types.
+`typedmark.md` can define `vocabularies` as named, reusable value sets that field definitions reference through `allowed_values_from`, instead of repeating the same `allowed_values` list across note types.
 
 Core Profile collections can skip vocabularies and use direct `allowed_values` until reuse becomes useful.
 
@@ -273,7 +273,7 @@ Rules:
 
 ### Composition Provenance
 
-`typedmark.md` MAY define `composition` to record the systems this collection's structure was composed from. The lineage is both provenance and the reproducible recipe: re-composing the same sources at the same versions reconstructs the same collection. It is also the input the update flow uses to migrate a collection to newer system versions. System composition, its deterministic merge semantics, and the migration flow are defined in [Systems, Composition, and Evolution](systems-composition-evolution.md).
+`typedmark.md` can define `composition` to record the systems this collection's structure was composed from. The lineage is both provenance and the reproducible recipe: re-composing the same sources at the same versions reconstructs the same collection. It is also the input the update flow uses to migrate a collection to newer system versions. System composition, its deterministic merge semantics, and the migration flow are defined in [Systems, Composition, and Evolution](systems-composition-evolution.md).
 
 This is an advanced system concern. Hand-authored Core Profile collections omit `composition`.
 
@@ -305,7 +305,7 @@ Rules:
 
 ### Default Property Sets
 
-`typedmark.md` MAY define `default_property_sets` to name the property sets that apply to every note type by default. This is how a collection declares shared `frontmatter`, `relationships`, and `headings` without repeating them in each schema.
+`typedmark.md` can define `default_property_sets` to name the property sets that apply to every note type by default. This is how a collection declares shared `frontmatter`, `relationships`, and `headings` without repeating them in each schema.
 
 Example:
 
@@ -409,7 +409,7 @@ frontmatter:
     default_value: null
 ```
 
-A property set MAY also contribute shared `relationships` and `headings`, which is how collection-wide relationship and heading defaults are expressed:
+A property set can also contribute shared `relationships` and `headings`, which is how collection-wide relationship and heading defaults are expressed:
 
 ```yaml
 specification_version: 0.0.1

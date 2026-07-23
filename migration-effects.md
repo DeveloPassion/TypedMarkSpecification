@@ -7,6 +7,8 @@ audience: advanced
 
 # Migration Effects on Managed Notes
 
+Audience: system publishers and tool authors.
+
 Authoritative for:
 
 - the managed-note effect of every `history.md` change operation
@@ -44,14 +46,14 @@ Rules:
 
 A `retype_field` migration changes a field's declared `type`. Conversions fall into three tiers, defined by the source type and target type pair.
 
-Defined lossless conversions are always information-preserving and a tool MUST apply them automatically:
+Defined lossless conversions are always information-preserving and are applied automatically:
 
 - `integer` to `number`, because every integer is a valid number.
 - `date` to `text`, `time` to `text`, `datetime` to `text`, and `link` to `text`, because these types are stored as strings and the stored characters are unchanged.
 - `tags` to `list` when the target `items.type` is `text`, because every tag value is a valid text item and the stored sequence is unchanged.
 - any type to `any`, because `any` accepts any non-null value.
 
-Conditional conversions are information-preserving only for values that already satisfy the target type and its constraints. A tool MUST apply a conditional conversion only when every affected stored value qualifies, and MUST otherwise report the field for explicit resolution:
+Conditional conversions are information-preserving only for values that already satisfy the target type and its constraints. They are applied automatically only when every affected stored value qualifies; otherwise the field requires explicit resolution:
 
 - `number` to `integer`, when every value has no fractional component.
 - `text` to `link`, and `text` to `date`, `time`, or `datetime`, when every value satisfies the target type's `format`.

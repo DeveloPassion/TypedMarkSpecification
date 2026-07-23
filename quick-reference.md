@@ -7,6 +7,17 @@ audience: essentials
 
 # Quick Reference
 
+Audience: collection authors and tool authors looking up an existing rule.
+
+Authoritative for:
+
+- no governed artifact contract; this page is a non-normative index into authoritative rules
+
+See also:
+
+- [Foundations](foundations.md): terminology and shared baselines
+- [Conformance and Roadmap](conformance-and-roadmap.md): conformance modes
+
 This page is non-normative. It maps terms and tasks to the sections that govern them.
 
 ## Glossary

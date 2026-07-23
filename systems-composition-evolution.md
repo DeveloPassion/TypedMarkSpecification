@@ -39,7 +39,7 @@ Rules:
 
 ## System Fields
 
-The system fields are the part of `typedmark.md` that makes a collection a publishable, versioned system. They live alongside the structural and identity fields defined in [Collection Model](collection-model.md). Every collection already declares `name`, `description`, and an optional `label`; a system additionally declares `version` and `scaffold`, and MAY add discovery metadata.
+The system fields are the part of `typedmark.md` that makes a collection a publishable, versioned system. They live alongside the structural and identity fields defined in [Collection Model](collection-model.md). Every collection already declares `name`, `description`, and an optional `label`; a system additionally declares `version` and `scaffold`, with optional discovery metadata.
 
 Example `typedmark.md` for a publishable system, showing the system fields together with the identity and structural fields they accompany:
 
@@ -100,7 +100,7 @@ Rules:
 - `SCE-9` `name`, the collection identity defined in [Collection Model](collection-model.md), is also the distribution identity a marketplace and `composition.sources` resolve against. A collection has exactly one identity.
 - `SCE-10` `version` identifies a publishable system release, MUST be a Semantic Versioning 2.0.0 string, and MUST follow the system versioning semantics defined under System Versioning below.
 - `SCE-11` A collection that declares `version` MUST also declare `scaffold`.
-- `SCE-12` `scaffold` SHOULD be present, even if empty, on a system definition.
+- `SCE-12` `scaffold` MUST be a mapping.
 - `SCE-13` `scaffold.folders` lists folders an importer SHOULD create when instantiating a collection from the system.
 - `SCE-14` `scaffold.notes` lists note files an importer SHOULD create when instantiating a collection from the system.
 - `SCE-15` Each scaffold note entry MUST define `path`, `note_type`, and `from_template`.
@@ -110,6 +110,23 @@ Rules:
 - `SCE-19` Values supplied in `scaffold.notes[].values` override template placeholder values for that instantiated note only.
 - `SCE-20` `scaffold.notes[].path` and `scaffold.folders` entries MUST be collection-relative, MUST use forward slashes, and MUST NOT escape the collection root with absolute paths or `..` segments.
 - `SCE-21` The system fields govern packaging, publishing, composition, and import only; they MUST NOT restate or override structural rules defined by the structural fields, note-type schemas, or property sets.
+- `SCE-121` `scaffold` MAY be empty and defines no starter folders or notes when empty.
+- `SCE-122` The only keys defined inside `scaffold` are `folders` and `notes`.
+- `SCE-123` `scaffold.folders` MAY be omitted.
+- `SCE-124` If present, `scaffold.folders` MUST be a list of collection-relative directory paths.
+- `SCE-125` `scaffold.notes` MAY be omitted.
+- `SCE-126` If present, `scaffold.notes` MUST be a list of scaffold note entries.
+- `SCE-127` Every `scaffold.notes[].path` MUST end in `.md`.
+- `SCE-128` If present, `scaffold.notes[].values` MUST be a mapping from managed-note frontmatter field name to starter value.
+- `SCE-129` `audiences` MAY be omitted.
+- `SCE-130` If present, `audiences` MUST be a list of unique non-empty strings.
+- `SCE-131` `publisher` MAY be omitted.
+- `SCE-132` If present, `publisher` MUST be a mapping that physically contains `name`.
+- `SCE-133` `publisher.name` MUST be a non-empty string.
+- `SCE-134` This specification version defines no other keys inside `publisher`.
+- `SCE-135` `license` MAY be omitted.
+- `SCE-136` If present, `license` MUST be a non-empty string.
+- `SCE-137` `audiences`, `publisher`, and `license` are discovery metadata and do not make a collection a system when `version` is absent.
 
 ### Publishing and Catalog
 
@@ -193,7 +210,7 @@ Rules:
 
 ## System Composition
 
-A collection or a system MAY be built by composing other systems. Composition is how a marketplace and a CLI let a user stack several systems together — for example combining a PARA system, a personal-knowledge system, and a dev-team AI-context system into one working collection, or publishing that combination as a new system.
+A collection or a system can be built by composing other systems. Composition is how a marketplace and a CLI let a user stack several systems together — for example combining a PARA system, a personal-knowledge system, and a dev-team AI-context system into one working collection, or publishing that combination as a new system.
 
 Composition is a build-time operation. A composing tool loads the source systems at their declared versions, merges them deterministically, and materializes one self-contained collection in which every schema, property set, and template is physically present in the metadata directory. The composed collection then conforms exactly like any hand-authored collection, and remains understandable from `typedmark.md` and the metadata directory alone.
 
@@ -234,21 +251,24 @@ Rules:
 Rules:
 
 - `SCE-70` Two conforming composing tools given identical `composition.sources` at identical versions MUST produce the same composed schemas, property sets, and templates under canonical comparison.
-- `SCE-71` Canonical comparison uses the canonical field materialization rules in [Managed Notes and Properties](managed-notes-and-properties.md) for frontmatter, and the deterministic merge order defined above for every ordered construct, including effective field order, `property_sets` order, and `composition.sources` order.
+- `SCE-71` Canonical comparison uses canonically expanded governed frontmatter, the deterministic merge order defined above for every ordered construct, and the normalized artifact body defined below.
 - `SCE-72` A composing tool that claims reproducible or hash-stable output MUST serialize composed artifacts in the canonical serialization defined below; two artifacts that are equal under canonical comparison then have byte-identical canonical serializations.
 - `SCE-73` The local-only contribution of a composed collection is, by definition, the difference between its current materialized state and the state obtained by recomposing its `composition.sources`; a tool MUST be able to recover it by recomposition rather than by reading per-artifact origin tags.
 
 ### Canonical Serialization
 
-The canonical serialization of a governed artifact's frontmatter is the byte sequence produced by the rules below. It exists so that composition and migration produce reproducible, hash-stable output. A hand-authored governed artifact need not be in canonical form to be valid; canonical serialization is the form a tool produces when it materializes composed artifacts or claims reproducible output.
+The canonical serialization of a governed artifact is the byte sequence produced by the rules below. It exists so that composition and migration produce reproducible, hash-stable output. A hand-authored governed artifact need not be in canonical form to be valid; canonical serialization is the form a tool produces when it materializes composed artifacts or claims reproducible output.
 
-A canonically serialized governed artifact file consists of one line containing `---`, the canonical YAML serialization of its frontmatter, one line containing `---`, and then the artifact body unchanged. The body is not part of canonical comparison: when composition replaces a keyed artifact, the winning input's body is carried unchanged, and two artifacts are canonically equal when their frontmatter is.
+A canonically serialized governed artifact file consists of one line containing `---`, the canonical YAML serialization of its frontmatter, one line containing `---`, and then the normalized artifact body. The body remains non-normative for structural reasoning, but it participates in byte-level canonical comparison so canonically equal artifacts have byte-identical serializations. When composition replaces a keyed artifact, the winning input's body is carried into this normalization.
 
 Encoding and layout:
 
 - `SCE-74` The output MUST be UTF-8 without a byte-order mark.
 - `SCE-75` Line endings MUST be a single LINE FEED (U+000A); carriage returns MUST NOT appear.
 - `SCE-76` The output MUST end with exactly one LINE FEED, and no line may contain trailing whitespace.
+- `SCE-138` Canonical body normalization MUST replace each CARRIAGE RETURN + LINE FEED pair and each remaining CARRIAGE RETURN with one LINE FEED.
+- `SCE-139` Canonical body normalization MUST remove every trailing LINE FEED from the body before the file-level terminal LINE FEED required by `SCE-76` is written.
+- `SCE-140` Canonical body normalization MUST remove trailing SPACE and CHARACTER TABULATION code points from every body line.
 - `SCE-77` Mappings and sequences MUST use block style; flow style, anchors, aliases, explicit tags, comments, and directives MUST NOT appear.
 - `SCE-78` Indentation MUST be two spaces per nesting level.
 

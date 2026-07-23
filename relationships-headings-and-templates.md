@@ -54,7 +54,7 @@ Rules:
 
 ## Relationship Constraints
 
-A concrete note type's effective schema MAY define `relationships.belongs_to.allowed_note_types` and `relationships.related_to.allowed_note_types`. Each mapping MAY be empty. An effective schema without a `relationships` block is equivalent to one declaring both mappings empty, as defined in [Note Type Schemas](note-type-schemas.md): no documented relationships and no relationship constraints.
+A concrete note type's effective schema can define `relationships.belongs_to.allowed_note_types` and `relationships.related_to.allowed_note_types`. Either mapping can be empty. An effective schema without a `relationships` block is equivalent to one declaring both mappings empty, as defined in [Note Type Schemas](note-type-schemas.md): no documented relationships and no relationship constraints.
 
 Rules:
 
@@ -102,7 +102,7 @@ Using the `topic` schema example in [Note Type Schemas](note-type-schemas.md), t
 
 ## Heading Rules
 
-A concrete note type's effective schema MAY define a `headings` block. That block MAY impose no mandatory H2 headings. An effective schema without a `headings` block is equivalent to one declaring `required_h2: []`, `optional_h2: []`, `allow_other_h2: true`, `require_order: false`, and `require_h1_title: false`, as defined in [Note Type Schemas](note-type-schemas.md): no heading constraints.
+A concrete note type's effective schema can define a `headings` block, including one with no mandatory H2 headings. An effective schema without a `headings` block is equivalent to one declaring `required_h2: []`, `optional_h2: []`, `allow_other_h2: true`, `require_order: false`, and `require_h1_title: false`, as defined in [Note Type Schemas](note-type-schemas.md): no heading constraints.
 
 Rules:
 
@@ -127,7 +127,9 @@ Rules:
 
 ## Templates
 
-Each concrete note type's effective schema MUST define a template reference.
+Each concrete note type's effective schema has a template reference.
+
+A template is pre-instantiation starter state, not a persisted managed note. Its frontmatter has the complete field shape of the effective schema, but it can hold the explicit placeholder values defined below until a tool supplies generated, computed, scaffolded, defaulted, or user-provided values. The instantiated note must satisfy the full managed-note contract before a tool claims that it conforms.
 
 Shape at a glance:
 
@@ -141,12 +143,20 @@ Rules:
 
 - `RHT-65` The effective `template.file` of a concrete note type MUST point to the canonical template for that note type.
 - `RHT-66` The `template.file` path rules — resolution against `<metadata_directory>/templates/`, the `.md` extension, and naming freedom — are defined in [Note Type Schemas](note-type-schemas.md).
-- `RHT-67` Templates MUST include valid starter frontmatter in canonical materialized form.
-- `RHT-68` A template's starter frontmatter MUST conform to the effective note-type schema of the note type that references the template, under the rules in [Managed Notes and Properties](managed-notes-and-properties.md).
-- `RHT-69` A template whose starter frontmatter declares a field absent from the effective schema, omits a declared field, or violates a field's type or value constraints is invalid, independently of the optional `template_drift` comparison.
-- `RHT-70` Template-frontmatter conformance is part of system-definition validity; an invalid template makes its referencing note type non-conforming.
+- `RHT-67` Templates MUST include YAML starter frontmatter.
+- `RHT-68` A template's starter frontmatter MUST satisfy the template-frontmatter rules on this page for the effective schema of the note type that references it.
+- `RHT-69` Every field declared in the effective `frontmatter` MUST be physically present in template frontmatter.
+- `RHT-70` Template-frontmatter validity is part of system-definition and instantiated-collection validity; an invalid template makes its referencing note type non-conforming.
 - `RHT-71` Templates MUST NOT introduce managed-note frontmatter fields solely to mirror schema-level `relationships` declarations.
 - `RHT-72` Templates SHOULD include the canonical required H2 headings.
 - `RHT-73` System-definition conformance requires every referenced template to exist and be valid; see [Conformance and Roadmap](conformance-and-roadmap.md).
 - `RHT-74` Validators MAY warn when a note drifts materially from the canonical template structure.
 - `RHT-75` When a concrete note type uses the defaulted `template.file`, the corresponding template path is resolved exactly like an explicit `template.file`.
+- `RHT-76` A template MUST NOT declare an unknown frontmatter field, except for a core-defined field permitted by [Managed Notes and Properties](managed-notes-and-properties.md).
+- `RHT-77` A template MAY store `null` as an unresolved placeholder for any declared field, regardless of that field's effective `nullable` value.
+- `RHT-78` A template MAY store `""` as an unresolved placeholder for a declared `text` or `link` field.
+- `RHT-79` Template-frontmatter validation MUST skip field type and value-constraint checks for values recognized as unresolved placeholders by `RHT-77` or `RHT-78`.
+- `RHT-80` Every non-placeholder template value MUST satisfy its field's effective type and value constraints.
+- `RHT-81` A tool that instantiates a template MUST apply scaffold values, defaults, schema-derived values, generation strategies, computed expressions, and user-provided values as applicable before writing the managed note.
+- `RHT-82` A tool MUST NOT claim that an instantiated note conforms while any unresolved template placeholder violates the note's effective schema.
+- `RHT-83` Template validity does not evaluate storage-path conformance, relationship cardinality, or managed-note heading conformance; those rules apply to the instantiated note.
