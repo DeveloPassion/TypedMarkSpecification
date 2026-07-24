@@ -6,8 +6,9 @@
  * chip (e.g. `CM-12`) using the page's prefix, and every ID must be unique
  * across the whole specification. IDs are append-only: never renumber, and
  * retire the ID of a removed rule instead of reusing it.
- * Normative keywords belong only on identified rule lines, and each published
- * page carries the compact Audience / Authoritative for / See also preamble.
+ * Normative keywords belong only on identified rule lines. Published pages
+ * carry compact preambles; non-authoritative introductory pages omit the
+ * otherwise-required Authoritative for list.
  *
  * Usage: bun scripts/lint-rule-ids.ts (or: bun run lint-rule-ids)
  */
@@ -37,6 +38,12 @@ const PREAMBLE_PAGES = [
   ...Object.keys(PREFIXES),
   "quick-reference.md",
 ];
+
+const NON_AUTHORITATIVE_PREAMBLE_PAGES = new Set([
+  "index.md",
+  "manifesto.md",
+  "getting-started.md",
+]);
 
 const EXTRA_TRIGGERS = new Set([
   "Encoding and layout:",
@@ -132,12 +139,17 @@ for (const [page, prefix] of Object.entries(PREFIXES)) {
 
 for (const page of PREAMBLE_PAGES) {
   const text = readFileSync(join(ROOT, page), "utf8");
-  const requiredMarkers = [
+  const requiredMarkers: Array<readonly [string, RegExp]> = [
     ["frontmatter audience", /^audience:\s+\S+/m],
     ["Audience line", /^Audience:\s+\S+/m],
-    ["Authoritative for list", /^Authoritative for:\s*$/m],
     ["See also list", /^See also:\s*$/m],
-  ] as const;
+  ];
+  if (!NON_AUTHORITATIVE_PREAMBLE_PAGES.has(page)) {
+    requiredMarkers.push(["Authoritative for list", /^Authoritative for:\s*$/m]);
+  } else if (/^Authoritative for:\s*$/m.test(text)) {
+    console.error(`${page}: non-authoritative page must omit the Authoritative for list`);
+    failures++;
+  }
   for (const [label, pattern] of requiredMarkers) {
     if (pattern.test(text)) continue;
     console.error(`${page}: missing required preamble element: ${label}`);

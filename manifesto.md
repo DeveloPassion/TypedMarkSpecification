@@ -9,10 +9,6 @@ audience: essentials
 
 Audience: everyone interested in the motivation for TypedMark.
 
-Authoritative for:
-
-- no governed artifact contract; this manifesto is non-normative rationale
-
 See also:
 
 - [Getting Started](getting-started.md): build a minimal typed collection

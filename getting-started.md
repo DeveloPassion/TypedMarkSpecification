@@ -9,10 +9,6 @@ audience: essentials
 
 Audience: first-time collection authors.
 
-Authoritative for:
-
-- no governed artifact contract; this page is a non-normative tutorial
-
 See also:
 
 - [Foundations](foundations.md): core concepts and parsing baselines

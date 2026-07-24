@@ -10,10 +10,6 @@ audience: essentials
 
 Audience: everyone.
 
-Authoritative for:
-
-- navigation and reading paths only; this page defines no normative artifact contract
-
 See also:
 
 - [Manifesto](manifesto.md): the motivation for TypedMark
