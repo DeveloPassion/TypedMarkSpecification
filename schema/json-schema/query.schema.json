@@ -1,0 +1,509 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developassion.github.io/TypedMarkSpecification/schema/query.schema.json",
+  "title": "TypedMark portable query descriptor",
+  "description": "A read-only query over a TypedMark collection. Authoritative semantics: collection-model.md (Portable Queries).",
+  "type": "object",
+  "required": [
+    "specification_version",
+    "select"
+  ],
+  "properties": {
+    "specification_version": {
+      "$ref": "defs.schema.json#/$defs/specification_version"
+    },
+    "note_types": {
+      "$ref": "#/$defs/note_types"
+    },
+    "where": {
+      "$ref": "#/$defs/predicate"
+    },
+    "select": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/selection"
+      }
+    },
+    "order_by": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/order"
+      }
+    },
+    "group_by": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "defs.schema.json#/$defs/field_name"
+      }
+    },
+    "limit": {
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "note_types": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "defs.schema.json#/$defs/slug"
+      }
+    },
+    "selection": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/path_selection"
+        },
+        {
+          "$ref": "#/$defs/note_type_selection"
+        },
+        {
+          "$ref": "#/$defs/field_selection"
+        }
+      ]
+    },
+    "path_selection": {
+      "type": "object",
+      "required": [
+        "kind",
+        "as"
+      ],
+      "properties": {
+        "kind": {
+          "const": "path"
+        },
+        "as": {
+          "$ref": "defs.schema.json#/$defs/field_name"
+        }
+      },
+      "additionalProperties": false
+    },
+    "note_type_selection": {
+      "type": "object",
+      "required": [
+        "kind",
+        "as"
+      ],
+      "properties": {
+        "kind": {
+          "const": "note_type"
+        },
+        "as": {
+          "$ref": "defs.schema.json#/$defs/field_name"
+        }
+      },
+      "additionalProperties": false
+    },
+    "field_selection": {
+      "type": "object",
+      "required": [
+        "kind",
+        "field",
+        "as"
+      ],
+      "properties": {
+        "kind": {
+          "const": "field"
+        },
+        "field": {
+          "$ref": "defs.schema.json#/$defs/dotted_field_path"
+        },
+        "as": {
+          "$ref": "defs.schema.json#/$defs/field_name"
+        }
+      },
+      "additionalProperties": false
+    },
+    "order": {
+      "type": "object",
+      "required": [
+        "column"
+      ],
+      "properties": {
+        "column": {
+          "$ref": "defs.schema.json#/$defs/field_name"
+        },
+        "direction": {
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "default": "asc"
+        },
+        "nulls": {
+          "enum": [
+            "first",
+            "last"
+          ],
+          "default": "last"
+        }
+      },
+      "additionalProperties": false
+    },
+    "predicate": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/all_predicate"
+        },
+        {
+          "$ref": "#/$defs/any_predicate"
+        },
+        {
+          "$ref": "#/$defs/not_predicate"
+        },
+        {
+          "$ref": "#/$defs/path_equals_predicate"
+        },
+        {
+          "$ref": "#/$defs/path_under_predicate"
+        },
+        {
+          "$ref": "#/$defs/path_regex_predicate"
+        },
+        {
+          "$ref": "#/$defs/field_exists_predicate"
+        },
+        {
+          "$ref": "#/$defs/field_equals_predicate"
+        },
+        {
+          "$ref": "#/$defs/field_order_predicate"
+        },
+        {
+          "$ref": "#/$defs/field_regex_predicate"
+        },
+        {
+          "$ref": "#/$defs/field_contains_predicate"
+        },
+        {
+          "$ref": "#/$defs/relationship_predicate"
+        }
+      ]
+    },
+    "predicate_list": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/predicate"
+      }
+    },
+    "all_predicate": {
+      "type": "object",
+      "required": [
+        "kind",
+        "predicates"
+      ],
+      "properties": {
+        "kind": {
+          "const": "all"
+        },
+        "predicates": {
+          "$ref": "#/$defs/predicate_list"
+        }
+      },
+      "additionalProperties": false
+    },
+    "any_predicate": {
+      "type": "object",
+      "required": [
+        "kind",
+        "predicates"
+      ],
+      "properties": {
+        "kind": {
+          "const": "any"
+        },
+        "predicates": {
+          "$ref": "#/$defs/predicate_list"
+        }
+      },
+      "additionalProperties": false
+    },
+    "not_predicate": {
+      "type": "object",
+      "required": [
+        "kind",
+        "predicate"
+      ],
+      "properties": {
+        "kind": {
+          "const": "not"
+        },
+        "predicate": {
+          "$ref": "#/$defs/predicate"
+        }
+      },
+      "additionalProperties": false
+    },
+    "path_equals_predicate": {
+      "type": "object",
+      "required": [
+        "kind",
+        "operator",
+        "value"
+      ],
+      "properties": {
+        "kind": {
+          "const": "path"
+        },
+        "operator": {
+          "const": "equals"
+        },
+        "value": {
+          "allOf": [
+            {
+              "$ref": "defs.schema.json#/$defs/collection_relative_path"
+            },
+            {
+              "pattern": "\\.md$"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "path_under_predicate": {
+      "type": "object",
+      "required": [
+        "kind",
+        "operator",
+        "value"
+      ],
+      "properties": {
+        "kind": {
+          "const": "path"
+        },
+        "operator": {
+          "const": "under"
+        },
+        "value": {
+          "type": "string",
+          "minLength": 2,
+          "allOf": [
+            {
+              "pattern": "/$"
+            },
+            {
+              "not": {
+                "pattern": "^/"
+              }
+            },
+            {
+              "not": {
+                "pattern": "\\\\"
+              }
+            },
+            {
+              "not": {
+                "pattern": "(^|/)\\.\\.?(/|$)"
+              }
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "path_regex_predicate": {
+      "type": "object",
+      "required": [
+        "kind",
+        "operator",
+        "value"
+      ],
+      "properties": {
+        "kind": {
+          "const": "path"
+        },
+        "operator": {
+          "const": "regex"
+        },
+        "value": {
+          "$ref": "defs.schema.json#/$defs/non_empty_string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "field_exists_predicate": {
+      "type": "object",
+      "required": [
+        "kind",
+        "field",
+        "operator",
+        "value"
+      ],
+      "properties": {
+        "kind": {
+          "const": "field"
+        },
+        "field": {
+          "$ref": "defs.schema.json#/$defs/dotted_field_path"
+        },
+        "operator": {
+          "const": "exists"
+        },
+        "value": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "field_equals_predicate": {
+      "type": "object",
+      "required": [
+        "kind",
+        "field",
+        "operator",
+        "value"
+      ],
+      "properties": {
+        "kind": {
+          "const": "field"
+        },
+        "field": {
+          "$ref": "defs.schema.json#/$defs/dotted_field_path"
+        },
+        "operator": {
+          "const": "equals"
+        },
+        "value": {}
+      },
+      "additionalProperties": false
+    },
+    "field_order_predicate": {
+      "type": "object",
+      "required": [
+        "kind",
+        "field",
+        "operator",
+        "value"
+      ],
+      "properties": {
+        "kind": {
+          "const": "field"
+        },
+        "field": {
+          "$ref": "defs.schema.json#/$defs/dotted_field_path"
+        },
+        "operator": {
+          "enum": [
+            "less_than",
+            "less_than_or_equal",
+            "greater_than",
+            "greater_than_or_equal"
+          ]
+        },
+        "value": {}
+      },
+      "additionalProperties": false
+    },
+    "field_regex_predicate": {
+      "type": "object",
+      "required": [
+        "kind",
+        "field",
+        "operator",
+        "value"
+      ],
+      "properties": {
+        "kind": {
+          "const": "field"
+        },
+        "field": {
+          "$ref": "defs.schema.json#/$defs/dotted_field_path"
+        },
+        "operator": {
+          "const": "regex"
+        },
+        "value": {
+          "$ref": "defs.schema.json#/$defs/non_empty_string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "field_contains_predicate": {
+      "type": "object",
+      "required": [
+        "kind",
+        "field",
+        "operator",
+        "value"
+      ],
+      "properties": {
+        "kind": {
+          "const": "field"
+        },
+        "field": {
+          "$ref": "defs.schema.json#/$defs/dotted_field_path"
+        },
+        "operator": {
+          "enum": [
+            "contains_any",
+            "contains_all"
+          ]
+        },
+        "value": {
+          "type": "array",
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "relationship_predicate": {
+      "type": "object",
+      "required": [
+        "kind",
+        "relationship"
+      ],
+      "properties": {
+        "kind": {
+          "const": "relationship"
+        },
+        "relationship": {
+          "enum": [
+            "belongs_to",
+            "related_to"
+          ]
+        },
+        "direction": {
+          "enum": [
+            "outbound",
+            "inbound"
+          ],
+          "default": "outbound"
+        },
+        "note_types": {
+          "$ref": "#/$defs/note_types"
+        },
+        "where": {
+          "$ref": "#/$defs/predicate"
+        },
+        "count": {
+          "$ref": "#/$defs/count_range"
+        }
+      },
+      "additionalProperties": false
+    },
+    "count_range": {
+      "type": "object",
+      "minProperties": 1,
+      "properties": {
+        "min": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        },
+        "max": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

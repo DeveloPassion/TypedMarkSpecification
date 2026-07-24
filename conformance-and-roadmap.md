@@ -33,7 +33,7 @@ This specification defines the structural contract for typed Markdown note colle
 - **Sync, storage backends, and version control.** TypedMark governs files at rest; how they move between machines — Git, sync services, backups — is out of scope.
 - **Body prose.** Markdown content outside the governed surfaces — frontmatter, H2 headings, internal note links — is free; TypedMark does not constrain writing style or block-level structure.
 - **Value coercion.** TypedMark is strictly typed: a stored value either satisfies its declared property type or it does not. Reading the string `"5"` as the integer `5` is coercion.
-- **Query and index engine internals.** Execution strategy, caching internals, and performance characteristics are implementation concerns, even where future versions define portable query or index contracts.
+- **Query and index engine internals.** Execution strategy, caching internals, and performance characteristics are implementation concerns; the portable query contract governs results, not how they are produced, and index formats remain outside this version.
 - **AI behavior.** Agents consume the structural contract; prompts, models, and agent workflows are outside the specification.
 - **Identity, authentication, and permissions.** Multi-user access control is out of scope; visibility metadata is tracked separately as a possible future addition.
 
@@ -245,4 +245,5 @@ Recommended implementation order:
 9. implement the migration and update flow that recomposes a collection at newer source versions and applies the resulting change operations to managed notes
 10. implement one-hop automation events, declarative actions, and portable run reports
 11. add dependency-graph propagation, fixed-point termination, recovery, and destructive previews
-12. generate the human-facing reference pages from the authoritative artifacts
+12. implement portable query evaluation and query-backed content expansion against the same effective collection model
+13. generate the human-facing reference pages from the authoritative artifacts

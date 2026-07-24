@@ -1,0 +1,14 @@
+{
+  "specification_version": "0.0.1",
+  "where": {
+    "kind": "field",
+    "field": "reviewed_at",
+    "operator": "exists"
+  },
+  "select": [
+    {
+      "kind": "path",
+      "as": "path"
+    }
+  ]
+}

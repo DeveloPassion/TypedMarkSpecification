@@ -1,0 +1,71 @@
+{
+  "specification_version": "0.0.1",
+  "note_types": [
+    "project"
+  ],
+  "where": {
+    "kind": "all",
+    "predicates": [
+      {
+        "kind": "field",
+        "field": "status",
+        "operator": "equals",
+        "value": "active"
+      },
+      {
+        "kind": "relationship",
+        "relationship": "belongs_to",
+        "direction": "outbound",
+        "note_types": [
+          "area"
+        ],
+        "where": {
+          "kind": "field",
+          "field": "status",
+          "operator": "equals",
+          "value": "active"
+        },
+        "count": {
+          "min": 1
+        }
+      }
+    ]
+  },
+  "select": [
+    {
+      "kind": "path",
+      "as": "path"
+    },
+    {
+      "kind": "field",
+      "field": "title",
+      "as": "title"
+    },
+    {
+      "kind": "field",
+      "field": "status",
+      "as": "status"
+    },
+    {
+      "kind": "field",
+      "field": "due",
+      "as": "due"
+    }
+  ],
+  "order_by": [
+    {
+      "column": "status"
+    },
+    {
+      "column": "due",
+      "nulls": "last"
+    },
+    {
+      "column": "title"
+    }
+  ],
+  "group_by": [
+    "status"
+  ],
+  "limit": 50
+}

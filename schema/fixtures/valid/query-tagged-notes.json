@@ -1,0 +1,32 @@
+{
+  "specification_version": "0.0.1",
+  "where": {
+    "kind": "all",
+    "predicates": [
+      {
+        "kind": "path",
+        "operator": "under",
+        "value": "Projects/"
+      },
+      {
+        "kind": "field",
+        "field": "tags",
+        "operator": "contains_any",
+        "value": [
+          "priority/high",
+          "review"
+        ]
+      }
+    ]
+  },
+  "select": [
+    {
+      "kind": "note_type",
+      "as": "type"
+    },
+    {
+      "kind": "path",
+      "as": "path"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "specification_version": "0.0.1",
+  "id": "active-projects",
+  "mode": "auto",
+  "state": "materialized",
+  "source": {
+    "kind": "query",
+    "query": {
+      "specification_version": "0.0.1",
+      "note_types": [
+        "project"
+      ],
+      "where": {
+        "kind": "field",
+        "field": "status",
+        "operator": "equals",
+        "value": "active"
+      },
+      "select": [
+        {
+          "kind": "field",
+          "field": "title",
+          "as": "title"
+        }
+      ],
+      "order_by": [
+        {
+          "column": "title"
+        }
+      ]
+    },
+    "column": "title"
+  },
+  "render": {
+    "item": "- ${value}",
+    "empty": "_No active projects._"
+  }
+}

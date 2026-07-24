@@ -1,0 +1,78 @@
+{
+  "specification_version": "0.0.1",
+  "where": {
+    "kind": "all",
+    "predicates": [
+      {
+        "kind": "any",
+        "predicates": [
+          {
+            "kind": "path",
+            "operator": "equals",
+            "value": "Projects/TypedMark.md"
+          },
+          {
+            "kind": "path",
+            "operator": "regex",
+            "value": "^Areas/[^/]+\\.md$"
+          }
+        ]
+      },
+      {
+        "kind": "not",
+        "predicate": {
+          "kind": "field",
+          "field": "archived",
+          "operator": "exists",
+          "value": false
+        }
+      },
+      {
+        "kind": "field",
+        "field": "priority",
+        "operator": "greater_than_or_equal",
+        "value": 2
+      },
+      {
+        "kind": "field",
+        "field": "title",
+        "operator": "regex",
+        "value": "^TypedMark"
+      },
+      {
+        "kind": "field",
+        "field": "tags",
+        "operator": "contains_all",
+        "value": [
+          "project",
+          "priority/high"
+        ]
+      },
+      {
+        "kind": "relationship",
+        "relationship": "related_to",
+        "count": {
+          "max": 0
+        }
+      }
+    ]
+  },
+  "select": [
+    {
+      "kind": "path",
+      "as": "path"
+    },
+    {
+      "kind": "field",
+      "field": "title",
+      "as": "title"
+    }
+  ],
+  "order_by": [
+    {
+      "column": "title",
+      "direction": "desc",
+      "nulls": "first"
+    }
+  ]
+}

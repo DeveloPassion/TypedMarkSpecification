@@ -1,0 +1,23 @@
+{
+  "specification_version": "0.0.1",
+  "id": "active-projects",
+  "mode": "manual",
+  "state": "materialized",
+  "source": {
+    "kind": "query",
+    "query": {
+      "specification_version": "0.0.1",
+      "select": [
+        {
+          "kind": "field",
+          "field": "title",
+          "as": "title"
+        }
+      ]
+    },
+    "column": "missing"
+  },
+  "render": {
+    "item": "- ${value}"
+  }
+}

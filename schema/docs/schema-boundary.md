@@ -22,6 +22,7 @@ specification wins and the schema has a bug.
 | portable validation report (plain JSON output, not a collection artifact) | `validation-report.schema.json` |
 | portable automation event (plain JSON runtime interchange) | `automation-event.schema.json` |
 | portable automation run report (plain JSON runtime interchange) | `automation-run-report.schema.json` |
+| portable query descriptor (plain JSON runtime interchange or embedded descriptor) | `query.schema.json` |
 | content-expansion descriptor (JSON inside a Markdown start marker) | `expansion.schema.json` |
 | template-region descriptor (JSON inside a Markdown start marker) | `template-region.schema.json` |
 | `template_regions` managed-note receipt value | `template-tracking.schema.json` |
@@ -53,6 +54,9 @@ descriptors are covered by their descriptor schemas, and the core-defined
   status/diagnostic combinations
 - content-expansion descriptor keys, source variants, sync modes, persisted
   state, current-time restrictions, and render-block shape
+- portable-query descriptor keys; recursive boolean, path, field, and
+  relationship predicate variants; projection variants; ordering, grouping,
+  count-range, and limit shapes
 - template-region descriptor keys and identifier grammar, plus baseline and
   detached receipt variants in a managed note's `template_regions` value
 - the core-defined field contracts for `note_type`, `id`, `deleted`,
@@ -92,8 +96,13 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
   placeholder links, relationship instance counting and cardinality, heading
   rules, storage-path conformance including archived state
 - content-expansion semantics: marker parsing and pairing, source resolution and
-  scalar conversion, relationship traversal, shared-expression evaluation,
-  rendered-region equality, template materialization, drift, and ejection
+  scalar conversion, relationship and query evaluation, shared-expression evaluation,
+  embedded-query version and column agreement, rendered-region equality,
+  template materialization, drift, and ejection
+- portable-query semantics: note-type and abstract-descendant resolution,
+  effective-field compatibility, typed comparisons, relationship traversal,
+  projection-alias uniqueness and resolution, count-range consistency,
+  compatible ordering domains, deterministic row order, grouping, and limiting
 - template-region semantics: marker parsing and pairing, nesting boundaries,
   marker-to-receipt correspondence, region extraction, digest calculation,
   enrollment, three-way drift classification, reconciliation, and detachment
@@ -128,7 +137,7 @@ Fixtures are mapped to artifact schemas by filename prefix (`typedmark-*`,
 `note-type-*`, `property-set-*`, `history*`, `marketplace*`,
 `validation-report-*`, `automation-*`, `automation-event-*`, and
 `automation-run-report-*`, `expansion-*`, `template-region-*`, and
-`template-tracking-*`). Markdown fixtures are validated through their extracted
+`template-tracking-*`, and `query-*`). Markdown fixtures are validated through their extracted
 frontmatter; `.json` fixtures such as marker descriptors, tracking receipts, the
 marketplace catalog, and validation reports are validated directly.
 

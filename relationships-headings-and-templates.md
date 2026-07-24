@@ -369,7 +369,7 @@ Rules:
 
 ### Sources and Rendering
 
-Every source evaluates to an ordered sequence of text values. A single-value source therefore uses the same rendering path as a relationship traversal, while the deliberately small shared expression language controls presentation. Computed fields need no separate source kind because their materialized values are read through the field sources after recomputation. Query-backed selection is reserved for the portable query contract; this version does not invent an expansion-only query language. Filesystem creation and modification timestamps are likewise excluded because they are not stable collection data—authors can store portable timestamps in typed fields instead.
+Every source evaluates to an ordered sequence of text values. A single-value source therefore uses the same rendering path as a relationship traversal, while the deliberately small shared expression language controls presentation. Computed fields need no separate source kind because their materialized values are read through the field sources after recomputation. Query-backed selection embeds the portable descriptor defined in [Collection Model](collection-model.md#portable-queries), rather than inventing an expansion-only query language. Filesystem creation and modification timestamps are excluded because they are not stable collection data—authors can store portable timestamps in typed fields instead.
 
 This descriptor renders outbound `related_to` targets as a Markdown list:
 
@@ -394,19 +394,49 @@ This descriptor renders outbound `related_to` targets as a Markdown list:
 }
 ```
 
+This query source renders the projected title column from every active project in portable query order:
+
+```json
+{
+  "specification_version": "0.0.1",
+  "id": "active-projects",
+  "mode": "auto",
+  "state": "materialized",
+  "source": {
+    "kind": "query",
+    "query": {
+      "specification_version": "0.0.1",
+      "note_types": ["project"],
+      "where": {"kind": "field", "field": "status", "operator": "equals", "value": "active"},
+      "select": [
+        {"kind": "field", "field": "title", "as": "title"}
+      ],
+      "order_by": [
+        {"column": "title", "direction": "asc"}
+      ]
+    },
+    "column": "title"
+  },
+  "render": {
+    "item": "- ${value}",
+    "empty": "_No active projects._"
+  }
+}
+```
+
 Rules:
 
 - `RHT-110` The content-expansion modes in this specification version are exactly `auto`, `manual`, `once`, and `once_and_eject`.
 - `RHT-111` The content-expansion states in this specification version are exactly `pending` and `materialized`.
-- `RHT-112` The content-expansion source kinds in this specification version are exactly `self_field`, `note_field`, `relationship`, `file`, and `now`.
+- `RHT-112` The content-expansion source kinds in this specification version are exactly `self_field`, `note_field`, `relationship`, `query`, `file`, and `now`.
 - `RHT-113` Every source evaluation MUST produce an ordered sequence containing zero or more strings.
-- `RHT-114` A stored string source value MUST contribute that string unchanged.
-- `RHT-115` A stored boolean source value MUST contribute `true` or `false` in lowercase.
-- `RHT-116` A stored integer source value MUST use the integer representation defined by `SCE-85` in [Systems, Composition, and Evolution](systems-composition-evolution.md).
-- `RHT-117` A stored number source value MUST use the number representation defined by `SCE-86` in [Systems, Composition, and Evolution](systems-composition-evolution.md).
-- `RHT-118` An absent or null stored source value MUST produce an empty sequence.
-- `RHT-119` A stored sequence source value MUST contribute its scalar entries in stored order using `RHT-114` through `RHT-117`.
-- `RHT-120` A stored mapping, nested sequence, or null sequence entry MUST make source evaluation fail.
+- `RHT-114` A string source value MUST contribute that string unchanged.
+- `RHT-115` A boolean source value MUST contribute `true` or `false` in lowercase.
+- `RHT-116` An integer source value MUST use the integer representation defined by `SCE-85` in [Systems, Composition, and Evolution](systems-composition-evolution.md).
+- `RHT-117` A number source value MUST use the number representation defined by `SCE-86` in [Systems, Composition, and Evolution](systems-composition-evolution.md).
+- `RHT-118` An absent or null source value MUST produce an empty sequence.
+- `RHT-119` A sequence source value MUST contribute its scalar entries in sequence order using `RHT-114` through `RHT-117`.
+- `RHT-120` A mapping, nested sequence, or null sequence entry MUST make source evaluation fail.
 - `RHT-121` A `self_field` source MUST read the named top-level field from the containing note's parsed frontmatter.
 - `RHT-169` A `self_field` source on a note without valid YAML frontmatter MUST make source evaluation fail.
 - `RHT-171` A `self_field` source in a managed note MUST name an effective-schema field or a core-defined managed-note field.
@@ -427,6 +457,18 @@ Rules:
 - `RHT-132` A relationship source with `field` MUST contribute the named top-level field from each selected target in target order.
 - `RHT-173` A relationship source with `field` MUST name an effective-schema field or a core-defined managed-note field of every selected target.
 - `RHT-133` Values from one relationship target's sequence field MUST precede values from every later target.
+- `RHT-246` A `query` source MUST contain `query` as a portable query descriptor and `column` as a projected-column alias.
+- `RHT-247` The embedded query's `specification_version` MUST equal the containing expansion descriptor's `specification_version`.
+- `RHT-248` A `query` source MUST evaluate its embedded query against the current collection snapshot under the portable query rules in [Collection Model](collection-model.md#portable-queries).
+- `RHT-249` A `query` source's `column` MUST resolve to exactly one alias in its embedded query's `select` list.
+- `RHT-250` A `query` source MUST read its named column from each ordered, limited result row before presentation grouping.
+- `RHT-256` Each query-row value MUST be converted under `RHT-114` through `RHT-120`.
+- `RHT-251` Values contributed by one query row's sequence value MUST precede values contributed by every later row.
+- `RHT-252` An absent or null projected value in one query row MUST contribute an empty sequence for that row.
+- `RHT-253` A `query` source MUST NOT implicitly exclude the note containing the expansion.
+- `RHT-254` A query-source resolution, evaluation, column-resolution, or value-conversion failure MUST be an `invalid_expansion` failure.
+- `RHT-255` An `auto` query expansion is affected when a staged change can alter its query's candidate membership, predicate outcome, projected values, row order, limit boundary, or selected-column values.
+- `RHT-257` During template instantiation, a query source MUST evaluate against the staged post-creation snapshot containing the new note at its final path with its final frontmatter and non-expansion body.
 - `RHT-134` A `file` source with `value: path` MUST contribute the containing note's normalized collection-relative path.
 - `RHT-135` A `file` source with `value: filename` MUST contribute the final path segment including `.md`.
 - `RHT-136` A `file` source with `value: stem` MUST contribute the final path segment without `.md`.

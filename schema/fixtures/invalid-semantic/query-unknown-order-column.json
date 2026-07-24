@@ -1,0 +1,14 @@
+{
+  "specification_version": "0.0.1",
+  "select": [
+    {
+      "kind": "path",
+      "as": "path"
+    }
+  ],
+  "order_by": [
+    {
+      "column": "priority"
+    }
+  ]
+}

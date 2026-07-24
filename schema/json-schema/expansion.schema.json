@@ -45,6 +45,9 @@
           "$ref": "#/$defs/relationship_source"
         },
         {
+          "$ref": "#/$defs/query_source"
+        },
+        {
           "$ref": "#/$defs/file_source"
         },
         {
@@ -176,6 +179,26 @@
           }
         },
         "field": {
+          "$ref": "defs.schema.json#/$defs/field_name"
+        }
+      },
+      "additionalProperties": false
+    },
+    "query_source": {
+      "type": "object",
+      "required": [
+        "kind",
+        "query",
+        "column"
+      ],
+      "properties": {
+        "kind": {
+          "const": "query"
+        },
+        "query": {
+          "$ref": "query.schema.json"
+        },
+        "column": {
           "$ref": "defs.schema.json#/$defs/field_name"
         }
       },

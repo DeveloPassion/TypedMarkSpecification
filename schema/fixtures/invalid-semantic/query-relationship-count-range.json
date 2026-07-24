@@ -1,0 +1,17 @@
+{
+  "specification_version": "0.0.1",
+  "where": {
+    "kind": "relationship",
+    "relationship": "related_to",
+    "count": {
+      "min": 3,
+      "max": 1
+    }
+  },
+  "select": [
+    {
+      "kind": "path",
+      "as": "path"
+    }
+  ]
+}

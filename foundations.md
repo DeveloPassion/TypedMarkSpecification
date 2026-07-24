@@ -127,6 +127,7 @@ TypedMark defines:
 - which collection-wide rules apply
 - where notes of each type live and how their note names are formed
 - which frontmatter fields, relationships, headings, and templates each type declares
+- how portable queries filter, project, order, group, and limit managed notes
 - how systems package, version, compose, scaffold, and evolve collections, and how a collection records its composition provenance
 - how conformance is evaluated
 
@@ -289,7 +290,7 @@ typedmark.md
 
 In path notation below, `<metadata_directory>` is the directory name declared by `typedmark.md` `metadata_directory`.
 
-The authoritative contract for each governed element lives in exactly one place, except that `typedmark.md` is documented by concern: its structural fields are authoritative on [Collection Model](collection-model.md) and its optional system fields are authoritative on [Systems, Composition, and Evolution](systems-composition-evolution.md).
+The authoritative contract for each governed element and cross-tool runtime surface lives in exactly one place, except that `typedmark.md` is documented by concern: its structural fields are authoritative on [Collection Model](collection-model.md) and its optional system fields are authoritative on [Systems, Composition, and Evolution](systems-composition-evolution.md).
 
 - `typedmark.md` structural fields: [Collection Model](collection-model.md)
 - `typedmark.md` system fields, including release version, publishing metadata, and scaffold: [Systems, Composition, and Evolution](systems-composition-evolution.md)
@@ -305,6 +306,8 @@ The authoritative contract for each governed element lives in exactly one place,
 - relationship semantics, heading constraints, and template obligations: [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md)
 - template-region marker, receipt, digest, drift-state, reconciliation, and detachment semantics: [Template Drift Tracking](relationships-headings-and-templates.md#template-drift-tracking)
 - content-expansion marker, source, rendering, synchronization, and ejection semantics: [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md#content-expansion)
+- portable query descriptor and evaluation semantics: [Collection Model](collection-model.md#portable-queries)
+- portable validation-report and automation-interchange formats: [Conformance and Roadmap](conformance-and-roadmap.md)
 - conformance modes and required artifact sets: [Conformance and Roadmap](conformance-and-roadmap.md)
 
 `typedmark.md` lives at the root of the managed collection, as required by [Collection Model](collection-model.md).

@@ -12,6 +12,7 @@ full boundary.
 | `expansion-note-field-unresolved.json` | A materialized `note_field` expansion source must resolve its note link to exactly one managed note. |
 | `expansion-relationship-target-unresolved.json` | Every `target_note_types` filter entry must resolve to exactly one concrete or abstract note type; `ghost` does not. |
 | `expansion-unknown-render-reference.json` | Expansion rendering exposes only the shared-expression reference name `value`; `title` is unknown. |
+| `expansion-query-unknown-column.json` | A query expansion's `column` must resolve to exactly one projected alias; `missing` is not projected. |
 | `note-type-basename-mismatch.md` | The schema file basename must equal the file's `note_type` value (`topic` here). |
 | `note-type-computed-reference-unresolved.md` | Every `computed` field reference must resolve to a sibling field declared in the same effective `frontmatter`; `nickname` does not exist. |
 | `note-type-computed-unsupported-transform.md` | `computed` supports only the transforms defined by the specification version; `upper` is unknown. |
@@ -19,6 +20,9 @@ full boundary.
 | `note-type-mandatory-tags-without-tags-field.md` | A non-empty effective mandatory-tag policy requires an effective top-level `tags` field with `type: tags`. |
 | `typedmark-composition-self-reference.md` | A composition source `name` must not equal the composing collection's own `name`. |
 | `property-set-relationship-target-unresolved.md` | Every relationship target note type must resolve to a concrete note type in the composed collection; `ghost` does not exist. |
+| `query-duplicate-column.json` | Projection aliases must be unique within one query; `identity` is declared twice. |
+| `query-relationship-count-range.json` | A relationship predicate's minimum count must not exceed its maximum count. |
+| `query-unknown-order-column.json` | Every ordering column must resolve to exactly one projected alias; `priority` is not projected. |
 
 Managed-note semantics — note-link resolution, allowed unresolved placeholder links,
 relationship cardinality, canonical field materialization — are also semantic-layer

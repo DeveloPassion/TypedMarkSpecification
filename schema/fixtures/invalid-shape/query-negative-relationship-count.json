@@ -1,0 +1,16 @@
+{
+  "specification_version": "0.0.1",
+  "where": {
+    "kind": "relationship",
+    "relationship": "belongs_to",
+    "count": {
+      "min": -1
+    }
+  },
+  "select": [
+    {
+      "kind": "path",
+      "as": "path"
+    }
+  ]
+}

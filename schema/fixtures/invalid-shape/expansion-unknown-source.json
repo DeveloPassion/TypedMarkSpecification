@@ -4,8 +4,8 @@
   "mode": "manual",
   "state": "pending",
   "source": {
-    "kind": "query",
-    "query": "note_type = source"
+    "kind": "script",
+    "script": "return notes"
   },
   "render": {
     "item": "- ${value}"

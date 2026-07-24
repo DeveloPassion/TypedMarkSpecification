@@ -1,0 +1,14 @@
+{
+  "specification_version": "0.0.1",
+  "select": [
+    {
+      "kind": "path",
+      "as": "identity"
+    },
+    {
+      "kind": "field",
+      "field": "id",
+      "as": "identity"
+    }
+  ]
+}
