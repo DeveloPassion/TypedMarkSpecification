@@ -1,0 +1,14 @@
+{
+  "specification_version": "0.0.1",
+  "run_id": "run-invalid-success-diagnostic",
+  "mode": "one_hop",
+  "status": "no_change",
+  "root_event_ids": ["evt-root"],
+  "waves": [],
+  "diagnostics": [
+    {
+      "code": "action_failed",
+      "message": "A successful run cannot carry a failure diagnostic."
+    }
+  ]
+}

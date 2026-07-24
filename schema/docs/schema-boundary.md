@@ -16,9 +16,12 @@ specification wins and the schema has a bug.
 | `typedmark.md` | `typedmark.schema.json` |
 | `<metadata_directory>/schemas/<note_type>.md` | `note-type.schema.json` |
 | `<metadata_directory>/property-sets/<property_set>.md` | `property-set.schema.json` |
+| `<metadata_directory>/automations/<automation>.md` | `automation.schema.json` |
 | `<metadata_directory>/history.md` | `history.schema.json` |
 | `marketplace.json` (marketplace repository root; plain JSON, not Markdown) | `marketplace.schema.json` |
 | portable validation report (plain JSON output, not a collection artifact) | `validation-report.schema.json` |
+| portable automation event (plain JSON runtime interchange) | `automation-event.schema.json` |
+| portable automation run report (plain JSON runtime interchange) | `automation-run-report.schema.json` |
 | shared blocks (field definitions, storage, relationships, headings, …) | `defs.schema.json` |
 
 Managed notes are deliberately **not** covered: their frontmatter is validated
@@ -39,7 +42,9 @@ express them.
   composition references, archive-policy-dependent required keys, `version`
   requiring `scaffold`, mandatory-tag declaration grammar and uniqueness,
   folder scopes declaring exactly one path matcher and at least one action,
-  field operations declaring exactly one of `note_type`/`property_set`
+  field operations declaring exactly one of `note_type`/`property_set`,
+  automation trigger and action variants, event snapshot combinations, and
+  automation run-report status/diagnostic combinations
 - the core-defined field contracts for `note_type`, `id`, `deleted`,
   `archived`, and `aliases` where schemas or property sets declare them
 - validation-report codes, severities, required context, and consistency between
@@ -63,8 +68,9 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
   duplicate removal, compatibility with the effective `tags` field, template
   obligations, managed-note membership, and append-only materialization
 - canonical expansion: applying effective defaults for omitted
-  `metadata_directory`, `exclude_paths`, `validation_defaults`, `abstract`,
-  `template.file`, and `storage.archive.policy`
+  `metadata_directory`, `exclude_paths`, `validation_defaults`,
+  `automation_defaults`, `abstract`, `template.file`, and
+  `storage.archive.policy`
 - value semantics: `default_value`/`const_value`/`allowed_values` conformance to
   the declared type, `min <= max`, regex dialect, storage placeholder resolution,
   generation-strategy value production, shared expression-language syntax,
@@ -77,6 +83,9 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
 - system evolution: history version ordering and uniqueness, the replay
   invariant, migration impact computation, composition determinism and the
   canonical serialization
+- automation semantics: artifact basenames and reference resolution, schedule
+  due-instant evaluation, event matching, action target compatibility,
+  capability negotiation, staged execution, and propagation termination
 - conformance evaluation: resolving the target mode, assigning effective
   severities, producing findings, and ordering validation results
 
@@ -100,14 +109,15 @@ bun run validate-fixtures
 
 Fixtures are mapped to artifact schemas by filename prefix (`typedmark-*`,
 `note-type-*`, `property-set-*`, `history*`, `marketplace*`,
-`validation-report-*`). Markdown fixtures are validated through their extracted
+`validation-report-*`, `automation-*`, `automation-event-*`, and
+`automation-run-report-*`). Markdown fixtures are validated through their extracted
 frontmatter; `.json` fixtures such as the marketplace catalog and validation
 reports are validated directly.
 
 The golden-vector check validates collection layout, governed-artifact shapes,
-schema basenames, referenced template existence, report shape, and canonical
-result ordering. It deliberately does not infer semantic findings; that behavior
-belongs to an executable conformance runner.
+schema and automation basenames, referenced template existence, report shape,
+and canonical result ordering. It deliberately does not infer semantic findings;
+that behavior belongs to an executable conformance runner.
 
 ## Recommended validation workflow for implementations
 

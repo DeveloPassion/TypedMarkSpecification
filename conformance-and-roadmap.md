@@ -14,6 +14,7 @@ Authoritative for:
 - the specification's non-goals
 - conformance modes and their required artifact sets
 - the portable validation-report format
+- portable automation event and run-report interchange
 - the recommended implementation order
 
 See also:
@@ -95,6 +96,97 @@ Rules:
 - `CR-39` Validators MUST order results by `path`, then `rule_id`, then `code`, then the optional context values, comparing each component as exact Unicode code points.
 - `CR-40` Validation MUST NOT modify the collection or any governed artifact it evaluates.
 
+### Automation Run Reports
+
+Automation executors serialize one-hop and propagation outcomes as portable JSON. The report records the root events, deterministic execution waves, actual semantic changes, and machine-stable diagnostics without making the report part of the collection's authoritative state.
+
+```json
+{
+  "specification_version": "0.0.1",
+  "run_id": "run-01k0projectdone",
+  "mode": "one_hop",
+  "status": "committed",
+  "root_event_ids": [
+    "evt-01k0projectdone"
+  ],
+  "waves": [
+    {
+      "index": 0,
+      "event_ids": [
+        "evt-01k0projectdone"
+      ],
+      "automations": [
+        "project-completed"
+      ],
+      "changes": [
+        {
+          "kind": "field",
+          "path": "Projects/TypedMark.md",
+          "field": "review_needed",
+          "before": true,
+          "after": false
+        },
+        {
+          "kind": "tag",
+          "path": "Projects/TypedMark.md",
+          "tag": "state/completed",
+          "operation": "add"
+        },
+        {
+          "kind": "note",
+          "path": "Projects/TypedMark.md",
+          "operation": "archive"
+        }
+      ]
+    }
+  ],
+  "diagnostics": []
+}
+```
+
+Rules:
+
+- `CR-41` Automation events and run reports are portable runtime interchange documents and are not governed collection artifacts.
+- `CR-42` A serialized automation event MUST satisfy `automation-event.schema.json`.
+- `CR-43` A serialized automation run report MUST satisfy `automation-run-report.schema.json`.
+- `CR-44` A run report MUST physically contain `specification_version`, `run_id`, `mode`, `status`, `root_event_ids`, `waves`, and `diagnostics`.
+- `CR-45` `mode` MUST be `one_hop` or `propagation`.
+- `CR-46` `status` MUST be `committed`, `no_change`, `aborted`, or `incomplete`.
+- `CR-47` `committed` means every change recorded by the run was committed successfully.
+- `CR-48` `no_change` means the run completed successfully without producing a semantic collection change.
+- `CR-49` `aborted` means the executor committed none of the run's staged changes.
+- `CR-50` `incomplete` means a commit began but recovery could not establish either the complete pre-run or complete post-run state.
+- `CR-51` `root_event_ids` MUST identify every external or caller-supplied event that initiated the run.
+- `CR-52` `waves` MUST appear in ascending contiguous `index` order starting at `0`.
+- `CR-53` A `one_hop` report MUST contain at most one wave.
+- `CR-54` Each wave MUST identify its consumed events, matched automations, and semantic changes.
+- `CR-55` Diagnostic `code` values are machine-stable.
+- `CR-56` Run diagnostics MUST use only `unsupported_capability`, `trigger_error`, `action_failed`, `conflicting_write`, `validation_failed`, `cycle_detected`, `wave_limit_exceeded`, `approval_required`, `concurrent_change`, or `incomplete_commit`.
+- `CR-57` A run report's change list MUST record only semantic changes.
+- `CR-58` Run reports MAY be stored outside the collection or under ignored tool state.
+- `CR-61` An `aborted` report MUST include at least one diagnostic.
+- `CR-62` An `incomplete` report MUST include an `incomplete_commit` diagnostic.
+- `CR-63` Consumers MUST NOT parse diagnostic `message` as an identifier.
+- `CR-64` A run report's change list MUST NOT record coalesced no-ops.
+- `CR-65` Run reports MUST NOT become authoritative collection input.
+- `CR-66` A wave's `event_ids` MUST use the canonical event order defined in [Managed Notes and Properties](managed-notes-and-properties.md#dependency-propagation-and-consistency).
+- `CR-67` A wave's `automations` MUST use the execution order defined in [Collection Model](collection-model.md#automation-rules).
+- `CR-68` A wave's `changes` MUST preserve semantic production order after no-op coalescing.
+- `CR-69` A `field` change records one top-level field's parsed before and after values.
+- `CR-70` A `tag` change records one exact tag addition or removal.
+- `CR-71` A `path` change records one managed note's normalized before and after paths.
+- `CR-72` A `note` change records one note creation, archive, logical deletion, or hard deletion.
+- `CR-73` A `link` change records one internal-link retargeting in note body content or a top-level frontmatter field.
+- `CR-74` A `committed` report MUST record at least one semantic change.
+- `CR-75` A `no_change` report MUST record no semantic changes.
+- `CR-76` An `aborted` report MUST record no semantic changes.
+- `CR-77` A change object's `path` is its post-change normalized path when the note remains, or its pre-change normalized path for hard deletion.
+- `CR-78` `root_event_ids` MUST use the canonical root-event order defined in [Managed Notes and Properties](managed-notes-and-properties.md#propagation-inputs-and-dependency-graph).
+- `CR-79` Run diagnostics MUST be ordered by wave, path, automation, field, code, and message, with absent values before present values and exact Unicode code-point comparison within each component.
+- `CR-80` `run_id` MUST be unique within the execution history available to the executor.
+- `CR-81` A `committed` report MUST record every semantic collection change produced by the run.
+- `CR-82` A `committed` or `no_change` report MUST contain no failure diagnostic.
+
 ### Valid System Definition
 
 A collection root conforms as a valid system definition when:
@@ -105,6 +197,7 @@ A collection root conforms as a valid system definition when:
 4. `CR-4` Every property set file under `<metadata_directory>/property-sets/`, if present, is valid under [Collection Model](collection-model.md), and every property set reference from `typedmark.md` or a note-type schema resolves.
 5. `CR-5` Every schema file under `<metadata_directory>/schemas/`, if present, is valid under [Note Type Schemas](note-type-schemas.md).
 6. `CR-6` Every template referenced by a schema file exists and satisfies the template-frontmatter contract in [Relationships, Headings, and Templates](relationships-headings-and-templates.md) for its note type's effective schema.
+7. `CR-59` Every automation file under `<metadata_directory>/automations/`, if present, is valid under [Collection Model](collection-model.md).
 
 ### Valid Instantiated Collection
 
@@ -118,6 +211,7 @@ A collection root conforms as a valid instantiated collection when:
 6. `CR-11` Managed notes resolve to valid concrete note types under the configured note-type mapping rules and satisfy the managed note contract under [Managed Notes and Properties](managed-notes-and-properties.md).
 7. `CR-12` Managed notes satisfy their schema storage rules under [Note Type Schemas](note-type-schemas.md).
 8. `CR-13` Managed notes satisfy their schema relationship and heading rules under [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
+9. `CR-60` Every automation file under `<metadata_directory>/automations/`, if present, is valid under [Collection Model](collection-model.md).
 
 Additional rules:
 
@@ -126,7 +220,7 @@ Additional rules:
 - `CR-16` A single collection root MAY conform simultaneously as both a valid system definition and a valid instantiated collection.
 - `CR-17` Untyped notes MAY exist in an instantiated collection and do not by themselves make the collection non-conforming.
 - `CR-18` Structural precedence across artifacts remains defined in [Foundations](foundations.md).
-- `CR-19` A Core Profile instantiated collection is a valid instantiated collection that omits system fields, composition provenance, `history.md`, property sets, `folder_scopes`, vocabularies, and non-default note-type mappings.
+- `CR-19` A Core Profile instantiated collection is a valid instantiated collection that omits system fields, composition provenance, `history.md`, automation rules, property sets, `folder_scopes`, vocabularies, and non-default note-type mappings.
 - `CR-20` Validators MUST apply the defaulted shorthand values defined in [Collection Model](collection-model.md) and [Note Type Schemas](note-type-schemas.md) before evaluating any conformance mode.
 - `CR-22` Validators MUST evaluate every winning note-type mapping candidate under `CM-114`, including candidates that do not resolve to a concrete schema.
 
@@ -143,4 +237,6 @@ Recommended implementation order:
 7. populate the system fields in `typedmark.md`, and add a `<metadata_directory>/history.md` change log, if you are packaging a reusable, versioned system, using [Systems, Composition, and Evolution](systems-composition-evolution.md)
 8. implement deterministic system composition that materializes a self-contained collection and records its lineage in `typedmark.md` `composition`, using [Systems, Composition, and Evolution](systems-composition-evolution.md)
 9. implement the migration and update flow that recomposes a collection at newer source versions and applies the resulting change operations to managed notes
-10. generate the human-facing reference pages from the authoritative artifacts
+10. implement one-hop automation events, declarative actions, and portable run reports
+11. add dependency-graph propagation, fixed-point termination, recovery, and destructive previews
+12. generate the human-facing reference pages from the authoritative artifacts

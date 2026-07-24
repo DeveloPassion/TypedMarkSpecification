@@ -46,6 +46,8 @@ Rules:
 - `ME-21` A migration MUST append every newly missing mandatory tag under the materialization rules in [Managed Notes and Properties](managed-notes-and-properties.md).
 - `ME-22` A migration MUST NOT remove a stored tag solely because the migrated policy no longer mandates it.
 - `ME-23` After mandatory-tag materialization, a migration MUST re-validate the complete stored `tags` value against the migrated effective field definition.
+- `ME-24` `add_automation`, `remove_automation`, and `change_automation` have no direct managed-note effect; the migrated effective automation set applies only to execution events processed after the migration commits.
+- `ME-25` A `change_collection` operation that changes only `automation_defaults` has no direct managed-note effect.
 
 ### Field Type Conversions
 

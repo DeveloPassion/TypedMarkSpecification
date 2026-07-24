@@ -8,6 +8,7 @@ full boundary.
 
 | Fixture | Semantic rule violated |
 | --- | --- |
+| `automation-set-field-unresolved.md` | Every automation field reference must resolve for every target on which the action can execute; `missing_field` is undeclared. |
 | `note-type-basename-mismatch.md` | The schema file basename must equal the file's `note_type` value (`topic` here). |
 | `note-type-computed-reference-unresolved.md` | Every `computed` field reference must resolve to a sibling field declared in the same effective `frontmatter`; `nickname` does not exist. |
 | `note-type-computed-unsupported-transform.md` | `computed` supports only the transforms defined by the specification version; `upper` is unknown. |

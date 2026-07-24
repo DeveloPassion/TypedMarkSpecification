@@ -1,0 +1,41 @@
+{
+  "specification_version": "0.0.1",
+  "run_id": "run-01k0projectdone",
+  "mode": "one_hop",
+  "status": "committed",
+  "root_event_ids": [
+    "evt-01k0projectdone"
+  ],
+  "waves": [
+    {
+      "index": 0,
+      "event_ids": [
+        "evt-01k0projectdone"
+      ],
+      "automations": [
+        "project-completed"
+      ],
+      "changes": [
+        {
+          "kind": "field",
+          "path": "Projects/TypedMark.md",
+          "field": "review_needed",
+          "before": true,
+          "after": false
+        },
+        {
+          "kind": "tag",
+          "path": "Projects/TypedMark.md",
+          "tag": "state/completed",
+          "operation": "add"
+        },
+        {
+          "kind": "note",
+          "path": "Projects/TypedMark.md",
+          "operation": "archive"
+        }
+      ]
+    }
+  ],
+  "diagnostics": []
+}

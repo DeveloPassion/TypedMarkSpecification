@@ -26,7 +26,7 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | --- | --- | --- |
 | Collection | A rooted set of Markdown notes plus the TypedMark artifacts that structure them | [Foundations](foundations.md#collection) |
 | Core Profile | The minimal authoring profile for a conforming typed collection | [Foundations](foundations.md#authoring-profiles-and-canonical-expansion) |
-| Governed artifact | `typedmark.md`, a note-type schema, a property set, or `history.md` — Markdown files whose frontmatter is the contract | [Foundations](foundations.md#governed-artifact-format) |
+| Governed artifact | `typedmark.md`, a note-type schema, a property set, an automation rule, or `history.md` — Markdown files whose frontmatter is the contract | [Foundations](foundations.md#governed-artifact-format) |
 | Note type | A named structural class notes are associated with; abstract or concrete | [Foundations](foundations.md#note-types) |
 | Managed note | A note associated with exactly one concrete note type and governed by its schema | [Managed Notes and Properties](managed-notes-and-properties.md) |
 | Untyped note | A collection note with no known note type; allowed, but unvalidated | [Foundations](foundations.md#untyped-notes) |
@@ -40,6 +40,8 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | Composition | Building one self-contained collection from ordered source systems | [Systems, Composition, and Evolution](systems-composition-evolution.md#system-composition) |
 | Marketplace catalog | The `marketplace.json` index of known systems | [Systems, Composition, and Evolution](systems-composition-evolution.md#marketplace-catalog) |
 | Vocabulary | A named, reusable value set referenced by `allowed_values_from` | [Collection Model](collection-model.md#vocabularies) |
+| Automation rule | A declarative event or schedule trigger with an ordered, atomic action list | [Collection Model](collection-model.md#automation-rules) |
+| Propagation | Deterministic multi-wave automation execution that commits only at a valid fixed point | [Managed Notes and Properties](managed-notes-and-properties.md#dependency-propagation-and-consistency) |
 
 ## How do I…
 
@@ -59,6 +61,8 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | add an optional name suffix like " (Meeting)" | `note_name_suffix` with `required: false` | [Storage rules](note-type-schemas.md#storage-rules) |
 | map notes to types by tag or folder | `note_type_mappings` with `kind: tag` or `kind: folder` | [Note-type mappings](collection-model.md#note-type-mappings) |
 | require tags collection-wide, by folder, or by note type | `mandatory_tags` in `typedmark.md`, `folder_scopes`, or a note-type schema | [Mandatory tags](collection-model.md#mandatory-tags) |
+| react to note changes or a schedule | an automation artifact under `<metadata_directory>/automations/` | [Automation rules](collection-model.md#automation-rules) |
+| let automation changes trigger further rules safely | propagation mode with `automation_defaults.max_propagation_waves` | [Dependency propagation](managed-notes-and-properties.md#dependency-propagation-and-consistency) |
 | share fields across many note types | property sets and `default_property_sets` | [Collection Model](collection-model.md#composing-property-sets) |
 | apply shared structure by note path | `folder_scopes` | [Collection Model](collection-model.md#folder-scopes) |
 | tolerate unknown fields on one type only | per-type `unknown_field` severity | [Note Type Schemas](note-type-schemas.md#schema-file-contract) |

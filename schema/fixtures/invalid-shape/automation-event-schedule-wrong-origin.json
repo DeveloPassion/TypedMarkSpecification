@@ -1,0 +1,11 @@
+{
+  "specification_version": "0.0.1",
+  "event_id": "evt-invalid-schedule-origin",
+  "kind": "schedule.tick",
+  "occurred_at": "2026-07-24T09:30:00+02:00",
+  "origin": "user",
+  "schedule": {
+    "automation": "daily-review",
+    "scheduled_for": "2026-07-24T09:30:00+02:00"
+  }
+}

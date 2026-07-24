@@ -212,14 +212,14 @@ Rules:
 
 A collection or a system can be built by composing other systems. Composition is how a marketplace and a CLI let a user stack several systems together — for example combining a PARA system, a personal-knowledge system, and a dev-team AI-context system into one working collection, or publishing that combination as a new system.
 
-Composition is a build-time operation. A composing tool loads the source systems at their declared versions, merges them deterministically, and materializes one self-contained collection in which every schema, property set, and template is physically present in the metadata directory. The composed collection then conforms exactly like any hand-authored collection, and remains understandable from `typedmark.md` and the metadata directory alone.
+Composition is a build-time operation. A composing tool loads the source systems at their declared versions, merges them deterministically, and materializes one self-contained collection in which every schema, property set, automation rule, and template is physically present in the metadata directory. The composed collection then conforms exactly like any hand-authored collection, and remains understandable from `typedmark.md` and the metadata directory alone.
 
 The ordered list of source systems and their resolved versions is the collection's composition lineage, recorded in `typedmark.md` `composition`, defined in [Collection Model](collection-model.md). The lineage is both provenance and the reproducible recipe: re-running composition over the same sources at the same versions reconstructs the same result.
 
 Rules:
 
 - `SCE-50` Composition resolves each source identity and version to exactly one system whose `name` and `version` match.
-- `SCE-51` A composing tool MUST materialize the merged note-type schemas, property sets, and templates into the target metadata directory so the composed collection is self-contained.
+- `SCE-51` A composing tool MUST materialize the merged note-type schemas, property sets, automation rules, and templates into the target metadata directory so the composed collection is self-contained.
 - `SCE-52` A composing tool MUST record each source `name` and resolved `version` in `typedmark.md` `composition.sources`, in composition order.
 - `SCE-53` A composing tool MUST NOT require network access, the source systems, or the composition tool itself to evaluate the conformance of an already-composed collection.
 - `SCE-54` Composition MUST be deterministic, as defined under Composition Merge Semantics below.
@@ -231,7 +231,7 @@ The inputs to composition are the ordered source systems from `composition.sourc
 Rules:
 
 - `SCE-55` Sources are merged in `composition.sources` order; the local collection's own artifacts are applied last.
-- `SCE-56` Note-type schemas merge by `note_type`; property sets merge by `property_set`; templates merge by template path; `scaffold.folders` merge by set union; `scaffold.notes` merge by `path`.
+- `SCE-56` Note-type schemas merge by `note_type`; property sets merge by `property_set`; automation rules merge by `automation`; templates merge by template path; `scaffold.folders` merge by set union; `scaffold.notes` merge by `path`.
 - `SCE-57` When two inputs contribute the same keyed artifact, the later input in the merge order replaces the earlier one completely, and the local collection's artifact overrides every source.
 - `SCE-58` `typedmark.md` `metadata_directory` MUST be identical across all sources and the target; a mismatch is a composition error.
 - `SCE-59` `typedmark.md` `default_property_sets` merge by concatenation in merge order with duplicate identifiers removed, keeping the first occurrence.
@@ -245,7 +245,9 @@ Rules:
 - `SCE-142` A source system's folder scope applies to every matching managed note in the composed collection, regardless of which source contributed that note's winning schema.
 - `SCE-143` `typedmark.md` `mandatory_tags` merge by concatenation in source merge order followed by the target collection's entries, with duplicates removed under `CM-232` in [Collection Model](collection-model.md) and the first occurrence retained.
 - `SCE-144` A source system's collection-level mandatory tags apply to every managed note in the composed collection, regardless of which source contributed that note's winning schema.
-- `SCE-66` `typedmark.md` `validation_defaults`, `exclude_paths`, and `vocabularies` merge by key, with later inputs overriding earlier inputs per key, and the target overriding all.
+- `SCE-145` A source system's winning automation rules evaluate against every matching managed note in the composed collection, regardless of which source contributed that note's winning schema.
+- `SCE-146` After keyed automation replacement, the composed automation set MUST be reordered by the effective priority and identifier order defined in [Collection Model](collection-model.md).
+- `SCE-66` `typedmark.md` `validation_defaults`, `automation_defaults`, `exclude_paths`, and `vocabularies` merge by key, with later inputs overriding earlier inputs per key, and the target overriding all.
 - `SCE-67` The composing collection's own `name`, `version`, and other system fields are authored on the result; they are never inherited from a source.
 - `SCE-68` A composing tool MUST report every collision it resolves, identifying the artifact, the contributing sources, and the winner.
 - `SCE-69` `history.md` from each source MAY be retained for update reasoning, as defined under Migration and Updates; composition itself does not require merging source histories into a single log.
@@ -254,7 +256,7 @@ Rules:
 
 Rules:
 
-- `SCE-70` Two conforming composing tools given identical `composition.sources` at identical versions MUST produce the same composed schemas, property sets, and templates under canonical comparison.
+- `SCE-70` Two conforming composing tools given identical `composition.sources` at identical versions MUST produce the same composed schemas, property sets, automation rules, and templates under canonical comparison.
 - `SCE-71` Canonical comparison uses canonically expanded governed frontmatter, the deterministic merge order defined above for every ordered construct, and the normalized artifact body defined below.
 - `SCE-72` A composing tool that claims reproducible or hash-stable output MUST serialize composed artifacts in the canonical serialization defined below; two artifacts that are equal under canonical comparison then have byte-identical canonical serializations.
 - `SCE-73` The local-only contribution of a composed collection is, by definition, the difference between its current materialized state and the state obtained by recomposing its `composition.sources`; a tool MUST be able to recover it by recomposition rather than by reading per-artifact origin tags.
@@ -280,7 +282,7 @@ Key and element order:
 
 - `SCE-79` Order-significant mappings preserve their defined order; every other mapping serializes its keys sorted ascending by Unicode code point.
 - `SCE-80` The `frontmatter` mapping and every `object.fields` mapping are order-significant and MUST preserve the effective field order defined by the merge rules.
-- `SCE-81` `property_sets`, `default_property_sets`, `mandatory_tags`, `folder_scopes`, each folder scope's `property_sets` and `mandatory_tags`, `composition.sources`, note-type-level `mandatory_tags`, `history`, and every `changes` list are sequences and MUST preserve their defined order.
+- `SCE-81` `property_sets`, `default_property_sets`, `mandatory_tags`, `folder_scopes`, each folder scope's `property_sets` and `mandatory_tags`, `composition.sources`, note-type-level `mandatory_tags`, automation `actions`, `history`, and every `changes` list are sequences and MUST preserve their defined order.
 - `SCE-82` Every other mapping, including a field definition's property keys and the `storage`, `relationships`, `headings`, and `typedmark.md` top-level mappings, MUST serialize its keys in ascending Unicode code-point order.
 
 Scalars:
@@ -355,10 +357,13 @@ Defined change operations:
 - `change_headings` with `note_type`, for changes to the effective `headings` block
 - `change_relationships` with `note_type`, for changes to the effective `relationships` block
 - `change_note_type` with `note_type`, for note-type-level changes that no more specific operation covers, such as changes to `kind`, `extends`, `mandatory_tags`, `property_sets`, `exclude_property_sets`, `frontmatter_remove`, or `guidance`
-- `change_collection`, for changes to the structural fields of `typedmark.md`, such as `note_type_mappings`, `mandatory_tags`, `default_property_sets`, `folder_scopes`, `exclude_paths`, or `validation_defaults`
+- `change_collection`, for changes to the structural fields of `typedmark.md`, such as `note_type_mappings`, `mandatory_tags`, `default_property_sets`, `folder_scopes`, `exclude_paths`, `validation_defaults`, or `automation_defaults`
 - `add_property_set` with `property_set`
 - `remove_property_set` with `property_set`
 - `rename_property_set` with `from` and `to`
+- `add_automation` with `automation`
+- `remove_automation` with `automation`
+- `change_automation` with `automation`
 
 Rules:
 
@@ -374,7 +379,9 @@ Rules:
 - `SCE-103` A `field` operand MAY be a dotted path to address a nested field inside an `object.fields` mapping.
 - `SCE-104` A `change_*` operation records that the named block or artifact changed; it does not restate the new value, which lives in the governed artifacts themselves.
 - `SCE-105` Every structural difference between two consecutive releases MUST be recorded by at least one change operation; a structural change that no operation records is a divergence between `history.md` and the current schemas.
-- `SCE-106` Replaying `history` from the first entry to the last, applying each `changes` list in order, MUST reconstruct the system's current inventory of note types, property sets, and fields, and MUST account for every structural change between consecutive releases; the governed artifacts remain authoritative for the concrete content of each block.
+- `SCE-106` Replaying `history` from the first entry to the last, applying each `changes` list in order, MUST reconstruct the system's current inventory of note types, property sets, automations, and fields.
+- `SCE-147` Replaying `history` MUST account for every structural change between consecutive releases.
+- `SCE-148` The governed artifacts remain authoritative for the concrete content of each replayed block.
 - `SCE-107` A validator MAY check this reconstruction invariant and report a divergence between `history.md` and the current schemas.
 - `SCE-108` When cutting a new release, a tool SHOULD generate candidate `changes` by comparing the previous version's state to the current state, and the author MUST confirm or correct any change that a structural comparison cannot classify unambiguously, in particular distinguishing a `rename_field` from a paired `remove_field` and `add_field`.
 

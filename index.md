@@ -29,10 +29,10 @@ New here? Read the [Manifesto](manifesto.md) for the why, then follow [Getting S
 - [Manifesto](manifesto.md): why note types matter
 - [Getting Started](getting-started.md): your first typed collection, step by step (non-normative)
 - [Foundations](foundations.md): the core concepts, the file format of governed artifacts, and the parsing baselines everything else builds on
-- [Collection Model](collection-model.md): the collection configuration file — how notes get their types, require tags, and reuse shared structure
+- [Collection Model](collection-model.md): the collection configuration file — how notes get their types, require tags, reuse shared structure, and declare automation rules
 - [Note Type Schemas](note-type-schemas.md): how one note type is defined — its fields, storage location, naming, and constraints
 - [Field Definition Reference](field-definition-reference.md): every property a field can declare, from types to constraints to generated values
-- [Managed Notes and Properties](managed-notes-and-properties.md): what a typed note must look like on disk
+- [Managed Notes and Properties](managed-notes-and-properties.md): what a typed note must look like on disk, including automation execution and dependency propagation
 - [Note Links](note-links.md): how links between notes are written and resolved
 - [Relationships, Headings, and Templates](relationships-headings-and-templates.md): documenting how note types relate, and what a note's body must contain
 - [Systems, Composition, and Evolution](systems-composition-evolution.md): packaging a collection as a shareable, versioned, composable system

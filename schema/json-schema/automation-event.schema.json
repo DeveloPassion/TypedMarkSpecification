@@ -1,0 +1,311 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developassion.github.io/TypedMarkSpecification/schema/automation-event.schema.json",
+  "title": "TypedMark automation event",
+  "description": "Immutable input envelope consumed by automation execution. Authoritative semantics: managed-notes-and-properties.md.",
+  "type": "object",
+  "required": [
+    "specification_version",
+    "event_id",
+    "kind",
+    "occurred_at",
+    "origin"
+  ],
+  "properties": {
+    "specification_version": {
+      "$ref": "defs.schema.json#/$defs/specification_version"
+    },
+    "event_id": {
+      "$ref": "defs.schema.json#/$defs/non_empty_string"
+    },
+    "kind": {
+      "enum": [
+        "note.created",
+        "note.updated",
+        "note.moved",
+        "note.archived",
+        "note.deleted",
+        "schedule.tick"
+      ]
+    },
+    "occurred_at": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]+)?(?:Z|[+-][0-9]{2}:[0-9]{2})$"
+    },
+    "origin": {
+      "enum": [
+        "user",
+        "tool",
+        "watch",
+        "schedule",
+        "migration",
+        "automation"
+      ]
+    },
+    "before": {
+      "$ref": "#/$defs/note_snapshot"
+    },
+    "after": {
+      "$ref": "#/$defs/note_snapshot"
+    },
+    "changes": {
+      "$ref": "#/$defs/field_changes"
+    },
+    "schedule": {
+      "type": "object",
+      "required": [
+        "automation",
+        "scheduled_for"
+      ],
+      "properties": {
+        "automation": {
+          "$ref": "defs.schema.json#/$defs/slug"
+        },
+        "scheduled_for": {
+          "$ref": "#/properties/occurred_at"
+        }
+      },
+      "additionalProperties": false
+    },
+    "caused_by": {
+      "type": "object",
+      "required": [
+        "run_id",
+        "event_id",
+        "automation"
+      ],
+      "properties": {
+        "run_id": {
+          "$ref": "defs.schema.json#/$defs/non_empty_string"
+        },
+        "event_id": {
+          "$ref": "defs.schema.json#/$defs/non_empty_string"
+        },
+        "automation": {
+          "$ref": "defs.schema.json#/$defs/slug"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "note.created"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "then": {
+        "required": [
+          "after"
+        ],
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "before"
+              ]
+            },
+            {
+              "required": [
+                "changes"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "note.deleted"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "then": {
+        "required": [
+          "before"
+        ],
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "after"
+              ]
+            },
+            {
+              "required": [
+                "changes"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "enum": [
+              "note.updated",
+              "note.archived"
+            ]
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "then": {
+        "required": [
+          "before",
+          "after",
+          "changes"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "note.moved"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "then": {
+        "required": [
+          "before",
+          "after"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "schedule.tick"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "then": {
+        "required": [
+          "schedule"
+        ],
+        "properties": {
+          "origin": {
+            "const": "schedule"
+          }
+        },
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "before"
+              ]
+            },
+            {
+              "required": [
+                "after"
+              ]
+            },
+            {
+              "required": [
+                "changes"
+              ]
+            }
+          ]
+        }
+      },
+      "else": {
+        "not": {
+          "required": [
+            "schedule"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "origin": {
+            "const": "automation"
+          }
+        },
+        "required": [
+          "origin"
+        ]
+      },
+      "then": {
+        "required": [
+          "caused_by"
+        ]
+      }
+    }
+  ],
+  "$defs": {
+    "note_snapshot": {
+      "type": "object",
+      "required": [
+        "path",
+        "frontmatter"
+      ],
+      "properties": {
+        "path": {
+          "allOf": [
+            {
+              "$ref": "defs.schema.json#/$defs/collection_relative_path"
+            },
+            {
+              "pattern": "\\.md$"
+            }
+          ]
+        },
+        "note_type": {
+          "$ref": "defs.schema.json#/$defs/slug"
+        },
+        "frontmatter": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "field_change": {
+      "type": "object",
+      "required": [
+        "before",
+        "after"
+      ],
+      "properties": {
+        "before": {},
+        "after": {}
+      },
+      "additionalProperties": false
+    },
+    "field_changes": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "$ref": "defs.schema.json#/$defs/field_name"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/field_change"
+      }
+    }
+  }
+}

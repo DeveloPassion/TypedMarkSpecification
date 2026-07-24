@@ -240,6 +240,26 @@
           "type": "object",
           "required": [
             "op",
+            "automation"
+          ],
+          "properties": {
+            "op": {
+              "enum": [
+                "add_automation",
+                "remove_automation",
+                "change_automation"
+              ]
+            },
+            "automation": {
+              "$ref": "defs.schema.json#/$defs/slug"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "op",
             "from",
             "to"
           ],

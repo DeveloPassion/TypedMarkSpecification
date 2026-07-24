@@ -125,6 +125,9 @@
         "invalid_property_set": {
           "$ref": "defs.schema.json#/$defs/validation_severity"
         },
+        "invalid_automation": {
+          "$ref": "defs.schema.json#/$defs/validation_severity"
+        },
         "invalid_note_type_mapping": {
           "$ref": "defs.schema.json#/$defs/validation_severity"
         },
@@ -148,6 +151,19 @@
         },
         "template_drift": {
           "$ref": "defs.schema.json#/$defs/validation_severity"
+        }
+      },
+      "additionalProperties": false
+    },
+    "automation_defaults": {
+      "type": "object",
+      "default": {},
+      "properties": {
+        "max_propagation_waves": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000,
+          "default": 100
         }
       },
       "additionalProperties": false

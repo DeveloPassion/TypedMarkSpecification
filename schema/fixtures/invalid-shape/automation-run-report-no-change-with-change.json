@@ -1,0 +1,24 @@
+{
+  "specification_version": "0.0.1",
+  "run_id": "run-invalid-no-change",
+  "mode": "one_hop",
+  "status": "no_change",
+  "root_event_ids": ["evt-root"],
+  "waves": [
+    {
+      "index": 0,
+      "event_ids": ["evt-root"],
+      "automations": ["set-status"],
+      "changes": [
+        {
+          "kind": "field",
+          "path": "Projects/TypedMark.md",
+          "field": "status",
+          "before": "doing",
+          "after": "done"
+        }
+      ]
+    }
+  ],
+  "diagnostics": []
+}

@@ -1,0 +1,29 @@
+{
+  "specification_version": "0.0.1",
+  "event_id": "evt-01k0projectdone",
+  "kind": "note.updated",
+  "occurred_at": "2026-07-24T09:30:00+02:00",
+  "origin": "user",
+  "before": {
+    "path": "Projects/TypedMark.md",
+    "note_type": "project",
+    "frontmatter": {
+      "note_type": "project",
+      "status": "doing"
+    }
+  },
+  "after": {
+    "path": "Projects/TypedMark.md",
+    "note_type": "project",
+    "frontmatter": {
+      "note_type": "project",
+      "status": "done"
+    }
+  },
+  "changes": {
+    "status": {
+      "before": "doing",
+      "after": "done"
+    }
+  }
+}

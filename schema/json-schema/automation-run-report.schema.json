@@ -1,0 +1,463 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developassion.github.io/TypedMarkSpecification/schema/automation-run-report.schema.json",
+  "title": "TypedMark automation run report",
+  "description": "Portable one-hop or propagation execution result. Authoritative semantics: conformance-and-roadmap.md.",
+  "type": "object",
+  "required": [
+    "specification_version",
+    "run_id",
+    "mode",
+    "status",
+    "root_event_ids",
+    "waves",
+    "diagnostics"
+  ],
+  "properties": {
+    "specification_version": {
+      "$ref": "defs.schema.json#/$defs/specification_version"
+    },
+    "run_id": {
+      "$ref": "defs.schema.json#/$defs/non_empty_string"
+    },
+    "mode": {
+      "enum": [
+        "one_hop",
+        "propagation"
+      ]
+    },
+    "status": {
+      "enum": [
+        "committed",
+        "no_change",
+        "aborted",
+        "incomplete"
+      ]
+    },
+    "root_event_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "defs.schema.json#/$defs/non_empty_string"
+      }
+    },
+    "waves": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/wave"
+      }
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/diagnostic"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "mode": {
+            "const": "one_hop"
+          }
+        },
+        "required": [
+          "mode"
+        ]
+      },
+      "then": {
+        "properties": {
+          "waves": {
+            "maxItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "committed"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "waves": {
+            "contains": {
+              "properties": {
+                "changes": {
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "changes"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "no_change",
+              "aborted"
+            ]
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "waves": {
+            "items": {
+              "properties": {
+                "changes": {
+                  "maxItems": 0
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "committed",
+              "no_change"
+            ]
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "diagnostics": {
+            "maxItems": 0
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "aborted"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "diagnostics": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "incomplete"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "diagnostics": {
+            "contains": {
+              "properties": {
+                "code": {
+                  "const": "incomplete_commit"
+                }
+              },
+              "required": [
+                "code"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "field_change": {
+      "type": "object",
+      "required": [
+        "kind",
+        "path",
+        "field",
+        "before",
+        "after"
+      ],
+      "properties": {
+        "kind": {
+          "const": "field"
+        },
+        "path": {
+          "$ref": "defs.schema.json#/$defs/collection_relative_path"
+        },
+        "field": {
+          "$ref": "defs.schema.json#/$defs/field_name"
+        },
+        "before": {},
+        "after": {}
+      },
+      "additionalProperties": false
+    },
+    "tag_change": {
+      "type": "object",
+      "required": [
+        "kind",
+        "path",
+        "tag",
+        "operation"
+      ],
+      "properties": {
+        "kind": {
+          "const": "tag"
+        },
+        "path": {
+          "$ref": "defs.schema.json#/$defs/collection_relative_path"
+        },
+        "tag": {
+          "$ref": "defs.schema.json#/$defs/tag"
+        },
+        "operation": {
+          "enum": [
+            "add",
+            "remove"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "path_change": {
+      "type": "object",
+      "required": [
+        "kind",
+        "path",
+        "before",
+        "after"
+      ],
+      "properties": {
+        "kind": {
+          "const": "path"
+        },
+        "path": {
+          "$ref": "defs.schema.json#/$defs/collection_relative_path"
+        },
+        "before": {
+          "$ref": "defs.schema.json#/$defs/collection_relative_path"
+        },
+        "after": {
+          "$ref": "defs.schema.json#/$defs/collection_relative_path"
+        }
+      },
+      "additionalProperties": false
+    },
+    "note_change": {
+      "type": "object",
+      "required": [
+        "kind",
+        "path",
+        "operation"
+      ],
+      "properties": {
+        "kind": {
+          "const": "note"
+        },
+        "path": {
+          "$ref": "defs.schema.json#/$defs/collection_relative_path"
+        },
+        "operation": {
+          "enum": [
+            "create",
+            "archive",
+            "logical_delete",
+            "hard_delete"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "link_change": {
+      "type": "object",
+      "required": [
+        "kind",
+        "path",
+        "location",
+        "before",
+        "after"
+      ],
+      "properties": {
+        "kind": {
+          "const": "link"
+        },
+        "path": {
+          "$ref": "defs.schema.json#/$defs/collection_relative_path"
+        },
+        "location": {
+          "enum": [
+            "frontmatter",
+            "body"
+          ]
+        },
+        "field": {
+          "$ref": "defs.schema.json#/$defs/field_name"
+        },
+        "before": {
+          "$ref": "defs.schema.json#/$defs/non_empty_string"
+        },
+        "after": {
+          "$ref": "defs.schema.json#/$defs/non_empty_string"
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "location": {
+                "const": "frontmatter"
+              }
+            },
+            "required": [
+              "location"
+            ]
+          },
+          "then": {
+            "required": [
+              "field"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "field"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "change": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/field_change"
+        },
+        {
+          "$ref": "#/$defs/tag_change"
+        },
+        {
+          "$ref": "#/$defs/path_change"
+        },
+        {
+          "$ref": "#/$defs/note_change"
+        },
+        {
+          "$ref": "#/$defs/link_change"
+        }
+      ]
+    },
+    "wave": {
+      "type": "object",
+      "required": [
+        "index",
+        "event_ids",
+        "automations",
+        "changes"
+      ],
+      "properties": {
+        "index": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "event_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "defs.schema.json#/$defs/non_empty_string"
+          }
+        },
+        "automations": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "defs.schema.json#/$defs/slug"
+          }
+        },
+        "changes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/change"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "diagnostic": {
+      "type": "object",
+      "required": [
+        "code",
+        "message"
+      ],
+      "properties": {
+        "code": {
+          "enum": [
+            "unsupported_capability",
+            "trigger_error",
+            "action_failed",
+            "conflicting_write",
+            "validation_failed",
+            "cycle_detected",
+            "wave_limit_exceeded",
+            "approval_required",
+            "concurrent_change",
+            "incomplete_commit"
+          ]
+        },
+        "message": {
+          "$ref": "defs.schema.json#/$defs/non_empty_string"
+        },
+        "automation": {
+          "$ref": "defs.schema.json#/$defs/slug"
+        },
+        "path": {
+          "$ref": "defs.schema.json#/$defs/collection_relative_path"
+        },
+        "field": {
+          "$ref": "defs.schema.json#/$defs/field_name"
+        },
+        "wave": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

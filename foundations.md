@@ -138,7 +138,7 @@ TypedMark separates the authoring surface from the values tools evaluate. Author
 
 | Profile | Purpose | Requires | Defers |
 | --- | --- | --- | --- |
-| Core Profile | A minimal conforming typed collection | `typedmark.md`, one concrete schema, one template for each concrete schema, and managed notes that resolve to those schemas | property sets, vocabularies, advanced mappings, systems, composition, history, and migration |
+| Core Profile | A minimal conforming typed collection | `typedmark.md`, one concrete schema, one template for each concrete schema, and managed notes that resolve to those schemas | automation rules, property sets, vocabularies, advanced mappings, systems, composition, history, and migration |
 | Reuse Profile | Shared structure across multiple note types | Core Profile plus property sets, abstract schemas, vocabularies, or conditional constraints as needed | publishing, catalogs, composition, and migration |
 | System Profile | Shareable, versioned, composable systems | Reuse Profile plus the system fields, scaffold, composition, and optional history | none; this is the advanced publishing layer |
 
@@ -148,7 +148,7 @@ Rules:
 - `FND-75` A Core Profile collection MUST declare `typedmark.md`.
 - `FND-76` A Core Profile collection MUST declare at least one concrete note-type schema.
 - `FND-77` A Core Profile collection MUST provide every template referenced or defaulted by its concrete schemas.
-- `FND-78` A Core Profile collection MAY omit property sets, `folder_scopes`, vocabularies, explicit note-type mappings, system fields, composition provenance, and `history.md`.
+- `FND-78` A Core Profile collection MAY omit automation rules, property sets, `folder_scopes`, vocabularies, explicit note-type mappings, system fields, composition provenance, and `history.md`.
 - `FND-79` Authoring shorthand is a governed artifact shape that omits a value only when the authoritative rule for that key defines one deterministic effective default.
 - `FND-80` A conforming tool MUST expand omitted shorthand defaults before computing effective note-type schemas, storage paths, template paths, validation severities, relationship constraints, heading constraints, or conformance results.
 - `FND-81` Canonical expansion MUST NOT invent domain content, note types, fields, relationships, headings, templates, scaffold notes, or migration history.
@@ -232,7 +232,7 @@ Rules:
 
 ## Governed Artifact Format
 
-Every governed TypedMark artifact — `typedmark.md`, the note-type schemas, the property sets, and `history.md` — is a Markdown file with YAML frontmatter.
+Every governed TypedMark artifact — `typedmark.md`, the note-type schemas, property sets, automation rules, and `history.md` — is a Markdown file with YAML frontmatter.
 
 Rules:
 
@@ -274,6 +274,8 @@ A conforming TypedMark collection uses this artifact layout:
 typedmark.md
 <metadata_directory>/
   history.md
+  automations/
+    <automation>.md
   property-sets/
     <property_set>.md
   schemas/
@@ -289,6 +291,7 @@ The authoritative contract for each governed element lives in exactly one place,
 - `typedmark.md` structural fields: [Collection Model](collection-model.md)
 - `typedmark.md` system fields, including release version, publishing metadata, and scaffold: [Systems, Composition, and Evolution](systems-composition-evolution.md)
 - `<metadata_directory>/history.md`: [Systems, Composition, and Evolution](systems-composition-evolution.md)
+- `<metadata_directory>/automations/<automation>.md`: [Collection Model](collection-model.md)
 - `<metadata_directory>/property-sets/<property_set>.md`: [Collection Model](collection-model.md)
 - `<metadata_directory>/schemas/<note_type>.md`: [Note Type Schemas](note-type-schemas.md)
 - `<metadata_directory>/templates/<note_type_template>.md`: [Relationships, Headings, and Templates](relationships-headings-and-templates.md)

@@ -1,0 +1,11 @@
+{
+  "specification_version": "0.0.1",
+  "run_id": "run-invalid-abort",
+  "mode": "one_hop",
+  "status": "aborted",
+  "root_event_ids": [
+    "evt-invalid"
+  ],
+  "waves": [],
+  "diagnostics": []
+}

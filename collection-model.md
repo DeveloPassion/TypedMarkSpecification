@@ -11,9 +11,10 @@ Audience: collection authors.
 
 Authoritative for:
 
-- the structural fields of `typedmark.md`: identity, metadata directory, excluded paths, assets directory, timezone, validation defaults, mandatory tags, folder scopes, and vocabularies
+- the structural fields of `typedmark.md`: identity, metadata directory, excluded paths, assets directory, timezone, validation defaults, automation defaults, mandatory tags, folder scopes, and vocabularies
 - note-type mappings and composition provenance
 - property sets, default property sets, and the block-merge rules of composition
+- governed automation rule artifacts and their trigger/action vocabulary
 
 See also:
 
@@ -21,7 +22,7 @@ See also:
 - [Note Type Schemas](note-type-schemas.md): the effective note-type schema the merge rules feed
 - [Field Definition Reference](field-definition-reference.md): the semantics of the field definitions property sets contribute
 
-Core Profile authors usually need only `specification_version`, `name`, and `description` in `typedmark.md`; deterministic defaults provide the metadata directory, ignored Git content, validation severities, and frontmatter-based note-type mapping. Mandatory tags, property sets, folder scopes, vocabularies, composition provenance, and advanced mappings are optional layers for larger collections.
+Core Profile authors usually need only `specification_version`, `name`, and `description` in `typedmark.md`; deterministic defaults provide the metadata directory, ignored Git content, validation severities, automation propagation limit, and frontmatter-based note-type mapping. Mandatory tags, automation rules, property sets, folder scopes, vocabularies, composition provenance, and advanced mappings are optional layers for larger collections.
 
 Property sets are the single composition mechanism for reusable `frontmatter`, `relationships`, and `headings`. A property set is a named bundle stored under `<metadata_directory>/property-sets/`. Collections apply them through collection-wide defaults, managed-note folder scopes, and property sets named by concrete note-type schemas.
 
@@ -47,6 +48,7 @@ Shape at a glance:
 | `assets_directory` | Optional | none | Preferred asset folder |
 | `timezone` | Optional | `UTC` | Date/time localization |
 | `validation_defaults` | Optional | `{}` plus core severity defaults | Validation severity overrides |
+| `automation_defaults` | Optional | `{max_propagation_waves: 100}` | Automation propagation safety limit |
 | `note_type_mappings` | Optional | frontmatter `note_type` mapping | Note-type association |
 | `vocabularies` | Optional | none | Reusable value sets |
 | `composition` | Optional | none | Advanced provenance and update lineage |
@@ -75,6 +77,7 @@ validation_defaults:
   duplicate_unique_value: error
   invalid_note_count: error
   invalid_property_set: error
+  invalid_automation: error
   invalid_note_type_mapping: error
   invalid_composition: error
   unsupported_specification_version: error
@@ -83,6 +86,8 @@ validation_defaults:
   invalid_relationship_instance: error
   invalid_heading: error
   template_drift: warn
+automation_defaults:
+  max_propagation_waves: 100
 ```
 
 In path notation on this page, `<metadata_directory>` means the directory name declared by `typedmark.md` `metadata_directory`.
@@ -111,7 +116,7 @@ Rules:
 - `CM-20` `metadata_directory` MAY be omitted, and when omitted its effective value is `.typedmark`.
 - `CM-21` `metadata_directory` MUST name a single directory at the collection root.
 - `CM-22` `metadata_directory` MUST NOT be `.` or `..` and MUST NOT contain path separators.
-- `CM-23` `metadata_directory` identifies the governed-artifact subtree for the collection, including the change history, property sets, note-type schemas, and templates.
+- `CM-23` `metadata_directory` identifies the governed-artifact subtree for the collection, including the change history, automation rules, property sets, note-type schemas, and templates.
 - `CM-24` Validators and agents MUST derive governed artifact locations from `metadata_directory`.
 - `CM-25` `exclude_paths` MAY be omitted, and when omitted its effective value is a list containing `.git/**`.
 - `CM-26` Each `exclude_paths` entry is a glob pattern matched against the entire normalized collection-relative path, using forward slashes.
@@ -154,7 +159,7 @@ Rules:
 - `CM-63` `invalid_relationship_instance` applies when resolved typed relationship instances violate the declared relationship cardinality constraints defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - `CM-64` `invalid_heading` applies when a managed note violates the effective heading rules defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - `CM-65` `template_drift` applies when a validator chooses to compare a managed note to its canonical template and detects material divergence that is not itself a core conformance failure.
-- `CM-200` The effective `metadata_directory`, `exclude_paths`, and `validation_defaults` values participate in conformance exactly as if their default values had been physically written in `typedmark.md`.
+- `CM-200` The effective `metadata_directory`, `exclude_paths`, `validation_defaults`, and `automation_defaults` values participate in conformance exactly as if their default values had been physically written in `typedmark.md`.
 
 ### Note-Type Mappings
 
@@ -404,6 +409,109 @@ Rules:
 - `CM-237` Every effective mandatory tag MUST satisfy the individual-entry constraints of the managed note's effective `tags` field, including `allowed_values_from` when declared.
 - `CM-238` The number of distinct effective mandatory tags MUST NOT exceed the effective `tags` field's `max` constraint when one is declared.
 - `CM-239` Mandatory-tag declarations constrain stored values and MUST NOT add, replace, or remove a field definition in the effective `frontmatter` block.
+
+### Automation Defaults
+
+`automation_defaults` holds collection-wide safety policy for automation execution. Its propagation limit bounds forward progress even when a cascade never repeats a state exactly.
+
+```yaml
+automation_defaults:
+  max_propagation_waves: 100
+```
+
+Rules:
+
+- `CM-286` `automation_defaults` MAY be omitted.
+- `CM-287` An omitted `automation_defaults` value is equivalent to an empty mapping.
+- `CM-288` `automation_defaults.max_propagation_waves` MAY be omitted.
+- `CM-289` The effective `max_propagation_waves` is `100` when it is omitted.
+- `CM-290` `max_propagation_waves` MUST be a positive integer.
+- `CM-291` `max_propagation_waves` MUST NOT exceed `10000`.
+
+### Automation Rules
+
+Automation rules declare portable reactions without embedding executable code. Each rule is a governed Markdown artifact under `<metadata_directory>/automations/`; its frontmatter identifies one trigger, optional targeting predicates, and an ordered action list, while its body explains the rule to humans and agents. Execution and propagation behavior are authoritative in [Managed Notes and Properties](managed-notes-and-properties.md).
+
+```yaml
+specification_version: 0.0.1
+automation: project-completed
+description: Archive a project when its status becomes done.
+priority: 100
+trigger:
+  kind: event
+  event: note.updated
+  changed:
+    status:
+      to: done
+scope:
+  note_types:
+    - project
+when:
+  archived:
+    equals: false
+actions:
+  - kind: set_field
+    field: review_needed
+    value: false
+  - kind: add_tag
+    tag: state/completed
+  - kind: archive_note
+failure: abort
+```
+
+Rules:
+
+- `CM-240` `<metadata_directory>/automations/` MAY be omitted when the collection defines no automation rules.
+- `CM-241` Every Markdown file directly under `<metadata_directory>/automations/` defines exactly one automation rule.
+- `CM-242` An automation file's basename without `.md` MUST equal its top-level `automation` value.
+- `CM-243` An automation rule MUST physically contain `specification_version`, `automation`, `description`, `trigger`, and `actions`.
+- `CM-244` `automation` MUST be a slug that is unique across the collection's effective automation rules.
+- `CM-245` `description` MUST be a non-empty human-facing string.
+- `CM-246` `priority` MAY be omitted, and when omitted its effective value is `0`.
+- `CM-247` Automation rules are ordered by descending effective `priority`, with equal-priority rules ordered by exact `automation` identifier in ascending Unicode code-point order.
+- `CM-248` `trigger.kind` MUST be `event` or `schedule`.
+- `CM-249` An event trigger MUST declare `event` as one of `note.created`, `note.updated`, `note.moved`, `note.archived`, or `note.deleted`.
+- `CM-250` `trigger.changed` MAY appear only on a `note.updated` event trigger.
+- `CM-280` `trigger.changed` MUST map one or more top-level field names to a predicate containing `from`, `to`, or both.
+- `CM-251` A `from` or `to` change predicate compares the corresponding parsed value in the event's `changes` entry by exact field-value equality under [Field Definition Reference](field-definition-reference.md).
+- `CM-252` `scope` MAY declare `note_types`, `path`, or both.
+- `CM-281` A target matches `scope` only when every declared scope constraint matches.
+- `CM-253` Each identifier in `scope.note_types` MUST resolve to exactly one concrete note type.
+- `CM-254` `scope.path` MUST declare exactly one of `equals`, `under`, or `regex`.
+- `CM-282` `scope.path` uses the folder-scope path semantics defined on this page.
+- `CM-255` `when`, when present, MUST use the frontmatter predicate shape and semantics defined for `note_type_mappings` on this page.
+- `CM-256` `trigger.scope_transition` MAY be omitted, and when omitted its effective value is `matches_after`.
+- `CM-257` `trigger.scope_transition` MUST be `matches_after`, `enters`, or `leaves`.
+- `CM-258` `matches_after` evaluates the combined `scope` and `when` target predicate against the event's after snapshot, except that `note.deleted` uses its before snapshot.
+- `CM-259` `enters` matches when the before snapshot does not satisfy the combined target predicate and the after snapshot does.
+- `CM-260` An `enters` or `leaves` trigger MUST consume an event that carries both before and after snapshots.
+- `CM-261` A schedule trigger MUST declare exactly one daily, weekly, or monthly schedule with a wall-clock `at` value in `HH:mm` form.
+- `CM-262` A daily schedule is due on every local calendar day at `at` in the collection timezone.
+- `CM-263` A weekly schedule MUST declare a weekday.
+- `CM-284` A weekly schedule is due on its declared local weekday at `at` in the collection timezone.
+- `CM-264` A monthly schedule MUST declare a day from `1` through `31`.
+- `CM-285` A monthly schedule is not due in a local calendar month that lacks its declared day.
+- `CM-265` If a scheduled local time does not exist because of an offset transition, its occurrence is the first valid instant after the gap.
+- `CM-266` If a scheduled local time occurs twice because of an offset transition, its occurrence is the earlier instant.
+- `CM-267` A schedule executor MUST emit at most one `schedule.tick` event for each automation and scheduled instant.
+- `CM-268` `actions` MUST be a non-empty ordered list.
+- `CM-269` Supported action kinds are `set_field`, `add_tag`, `remove_tag`, `move_note`, `archive_note`, `create_note`, `logical_delete_note`, and `hard_delete_note`.
+- `CM-270` `set_field` MUST declare a top-level `field` name and a parsed YAML `value`.
+- `CM-271` `add_tag` and `remove_tag` MUST declare one tag satisfying the stored tag-entry grammar in [Field Definition Reference](field-definition-reference.md).
+- `CM-272` `move_note` MUST declare a collection-relative Markdown `path`.
+- `CM-273` `archive_note`, `logical_delete_note`, and `hard_delete_note` MUST NOT declare action operands.
+- `CM-274` `create_note` MUST declare a concrete `note_type`.
+- `CM-283` `create_note` MAY declare a `values` mapping keyed by top-level field name.
+- `CM-275` `failure` MAY be omitted, and when omitted its effective value is `abort`.
+- `CM-276` This specification version supports only `failure: abort`.
+- `CM-277` Automation rules MUST NOT declare arbitrary scripts, commands, prompts, network calls, or executable expressions as triggers or actions.
+- `CM-278` Every field, note type, path, tag, and other governed reference in an automation rule MUST be valid for every target on which its action can execute.
+- `CM-279` An automation artifact that violates its shape, resolution, or target-compatibility rules is an `invalid_automation` failure.
+- `CM-292` A `trigger.changed` field absent from the event's `changes` mapping does not match.
+- `CM-293` An omitted `from` or `to` member places no constraint on that side of the field change.
+- `CM-294` `leaves` matches when the before snapshot satisfies the combined target predicate and the after snapshot does not.
+- `CM-295` An `enters` or `leaves` trigger MUST declare `scope`, `when`, or both.
+- `CM-296` A schedule-triggered automation without `scope` or `when` MUST contain only `create_note` actions.
 
 ### Property Set Definitions
 

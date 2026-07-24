@@ -1,0 +1,25 @@
+{
+  "specification_version": "0.0.1",
+  "event_id": "evt-invalid-missing-cause",
+  "kind": "note.updated",
+  "occurred_at": "2026-07-24T09:30:00+02:00",
+  "origin": "automation",
+  "before": {
+    "path": "Projects/TypedMark.md",
+    "frontmatter": {
+      "status": "doing"
+    }
+  },
+  "after": {
+    "path": "Projects/TypedMark.md",
+    "frontmatter": {
+      "status": "done"
+    }
+  },
+  "changes": {
+    "status": {
+      "before": "doing",
+      "after": "done"
+    }
+  }
+}

@@ -42,6 +42,9 @@ const SPEC_PAGES = [
 ];
 
 const ARTIFACT_SCHEMAS: Record<string, string> = {
+  "automation-event": "automation-event.schema.json",
+  "automation-run-report": "automation-run-report.schema.json",
+  automation: "automation.schema.json",
   typedmark: "typedmark.schema.json",
   "note-type": "note-type.schema.json",
   "property-set": "property-set.schema.json",
@@ -94,6 +97,9 @@ function classify(document: unknown): string | null {
   if (typeof document !== "object" || document === null || Array.isArray(document)) return null;
   const doc = document as Record<string, unknown>;
   if (!("specification_version" in doc)) return null;
+  if ("event_id" in doc && "kind" in doc && "occurred_at" in doc) return "automation-event";
+  if ("run_id" in doc && "mode" in doc && "status" in doc) return "automation-run-report";
+  if ("automation" in doc && "trigger" in doc && "actions" in doc) return "automation";
   if ("note_type" in doc) return "note-type";
   if ("property_set" in doc) return "property-set";
   if ("history" in doc) return "history";
@@ -315,6 +321,23 @@ function validateGoldenVectors(
           validateShape(validators["property-set"]!, propertySet, `golden/${vector}/${basename(propertySetPath)}`, failures);
         } catch (error) {
           failures.push(`golden/${vector}/${basename(propertySetPath)}: ${error instanceof Error ? error.message : String(error)}`);
+        }
+      }
+    }
+
+    const automationRoot = join(metadataRoot, "automations");
+    if (existsSync(automationRoot)) {
+      for (const automationPath of collectFiles(automationRoot).filter((path) => extname(path) === ".md")) {
+        try {
+          const automation = extractFrontmatter(readFileSync(automationPath, "utf8"));
+          validateShape(validators.automation!, automation, `golden/${vector}/${basename(automationPath)}`, failures);
+          const automationObject = objectValue(automation);
+          const automationId = automationObject?.automation;
+          if (typeof automationId === "string" && basename(automationPath, ".md") !== automationId) {
+            failures.push(`golden/${vector}: automation basename does not match automation ${automationId}`);
+          }
+        } catch (error) {
+          failures.push(`golden/${vector}/${basename(automationPath)}: ${error instanceof Error ? error.message : String(error)}`);
         }
       }
     }
