@@ -5,8 +5,9 @@
  * Fixtures are governed artifacts: Markdown files whose YAML frontmatter is the
  * governed content (the frontmatter is extracted per the Frontmatter Block
  * Grammar and validated against the matching artifact schema; the body is
- * ignored), plus plain-JSON contracts such as content-expansion descriptors,
- * the marketplace catalog, and portable validation reports.
+ * ignored), plus plain-JSON contracts such as content-expansion and
+ * template-region descriptors, template-tracking receipts, the marketplace
+ * catalog, and portable validation reports.
  *
  * It also extracts artifact-shaped example blocks from the specification pages
  * and validates them, so the prose examples can never drift from the schemas.
@@ -50,6 +51,8 @@ const ARTIFACT_SCHEMAS: Record<string, string> = {
   "property-set": "property-set.schema.json",
   history: "history.schema.json",
   expansion: "expansion.schema.json",
+  "template-region": "template-region.schema.json",
+  "template-tracking": "template-tracking.schema.json",
   marketplace: "marketplace.schema.json",
   "validation-report": "validation-report.schema.json",
 };
@@ -105,6 +108,7 @@ function classify(document: unknown): string | null {
   if ("property_set" in doc) return "property-set";
   if ("history" in doc) return "history";
   if ("id" in doc && "source" in doc && "render" in doc && "state" in doc) return "expansion";
+  if ("id" in doc && Object.keys(doc).every((key) => ["specification_version", "id"].includes(key))) return "template-region";
   if ("systems" in doc) return "marketplace";
   if ("mode" in doc && "valid" in doc && "results" in doc) return "validation-report";
   if ("metadata_directory" in doc || "name" in doc) return "typedmark";
@@ -185,7 +189,7 @@ function compareReportResults(left: unknown, right: unknown): number {
   const rightResult = objectValue(right) ?? {};
   const keys = [
     "path", "rule_id", "code", "note_type", "field", "relationship", "heading",
-    "expansion",
+    "expansion", "template_region", "drift_kind",
   ];
   for (const key of keys) {
     const compared = compareCodePoints(

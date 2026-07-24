@@ -13,12 +13,23 @@
       "field": "priority"
     },
     {
+      "code": "invalid_template_region",
+      "severity": "error",
+      "path": "notes/typed-mark.md",
+      "rule_id": "RHT-199",
+      "message": "the overview template-region marker is not paired",
+      "note_type": "topic",
+      "template_region": "overview"
+    },
+    {
       "code": "template_drift",
       "severity": "warn",
       "path": "notes/typed-mark.md",
-      "rule_id": "RHT-74",
-      "message": "note body differs from the canonical template",
-      "note_type": "topic"
+      "rule_id": "RHT-217",
+      "message": "the canonical overview region changed from the shared baseline",
+      "note_type": "topic",
+      "template_region": "overview",
+      "drift_kind": "template_changed"
     }
   ]
 }

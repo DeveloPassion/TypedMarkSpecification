@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developassion.github.io/TypedMarkSpecification/schema/template-tracking.schema.json",
+  "title": "TypedMark template-region tracking receipts",
+  "description": "Shape of the core-defined template_regions managed-note frontmatter value. Authoritative semantics: managed-notes-and-properties.md and relationships-headings-and-templates.md (Template Drift Tracking).",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "defs.schema.json#/$defs/slug"
+  },
+  "additionalProperties": {
+    "oneOf": [
+      {
+        "type": "object",
+        "required": [
+          "baseline"
+        ],
+        "properties": {
+          "baseline": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "required": [
+          "detached"
+        ],
+        "properties": {
+          "detached": {
+            "const": true
+          }
+        },
+        "additionalProperties": false
+      }
+    ]
+  }
+}

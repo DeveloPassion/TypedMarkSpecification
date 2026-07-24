@@ -75,7 +75,7 @@ The effective note-type schema is the normative result of taking one concrete no
 
 ### Relationships, Headings, and Templates
 
-A note type governs more than metadata fields. It also defines typed relationship constraints, heading requirements, and a canonical template reference. These rules are authoritative on [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
+A note type governs more than metadata fields. It also defines typed relationship constraints, heading requirements, a canonical template reference, and explicit tracking for template-owned body regions. These rules are authoritative on [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md).
 
 ### Systems, Composition, and Evolution
 
@@ -242,10 +242,10 @@ Rules:
 - `FND-45` A governed artifact MUST have a frontmatter block under the Frontmatter Block Grammar defined above; an artifact without valid frontmatter is invalid.
 - `FND-46` Except for the governed template-body contract under `FND-50`, tools MUST ignore artifact bodies for structural reasoning.
 - `FND-88` A tool that rewrites governed artifact frontmatter MUST preserve the artifact body.
-- `FND-47` Except for template starter content and content-expansion declarations under `FND-50`, an artifact body MUST NOT be required to understand or evaluate collection structure.
+- `FND-47` Except for template starter content, template-region declarations, and content-expansion declarations under `FND-50`, an artifact body MUST NOT be required to understand or evaluate collection structure.
 - `FND-48` Governed artifact files are not collection notes: they are not evaluated for note-type mapping, are not candidates for note-link resolution, and are not validated as managed notes.
 - `FND-49` `typedmark.md` at the collection root is reserved for the collection configuration; a managed note MUST NOT resolve its storage path to `typedmark.md`.
-- `FND-50` Templates under `<metadata_directory>/templates/` are governed artifacts with their own contract: their frontmatter is starter note frontmatter and their body is governed starter note content, including content-expansion declarations, as defined in [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md).
+- `FND-50` Templates under `<metadata_directory>/templates/` are governed artifacts with their own contract: their frontmatter is starter note frontmatter and their body is governed starter note content, including template-region and content-expansion declarations, as defined in [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md).
 - `FND-51` Examples of governed artifacts in this specification show frontmatter content unless frontmatter delimiters are shown.
 
 A complete minimal `typedmark.md`, showing the governed frontmatter together with a free-form body:
@@ -302,7 +302,8 @@ The authoritative contract for each governed element lives in exactly one place,
 - frontmatter property types and field-definition properties: [Field Definition Reference](field-definition-reference.md)
 - note-link syntax, resolution, and body extraction: [Note Links](note-links.md)
 - managed-note effects of migration operations: [Migration Effects](migration-effects.md)
-- relationship semantics, heading constraints, and template obligations: [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
+- relationship semantics, heading constraints, and template obligations: [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md)
+- template-region marker, receipt, digest, drift-state, reconciliation, and detachment semantics: [Template Drift Tracking](relationships-headings-and-templates.md#template-drift-tracking)
 - content-expansion marker, source, rendering, synchronization, and ejection semantics: [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md#content-expansion)
 - conformance modes and required artifact sets: [Conformance and Roadmap](conformance-and-roadmap.md)
 

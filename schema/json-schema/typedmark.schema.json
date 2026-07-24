@@ -149,6 +149,9 @@
         "invalid_heading": {
           "$ref": "defs.schema.json#/$defs/validation_severity"
         },
+        "invalid_template_region": {
+          "$ref": "defs.schema.json#/$defs/validation_severity"
+        },
         "template_drift": {
           "$ref": "defs.schema.json#/$defs/validation_severity"
         },

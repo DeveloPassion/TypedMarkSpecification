@@ -32,7 +32,7 @@
           "$ref": "defs.schema.json#/$defs/frontmatter_block"
         },
         {
-          "$comment": "A property set must not define id; note_type, when declared, must use value_from_schema because a property set has no top-level note_type.",
+          "$comment": "A property set must not define id or template_regions; note_type, when declared, must use value_from_schema because a property set has no top-level note_type.",
           "properties": {
             "id": false,
             "note_type": {
@@ -56,7 +56,8 @@
             },
             "aliases": {
               "$ref": "defs.schema.json#/$defs/aliases_field_contract"
-            }
+            },
+            "template_regions": false
           }
         }
       ]

@@ -23,13 +23,16 @@ specification wins and the schema has a bug.
 | portable automation event (plain JSON runtime interchange) | `automation-event.schema.json` |
 | portable automation run report (plain JSON runtime interchange) | `automation-run-report.schema.json` |
 | content-expansion descriptor (JSON inside a Markdown start marker) | `expansion.schema.json` |
+| template-region descriptor (JSON inside a Markdown start marker) | `template-region.schema.json` |
+| `template_regions` managed-note receipt value | `template-tracking.schema.json` |
 | shared blocks (field definitions, storage, relationships, headings, …) | `defs.schema.json` |
 
 Managed notes as complete documents are deliberately **not** covered: their frontmatter is validated
 against the collection's *effective note-type schemas*, which only exist after the
 semantic layer composes property sets and inheritance. A document schema cannot
-express them. The independently parseable JSON descriptor inside a content-expansion
-marker is covered by `expansion.schema.json`.
+express them. Independently parseable content-expansion and template-region
+descriptors are covered by their descriptor schemas, and the core-defined
+`template_regions` value is covered separately by `template-tracking.schema.json`.
 
 ## What the schemas enforce
 
@@ -50,8 +53,11 @@ marker is covered by `expansion.schema.json`.
   status/diagnostic combinations
 - content-expansion descriptor keys, source variants, sync modes, persisted
   state, current-time restrictions, and render-block shape
+- template-region descriptor keys and identifier grammar, plus baseline and
+  detached receipt variants in a managed note's `template_regions` value
 - the core-defined field contracts for `note_type`, `id`, `deleted`,
-  `archived`, and `aliases` where schemas or property sets declare them
+  `archived`, and `aliases` where schemas or property sets declare them;
+  `template_regions` is runtime tracking state and cannot be schema-declared
 - validation-report codes, severities, required context, and consistency between
   the top-level `valid` flag and emitted `error` results
 
@@ -88,6 +94,9 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
 - content-expansion semantics: marker parsing and pairing, source resolution and
   scalar conversion, relationship traversal, shared-expression evaluation,
   rendered-region equality, template materialization, drift, and ejection
+- template-region semantics: marker parsing and pairing, nesting boundaries,
+  marker-to-receipt correspondence, region extraction, digest calculation,
+  enrollment, three-way drift classification, reconciliation, and detachment
 - system evolution: history version ordering and uniqueness, the replay
   invariant, migration impact computation, composition determinism and the
   canonical serialization
@@ -118,9 +127,10 @@ bun run validate-fixtures
 Fixtures are mapped to artifact schemas by filename prefix (`typedmark-*`,
 `note-type-*`, `property-set-*`, `history*`, `marketplace*`,
 `validation-report-*`, `automation-*`, `automation-event-*`, and
-`automation-run-report-*`, and `expansion-*`). Markdown fixtures are validated through their extracted
-frontmatter; `.json` fixtures such as expansion descriptors, the marketplace
-catalog, and validation reports are validated directly.
+`automation-run-report-*`, `expansion-*`, `template-region-*`, and
+`template-tracking-*`). Markdown fixtures are validated through their extracted
+frontmatter; `.json` fixtures such as marker descriptors, tracking receipts, the
+marketplace catalog, and validation reports are validated directly.
 
 The golden-vector check validates collection layout, governed-artifact shapes,
 schema and automation basenames, referenced template existence, report shape,

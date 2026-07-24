@@ -1,0 +1,8 @@
+{
+  "review-guidance": {
+    "baseline": "sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+  },
+  "legacy-footer": {
+    "detached": true
+  }
+}

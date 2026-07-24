@@ -12,7 +12,7 @@ Audience: collection authors.
 Authoritative for:
 
 - the managed note contract and note-type association
-- field names and the core-defined fields: `note_type`, `id`, `deleted`, `archived`, and `aliases`
+- field names and the core-defined fields: `note_type`, `id`, `deleted`, `archived`, `aliases`, and `template_regions`
 - mandatory-tag conformance and materialization
 - canonical field materialization and field optionality
 - automation events, action effects, and propagation consistency
@@ -22,7 +22,7 @@ See also:
 - [Field Definition Reference](field-definition-reference.md): property types and field-definition properties
 - [Note Links](note-links.md): note-link syntax, resolution, and body extraction
 - [Migration Effects](migration-effects.md): what migration operations do to managed notes
-- [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md): relationship cardinality, headings, templates, and derived Markdown regions
+- [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md): relationship cardinality, headings, template drift, and derived Markdown regions
 
 ## Notes in a Collection
 
@@ -176,6 +176,30 @@ Rules:
 - `MN-89` The `tags` property type defined below remains a first-class supported property type.
 - `MN-90` The generic property-type and field-definition rules in this page apply to ordinary schema-defined fields unless a dedicated core field rule says otherwise.
 
+`template_regions` is portable note-local tracking state, not a schema field. A baseline records the canonical region version last shared by the note and its template; a detached receipt records a deliberate opt-out for one identifier.
+
+```yaml
+template_regions:
+  review-guidance:
+    baseline: sha256:6d0e3caf8191b133d40ed62b20f304b24be2ee9f3e4de0a3d84b62ad976320a0
+  legacy-footer:
+    detached: true
+```
+
+Rules:
+
+- `MN-284` `template_regions` is an optional core-defined managed-note field name in this specification version.
+- `MN-285` `template_regions` MAY appear in stored frontmatter even when it is not declared in the effective schema, because it is core-defined rather than user-defined.
+- `MN-286` A property set or a note-type schema MUST NOT declare `template_regions`.
+- `MN-287` If stored, `template_regions` MUST be a YAML mapping.
+- `MN-288` Every key in `template_regions` MUST be a slug identifying one template region.
+- `MN-289` Every `template_regions` value MUST be a mapping containing exactly either `baseline` or `detached`.
+- `MN-290` A `baseline` value MUST match `^sha256:[0-9a-f]{64}$`.
+- `MN-291` A `detached` value MUST be the YAML boolean `true`.
+- `MN-292` `template_regions` receipts MUST satisfy `schema/json-schema/template-tracking.schema.json`.
+- `MN-293` Template frontmatter MUST NOT store `template_regions`.
+- `MN-294` The `template_regions` mapping records whole-note enrollment and per-identifier receipt state for [Template Drift Tracking](relationships-headings-and-templates.md#template-drift-tracking).
+
 ### Mandatory Tags
 
 Mandatory tags are value requirements on the ordinary top-level `tags` field. They do not turn `tags` into a core-defined field, and they do not authorize tools to overwrite author-added tags. A conforming note contains the effective policy values alongside any other tags allowed by its field definition.
@@ -238,7 +262,7 @@ Rules:
 - `MN-110` The same optionality distinction applies recursively within object field definitions.
 - `MN-111` Unknown fields are evaluated using the `unknown_field` rule defined in [Collection Model](collection-model.md), at the effective severity for the note's resolved note type as defined in [Note Type Schemas](note-type-schemas.md).
 - `MN-112` Unknown nested fields inside object values are also evaluated using the `unknown_field` rule defined in [Collection Model](collection-model.md).
-- `MN-113` A field is unknown when it is absent from the note's effective note-type schema; the core-defined managed-note field names `note_type`, `deleted`, `archived`, and `aliases` are never unknown fields, whether or not the effective schema declares them.
+- `MN-113` A field is unknown when it is absent from the note's effective note-type schema; the core-defined managed-note field names `note_type`, `deleted`, `archived`, `aliases`, and `template_regions` are never unknown fields, whether or not the effective schema declares them.
 - `MN-114` If the effective `frontmatter` block declares `note_type`, `note_type` MUST be physically present in stored frontmatter.
 - `MN-115` If the effective `frontmatter` block declares `note_type`, `note_type` MUST NOT declare `optional: true`.
 - `MN-116` If `frontmatter` declares `id`, `id` MUST NOT declare `optional: true`.

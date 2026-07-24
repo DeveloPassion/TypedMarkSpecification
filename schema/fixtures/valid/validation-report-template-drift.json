@@ -1,0 +1,17 @@
+{
+  "specification_version": "0.0.1",
+  "mode": "instantiated_collection",
+  "valid": true,
+  "results": [
+    {
+      "code": "template_drift",
+      "severity": "warn",
+      "path": "Reviews/Quarterly review.md",
+      "rule_id": "RHT-217",
+      "message": "The canonical review-guidance region and the note region both changed from their shared baseline.",
+      "note_type": "review",
+      "template_region": "review-guidance",
+      "drift_kind": "both_changed"
+    }
+  ]
+}

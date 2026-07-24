@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developassion.github.io/TypedMarkSpecification/schema/template-region.schema.json",
+  "title": "TypedMark template-region marker descriptor",
+  "description": "Portable JSON descriptor carried by a typedmark:template-region start marker. Authoritative semantics: relationships-headings-and-templates.md (Template Drift Tracking).",
+  "type": "object",
+  "required": [
+    "specification_version",
+    "id"
+  ],
+  "properties": {
+    "specification_version": {
+      "$ref": "defs.schema.json#/$defs/specification_version"
+    },
+    "id": {
+      "$ref": "defs.schema.json#/$defs/slug"
+    }
+  },
+  "additionalProperties": false
+}

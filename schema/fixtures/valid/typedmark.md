@@ -33,7 +33,10 @@ validation_defaults:
   invalid_relationship_definition: error
   invalid_relationship_instance: error
   invalid_heading: error
+  invalid_template_region: error
   template_drift: warn
+  invalid_expansion: error
+  expansion_drift: error
 
 note_type_mappings:
   - kind: frontmatter_field

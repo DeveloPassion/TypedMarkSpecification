@@ -85,7 +85,10 @@ validation_defaults:
   invalid_relationship_definition: error
   invalid_relationship_instance: error
   invalid_heading: error
+  invalid_template_region: error
   template_drift: warn
+  invalid_expansion: error
+  expansion_drift: error
 automation_defaults:
   max_propagation_waves: 100
 ```
@@ -142,7 +145,7 @@ Rules:
 - `CM-46` The severity keys defined on this page are the complete set for this specification version; an undeclared key inside `validation_defaults` is evaluated under `unknown_field`.
 - `CM-47` A note or artifact with any `error` violation is non-conforming.
 - `CM-48` A note or artifact with only `warn` or `info` issues remains structurally usable.
-- `CM-49` Validators SHOULD report the artifact path, note type when applicable, rule name, and failing field, relationship, or heading.
+- `CM-49` Validators SHOULD report the artifact path, note type when applicable, rule identifier, and applicable field, relationship, heading, expansion, or template-region context.
 - `CM-50` `path` applies when a managed note path violates the storage rules defined in [Note Type Schemas](note-type-schemas.md).
 - `CM-51` `missing_required_field` applies when a field declared in `frontmatter` with `optional: false` lacks a concrete value required for conformance after applying the rules in [Managed Notes and Properties](managed-notes-and-properties.md), or when a matching conditional constraint defined in [Note Type Schemas](note-type-schemas.md) requires a concrete value the note does not hold.
 - `CM-52` `missing_declared_field` applies when a field declared in `frontmatter` is absent from stored note frontmatter.
@@ -158,9 +161,10 @@ Rules:
 - `CM-62` `invalid_relationship_definition` applies when relationship declarations violate the relationship model defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - `CM-63` `invalid_relationship_instance` applies when resolved typed relationship instances violate the declared relationship cardinality constraints defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - `CM-64` `invalid_heading` applies when a managed note violates the effective heading rules defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
-- `CM-65` `template_drift` applies when a validator chooses to compare a managed note to its canonical template and detects material divergence that is not itself a core conformance failure.
+- `CM-65` `template_drift` applies when an enrolled managed note has a template-region state of `template_added`, `template_changed`, `note_changed`, `both_changed`, `region_missing`, `template_removed`, or `template_removed_note_changed` under [Template Drift Tracking](relationships-headings-and-templates.md#template-drift-tracking).
 - `CM-297` `invalid_expansion` applies when a content expansion violates the marker, descriptor, source, rendering, or materialization rules defined in [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md#content-expansion).
 - `CM-298` `expansion_drift` applies when a materialized `auto` or `manual` content expansion does not equal its current rendered source result.
+- `CM-299` `invalid_template_region` applies when a template-region marker, descriptor, receipt, marker pairing, nesting boundary, or marker-to-receipt correspondence violates [Template Drift Tracking](relationships-headings-and-templates.md#template-drift-tracking).
 - `CM-200` The effective `metadata_directory`, `exclude_paths`, `validation_defaults`, and `automation_defaults` values participate in conformance exactly as if their default values had been physically written in `typedmark.md`.
 
 ### Note-Type Mappings

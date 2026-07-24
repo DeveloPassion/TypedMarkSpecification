@@ -111,7 +111,8 @@
             },
             "aliases": {
               "$ref": "defs.schema.json#/$defs/aliases_field_contract"
-            }
+            },
+            "template_regions": false
           }
         }
       ]

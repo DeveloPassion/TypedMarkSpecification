@@ -91,10 +91,11 @@ Rules:
 - `CR-34` `rule_id` MUST identify the stable rule whose violation produced the result.
 - `CR-35` `message` MUST be a non-empty human-readable explanation of the specific finding.
 - `CR-36` Consumers MUST NOT use `message` as a machine-stable identifier.
-- `CR-37` A result MAY include `note_type`, `field`, `relationship`, `heading`, or `expansion` when that context applies.
+- `CR-37` A result MAY include `note_type`, `field`, `relationship`, `heading`, `expansion`, `template_region`, or `drift_kind` when that context applies.
 - `CR-38` A nested field context MUST use `field` as a dot-separated path from its top-level frontmatter field.
-- `CR-39` Validators MUST order results by `path`, `rule_id`, `code`, `note_type`, `field`, `relationship`, `heading`, and `expansion`, in that sequence, comparing each component as exact Unicode code points and treating absent values as empty strings.
+- `CR-39` Validators MUST order results by `path`, `rule_id`, `code`, `note_type`, `field`, `relationship`, `heading`, `expansion`, `template_region`, and `drift_kind`, in that sequence, comparing each component as exact Unicode code points and treating absent values as empty strings.
 - `CR-40` Validation MUST NOT modify the collection or any governed artifact it evaluates.
+- `CR-86` Every `template_drift` result MUST contain `template_region` and `drift_kind`.
 
 ### Automation Run Reports
 
@@ -200,6 +201,7 @@ A collection root conforms as a valid system definition when:
 6. `CR-6` Every template referenced by a schema file exists and satisfies the template-frontmatter contract in [Relationships, Headings, and Templates](relationships-headings-and-templates.md) for its note type's effective schema.
 7. `CR-59` Every automation file under `<metadata_directory>/automations/`, if present, is valid under [Collection Model](collection-model.md).
 8. `CR-84` Every content expansion in a referenced template satisfies the template expansion contract in [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md#content-expansion).
+9. `CR-87` Every template region in a referenced template satisfies the marker, descriptor, pairing, nesting, and identifier rules in [Template Drift Tracking](relationships-headings-and-templates.md#template-drift-tracking).
 
 ### Valid Instantiated Collection
 
@@ -215,6 +217,7 @@ A collection root conforms as a valid instantiated collection when:
 8. `CR-13` Managed notes satisfy their schema relationship and heading rules under [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 9. `CR-60` Every automation file under `<metadata_directory>/automations/`, if present, is valid under [Collection Model](collection-model.md).
 10. `CR-85` Every content expansion in a collection note satisfies the applicable marker, descriptor, source, rendering, synchronization, and persisted-state rules in [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md#content-expansion).
+11. `CR-88` Every template-region marker or `template_regions` receipt in a collection note belongs to an enrolled managed note and satisfies the receipt, marker-correspondence, and drift-classification rules in [Template Drift Tracking](relationships-headings-and-templates.md#template-drift-tracking).
 
 Additional rules:
 

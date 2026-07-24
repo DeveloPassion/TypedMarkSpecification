@@ -121,6 +121,7 @@
             "invalid_relationship_definition",
             "invalid_relationship_instance",
             "invalid_heading",
+            "invalid_template_region",
             "template_drift",
             "invalid_expansion",
             "expansion_drift"
@@ -157,8 +158,42 @@
         },
         "expansion": {
           "$ref": "defs.schema.json#/$defs/slug"
+        },
+        "template_region": {
+          "$ref": "defs.schema.json#/$defs/slug"
+        },
+        "drift_kind": {
+          "enum": [
+            "template_added",
+            "template_changed",
+            "note_changed",
+            "both_changed",
+            "region_missing",
+            "template_removed",
+            "template_removed_note_changed"
+          ]
         }
       },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "template_drift"
+              }
+            },
+            "required": [
+              "code"
+            ]
+          },
+          "then": {
+            "required": [
+              "template_region",
+              "drift_kind"
+            ]
+          }
+        }
+      ],
       "additionalProperties": false
     }
   }

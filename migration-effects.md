@@ -14,6 +14,7 @@ Authoritative for:
 - the managed-note effect of every `history.md` change operation
 - mandatory-tag policy changes during collection and note-type migrations
 - field type conversions during `retype_field` migrations
+- template-region drift evaluation after `change_template`
 
 See also:
 
@@ -35,7 +36,7 @@ Rules:
 - `ME-7` `change_field` MUST re-validate every affected managed note against the field's new constraints; a stored value that violates the new constraints MUST be reported rather than silently dropped or altered.
 - `ME-8` `rename_note_type` MUST update the stored `note_type` field when present, MUST re-resolve the note's storage path under the renamed type's effective storage rules, and MUST update internal note links and relationship-bearing fields that target the renamed type.
 - `ME-9` `change_storage` MUST re-resolve the storage path of every affected managed note under the new effective storage rules, MUST move each note whose stored path no longer conforms, and MUST update internal note links so moved notes still resolve; a move or link update that cannot be applied safely MUST be reported for explicit resolution.
-- `ME-10` `change_template` has no direct managed-note effect; tools MAY re-evaluate `template_drift` against the new canonical template.
+- `ME-10` `change_template` has no direct managed-note write effect; a migration tool MUST re-evaluate enrolled managed notes against the new canonical template.
 - `ME-11` `change_headings` and `change_relationships` MUST re-validate every affected managed note against the new effective heading and relationship rules; violations MUST be reported, and a migration MUST NOT restructure note body content automatically.
 - `ME-12` `change_note_type` and `change_collection` have the managed-note effect of the resulting change to each note's effective schema and mandatory-tag policy, evaluated through the operations above and re-validation.
 - `ME-13` `add_note_type`, `remove_note_type`, `add_property_set`, `remove_property_set`, and `rename_property_set` change which schemas and property sets exist; their effect on an individual managed note is only the resulting change to that note's effective schema, evaluated through the field operations above.
@@ -49,6 +50,8 @@ Rules:
 - `ME-24` `add_automation`, `remove_automation`, and `change_automation` have no direct managed-note effect; the migrated effective automation set applies only to execution events processed after the migration commits.
 - `ME-25` A `change_collection` operation that changes only `automation_defaults` has no direct managed-note effect.
 - `ME-26` A `change_template` operation MUST NOT copy changed content-expansion descriptors or regions into existing managed notes.
+- `ME-27` A `change_template` operation MUST preserve each affected note's body and `template_regions` receipts while computing its post-migration template-drift states.
+- `ME-28` A migration tool MUST NOT reconcile a post-migration template-drift state without a separate reconciliation request under [Template Drift Tracking](relationships-headings-and-templates.md#reconciliation-and-detachment).
 
 ### Field Type Conversions
 

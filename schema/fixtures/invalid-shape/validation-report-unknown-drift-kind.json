@@ -1,0 +1,16 @@
+{
+  "specification_version": "0.0.1",
+  "mode": "instantiated_collection",
+  "valid": true,
+  "results": [
+    {
+      "code": "template_drift",
+      "severity": "warn",
+      "path": "Reviews/Quarterly review.md",
+      "rule_id": "RHT-200",
+      "message": "The region drift kind is not portable.",
+      "template_region": "review-guidance",
+      "drift_kind": "different"
+    }
+  ]
+}

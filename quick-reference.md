@@ -42,6 +42,7 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | Vocabulary | A named, reusable value set referenced by `allowed_values_from` | [Collection Model](collection-model.md#vocabularies) |
 | Automation rule | A declarative event or schedule trigger with an ordered, atomic action list | [Collection Model](collection-model.md#automation-rules) |
 | Propagation | Deterministic multi-wave automation execution that commits only at a valid fixed point | [Managed Notes and Properties](managed-notes-and-properties.md#dependency-propagation-and-consistency) |
+| Template region | Marker-delimited static Markdown with a per-note baseline receipt for portable three-way drift detection | [Template Drift Tracking](relationships-headings-and-templates.md#template-drift-tracking) |
 | Content expansion | Marker-delimited plain Markdown derived from a declared source, with automatic, manual, once, and ejectable modes | [Content Expansion](relationships-headings-and-templates.md#content-expansion) |
 
 ## How do I…
@@ -64,6 +65,7 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | require tags collection-wide, by folder, or by note type | `mandatory_tags` in `typedmark.md`, `folder_scopes`, or a note-type schema | [Mandatory tags](collection-model.md#mandatory-tags) |
 | react to note changes or a schedule | an automation artifact under `<metadata_directory>/automations/` | [Automation rules](collection-model.md#automation-rules) |
 | let automation changes trigger further rules safely | propagation mode with `automation_defaults.max_propagation_waves` | [Dependency propagation](managed-notes-and-properties.md#dependency-propagation-and-consistency) |
+| detect and reconcile static template changes without overwriting note edits | `typedmark:template-region` markers plus `template_regions` baseline receipts | [Template Drift Tracking](relationships-headings-and-templates.md#template-drift-tracking) |
 | keep a Markdown region synchronized with a field or relationship | a `typedmark:expansion` marker with `mode: auto` or `manual` | [Content Expansion](relationships-headings-and-templates.md#content-expansion) |
 | share fields across many note types | property sets and `default_property_sets` | [Collection Model](collection-model.md#composing-property-sets) |
 | apply shared structure by note path | `folder_scopes` | [Collection Model](collection-model.md#folder-scopes) |
