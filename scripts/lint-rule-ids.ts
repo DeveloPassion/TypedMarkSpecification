@@ -7,8 +7,8 @@
  * across the whole specification. IDs are append-only: never renumber, and
  * retire the ID of a removed rule instead of reusing it.
  * Normative keywords belong only on identified rule lines. Published pages
- * carry compact preambles; non-authoritative introductory pages omit the
- * otherwise-required Authoritative for list.
+ * carry compact preambles; non-authoritative pages omit the otherwise-required
+ * Authoritative for list.
  *
  * Usage: bun scripts/lint-rule-ids.ts (or: bun run lint-rule-ids)
  */
@@ -43,6 +43,7 @@ const NON_AUTHORITATIVE_PREAMBLE_PAGES = new Set([
   "index.md",
   "manifesto.md",
   "getting-started.md",
+  "quick-reference.md",
 ]);
 
 const EXTRA_TRIGGERS = new Set([

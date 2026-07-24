@@ -9,10 +9,6 @@ audience: essentials
 
 Audience: collection authors and tool authors looking up an existing rule.
 
-Authoritative for:
-
-- no governed artifact contract; this page is a non-normative index into authoritative rules
-
 See also:
 
 - [Foundations](foundations.md): terminology and shared baselines

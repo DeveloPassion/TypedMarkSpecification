@@ -84,8 +84,9 @@ The prose specification is the single source of truth. The JSON Schemas under
 - Each page opens with a compact preamble: an `Audience:` line, an
   `Authoritative for:` list, and a `See also:` list. Pages declare
   `audience: essentials | advanced | tool-authors` in their frontmatter. The
-  overview (`index.md`), Manifesto, and Getting Started are exceptions: they
-  omit `Authoritative for:` because they define no normative concern.
+  overview (`index.md`), Manifesto, Getting Started, and Quick Reference are
+  exceptions: they omit `Authoritative for:` because they define no normative
+  concern.
 - Lead each major section with a short narrative paragraph before the
   rule list, and give every major section at least one example.
 - Artifact-shaped example blocks in the spec pages are validated against
