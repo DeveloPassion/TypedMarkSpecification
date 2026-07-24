@@ -91,9 +91,9 @@ Rules:
 - `CR-34` `rule_id` MUST identify the stable rule whose violation produced the result.
 - `CR-35` `message` MUST be a non-empty human-readable explanation of the specific finding.
 - `CR-36` Consumers MUST NOT use `message` as a machine-stable identifier.
-- `CR-37` A result MAY include `note_type`, `field`, `relationship`, or `heading` when that context applies.
+- `CR-37` A result MAY include `note_type`, `field`, `relationship`, `heading`, or `expansion` when that context applies.
 - `CR-38` A nested field context MUST use `field` as a dot-separated path from its top-level frontmatter field.
-- `CR-39` Validators MUST order results by `path`, then `rule_id`, then `code`, then the optional context values, comparing each component as exact Unicode code points.
+- `CR-39` Validators MUST order results by `path`, `rule_id`, `code`, `note_type`, `field`, `relationship`, `heading`, and `expansion`, in that sequence, comparing each component as exact Unicode code points and treating absent values as empty strings.
 - `CR-40` Validation MUST NOT modify the collection or any governed artifact it evaluates.
 
 ### Automation Run Reports
@@ -177,6 +177,7 @@ Rules:
 - `CR-71` A `path` change records one managed note's normalized before and after paths.
 - `CR-72` A `note` change records one note creation, archive, logical deletion, or hard deletion.
 - `CR-73` A `link` change records one internal-link retargeting in note body content or a top-level frontmatter field.
+- `CR-83` An `expansion` change records one identified content expansion's materialized region before and after refresh.
 - `CR-74` A `committed` report MUST record at least one semantic change.
 - `CR-75` A `no_change` report MUST record no semantic changes.
 - `CR-76` An `aborted` report MUST record no semantic changes.
@@ -198,6 +199,7 @@ A collection root conforms as a valid system definition when:
 5. `CR-5` Every schema file under `<metadata_directory>/schemas/`, if present, is valid under [Note Type Schemas](note-type-schemas.md).
 6. `CR-6` Every template referenced by a schema file exists and satisfies the template-frontmatter contract in [Relationships, Headings, and Templates](relationships-headings-and-templates.md) for its note type's effective schema.
 7. `CR-59` Every automation file under `<metadata_directory>/automations/`, if present, is valid under [Collection Model](collection-model.md).
+8. `CR-84` Every content expansion in a referenced template satisfies the template expansion contract in [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md#content-expansion).
 
 ### Valid Instantiated Collection
 
@@ -212,6 +214,7 @@ A collection root conforms as a valid instantiated collection when:
 7. `CR-12` Managed notes satisfy their schema storage rules under [Note Type Schemas](note-type-schemas.md).
 8. `CR-13` Managed notes satisfy their schema relationship and heading rules under [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 9. `CR-60` Every automation file under `<metadata_directory>/automations/`, if present, is valid under [Collection Model](collection-model.md).
+10. `CR-85` Every content expansion in a collection note satisfies the applicable marker, descriptor, source, rendering, synchronization, and persisted-state rules in [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md#content-expansion).
 
 Additional rules:
 

@@ -1,0 +1,15 @@
+{
+  "specification_version": "0.0.1",
+  "event_id": "evt-01k0createdbody",
+  "kind": "note.created",
+  "occurred_at": "2026-07-24T09:31:00+02:00",
+  "origin": "user",
+  "after": {
+    "path": "Projects/New.md",
+    "note_type": "project",
+    "frontmatter": {
+      "note_type": "project"
+    }
+  },
+  "body_changed": true
+}

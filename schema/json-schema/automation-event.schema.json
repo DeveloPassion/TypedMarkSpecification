@@ -51,6 +51,9 @@
     "changes": {
       "$ref": "#/$defs/field_changes"
     },
+    "body_changed": {
+      "const": true
+    },
     "schedule": {
       "type": "object",
       "required": [
@@ -71,8 +74,7 @@
       "type": "object",
       "required": [
         "run_id",
-        "event_id",
-        "automation"
+        "event_id"
       ],
       "properties": {
         "run_id": {
@@ -83,9 +85,24 @@
         },
         "automation": {
           "$ref": "defs.schema.json#/$defs/slug"
+        },
+        "operation": {
+          "const": "content_expansion"
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "required": [
+            "automation"
+          ]
+        },
+        {
+          "required": [
+            "operation"
+          ]
+        }
+      ]
     }
   },
   "additionalProperties": false,
@@ -156,10 +173,7 @@
       "if": {
         "properties": {
           "kind": {
-            "enum": [
-              "note.updated",
-              "note.archived"
-            ]
+            "const": "note.archived"
           }
         },
         "required": [
@@ -172,6 +186,43 @@
           "after",
           "changes"
         ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "note.updated"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "then": {
+        "required": [
+          "before",
+          "after"
+        ],
+        "anyOf": [
+          {
+            "required": [
+              "changes"
+            ]
+          },
+          {
+            "required": [
+              "body_changed"
+            ]
+          }
+        ]
+      },
+      "else": {
+        "not": {
+          "required": [
+            "body_changed"
+          ]
+        }
       }
     },
     {
@@ -255,6 +306,35 @@
         "required": [
           "caused_by"
         ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "caused_by": {
+            "properties": {
+              "operation": {
+                "const": "content_expansion"
+              }
+            },
+            "required": [
+              "operation"
+            ]
+          }
+        },
+        "required": [
+          "caused_by"
+        ]
+      },
+      "then": {
+        "required": [
+          "body_changed"
+        ],
+        "properties": {
+          "kind": {
+            "const": "note.updated"
+          }
+        }
       }
     }
   ],

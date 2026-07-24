@@ -159,6 +159,8 @@ Rules:
 - `CM-63` `invalid_relationship_instance` applies when resolved typed relationship instances violate the declared relationship cardinality constraints defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - `CM-64` `invalid_heading` applies when a managed note violates the effective heading rules defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - `CM-65` `template_drift` applies when a validator chooses to compare a managed note to its canonical template and detects material divergence that is not itself a core conformance failure.
+- `CM-297` `invalid_expansion` applies when a content expansion violates the marker, descriptor, source, rendering, or materialization rules defined in [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md#content-expansion).
+- `CM-298` `expansion_drift` applies when a materialized `auto` or `manual` content expansion does not equal its current rendered source result.
 - `CM-200` The effective `metadata_directory`, `exclude_paths`, `validation_defaults`, and `automation_defaults` values participate in conformance exactly as if their default values had been physically written in `typedmark.md`.
 
 ### Note-Type Mappings

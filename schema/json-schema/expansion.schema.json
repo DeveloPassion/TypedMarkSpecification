@@ -1,0 +1,250 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developassion.github.io/TypedMarkSpecification/schema/expansion.schema.json",
+  "title": "TypedMark content-expansion descriptor",
+  "description": "The JSON descriptor carried by a typedmark:expansion start marker. Authoritative semantics: relationships-headings-and-templates.md (Content Expansion).",
+  "type": "object",
+  "required": [
+    "specification_version",
+    "id",
+    "mode",
+    "state",
+    "source",
+    "render"
+  ],
+  "properties": {
+    "specification_version": {
+      "$ref": "defs.schema.json#/$defs/specification_version"
+    },
+    "id": {
+      "$ref": "defs.schema.json#/$defs/slug"
+    },
+    "mode": {
+      "enum": [
+        "auto",
+        "manual",
+        "once",
+        "once_and_eject"
+      ]
+    },
+    "state": {
+      "enum": [
+        "pending",
+        "materialized"
+      ]
+    },
+    "source": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/self_field_source"
+        },
+        {
+          "$ref": "#/$defs/note_field_source"
+        },
+        {
+          "$ref": "#/$defs/relationship_source"
+        },
+        {
+          "$ref": "#/$defs/file_source"
+        },
+        {
+          "$ref": "#/$defs/now_source"
+        }
+      ]
+    },
+    "render": {
+      "$ref": "#/$defs/render"
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "source": {
+            "properties": {
+              "kind": {
+                "const": "now"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          }
+        },
+        "required": [
+          "source"
+        ]
+      },
+      "then": {
+        "properties": {
+          "mode": {
+            "enum": [
+              "once",
+              "once_and_eject"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "mode": {
+            "const": "once_and_eject"
+          }
+        },
+        "required": [
+          "mode"
+        ]
+      },
+      "then": {
+        "properties": {
+          "state": {
+            "const": "pending"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "self_field_source": {
+      "type": "object",
+      "required": [
+        "kind",
+        "field"
+      ],
+      "properties": {
+        "kind": {
+          "const": "self_field"
+        },
+        "field": {
+          "$ref": "defs.schema.json#/$defs/field_name"
+        }
+      },
+      "additionalProperties": false
+    },
+    "note_field_source": {
+      "type": "object",
+      "required": [
+        "kind",
+        "note",
+        "field"
+      ],
+      "properties": {
+        "kind": {
+          "const": "note_field"
+        },
+        "note": {
+          "$ref": "defs.schema.json#/$defs/non_empty_string"
+        },
+        "field": {
+          "$ref": "defs.schema.json#/$defs/field_name"
+        }
+      },
+      "additionalProperties": false
+    },
+    "relationship_source": {
+      "type": "object",
+      "required": [
+        "kind",
+        "relationship"
+      ],
+      "properties": {
+        "kind": {
+          "const": "relationship"
+        },
+        "relationship": {
+          "enum": [
+            "belongs_to",
+            "related_to"
+          ]
+        },
+        "direction": {
+          "enum": [
+            "outbound",
+            "inbound"
+          ],
+          "default": "outbound"
+        },
+        "target_note_types": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "defs.schema.json#/$defs/slug"
+          }
+        },
+        "field": {
+          "$ref": "defs.schema.json#/$defs/field_name"
+        }
+      },
+      "additionalProperties": false
+    },
+    "file_source": {
+      "type": "object",
+      "required": [
+        "kind",
+        "value"
+      ],
+      "properties": {
+        "kind": {
+          "const": "file"
+        },
+        "value": {
+          "enum": [
+            "path",
+            "filename",
+            "stem"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "now_source": {
+      "type": "object",
+      "required": [
+        "kind",
+        "format"
+      ],
+      "properties": {
+        "kind": {
+          "const": "now"
+        },
+        "format": {
+          "enum": [
+            "YYYY",
+            "MM",
+            "DD",
+            "YYYY-MM",
+            "YYYY-MM-DD",
+            "Q",
+            "WW",
+            "GGGG"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "render": {
+      "type": "object",
+      "required": [
+        "item"
+      ],
+      "properties": {
+        "item": {
+          "type": "string"
+        },
+        "separator": {
+          "type": "string",
+          "default": "\n"
+        },
+        "empty": {
+          "type": "string",
+          "default": ""
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "specification_version": "0.0.1",
+  "id": "canonical-owner",
+  "mode": "auto",
+  "state": "materialized",
+  "source": {
+    "kind": "note_field",
+    "note": "[[Missing Configuration]]",
+    "field": "owner"
+  },
+  "render": {
+    "item": "Owner: ${value}"
+  }
+}

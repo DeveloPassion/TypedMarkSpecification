@@ -1,0 +1,16 @@
+{
+  "specification_version": "0.0.1",
+  "mode": "instantiated_collection",
+  "valid": true,
+  "results": [
+    {
+      "code": "expansion_drift",
+      "severity": "warn",
+      "path": "Projects/TypedMark.md",
+      "rule_id": "RHT-164",
+      "message": "project-summary does not equal its current rendered source",
+      "note_type": "project",
+      "expansion": "project-summary"
+    }
+  ]
+}

@@ -1,11 +1,11 @@
 ---
-title: Relationships, Headings, and Templates
+title: Relationships, Headings, Templates, and Content Expansion
 parent: TypedMark
 nav_order: 9
 audience: essentials
 ---
 
-# Relationships, Headings, and Templates
+# Relationships, Headings, Templates, and Content Expansion
 
 Audience: collection authors.
 
@@ -14,11 +14,14 @@ Authoritative for:
 - relationship kinds, the relationship block shape, and relationship constraints
 - heading rules, including the H1 and H2 contracts
 - template content obligations
+- content-expansion markers, sources, rendering, synchronization, and ejection
 
 See also:
 
 - [Note Links](note-links.md): how internal note links are parsed and resolved
 - [Note Type Schemas](note-type-schemas.md): the schema file contract and `template.file` path rules
+- [Foundations](foundations.md): the shared expression language used to render source values
+- [Managed Notes and Properties](managed-notes-and-properties.md): dependency propagation for automatic expansion refresh
 
 ## Relationship Model
 
@@ -171,3 +174,151 @@ Rules:
 - `RHT-90` A `null` template placeholder MUST NOT stand in for a non-empty path-independent mandatory-tag sequence.
 - `RHT-91` Before writing an instantiated managed note, a tool MUST add the mandatory tags contributed by every folder scope matching the resolved target path.
 - `RHT-92` The instantiated note's final `tags` value MUST satisfy the mandatory-tag materialization rules in [Managed Notes and Properties](managed-notes-and-properties.md).
+
+## Content Expansion
+
+A content expansion keeps a marker-delimited region of ordinary Markdown derived from one declared source. The source remains authoritative while the rendered region stays readable in every Markdown editor; an author can eject the markers at any time and keep the rendered Markdown as ordinary prose.
+
+For example, this expansion mirrors the note's `summary` field:
+
+```markdown
+<!-- typedmark:expansion {"specification_version":"0.0.1","id":"project-summary","mode":"auto","state":"materialized","source":{"kind":"self_field","field":"summary"},"render":{"item":"${value}"}} -->
+The current project summary.
+<!-- /typedmark:expansion -->
+```
+
+### Marker Grammar
+
+The start marker carries one compact JSON descriptor. The lines between it and the closing marker are the materialized region; the comment lines themselves remain invisible in rendered Markdown.
+
+Rules:
+
+- `RHT-93` A content expansion MAY appear in the body of any collection note or governed template.
+- `RHT-94` A content expansion MUST consist of one start marker, one materialized region, and one closing marker in that order.
+- `RHT-95` A start-marker line MUST contain zero to three leading ASCII spaces, `<!-- typedmark:expansion `, one JSON object on that same line, ` -->`, and no other content.
+- `RHT-96` A closing-marker line MUST contain zero to three leading ASCII spaces, `<!-- /typedmark:expansion -->`, and no other content.
+- `RHT-97` Marker-shaped text inside CommonMark fenced or indented code MUST NOT be parsed as a content-expansion marker.
+- `RHT-98` The JSON object in a start marker MUST satisfy `schema/json-schema/expansion.schema.json`.
+- `RHT-175` The serialized JSON object in a start marker MUST NOT contain the two-character sequence `--`.
+- `RHT-99` A descriptor's `specification_version` MUST follow the specification-version rules in [Foundations](foundations.md).
+- `RHT-100` Content expansions MUST NOT be nested.
+- `RHT-101` Every parsed start marker MUST have exactly one closing marker.
+- `RHT-102` Every parsed closing marker MUST have exactly one preceding unmatched start marker.
+- `RHT-103` Descriptor `id` values MUST be unique within their Markdown file.
+- `RHT-104` The materialized region is the sequence of zero or more complete source lines strictly between the marker lines, joined by their intervening line endings with the marker-line terminators excluded.
+- `RHT-105` Materialized-region Markdown MUST participate in heading detection, note-link extraction, relationship derivation, and every other ordinary body-content rule.
+- `RHT-106` The two marker-comment lines MUST NOT themselves participate in heading detection, note-link extraction, or relationship derivation.
+- `RHT-107` A tool that refreshes an expansion MUST limit its body edit to that expansion's materialized region and descriptor state.
+- `RHT-108` Ejecting an expansion MUST remove both marker lines while preserving the materialized region in place.
+- `RHT-109` A marker-grammar, pairing, nesting, identifier, or descriptor-shape violation is an `invalid_expansion` failure.
+
+### Sources and Rendering
+
+Every source evaluates to an ordered sequence of text values. A single-value source therefore uses the same rendering path as a relationship traversal, while the deliberately small shared expression language controls presentation. Computed fields need no separate source kind because their materialized values are read through the field sources after recomputation. Query-backed selection is reserved for the portable query contract; this version does not invent an expansion-only query language. Filesystem creation and modification timestamps are likewise excluded because they are not stable collection data—authors can store portable timestamps in typed fields instead.
+
+This descriptor renders outbound `related_to` targets as a Markdown list:
+
+```json
+{
+  "specification_version": "0.0.1",
+  "id": "related-sources",
+  "mode": "manual",
+  "state": "materialized",
+  "source": {
+    "kind": "relationship",
+    "relationship": "related_to",
+    "direction": "outbound",
+    "target_note_types": [
+      "source"
+    ]
+  },
+  "render": {
+    "item": "- ${value}",
+    "empty": "_No sources._"
+  }
+}
+```
+
+Rules:
+
+- `RHT-110` The content-expansion modes in this specification version are exactly `auto`, `manual`, `once`, and `once_and_eject`.
+- `RHT-111` The content-expansion states in this specification version are exactly `pending` and `materialized`.
+- `RHT-112` The content-expansion source kinds in this specification version are exactly `self_field`, `note_field`, `relationship`, `file`, and `now`.
+- `RHT-113` Every source evaluation MUST produce an ordered sequence containing zero or more strings.
+- `RHT-114` A stored string source value MUST contribute that string unchanged.
+- `RHT-115` A stored boolean source value MUST contribute `true` or `false` in lowercase.
+- `RHT-116` A stored integer source value MUST use the integer representation defined by `SCE-85` in [Systems, Composition, and Evolution](systems-composition-evolution.md).
+- `RHT-117` A stored number source value MUST use the number representation defined by `SCE-86` in [Systems, Composition, and Evolution](systems-composition-evolution.md).
+- `RHT-118` An absent or null stored source value MUST produce an empty sequence.
+- `RHT-119` A stored sequence source value MUST contribute its scalar entries in stored order using `RHT-114` through `RHT-117`.
+- `RHT-120` A stored mapping, nested sequence, or null sequence entry MUST make source evaluation fail.
+- `RHT-121` A `self_field` source MUST read the named top-level field from the containing note's parsed frontmatter.
+- `RHT-169` A `self_field` source on a note without valid YAML frontmatter MUST make source evaluation fail.
+- `RHT-171` A `self_field` source in a managed note MUST name an effective-schema field or a core-defined managed-note field.
+- `RHT-122` A `note_field.note` value MUST be a supported internal note link under [Note Links](note-links.md).
+- `RHT-123` A `note_field.note` value MUST resolve to exactly one managed note.
+- `RHT-124` A `note_field` source MUST read its named top-level field from the resolved note's parsed frontmatter.
+- `RHT-172` A `note_field` source MUST name an effective-schema field or a core-defined managed-note field of its resolved note.
+- `RHT-125` A `relationship` source MUST be evaluated only for a managed containing note.
+- `RHT-126` An outbound `relationship` source MUST select the containing note's unique concrete relationship targets for the named relationship kind.
+- `RHT-127` An inbound `relationship` source MUST select the unique managed notes that have the named concrete relationship kind to the containing note.
+- `RHT-128` An omitted `relationship.direction` MUST have the effective value `outbound`.
+- `RHT-170` Every identifier in `target_note_types` MUST resolve to exactly one concrete or abstract note type.
+- `RHT-129` A present `target_note_types` list MUST filter relationship targets using the concrete-and-abstract target semantics of `RHT-16` and `RHT-17`.
+- `RHT-130` Relationship targets MUST be ordered by normalized collection-relative path in ascending Unicode code-point order.
+- `RHT-131` A relationship source without `field` MUST contribute each selected target as the root-relative standard Markdown link defined by `RHT-166` and `RHT-167`.
+- `RHT-166` The generated relationship-link label MUST be the target's final path segment without `.md`, with `\`, `[`, and `]` escaped by a preceding backslash.
+- `RHT-167` The generated relationship-link destination MUST be `/` followed by the normalized collection-relative path, with every UTF-8 byte other than an ASCII letter, digit, `-`, `.`, `_`, `~`, or `/` percent-encoded using uppercase hexadecimal digits.
+- `RHT-132` A relationship source with `field` MUST contribute the named top-level field from each selected target in target order.
+- `RHT-173` A relationship source with `field` MUST name an effective-schema field or a core-defined managed-note field of every selected target.
+- `RHT-133` Values from one relationship target's sequence field MUST precede values from every later target.
+- `RHT-134` A `file` source with `value: path` MUST contribute the containing note's normalized collection-relative path.
+- `RHT-135` A `file` source with `value: filename` MUST contribute the final path segment including `.md`.
+- `RHT-136` A `file` source with `value: stem` MUST contribute the final path segment without `.md`.
+- `RHT-137` A `now` source MUST use the collection timezone defined in [Collection Model](collection-model.md).
+- `RHT-174` A `now` source MUST use the current instant at the start of its materialization request.
+- `RHT-138` A `now.format` value MUST use the format semantics defined for `{now:format}` by `NTS-119` and `NTS-120` in [Note Type Schemas](note-type-schemas.md).
+- `RHT-139` A `now` source MUST use `once` or `once_and_eject` mode.
+- `RHT-140` `render.item` MUST be evaluated as a shared text-template expression once for each source value.
+- `RHT-141` The only reference name available to `render.item` MUST be `value`.
+- `RHT-142` Rendered items MUST be joined in source order using the literal `render.separator` value.
+- `RHT-143` An omitted `render.separator` MUST have the effective value of one line-feed character.
+- `RHT-144` A zero-value source MUST render the literal `render.empty` value.
+- `RHT-145` An omitted `render.empty` MUST have the effective value of the empty string.
+
+### Materialization, Synchronization, and Drift
+
+Pending descriptors are template-time declarations. Materialization evaluates the source, renders the result, and writes plain Markdown; thereafter the mode decides whether the source remains authoritative. Automatic and manual expansions share the same conformance requirement, but only automatic mode participates in propagation without an explicit refresh request.
+
+For example, a template can seed an expansion without pretending that placeholder frontmatter has already produced current content:
+
+```markdown
+<!-- typedmark:expansion {"specification_version":"0.0.1","id":"owner","mode":"auto","state":"pending","source":{"kind":"self_field","field":"owner"},"render":{"item":"Owner: ${value}"}} -->
+<!-- /typedmark:expansion -->
+```
+
+Rules:
+
+- `RHT-146` A pending expansion's materialized region MUST be empty.
+- `RHT-147` Materializing an expansion MUST replace its region with the current rendered source result.
+- `RHT-148` Materializing an expansion other than `once_and_eject` MUST set its descriptor state to `materialized`.
+- `RHT-149` Materializing a `once_and_eject` expansion MUST eject its markers in the same write.
+- `RHT-150` Every content expansion in a governed template MUST have `state: pending`.
+- `RHT-168` A pending template expansion's source MUST NOT be evaluated before template instantiation.
+- `RHT-151` Template instantiation MUST materialize expansions after resolving the target path, final frontmatter values, and non-expansion starter body and before writing the note.
+- `RHT-152` Adding an ad hoc expansion to a collection note MUST write a materialized expansion atomically.
+- `RHT-153` A materialized `auto` expansion's region MUST equal its current rendered source result.
+- `RHT-154` A propagation-capable tool MUST refresh an affected `auto` expansion before committing the propagation closure.
+- `RHT-155` A materialized `manual` expansion's region MUST equal its current rendered source result.
+- `RHT-156` A tool MUST refresh a `manual` expansion only in response to an explicit refresh or materialization request.
+- `RHT-157` A pending `once` expansion MUST be materialized by note creation or an explicit materialization request.
+- `RHT-158` A materialized `once` expansion MUST NOT re-evaluate its source for conformance or propagation.
+- `RHT-159` The materialized region of a `once` expansion MAY be edited as ordinary Markdown.
+- `RHT-160` The materialized regions of `auto` and `manual` expansions MUST be treated as read-only derived content until ejected.
+- `RHT-161` A tool MAY explicitly eject an expansion in any mode.
+- `RHT-162` A persisted collection note MUST NOT contain a pending expansion.
+- `RHT-163` An applicable source-resolution, source-conversion, or render-expression failure is an `invalid_expansion` failure.
+- `RHT-164` Unequal current and stored output for a materialized `auto` or `manual` expansion is an `expansion_drift` failure.
+- `RHT-165` Expansion-output equality MUST compare the rendered result and materialized-region source text exactly after normalizing line endings in both to line feed.
+- `RHT-176` Template-drift comparison MUST ignore the expected change from a pending template descriptor to a materialized descriptor and region.
+- `RHT-177` Template-drift comparison MUST treat the absence of a template's `once_and_eject` marker pair as expected materialization rather than drift.

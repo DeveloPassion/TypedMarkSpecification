@@ -9,6 +9,9 @@ full boundary.
 | Fixture | Semantic rule violated |
 | --- | --- |
 | `automation-set-field-unresolved.md` | Every automation field reference must resolve for every target on which the action can execute; `missing_field` is undeclared. |
+| `expansion-note-field-unresolved.json` | A materialized `note_field` expansion source must resolve its note link to exactly one managed note. |
+| `expansion-relationship-target-unresolved.json` | Every `target_note_types` filter entry must resolve to exactly one concrete or abstract note type; `ghost` does not. |
+| `expansion-unknown-render-reference.json` | Expansion rendering exposes only the shared-expression reference name `value`; `title` is unknown. |
 | `note-type-basename-mismatch.md` | The schema file basename must equal the file's `note_type` value (`topic` here). |
 | `note-type-computed-reference-unresolved.md` | Every `computed` field reference must resolve to a sibling field declared in the same effective `frontmatter`; `nickname` does not exist. |
 | `note-type-computed-unsupported-transform.md` | `computed` supports only the transforms defined by the specification version; `upper` is unknown. |

@@ -363,6 +363,34 @@
         }
       ]
     },
+    "expansion_change": {
+      "type": "object",
+      "required": [
+        "kind",
+        "path",
+        "expansion",
+        "before",
+        "after"
+      ],
+      "properties": {
+        "kind": {
+          "const": "expansion"
+        },
+        "path": {
+          "$ref": "defs.schema.json#/$defs/collection_relative_path"
+        },
+        "expansion": {
+          "$ref": "defs.schema.json#/$defs/slug"
+        },
+        "before": {
+          "type": "string"
+        },
+        "after": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
     "change": {
       "oneOf": [
         {
@@ -379,6 +407,9 @@
         },
         {
           "$ref": "#/$defs/link_change"
+        },
+        {
+          "$ref": "#/$defs/expansion_change"
         }
       ]
     },

@@ -34,7 +34,7 @@ New here? Read the [Manifesto](manifesto.md) for the why, then follow [Getting S
 - [Field Definition Reference](field-definition-reference.md): every property a field can declare, from types to constraints to generated values
 - [Managed Notes and Properties](managed-notes-and-properties.md): what a typed note must look like on disk, including automation execution and dependency propagation
 - [Note Links](note-links.md): how links between notes are written and resolved
-- [Relationships, Headings, and Templates](relationships-headings-and-templates.md): documenting how note types relate, and what a note's body must contain
+- [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md): documenting how note types relate, what a note's body must contain, and how derived Markdown stays synchronized
 - [Systems, Composition, and Evolution](systems-composition-evolution.md): packaging a collection as a shareable, versioned, composable system
 - [Migration Effects](migration-effects.md): what happens to existing notes when a system changes
 - [Conformance and Roadmap](conformance-and-roadmap.md): what it means for a tool or collection to conform
@@ -50,7 +50,7 @@ New here? Read the [Manifesto](manifesto.md) for the why, then follow [Getting S
 4. [Collection Model](collection-model.md) for `typedmark.md` identity and defaults
 5. [Note Type Schemas](note-type-schemas.md) for one concrete note type and the effective schema
 6. [Managed Notes and Properties](managed-notes-and-properties.md), with the [Field Definition Reference](field-definition-reference.md) at hand
-7. [Note Links](note-links.md) and [Relationships, Headings, and Templates](relationships-headings-and-templates.md) when the collection needs links, headings, or template checks
+7. [Note Links](note-links.md) and [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md) when the collection needs links, headings, template checks, or synchronized derived Markdown
 
 **Essentials plus reuse** — for larger personal or team collections:
 

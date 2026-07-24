@@ -1,0 +1,13 @@
+{
+  "specification_version": "0.0.1",
+  "id": "created-date",
+  "mode": "once",
+  "state": "pending",
+  "source": {
+    "kind": "now",
+    "format": "YYYY-MM-DD"
+  },
+  "render": {
+    "item": "Created ${value}"
+  }
+}

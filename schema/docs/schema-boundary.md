@@ -11,7 +11,7 @@ specification wins and the schema has a bug.
 
 ## Artifact map
 
-| Governed artifact | JSON Schema |
+| Contract surface | JSON Schema |
 | --- | --- |
 | `typedmark.md` | `typedmark.schema.json` |
 | `<metadata_directory>/schemas/<note_type>.md` | `note-type.schema.json` |
@@ -22,12 +22,14 @@ specification wins and the schema has a bug.
 | portable validation report (plain JSON output, not a collection artifact) | `validation-report.schema.json` |
 | portable automation event (plain JSON runtime interchange) | `automation-event.schema.json` |
 | portable automation run report (plain JSON runtime interchange) | `automation-run-report.schema.json` |
+| content-expansion descriptor (JSON inside a Markdown start marker) | `expansion.schema.json` |
 | shared blocks (field definitions, storage, relationships, headings, …) | `defs.schema.json` |
 
-Managed notes are deliberately **not** covered: their frontmatter is validated
+Managed notes as complete documents are deliberately **not** covered: their frontmatter is validated
 against the collection's *effective note-type schemas*, which only exist after the
 semantic layer composes property sets and inheritance. A document schema cannot
-express them.
+express them. The independently parseable JSON descriptor inside a content-expansion
+marker is covered by `expansion.schema.json`.
 
 ## What the schemas enforce
 
@@ -43,8 +45,11 @@ express them.
   requiring `scaffold`, mandatory-tag declaration grammar and uniqueness,
   folder scopes declaring exactly one path matcher and at least one action,
   field operations declaring exactly one of `note_type`/`property_set`,
-  automation trigger and action variants, event snapshot combinations, and
-  automation run-report status/diagnostic combinations
+  automation trigger and action variants, event snapshot and body-change
+  combinations, causal producer variants, and automation run-report
+  status/diagnostic combinations
+- content-expansion descriptor keys, source variants, sync modes, persisted
+  state, current-time restrictions, and render-block shape
 - the core-defined field contracts for `note_type`, `id`, `deleted`,
   `archived`, and `aliases` where schemas or property sets declare them
 - validation-report codes, severities, required context, and consistency between
@@ -80,6 +85,9 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
   materialization, note-link syntax and resolution, allowed unresolved
   placeholder links, relationship instance counting and cardinality, heading
   rules, storage-path conformance including archived state
+- content-expansion semantics: marker parsing and pairing, source resolution and
+  scalar conversion, relationship traversal, shared-expression evaluation,
+  rendered-region equality, template materialization, drift, and ejection
 - system evolution: history version ordering and uniqueness, the replay
   invariant, migration impact computation, composition determinism and the
   canonical serialization
@@ -110,9 +118,9 @@ bun run validate-fixtures
 Fixtures are mapped to artifact schemas by filename prefix (`typedmark-*`,
 `note-type-*`, `property-set-*`, `history*`, `marketplace*`,
 `validation-report-*`, `automation-*`, `automation-event-*`, and
-`automation-run-report-*`). Markdown fixtures are validated through their extracted
-frontmatter; `.json` fixtures such as the marketplace catalog and validation
-reports are validated directly.
+`automation-run-report-*`, and `expansion-*`). Markdown fixtures are validated through their extracted
+frontmatter; `.json` fixtures such as expansion descriptors, the marketplace
+catalog, and validation reports are validated directly.
 
 The golden-vector check validates collection layout, governed-artifact shapes,
 schema and automation basenames, referenced template existence, report shape,

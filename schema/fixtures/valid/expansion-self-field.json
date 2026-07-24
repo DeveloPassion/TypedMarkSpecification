@@ -1,0 +1,14 @@
+{
+  "specification_version": "0.0.1",
+  "id": "project-summary",
+  "mode": "auto",
+  "state": "materialized",
+  "source": {
+    "kind": "self_field",
+    "field": "summary"
+  },
+  "render": {
+    "item": "${value}",
+    "separator": "\n"
+  }
+}

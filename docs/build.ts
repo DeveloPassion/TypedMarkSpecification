@@ -34,7 +34,7 @@ const PAGES: Page[] = [
   { file: "field-definition-reference.md", out: "field-definition-reference.html", nav: "Field Definition Reference", section: "Specification" },
   { file: "managed-notes-and-properties.md", out: "managed-notes-and-properties.html", nav: "Managed Notes and Properties", section: "Specification" },
   { file: "note-links.md", out: "note-links.html", nav: "Note Links", section: "Specification" },
-  { file: "relationships-headings-and-templates.md", out: "relationships-headings-and-templates.html", nav: "Relationships, Headings, and Templates", section: "Specification" },
+  { file: "relationships-headings-and-templates.md", out: "relationships-headings-and-templates.html", nav: "Relationships, Headings, Templates, and Content Expansion", section: "Specification" },
   { file: "systems-composition-evolution.md", out: "systems-composition-evolution.html", nav: "Systems, Composition, and Evolution", section: "Specification" },
   { file: "migration-effects.md", out: "migration-effects.html", nav: "Migration Effects", section: "Specification" },
   { file: "conformance-and-roadmap.md", out: "conformance-and-roadmap.html", nav: "Conformance and Roadmap", section: "Specification" },

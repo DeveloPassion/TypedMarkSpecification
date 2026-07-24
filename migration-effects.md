@@ -48,6 +48,7 @@ Rules:
 - `ME-23` After mandatory-tag materialization, a migration MUST re-validate the complete stored `tags` value against the migrated effective field definition.
 - `ME-24` `add_automation`, `remove_automation`, and `change_automation` have no direct managed-note effect; the migrated effective automation set applies only to execution events processed after the migration commits.
 - `ME-25` A `change_collection` operation that changes only `automation_defaults` has no direct managed-note effect.
+- `ME-26` A `change_template` operation MUST NOT copy changed content-expansion descriptors or regions into existing managed notes.
 
 ### Field Type Conversions
 

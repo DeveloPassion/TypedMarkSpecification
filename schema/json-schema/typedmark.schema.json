@@ -151,6 +151,12 @@
         },
         "template_drift": {
           "$ref": "defs.schema.json#/$defs/validation_severity"
+        },
+        "invalid_expansion": {
+          "$ref": "defs.schema.json#/$defs/validation_severity"
+        },
+        "expansion_drift": {
+          "$ref": "defs.schema.json#/$defs/validation_severity"
         }
       },
       "additionalProperties": false

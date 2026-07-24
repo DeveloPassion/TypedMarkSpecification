@@ -121,7 +121,9 @@
             "invalid_relationship_definition",
             "invalid_relationship_instance",
             "invalid_heading",
-            "template_drift"
+            "template_drift",
+            "invalid_expansion",
+            "expansion_drift"
           ]
         },
         "severity": {
@@ -152,6 +154,9 @@
         },
         "heading": {
           "$ref": "defs.schema.json#/$defs/non_empty_string"
+        },
+        "expansion": {
+          "$ref": "defs.schema.json#/$defs/slug"
         }
       },
       "additionalProperties": false

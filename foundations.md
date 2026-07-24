@@ -136,6 +136,8 @@ TypedMark is the structural contract for a note collection. Artifact-specific ru
 
 TypedMark separates the authoring surface from the values tools evaluate. Authors can start with the Core Profile and omit deterministic boilerplate; tools expand omitted defaults before computing conformance. Larger collections add reuse, publishing, composition, and migration without replacing the core model.
 
+Here, *canonical expansion* means filling deterministic defaults in governed artifacts. It is distinct from the marker-delimited *content expansion* defined in [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md#content-expansion), which materializes derived Markdown inside note and template bodies.
+
 | Profile | Purpose | Requires | Defers |
 | --- | --- | --- | --- |
 | Core Profile | A minimal conforming typed collection | `typedmark.md`, one concrete schema, one template for each concrete schema, and managed notes that resolve to those schemas | automation rules, property sets, vocabularies, advanced mappings, systems, composition, history, and migration |
@@ -238,11 +240,12 @@ Rules:
 
 - `FND-44` A governed artifact's frontmatter is its governed content. When this specification says an artifact contains, declares, or defines a key, it refers to that artifact's frontmatter.
 - `FND-45` A governed artifact MUST have a frontmatter block under the Frontmatter Block Grammar defined above; an artifact without valid frontmatter is invalid.
-- `FND-46` The artifact body is non-normative explanatory content for humans and agents. Tools MUST ignore it for structural reasoning and MUST preserve it when rewriting the artifact's frontmatter.
-- `FND-47` The artifact body MUST NOT be required to understand or evaluate collection structure; everything structural lives in frontmatter.
+- `FND-46` Except for the governed template-body contract under `FND-50`, tools MUST ignore artifact bodies for structural reasoning.
+- `FND-88` A tool that rewrites governed artifact frontmatter MUST preserve the artifact body.
+- `FND-47` Except for template starter content and content-expansion declarations under `FND-50`, an artifact body MUST NOT be required to understand or evaluate collection structure.
 - `FND-48` Governed artifact files are not collection notes: they are not evaluated for note-type mapping, are not candidates for note-link resolution, and are not validated as managed notes.
 - `FND-49` `typedmark.md` at the collection root is reserved for the collection configuration; a managed note MUST NOT resolve its storage path to `typedmark.md`.
-- `FND-50` Templates under `<metadata_directory>/templates/` are governed artifacts with their own contract: their frontmatter is starter note frontmatter and their body is starter note content, as defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
+- `FND-50` Templates under `<metadata_directory>/templates/` are governed artifacts with their own contract: their frontmatter is starter note frontmatter and their body is governed starter note content, including content-expansion declarations, as defined in [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md).
 - `FND-51` Examples of governed artifacts in this specification show frontmatter content unless frontmatter delimiters are shown.
 
 A complete minimal `typedmark.md`, showing the governed frontmatter together with a free-form body:
@@ -300,6 +303,7 @@ The authoritative contract for each governed element lives in exactly one place,
 - note-link syntax, resolution, and body extraction: [Note Links](note-links.md)
 - managed-note effects of migration operations: [Migration Effects](migration-effects.md)
 - relationship semantics, heading constraints, and template obligations: [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
+- content-expansion marker, source, rendering, synchronization, and ejection semantics: [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md#content-expansion)
 - conformance modes and required artifact sets: [Conformance and Roadmap](conformance-and-roadmap.md)
 
 `typedmark.md` lives at the root of the managed collection, as required by [Collection Model](collection-model.md).
@@ -347,7 +351,7 @@ Rules:
 - `FND-60` A text-template expression is a string composed of literal text plus zero or more placeholders.
 - `FND-61` A placeholder has the form `${name}` or `${transform(name)}`.
 - `FND-62` `name` and `transform` in the shared expression language MUST each match the field-name grammar `^[a-z][a-z0-9_]*$`.
-- `FND-63` The shared expression parser operates on the decoded string value after YAML parsing. Within that string, `\\` represents a literal backslash and `\${` represents a literal `${`; any other backslash escape is invalid.
+- `FND-63` The shared expression parser operates on the decoded string value after parsing its containing YAML or JSON syntax. Within that string, `\\` represents a literal backslash and `\${` represents a literal `${`; any other backslash escape is invalid.
 - `FND-64` Shared-expression evaluation MUST be deterministic and side-effect free.
 - `FND-65` Shared expressions MUST NOT read the current time, random sources, the filesystem, the network, or any state outside the consumer-defined input scope.
 - `FND-66` The shared transform library in this specification version contains exactly `uppercase`, `lowercase`, and `capitalize`.

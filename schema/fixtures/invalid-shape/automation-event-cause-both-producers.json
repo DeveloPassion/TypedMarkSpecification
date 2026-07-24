@@ -1,0 +1,26 @@
+{
+  "specification_version": "0.0.1",
+  "event_id": "evt-01k0ambiguouscause",
+  "kind": "note.updated",
+  "occurred_at": "2026-07-24T09:31:00+02:00",
+  "origin": "automation",
+  "before": {
+    "path": "Projects/TypedMark.md",
+    "frontmatter": {
+      "note_type": "project"
+    }
+  },
+  "after": {
+    "path": "Projects/TypedMark.md",
+    "frontmatter": {
+      "note_type": "project"
+    }
+  },
+  "body_changed": true,
+  "caused_by": {
+    "run_id": "run-01k0refresh",
+    "event_id": "evt-01k0projectdone",
+    "automation": "refresh-content",
+    "operation": "content_expansion"
+  }
+}

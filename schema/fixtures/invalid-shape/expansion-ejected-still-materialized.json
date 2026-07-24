@@ -1,0 +1,13 @@
+{
+  "specification_version": "0.0.1",
+  "id": "temporary",
+  "mode": "once_and_eject",
+  "state": "materialized",
+  "source": {
+    "kind": "self_field",
+    "field": "summary"
+  },
+  "render": {
+    "item": "${value}"
+  }
+}
