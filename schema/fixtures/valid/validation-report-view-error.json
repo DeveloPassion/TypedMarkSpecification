@@ -1,0 +1,16 @@
+{
+  "specification_version": "0.0.1",
+  "mode": "instantiated_collection",
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_view",
+      "severity": "error",
+      "path": ".typedmark/views/project-board.md",
+      "rule_id": "CM-425",
+      "message": "presentation column missing does not resolve to a query projection alias",
+      "view": "project-board",
+      "field": "missing"
+    }
+  ]
+}

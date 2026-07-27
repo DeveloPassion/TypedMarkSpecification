@@ -28,7 +28,7 @@ See also:
 This specification defines the structural contract for typed Markdown note collections. It deliberately does not define:
 
 - **A specific schema for note types.** TypedMark describes how to define and document note types; concrete note sets, starter content, and house conventions belong to systems layered on top of the core, as stated in [Foundations](foundations.md).
-- **Rendering and presentation.** How notes, fields, views, or icons are displayed is tool-defined; `icon` is an opaque token, and presentation hints remain an open decision tracked separately.
+- **Visual rendering and field widgets.** Saved views standardize their layout family, visible field order, labels, grouping, and board partition. Styling, dimensions, interaction controls, value widgets, note rendering, and opaque `icon` tokens remain tool-defined.
 - **Editor user experience.** Forms, pickers, autocomplete behavior, and authoring workflows are application concerns.
 - **Sync, storage backends, and version control.** TypedMark governs files at rest; how they move between machines — Git, sync services, backups — is out of scope.
 - **Body prose.** Markdown content outside the governed surfaces — frontmatter, H2 headings, internal note links — is free; TypedMark does not constrain writing style or block-level structure.
@@ -91,9 +91,9 @@ Rules:
 - `CR-34` `rule_id` MUST identify the stable rule whose violation produced the result.
 - `CR-35` `message` MUST be a non-empty human-readable explanation of the specific finding.
 - `CR-36` Consumers MUST NOT use `message` as a machine-stable identifier.
-- `CR-37` A result MAY include `note_type`, `field`, `relationship`, `heading`, `expansion`, `template_region`, or `drift_kind` when that context applies.
+- `CR-37` A result MAY include `note_type`, `field`, `relationship`, `heading`, `expansion`, `view`, `template_region`, or `drift_kind` when that context applies.
 - `CR-38` A nested field context MUST use `field` as a dot-separated path from its top-level frontmatter field.
-- `CR-39` Validators MUST order results by `path`, `rule_id`, `code`, `note_type`, `field`, `relationship`, `heading`, `expansion`, `template_region`, and `drift_kind`, in that sequence, comparing each component as exact Unicode code points and treating absent values as empty strings.
+- `CR-39` Validators MUST order results by `path`, `rule_id`, `code`, `note_type`, `field`, `relationship`, `heading`, `expansion`, `view`, `template_region`, and `drift_kind`, in that sequence, comparing each component as exact Unicode code points and treating absent values as empty strings.
 - `CR-40` Validation MUST NOT modify the collection or any governed artifact it evaluates.
 - `CR-86` Every `template_drift` result MUST contain `template_region` and `drift_kind`.
 
@@ -200,8 +200,10 @@ A collection root conforms as a valid system definition when:
 5. `CR-5` Every schema file under `<metadata_directory>/schemas/`, if present, is valid under [Note Type Schemas](note-type-schemas.md).
 6. `CR-6` Every template referenced by a schema file exists and satisfies the template-frontmatter contract in [Relationships, Headings, and Templates](relationships-headings-and-templates.md) for its note type's effective schema.
 7. `CR-59` Every automation file under `<metadata_directory>/automations/`, if present, is valid under [Collection Model](collection-model.md).
-8. `CR-84` Every content expansion in a referenced template satisfies the template expansion contract in [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md#content-expansion).
-9. `CR-87` Every template region in a referenced template satisfies the marker, descriptor, pairing, nesting, and identifier rules in [Template Drift Tracking](relationships-headings-and-templates.md#template-drift-tracking).
+8. `CR-89` Every saved-view file under `<metadata_directory>/views/`, if present, is valid under [Collection Model](collection-model.md).
+9. `CR-91` Every saved-view reference from a template resolves.
+10. `CR-84` Every content expansion in a referenced template satisfies the template expansion contract in [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md#content-expansion).
+11. `CR-87` Every template region in a referenced template satisfies the marker, descriptor, pairing, nesting, and identifier rules in [Template Drift Tracking](relationships-headings-and-templates.md#template-drift-tracking).
 
 ### Valid Instantiated Collection
 
@@ -216,8 +218,10 @@ A collection root conforms as a valid instantiated collection when:
 7. `CR-12` Managed notes satisfy their schema storage rules under [Note Type Schemas](note-type-schemas.md).
 8. `CR-13` Managed notes satisfy their schema relationship and heading rules under [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 9. `CR-60` Every automation file under `<metadata_directory>/automations/`, if present, is valid under [Collection Model](collection-model.md).
-10. `CR-85` Every content expansion in a collection note satisfies the applicable marker, descriptor, source, rendering, synchronization, and persisted-state rules in [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md#content-expansion).
-11. `CR-88` Every template-region marker or `template_regions` receipt in a collection note belongs to an enrolled managed note and satisfies the receipt, marker-correspondence, and drift-classification rules in [Template Drift Tracking](relationships-headings-and-templates.md#template-drift-tracking).
+10. `CR-90` Every saved-view file under `<metadata_directory>/views/`, if present, is valid under [Collection Model](collection-model.md).
+11. `CR-92` Every saved-view reference from a collection note resolves.
+12. `CR-85` Every content expansion in a collection note satisfies the applicable marker, descriptor, source, rendering, synchronization, and persisted-state rules in [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md#content-expansion).
+13. `CR-88` Every template-region marker or `template_regions` receipt in a collection note belongs to an enrolled managed note and satisfies the receipt, marker-correspondence, and drift-classification rules in [Template Drift Tracking](relationships-headings-and-templates.md#template-drift-tracking).
 
 Additional rules:
 
@@ -226,7 +230,7 @@ Additional rules:
 - `CR-16` A single collection root MAY conform simultaneously as both a valid system definition and a valid instantiated collection.
 - `CR-17` Untyped notes MAY exist in an instantiated collection and do not by themselves make the collection non-conforming.
 - `CR-18` Structural precedence across artifacts remains defined in [Foundations](foundations.md).
-- `CR-19` A Core Profile instantiated collection is a valid instantiated collection that omits system fields, composition provenance, `history.md`, automation rules, property sets, `folder_scopes`, vocabularies, and non-default note-type mappings.
+- `CR-19` A Core Profile instantiated collection is a valid instantiated collection that omits system fields, composition provenance, `history.md`, automation rules, saved views, property sets, `folder_scopes`, vocabularies, and non-default note-type mappings.
 - `CR-20` Validators MUST apply the defaulted shorthand values defined in [Collection Model](collection-model.md) and [Note Type Schemas](note-type-schemas.md) before evaluating any conformance mode.
 - `CR-22` Validators MUST evaluate every winning note-type mapping candidate under `CM-114`, including candidates that do not resolve to a concrete schema.
 

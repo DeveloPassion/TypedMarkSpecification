@@ -1,0 +1,15 @@
+{
+  "specification_version": "0.0.1",
+  "id": "active-projects",
+  "mode": "auto",
+  "state": "materialized",
+  "source": {
+    "kind": "view",
+    "view": "project-board",
+    "column": "title"
+  },
+  "render": {
+    "item": "- ${value}",
+    "empty": "_No active projects._"
+  }
+}

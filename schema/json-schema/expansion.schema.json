@@ -48,6 +48,9 @@
           "$ref": "#/$defs/query_source"
         },
         {
+          "$ref": "#/$defs/view_source"
+        },
+        {
           "$ref": "#/$defs/file_source"
         },
         {
@@ -197,6 +200,26 @@
         },
         "query": {
           "$ref": "query.schema.json"
+        },
+        "column": {
+          "$ref": "defs.schema.json#/$defs/field_name"
+        }
+      },
+      "additionalProperties": false
+    },
+    "view_source": {
+      "type": "object",
+      "required": [
+        "kind",
+        "view",
+        "column"
+      ],
+      "properties": {
+        "kind": {
+          "const": "view"
+        },
+        "view": {
+          "$ref": "defs.schema.json#/$defs/slug"
         },
         "column": {
           "$ref": "defs.schema.json#/$defs/field_name"

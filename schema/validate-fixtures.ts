@@ -51,6 +51,7 @@ const ARTIFACT_SCHEMAS: Record<string, string> = {
   "property-set": "property-set.schema.json",
   history: "history.schema.json",
   query: "query.schema.json",
+  view: "view.schema.json",
   expansion: "expansion.schema.json",
   "template-region": "template-region.schema.json",
   "template-tracking": "template-tracking.schema.json",
@@ -108,6 +109,7 @@ function classify(document: unknown): string | null {
   if ("note_type" in doc) return "note-type";
   if ("property_set" in doc) return "property-set";
   if ("history" in doc) return "history";
+  if ("view" in doc && "query" in doc && "presentation" in doc) return "view";
   if ("select" in doc) return "query";
   if ("id" in doc && "source" in doc && "render" in doc && "state" in doc) return "expansion";
   if ("id" in doc && Object.keys(doc).every((key) => ["specification_version", "id"].includes(key))) return "template-region";
@@ -191,7 +193,7 @@ function compareReportResults(left: unknown, right: unknown): number {
   const rightResult = objectValue(right) ?? {};
   const keys = [
     "path", "rule_id", "code", "note_type", "field", "relationship", "heading",
-    "expansion", "template_region", "drift_kind",
+    "expansion", "view", "template_region", "drift_kind",
   ];
   for (const key of keys) {
     const compared = compareCodePoints(
@@ -347,6 +349,23 @@ function validateGoldenVectors(
           }
         } catch (error) {
           failures.push(`golden/${vector}/${basename(automationPath)}: ${error instanceof Error ? error.message : String(error)}`);
+        }
+      }
+    }
+
+    const viewRoot = join(metadataRoot, "views");
+    if (existsSync(viewRoot)) {
+      for (const viewPath of collectFiles(viewRoot).filter((path) => extname(path) === ".md")) {
+        try {
+          const view = extractFrontmatter(readFileSync(viewPath, "utf8"));
+          validateShape(validators.view!, view, `golden/${vector}/${basename(viewPath)}`, failures);
+          const viewObject = objectValue(view);
+          const viewId = viewObject?.view;
+          if (typeof viewId === "string" && basename(viewPath, ".md") !== viewId) {
+            failures.push(`golden/${vector}: view basename does not match view ${viewId}`);
+          }
+        } catch (error) {
+          failures.push(`golden/${vector}/${basename(viewPath)}: ${error instanceof Error ? error.message : String(error)}`);
         }
       }
     }

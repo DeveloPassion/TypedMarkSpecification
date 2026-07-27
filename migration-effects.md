@@ -5,16 +5,17 @@ nav_order: 10
 audience: advanced
 ---
 
-# Migration Effects on Managed Notes
+# Migration Effects on Collection Content
 
 Audience: system publishers and tool authors.
 
 Authoritative for:
 
-- the managed-note effect of every `history.md` change operation
+- the collection-content effect of every `history.md` change operation
 - mandatory-tag policy changes during collection and note-type migrations
 - field type conversions during `retype_field` migrations
 - template-region drift evaluation after `change_template`
+- saved-view reference behavior after saved-view changes
 
 See also:
 
@@ -23,7 +24,7 @@ See also:
 
 ## Migrating Managed Notes
 
-When a collection is updated to newer versions of its source systems, the migration plan defined in [Systems, Composition, and Evolution](systems-composition-evolution.md) is applied to managed notes. Each system change operation recorded in `history.md` has a defined effect on managed-note frontmatter, defined here. The migration plan determines the order in which these operations are applied; this page defines what each one does to a note.
+When a collection is updated to newer versions of its source systems, the migration plan defined in [Systems, Composition, and Evolution](systems-composition-evolution.md) is applied to affected governed references and collection content. Each system change operation recorded in `history.md` has a defined effect here. The migration plan determines the order in which these operations are applied; this page defines what each one does to a note or governed reference.
 
 Rules:
 
@@ -52,6 +53,13 @@ Rules:
 - `ME-26` A `change_template` operation MUST NOT copy changed content-expansion descriptors or regions into existing managed notes.
 - `ME-27` A `change_template` operation MUST preserve each affected note's body and `template_regions` receipts while computing its post-migration template-drift states.
 - `ME-28` A migration tool MUST NOT reconcile a post-migration template-drift state without a separate reconciliation request under [Template Drift Tracking](relationships-headings-and-templates.md#reconciliation-and-detachment).
+- `ME-29` `add_view` has no direct managed-note write effect.
+- `ME-30` `change_view` MUST re-evaluate every auto-synchronized content expansion that references the changed saved view.
+- `ME-31` `change_view` MUST NOT rewrite a manual content expansion that references the changed saved view without an explicit refresh request.
+- `ME-32` Before applying `remove_view`, a migration MUST update, eject, or remove every reference to that saved view so the migrated collection does not contain an unresolved saved-view reference.
+- `ME-33` `remove_view` MUST NOT delete materialized Markdown from an ejected content expansion.
+- `ME-34` Before a migration containing `change_view` commits, every affected manual content expansion MUST be revalidated against the changed saved view.
+- `ME-35` An affected manual content expansion whose materialized region no longer equals its current rendered source result MUST be explicitly refreshed or ejected before the migration commits.
 
 ### Field Type Conversions
 

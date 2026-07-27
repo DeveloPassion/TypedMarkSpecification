@@ -114,6 +114,7 @@
             "invalid_note_count",
             "invalid_property_set",
             "invalid_automation",
+            "invalid_view",
             "invalid_note_type_mapping",
             "invalid_composition",
             "unsupported_specification_version",
@@ -157,6 +158,9 @@
           "$ref": "defs.schema.json#/$defs/non_empty_string"
         },
         "expansion": {
+          "$ref": "defs.schema.json#/$defs/slug"
+        },
+        "view": {
           "$ref": "defs.schema.json#/$defs/slug"
         },
         "template_region": {

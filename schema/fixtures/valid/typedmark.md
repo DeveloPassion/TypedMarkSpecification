@@ -26,6 +26,7 @@ validation_defaults:
   duplicate_unique_value: error
   invalid_note_count: error
   invalid_property_set: error
+  invalid_view: error
   invalid_note_type_mapping: error
   invalid_composition: error
   unsupported_specification_version: error

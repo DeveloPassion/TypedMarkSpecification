@@ -73,6 +73,10 @@ A property set is the single named reusable bundle for shared `frontmatter`, `re
 
 The effective note-type schema is the normative result of taking one concrete note-type schema, its abstract ancestor chain through `extends`, and then applying default property sets, composed property sets, and local schema definitions in the order defined by this specification. Managed-note conformance is evaluated against that effective schema, not against isolated fragments.
 
+### Saved Views
+
+A saved view is a governed, named pairing of one portable query with a declarative presentation. It lives under `<metadata_directory>/views/` and can be rendered directly or reused by content expansion. Details: [Collection Model](collection-model.md#saved-views).
+
 ### Relationships, Headings, and Templates
 
 A note type governs more than metadata fields. It also defines typed relationship constraints, heading requirements, a canonical template reference, and explicit tracking for template-owned body regions. These rules are authoritative on [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md).
@@ -128,6 +132,7 @@ TypedMark defines:
 - where notes of each type live and how their note names are formed
 - which frontmatter fields, relationships, headings, and templates each type declares
 - how portable queries filter, project, order, group, and limit managed notes
+- how saved views name a query and present its results as a table, list, cards, or board
 - how systems package, version, compose, scaffold, and evolve collections, and how a collection records its composition provenance
 - how conformance is evaluated
 
@@ -151,7 +156,7 @@ Rules:
 - `FND-75` A Core Profile collection MUST declare `typedmark.md`.
 - `FND-76` A Core Profile collection MUST declare at least one concrete note-type schema.
 - `FND-77` A Core Profile collection MUST provide every template referenced or defaulted by its concrete schemas.
-- `FND-78` A Core Profile collection MAY omit automation rules, property sets, `folder_scopes`, vocabularies, explicit note-type mappings, system fields, composition provenance, and `history.md`.
+- `FND-78` A Core Profile collection MAY omit automation rules, saved views, property sets, `folder_scopes`, vocabularies, explicit note-type mappings, system fields, composition provenance, and `history.md`.
 - `FND-79` Authoring shorthand is a governed artifact shape that omits a value only when the authoritative rule for that key defines one deterministic effective default.
 - `FND-80` A conforming tool MUST expand omitted shorthand defaults before computing effective note-type schemas, storage paths, template paths, validation severities, relationship constraints, heading constraints, or conformance results.
 - `FND-81` Canonical expansion MUST NOT invent domain content, note types, fields, relationships, headings, templates, scaffold notes, or migration history.
@@ -235,7 +240,7 @@ Rules:
 
 ## Governed Artifact Format
 
-Every governed TypedMark artifact — `typedmark.md`, the note-type schemas, property sets, automation rules, and `history.md` — is a Markdown file with YAML frontmatter.
+Every governed TypedMark artifact — `typedmark.md`, the note-type schemas, property sets, automation rules, saved views, templates, and `history.md` — is a Markdown file with YAML frontmatter.
 
 Rules:
 
@@ -286,6 +291,8 @@ typedmark.md
     <note_type>.md
   templates/
     <note_type_template>.md
+  views/
+    <view>.md
 ```
 
 In path notation below, `<metadata_directory>` is the directory name declared by `typedmark.md` `metadata_directory`.
@@ -299,6 +306,7 @@ The authoritative contract for each governed element and cross-tool runtime surf
 - `<metadata_directory>/property-sets/<property_set>.md`: [Collection Model](collection-model.md)
 - `<metadata_directory>/schemas/<note_type>.md`: [Note Type Schemas](note-type-schemas.md)
 - `<metadata_directory>/templates/<note_type_template>.md`: [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
+- `<metadata_directory>/views/<view>.md`: [Collection Model](collection-model.md)
 - managed note contract, field names, core-defined fields, and field materialization: [Managed Notes and Properties](managed-notes-and-properties.md)
 - frontmatter property types and field-definition properties: [Field Definition Reference](field-definition-reference.md)
 - note-link syntax, resolution, and body extraction: [Note Links](note-links.md)
@@ -307,6 +315,7 @@ The authoritative contract for each governed element and cross-tool runtime surf
 - template-region marker, receipt, digest, drift-state, reconciliation, and detachment semantics: [Template Drift Tracking](relationships-headings-and-templates.md#template-drift-tracking)
 - content-expansion marker, source, rendering, synchronization, and ejection semantics: [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md#content-expansion)
 - portable query descriptor and evaluation semantics: [Collection Model](collection-model.md#portable-queries)
+- saved-view artifact, presentation, and Obsidian Bases interoperability: [Collection Model](collection-model.md#saved-views)
 - portable validation-report and automation-interchange formats: [Conformance and Roadmap](conformance-and-roadmap.md)
 - conformance modes and required artifact sets: [Conformance and Roadmap](conformance-and-roadmap.md)
 

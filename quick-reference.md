@@ -22,7 +22,7 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | --- | --- | --- |
 | Collection | A rooted set of Markdown notes plus the TypedMark artifacts that structure them | [Foundations](foundations.md#collection) |
 | Core Profile | The minimal authoring profile for a conforming typed collection | [Foundations](foundations.md#authoring-profiles-and-canonical-expansion) |
-| Governed artifact | `typedmark.md`, a note-type schema, a property set, an automation rule, or `history.md` — Markdown files whose frontmatter is the contract | [Foundations](foundations.md#governed-artifact-format) |
+| Governed artifact | `typedmark.md`, a note-type schema, a property set, an automation rule, a saved view, a template, or `history.md` — Markdown files with governed frontmatter or body surfaces | [Foundations](foundations.md#governed-artifact-format) |
 | Note type | A named structural class notes are associated with; abstract or concrete | [Foundations](foundations.md#note-types) |
 | Managed note | A note associated with exactly one concrete note type and governed by its schema | [Managed Notes and Properties](managed-notes-and-properties.md) |
 | Untyped note | A collection note with no known note type; outside managed-note schema validation, though any expansion markers still use the content-expansion contract | [Foundations](foundations.md#untyped-notes) |
@@ -39,6 +39,7 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | Automation rule | A declarative event or schedule trigger with an ordered, atomic action list | [Collection Model](collection-model.md#automation-rules) |
 | Propagation | Deterministic multi-wave automation execution that commits only at a valid fixed point | [Managed Notes and Properties](managed-notes-and-properties.md#dependency-propagation-and-consistency) |
 | Portable query | A plain-JSON, read-only descriptor for filtering managed notes and projecting deterministic result rows | [Portable Queries](collection-model.md#portable-queries) |
+| Saved view | A governed named portable query plus an ordered presentation in a table, list, cards, or board layout | [Saved Views](collection-model.md#saved-views) |
 | Template region | Marker-delimited static Markdown with a per-note baseline receipt for portable three-way drift detection | [Template Drift Tracking](relationships-headings-and-templates.md#template-drift-tracking) |
 | Content expansion | Marker-delimited plain Markdown derived from a declared source, with automatic, manual, once, and ejectable modes | [Content Expansion](relationships-headings-and-templates.md#content-expansion) |
 
@@ -63,6 +64,8 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | react to note changes or a schedule | an automation artifact under `<metadata_directory>/automations/` | [Automation rules](collection-model.md#automation-rules) |
 | let automation changes trigger further rules safely | propagation mode with `automation_defaults.max_propagation_waves` | [Dependency propagation](managed-notes-and-properties.md#dependency-propagation-and-consistency) |
 | select, filter, sort, group, or limit managed notes portably | a portable query descriptor with `where`, `select`, `order_by`, `group_by`, and `limit` | [Portable Queries](collection-model.md#portable-queries) |
+| save and share a table, list, cards, or board view | a saved-view artifact under `<metadata_directory>/views/` | [Saved Views](collection-model.md#saved-views) |
+| build a readable Markdown dashboard from saved views | one or more view-backed content expansions in an ordinary note | [Content Expansion](relationships-headings-and-templates.md#content-expansion) |
 | detect and reconcile static template changes without overwriting note edits | `typedmark:template-region` markers plus `template_regions` baseline receipts | [Template Drift Tracking](relationships-headings-and-templates.md#template-drift-tracking) |
 | keep a Markdown region synchronized with a field, relationship, or query result | a `typedmark:expansion` marker with `mode: auto` or `manual` | [Content Expansion](relationships-headings-and-templates.md#content-expansion) |
 | share fields across many note types | property sets and `default_property_sets` | [Collection Model](collection-model.md#composing-property-sets) |

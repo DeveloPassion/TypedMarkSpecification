@@ -25,7 +25,7 @@ New here? Read the [Manifesto](manifesto.md) for the why, then follow [Getting S
 - [Manifesto](manifesto.md): why note types matter
 - [Getting Started](getting-started.md): your first typed collection, step by step (non-normative)
 - [Foundations](foundations.md): the core concepts, the file format of governed artifacts, and the parsing baselines everything else builds on
-- [Collection Model](collection-model.md): collection configuration plus the portable query contract for filtering and projecting managed notes
+- [Collection Model](collection-model.md): collection configuration plus portable queries and saved table, list, cards, and board views
 - [Note Type Schemas](note-type-schemas.md): how one note type is defined — its fields, storage location, naming, and constraints
 - [Field Definition Reference](field-definition-reference.md): every property a field can declare, from types to constraints to generated values
 - [Managed Notes and Properties](managed-notes-and-properties.md): what a typed note must look like on disk, including automation execution and dependency propagation
@@ -50,7 +50,7 @@ New here? Read the [Manifesto](manifesto.md) for the why, then follow [Getting S
 
 **Essentials plus reuse** — for larger personal or team collections:
 
-8. [Collection Model](collection-model.md) sections on property sets, vocabularies, advanced note-type mappings, and portable queries
+8. [Collection Model](collection-model.md) sections on property sets, vocabularies, advanced note-type mappings, portable queries, and saved views
 9. [Note Type Schemas](note-type-schemas.md) sections on abstract inheritance, conditions, counts, and storage variations
 
 **Advanced** — for publishing, composing, and migrating systems:

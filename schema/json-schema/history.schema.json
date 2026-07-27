@@ -260,6 +260,26 @@
           "type": "object",
           "required": [
             "op",
+            "view"
+          ],
+          "properties": {
+            "op": {
+              "enum": [
+                "add_view",
+                "remove_view",
+                "change_view"
+              ]
+            },
+            "view": {
+              "$ref": "defs.schema.json#/$defs/slug"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "op",
             "from",
             "to"
           ],

@@ -128,6 +128,9 @@
         "invalid_automation": {
           "$ref": "defs.schema.json#/$defs/validation_severity"
         },
+        "invalid_view": {
+          "$ref": "defs.schema.json#/$defs/validation_severity"
+        },
         "invalid_note_type_mapping": {
           "$ref": "defs.schema.json#/$defs/validation_severity"
         },

@@ -13,6 +13,7 @@ full boundary.
 | `expansion-relationship-target-unresolved.json` | Every `target_note_types` filter entry must resolve to exactly one concrete or abstract note type; `ghost` does not. |
 | `expansion-unknown-render-reference.json` | Expansion rendering exposes only the shared-expression reference name `value`; `title` is unknown. |
 | `expansion-query-unknown-column.json` | A query expansion's `column` must resolve to exactly one projected alias; `missing` is not projected. |
+| `expansion-view-unknown-column.json` | A view expansion's `column` must resolve to a projected and presented column in the saved view; `missing` does not. |
 | `note-type-basename-mismatch.md` | The schema file basename must equal the file's `note_type` value (`topic` here). |
 | `note-type-computed-reference-unresolved.md` | Every `computed` field reference must resolve to a sibling field declared in the same effective `frontmatter`; `nickname` does not exist. |
 | `note-type-computed-unsupported-transform.md` | `computed` supports only the transforms defined by the specification version; `upper` is unknown. |
@@ -23,6 +24,7 @@ full boundary.
 | `query-duplicate-column.json` | Projection aliases must be unique within one query; `identity` is declared twice. |
 | `query-relationship-count-range.json` | A relationship predicate's minimum count must not exceed its maximum count. |
 | `query-unknown-order-column.json` | Every ordering column must resolve to exactly one projected alias; `priority` is not projected. |
+| `view-unknown-column.md` | Every presented column must resolve to exactly one alias in the saved view's query; `missing` is not projected. |
 
 Managed-note semantics — note-link resolution, allowed unresolved placeholder links,
 relationship cardinality, canonical field materialization — are also semantic-layer
