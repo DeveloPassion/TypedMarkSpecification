@@ -98,6 +98,9 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
   materialization, note-link syntax and resolution, allowed unresolved
   placeholder links, relationship instance counting and cardinality, heading
   rules, storage-path conformance including archived state
+- field compatibility and conversion: directional type-pair classification,
+  conditional-value qualification, target-constraint evaluation, finite-set
+  compatibility, and safe write-back eligibility
 - content-expansion semantics: marker parsing and pairing, source resolution and
   scalar conversion, relationship, query, and saved-view evaluation, shared-expression evaluation,
   embedded-query version and column agreement, rendered-region equality,

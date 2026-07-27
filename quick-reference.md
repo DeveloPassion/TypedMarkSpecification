@@ -30,6 +30,7 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | Property set | A named reusable bundle of `frontmatter`, `relationships`, and `headings` | [Collection Model](collection-model.md#property-set-definitions) |
 | Effective note-type schema | The result of composing a concrete schema, its abstract ancestors, and property sets | [Note Type Schemas](note-type-schemas.md#effective-note-type-schema) |
 | Field definition | The typed contract for one frontmatter property | [Field Definition Reference](field-definition-reference.md) |
+| Field conversion | A directional, typed conversion from one field definition to another | [Field compatibility and conversion](field-definition-reference.md#field-compatibility-and-conversion) |
 | Canonical materialization | Every declared field physically present in stored frontmatter, `null` when empty | [Managed Notes and Properties](managed-notes-and-properties.md#canonical-field-materialization) |
 | Relationship instance | A resolved note-to-note link counted against declared targets | [Relationships, Headings, and Templates](relationships-headings-and-templates.md) |
 | System | A collection that declares `version` and `scaffold`, making it publishable and composable | [Systems, Composition, and Evolution](systems-composition-evolution.md) |
@@ -69,6 +70,7 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | detect and reconcile static template changes without overwriting note edits | `typedmark:template-region` markers plus `template_regions` baseline receipts | [Template Drift Tracking](relationships-headings-and-templates.md#template-drift-tracking) |
 | keep a Markdown region synchronized with a field, relationship, or query result | a `typedmark:expansion` marker with `mode: auto` or `manual` | [Content Expansion](relationships-headings-and-templates.md#content-expansion) |
 | share fields across many note types | property sets and `default_property_sets` | [Collection Model](collection-model.md#composing-property-sets) |
+| combine differently typed fields safely | field compatibility and conversion rules | [Field compatibility and conversion](field-definition-reference.md#field-compatibility-and-conversion) |
 | apply shared structure by note path | `folder_scopes` | [Collection Model](collection-model.md#folder-scopes) |
 | tolerate unknown fields on one type only | per-type `unknown_field` severity | [Note Type Schemas](note-type-schemas.md#schema-file-contract) |
 | require exactly one Home note | `kind: singleton` with `count: {min: 1}` | [Schema kinds](note-type-schemas.md#allowed-schema-kinds) |

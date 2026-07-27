@@ -13,7 +13,7 @@ Authoritative for:
 
 - the collection-content effect of every `history.md` change operation
 - mandatory-tag policy changes during collection and note-type migrations
-- field type conversions during `retype_field` migrations
+- application of shared field conversions during `retype_field` migrations
 - template-region drift evaluation after `change_template`
 - saved-view reference behavior after saved-view changes
 
@@ -33,7 +33,7 @@ Rules:
 - `ME-3` `add_field` MUST add the new field to every affected managed note, materialized to a freshly generated value when the field declares a generation strategy, and otherwise to its `default_value` or to `null` under the Canonical Field Materialization rules defined in [Managed Notes and Properties](managed-notes-and-properties.md).
 - `ME-4` `remove_field` MUST remove the named field from every affected managed note.
 - `ME-5` `rename_field` MUST move the stored value from the old field name to the new field name in every affected managed note, preserving the value unchanged.
-- `ME-6` `retype_field` MUST convert each stored value under the Field Type Conversions rules below: a defined lossless conversion is applied automatically, a conditional conversion is applied only when every affected value qualifies, and every other type pair MUST be reported for explicit resolution and MUST NOT be coerced destructively.
+- `ME-6` `retype_field` MUST convert each stored value under the shared [Field Compatibility and Conversion](field-definition-reference.md#field-compatibility-and-conversion) rules.
 - `ME-7` `change_field` MUST re-validate every affected managed note against the field's new constraints; a stored value that violates the new constraints MUST be reported rather than silently dropped or altered.
 - `ME-8` `rename_note_type` MUST update the stored `note_type` field when present, MUST re-resolve the note's storage path under the renamed type's effective storage rules, and MUST update internal note links and relationship-bearing fields that target the renamed type.
 - `ME-9` `change_storage` MUST re-resolve the storage path of every affected managed note under the new effective storage rules, MUST move each note whose stored path no longer conforms, and MUST update internal note links so moved notes still resolve; a move or link update that cannot be applied safely MUST be reported for explicit resolution.
@@ -63,24 +63,18 @@ Rules:
 
 ### Field Type Conversions
 
-A `retype_field` migration changes a field's declared `type`. Conversions fall into three tiers, defined by the source type and target type pair.
+A `retype_field` migration is one consumer of the shared conversion contract in [Field Definition Reference](field-definition-reference.md#field-compatibility-and-conversion). It changes the field definition and writes compatible converted values back to affected notes; other consumers can use the same conversion semantics without mutating their sources.
 
-Defined lossless conversions are always information-preserving and are applied automatically:
-
-- `integer` to `number`, because every integer is a valid number.
-- `date` to `text`, `time` to `text`, `datetime` to `text`, and `link` to `text`, because these types are stored as strings and the stored characters are unchanged.
-- `tags` to `list` when the target `items.type` is `text`, because every tag value is a valid text item and the stored sequence is unchanged.
-- any type to `any`, because `any` accepts any non-null value.
-
-Conditional conversions are information-preserving only for values that already satisfy the target type and its constraints. They are applied automatically only when every affected stored value qualifies; otherwise the field requires explicit resolution:
-
-- `number` to `integer`, when every value has no fractional component.
-- `text` to `link`, and `text` to `date`, `time`, or `datetime`, when every value satisfies the target type's `format`.
-- `list` to `tags`, when the source `items.type` is `text` and every item is a non-empty string.
-- `any` to a concrete type, when every value satisfies that type.
+For example, retyping `estimate` from `integer` to `number` applies a lossless conversion to every stored value. Retyping it from `number` to `integer` proceeds automatically only when the complete affected value set contains no fractional value.
 
 Rules:
 
-- `ME-17` Any source and target type pair not listed above MUST be reported for explicit resolution and MUST NOT be coerced destructively.
-- `ME-18` A conversion changes only the stored representation; after conversion, each value MUST satisfy the new field definition's constraints under the rules on this page, and a value that fails is reported rather than silently altered.
-- `ME-19` A conversion to a non-nullable target MUST NOT introduce `null`; a value that cannot be converted to a conforming non-null value is reported for explicit resolution.
+- `ME-36` A lossless `retype_field` conversion MUST be applied automatically.
+- `ME-37` A conditional `retype_field` conversion MUST be applied automatically only when every affected stored value is compatible with the target definition.
+- `ME-17` A source-target pair classified as incompatible by `FDR-256` MUST be reported for explicit resolution.
+- `ME-38` A source-target pair classified as incompatible by `FDR-256` MUST NOT be coerced destructively.
+- `ME-18` After conversion, each stored value MUST satisfy the new field definition's constraints.
+- `ME-39` A converted value that fails the new field definition MUST be reported for explicit resolution.
+- `ME-40` A converted value that fails the new field definition MUST NOT be silently altered.
+- `ME-19` A conversion to a non-nullable target MUST NOT introduce `null`.
+- `ME-41` A value that cannot convert to a conforming non-null target value MUST be reported for explicit resolution.

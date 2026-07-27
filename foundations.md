@@ -308,7 +308,7 @@ The authoritative contract for each governed element and cross-tool runtime surf
 - `<metadata_directory>/templates/<note_type_template>.md`: [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
 - `<metadata_directory>/views/<view>.md`: [Collection Model](collection-model.md)
 - managed note contract, field names, core-defined fields, and field materialization: [Managed Notes and Properties](managed-notes-and-properties.md)
-- frontmatter property types and field-definition properties: [Field Definition Reference](field-definition-reference.md)
+- frontmatter property types, field-definition properties, and field compatibility and conversion: [Field Definition Reference](field-definition-reference.md)
 - note-link syntax, resolution, and body extraction: [Note Links](note-links.md)
 - managed-note effects of migration operations: [Migration Effects](migration-effects.md)
 - relationship semantics, heading constraints, and template obligations: [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md)
