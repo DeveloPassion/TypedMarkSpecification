@@ -65,6 +65,9 @@
         },
         {
           "$ref": "#/$defs/field_selection"
+        },
+        {
+          "$ref": "#/$defs/mapped_field_selection"
         }
       ]
     },
@@ -116,6 +119,56 @@
         },
         "as": {
           "$ref": "defs.schema.json#/$defs/field_name"
+        }
+      },
+      "additionalProperties": false
+    },
+    "mapped_field_selection": {
+      "type": "object",
+      "required": [
+        "kind",
+        "as",
+        "definition",
+        "sources"
+      ],
+      "properties": {
+        "kind": {
+          "const": "mapped_field"
+        },
+        "as": {
+          "$ref": "defs.schema.json#/$defs/field_name"
+        },
+        "definition": {
+          "$ref": "defs.schema.json#/$defs/field_definition"
+        },
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/mapped_field_source"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "mapped_field_source": {
+      "type": "object",
+      "required": [
+        "note_types",
+        "field"
+      ],
+      "properties": {
+        "note_types": {
+          "$ref": "#/$defs/note_types"
+        },
+        "field": {
+          "$ref": "defs.schema.json#/$defs/dotted_field_path"
+        },
+        "conversion": {
+          "enum": [
+            "lossless",
+            "conditional"
+          ]
         }
       },
       "additionalProperties": false

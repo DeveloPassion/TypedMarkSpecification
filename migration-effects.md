@@ -16,6 +16,7 @@ Authoritative for:
 - application of shared field conversions during `retype_field` migrations
 - template-region drift evaluation after `change_template`
 - saved-view reference behavior after saved-view changes
+- dataset dependency and reference behavior after dataset changes
 
 See also:
 
@@ -60,6 +61,14 @@ Rules:
 - `ME-33` `remove_view` MUST NOT delete materialized Markdown from an ejected content expansion.
 - `ME-34` Before a migration containing `change_view` commits, every affected manual content expansion MUST be revalidated against the changed saved view.
 - `ME-35` An affected manual content expansion whose materialized region no longer equals its current rendered source result MUST be explicitly refreshed or ejected before the migration commits.
+- `ME-42` `add_dataset`, `change_dataset`, and `remove_dataset` have no direct managed-note write effect.
+- `ME-43` `change_dataset` MUST re-evaluate every auto-synchronized content expansion that directly references the changed dataset or references a saved view backed by it.
+- `ME-44` `change_dataset` MUST NOT rewrite an affected manual content expansion without an explicit refresh request.
+- `ME-45` Before a migration containing `change_dataset` commits, every referencing saved view and affected manual content expansion MUST be revalidated against the changed projected column contract and row identity.
+- `ME-46` An affected manual content expansion whose materialized region no longer equals its current dataset-derived result MUST be explicitly refreshed or ejected before the migration commits.
+- `ME-47` Before applying `remove_dataset`, a migration MUST update, inline, retarget, or remove every saved-view and content-expansion reference to that dataset so the migrated collection contains no unresolved dataset reference.
+- `ME-48` `remove_dataset` MUST NOT delete materialized Markdown from an ejected content expansion.
+- `ME-49` A `change_dataset` that makes a mapped source ambiguous, incompatible, or non-conforming MUST be reported and resolved before the migration commits.
 
 ### Field Type Conversions
 

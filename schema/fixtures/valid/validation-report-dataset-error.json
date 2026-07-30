@@ -1,0 +1,15 @@
+{
+  "specification_version": "0.0.1",
+  "mode": "instantiated_collection",
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_dataset",
+      "severity": "error",
+      "path": ".typedmark/datasets/actions.md",
+      "rule_id": "CM-510",
+      "message": "row identity values are not unique",
+      "dataset": "actions"
+    }
+  ]
+}

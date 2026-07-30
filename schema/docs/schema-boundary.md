@@ -56,10 +56,11 @@ descriptors are covered by their descriptor schemas, and the core-defined
 - content-expansion descriptor keys, source variants, sync modes, persisted
   state, current-time restrictions, and render-block shape
 - portable-query descriptor keys; recursive boolean, path, field, and
-  relationship predicate variants; projection variants; ordering, grouping,
-  count-range, and limit shapes
-- saved-view keys, nested query shape, presented-field entries, layout families,
-  and board-layout configuration
+  relationship predicate variants; direct and mapped projection variants;
+  mapped source shapes; ordering, grouping, count-range, and limit shapes
+- dataset keys, nested query shape, row-identity grammar, and saved-view keys,
+  embedded-query or dataset-reference exclusivity, presented-field entries,
+  layout families, and board-layout configuration
 - template-region descriptor keys and identifier grammar, plus baseline and
   detached receipt variants in a managed note's `template_regions` value
 - the core-defined field contracts for `note_type`, `id`, `deleted`,
@@ -72,7 +73,7 @@ descriptors are covered by their descriptor schemas, and the core-defined
 
 These rules are normative but cannot (or should not) be expressed in JSON Schema:
 
-- filesystem checks: file basename equals `note_type`/`property_set`/`automation`/`view`, template
+- filesystem checks: file basename equals `note_type`/`property_set`/`automation`/`dataset`/`view`, template
   files exist under `<metadata_directory>/templates/`, artifact locations derive
   from `metadata_directory`
 - cross-file resolution: `extends` chains and cycle detection, property-set
@@ -102,14 +103,18 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
   conditional-value qualification, target-constraint evaluation, finite-set
   compatibility, and safe write-back eligibility
 - content-expansion semantics: marker parsing and pairing, source resolution and
-  scalar conversion, relationship, query, and saved-view evaluation, shared-expression evaluation,
+  scalar conversion, relationship, query, dataset, and saved-view evaluation, shared-expression evaluation,
   embedded-query version and column agreement, rendered-region equality,
   template materialization, drift, and ejection
 - portable-query semantics: note-type and abstract-descendant resolution,
   effective-field compatibility, typed comparisons, relationship traversal,
-  projection-alias uniqueness and resolution, count-range consistency,
+  projection-alias uniqueness and resolution, mapped-source overlap, declared
+  conversion-class agreement, target compatibility, count-range consistency,
   compatible ordering domains, deterministic row order, grouping, and limiting
-- saved-view semantics: query-version agreement, projection-reference resolution,
+- dataset semantics: query-version agreement, projection-contract resolution,
+  row-identity validity and uniqueness, source-backed/read-only classification,
+  reference resolution, and schema-evolution compatibility
+- saved-view semantics: query or dataset version agreement, projection-reference resolution,
   visible-field uniqueness, layout interpretation, explicit board-column equality,
   fallback-column placement, schema-evolution compatibility, and Bases conversion
   loss diagnostics
@@ -117,7 +122,7 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
   marker-to-receipt correspondence, region extraction, digest calculation,
   enrollment, three-way drift classification, reconciliation, and detachment
 - system evolution: history version ordering and uniqueness, inventory replay
-  across note types, property sets, automations, fields, and saved views;
+  across note types, property sets, automations, fields, datasets, and saved views;
   migration impact computation; composition determinism; and canonical
   serialization
 - automation semantics: artifact basenames and reference resolution, schedule

@@ -50,6 +50,7 @@ const ARTIFACT_SCHEMAS: Record<string, string> = {
   "note-type": "note-type.schema.json",
   "property-set": "property-set.schema.json",
   history: "history.schema.json",
+  dataset: "dataset.schema.json",
   query: "query.schema.json",
   view: "view.schema.json",
   expansion: "expansion.schema.json",
@@ -109,7 +110,8 @@ function classify(document: unknown): string | null {
   if ("note_type" in doc) return "note-type";
   if ("property_set" in doc) return "property-set";
   if ("history" in doc) return "history";
-  if ("view" in doc && "query" in doc && "presentation" in doc) return "view";
+  if ("dataset" in doc && "row_identity" in doc && "query" in doc) return "dataset";
+  if ("view" in doc && "presentation" in doc) return "view";
   if ("select" in doc) return "query";
   if ("id" in doc && "source" in doc && "render" in doc && "state" in doc) return "expansion";
   if ("id" in doc && Object.keys(doc).every((key) => ["specification_version", "id"].includes(key))) return "template-region";
@@ -193,7 +195,7 @@ function compareReportResults(left: unknown, right: unknown): number {
   const rightResult = objectValue(right) ?? {};
   const keys = [
     "path", "rule_id", "code", "note_type", "field", "relationship", "heading",
-    "expansion", "view", "template_region", "drift_kind",
+    "expansion", "dataset", "view", "template_region", "drift_kind",
   ];
   for (const key of keys) {
     const compared = compareCodePoints(

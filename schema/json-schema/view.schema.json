@@ -2,13 +2,12 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://developassion.github.io/TypedMarkSpecification/schema/view.schema.json",
   "title": "TypedMark saved view (<metadata_directory>/views/<view>.md frontmatter)",
-  "description": "A named portable query plus a declarative presentation. Authoritative semantics: collection-model.md (Saved Views).",
+  "description": "An embedded portable query or dataset reference plus a declarative presentation. Authoritative semantics: collection-model.md (Saved Views).",
   "type": "object",
   "required": [
     "specification_version",
     "view",
     "description",
-    "query",
     "presentation"
   ],
   "properties": {
@@ -27,11 +26,26 @@
     "query": {
       "$ref": "query.schema.json"
     },
+    "dataset": {
+      "$ref": "defs.schema.json#/$defs/slug"
+    },
     "presentation": {
       "$ref": "#/$defs/presentation"
     }
   },
   "additionalProperties": false,
+  "oneOf": [
+    {
+      "required": [
+        "query"
+      ]
+    },
+    {
+      "required": [
+        "dataset"
+      ]
+    }
+  ],
   "$defs": {
     "presentation": {
       "type": "object",

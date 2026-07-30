@@ -369,7 +369,7 @@ Rules:
 
 ### Sources and Rendering
 
-Every source evaluates to an ordered sequence of text values. A single-value source therefore uses the same rendering path as a relationship traversal, while the deliberately small shared expression language controls presentation. Computed fields need no separate source kind because their materialized values are read through the field sources after recomputation. Query-backed selection embeds the portable descriptor defined in [Collection Model](collection-model.md#portable-queries), rather than inventing an expansion-only query language. A view source reuses the query of one governed [saved view](collection-model.md#saved-views), allowing several dashboard expansions to share one selection definition. Filesystem creation and modification timestamps are excluded because they are not stable collection data—authors can store portable timestamps in typed fields instead.
+Every source evaluates to an ordered sequence of text values. A single-value source therefore uses the same rendering path as a relationship traversal, while the deliberately small shared expression language controls presentation. Computed fields need no separate source kind because their materialized values are read through the field sources after recomputation. Query-backed selection embeds the portable descriptor defined in [Collection Model](collection-model.md#portable-queries), rather than inventing an expansion-only query language. Dataset and view sources reuse governed [datasets](collection-model.md#datasets) and [saved views](collection-model.md#saved-views), allowing several dashboard expansions and presentations to share one selection definition. Filesystem creation and modification timestamps are excluded because they are not stable collection data—authors can store portable timestamps in typed fields instead.
 
 This descriptor renders outbound `related_to` targets as a Markdown list:
 
@@ -448,7 +448,7 @@ Rules:
 
 - `RHT-110` The content-expansion modes in this specification version are exactly `auto`, `manual`, `once`, and `once_and_eject`.
 - `RHT-111` The content-expansion states in this specification version are exactly `pending` and `materialized`.
-- `RHT-112` The content-expansion source kinds in this specification version are exactly `self_field`, `note_field`, `relationship`, `query`, `view`, `file`, and `now`.
+- `RHT-112` The content-expansion source kinds in this specification version are exactly `self_field`, `note_field`, `relationship`, `query`, `dataset`, `view`, `file`, and `now`.
 - `RHT-113` Every source evaluation MUST produce an ordered sequence containing zero or more strings.
 - `RHT-114` A string source value MUST contribute that string unchanged.
 - `RHT-115` A boolean source value MUST contribute `true` or `false` in lowercase.
@@ -492,8 +492,8 @@ Rules:
 - `RHT-258` A `view` source MUST contain `view` as a saved-view identifier and `column` as a projected-column alias.
 - `RHT-259` A `view` source's `view` identifier MUST resolve to exactly one artifact under `<metadata_directory>/views/`.
 - `RHT-260` The resolved saved view's `specification_version` MUST equal the containing expansion descriptor's `specification_version`.
-- `RHT-261` A `view` source MUST evaluate the resolved saved view's query against the current collection snapshot under the portable query rules in [Collection Model](collection-model.md#portable-queries).
-- `RHT-262` A `view` source's `column` MUST resolve to exactly one alias in the saved view's `query.select` list.
+- `RHT-261` A `view` source MUST evaluate the resolved saved view's embedded query or referenced dataset against the current collection snapshot under the applicable rules in [Collection Model](collection-model.md).
+- `RHT-262` A `view` source's `column` MUST resolve to exactly one alias in the saved view's resolved projected column contract.
 - `RHT-263` A `view` source's `column` MUST also appear exactly once in the saved view's `presentation.fields` list.
 - `RHT-264` A `view` source MUST read its named column from each ordered, limited result row before presentation grouping.
 - `RHT-265` Each view-row value MUST be converted under `RHT-114` through `RHT-120`.
@@ -502,8 +502,20 @@ Rules:
 - `RHT-268` A `view` source MUST materialize only its selected column through `render`.
 - `RHT-269` A `view` source MUST NOT reproduce the saved view's visual layout.
 - `RHT-270` A view-source resolution, evaluation, column-resolution, or value-conversion failure MUST be an `invalid_expansion` failure.
-- `RHT-271` An `auto` view expansion is affected when a staged change can alter the saved query's result or when the referenced saved-view artifact changes.
+- `RHT-271` An `auto` view expansion is affected when a staged change can alter the resolved row result or when the referenced saved-view or transitive dataset artifact changes.
 - `RHT-272` During template instantiation, a view source MUST evaluate against the staged post-creation snapshot containing the new note at its final path with its final frontmatter and non-expansion body.
+- `RHT-273` A `dataset` source MUST contain `dataset` as a dataset identifier and `column` as a projected-column alias.
+- `RHT-274` A `dataset` source's `dataset` identifier MUST resolve to exactly one artifact under `<metadata_directory>/datasets/`.
+- `RHT-275` The resolved dataset's `specification_version` MUST equal the containing expansion descriptor's `specification_version`.
+- `RHT-276` A `dataset` source MUST evaluate the resolved dataset against the current collection snapshot under [Datasets](collection-model.md#datasets).
+- `RHT-277` A `dataset` source's `column` MUST resolve to exactly one alias in the dataset's projected column contract.
+- `RHT-278` A `dataset` source MUST read its named column from each ordered, limited result row before presentation grouping.
+- `RHT-279` Each dataset-row value MUST be converted under `RHT-114` through `RHT-120`.
+- `RHT-280` Values contributed by one dataset row's sequence value MUST precede values contributed by every later row.
+- `RHT-281` An absent or null projected value in one dataset row MUST contribute an empty sequence for that row.
+- `RHT-282` A dataset-source resolution, evaluation, column-resolution, or value-conversion failure MUST be an `invalid_expansion` failure.
+- `RHT-283` An `auto` dataset expansion is affected when a staged change can alter the dataset query's candidate membership, predicate outcome, projected values, row identity, row order, limit boundary, or selected-column values, or when the dataset artifact changes.
+- `RHT-284` During template instantiation, a dataset source MUST evaluate against the staged post-creation snapshot containing the new note at its final path with its final frontmatter and non-expansion body.
 - `RHT-134` A `file` source with `value: path` MUST contribute the containing note's normalized collection-relative path.
 - `RHT-135` A `file` source with `value: filename` MUST contribute the final path segment including `.md`.
 - `RHT-136` A `file` source with `value: stem` MUST contribute the final path segment without `.md`.

@@ -1,0 +1,15 @@
+{
+  "specification_version": "0.0.1",
+  "id": "action-index",
+  "mode": "auto",
+  "state": "materialized",
+  "source": {
+    "kind": "dataset",
+    "dataset": "actions",
+    "column": "title"
+  },
+  "render": {
+    "item": "- ${value}",
+    "empty": "_No actions._"
+  }
+}

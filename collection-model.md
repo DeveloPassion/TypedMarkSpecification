@@ -15,8 +15,8 @@ Authoritative for:
 - note-type mappings and composition provenance
 - property sets, default property sets, and the block-merge rules of composition
 - governed automation rule artifacts and their trigger/action vocabulary
-- the portable query descriptor, evaluation surface, predicates, projection, ordering, grouping, and limiting
-- saved-view artifacts, portable presentation layouts, and Obsidian Bases interoperability
+- the portable query descriptor, evaluation surface, predicates, projection, heterogeneous field mapping, ordering, grouping, and limiting
+- reusable dataset artifacts, saved-view artifacts, portable presentation layouts, and Obsidian Bases interoperability
 
 See also:
 
@@ -25,7 +25,7 @@ See also:
 - [Field Definition Reference](field-definition-reference.md): the semantics of the field definitions property sets contribute
 - [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md): relationship resolution and query-backed content expansion
 
-Core Profile authors usually need only `specification_version`, `name`, and `description` in `typedmark.md`; deterministic defaults provide the metadata directory, ignored Git content, validation severities, automation propagation limit, and frontmatter-based note-type mapping. Mandatory tags, automation rules, saved views, property sets, folder scopes, vocabularies, composition provenance, and advanced mappings are optional layers for larger collections.
+Core Profile authors usually need only `specification_version`, `name`, and `description` in `typedmark.md`; deterministic defaults provide the metadata directory, ignored Git content, validation severities, automation propagation limit, and frontmatter-based note-type mapping. Mandatory tags, automation rules, datasets, saved views, property sets, folder scopes, vocabularies, composition provenance, and advanced mappings are optional layers for larger collections.
 
 Property sets are the single composition mechanism for reusable `frontmatter`, `relationships`, and `headings`. A property set is a named bundle stored under `<metadata_directory>/property-sets/`. Collections apply them through collection-wide defaults, managed-note folder scopes, and property sets named by concrete note-type schemas.
 
@@ -81,6 +81,7 @@ validation_defaults:
   invalid_note_count: error
   invalid_property_set: error
   invalid_automation: error
+  invalid_dataset: error
   invalid_view: error
   invalid_note_type_mapping: error
   invalid_composition: error
@@ -123,7 +124,7 @@ Rules:
 - `CM-20` `metadata_directory` MAY be omitted, and when omitted its effective value is `.typedmark`.
 - `CM-21` `metadata_directory` MUST name a single directory at the collection root.
 - `CM-22` `metadata_directory` MUST NOT be `.` or `..` and MUST NOT contain path separators.
-- `CM-23` `metadata_directory` identifies the governed-artifact subtree for the collection, including the change history, automation rules, saved views, property sets, note-type schemas, and templates.
+- `CM-23` `metadata_directory` identifies the governed-artifact subtree for the collection, including the change history, automation rules, datasets, saved views, property sets, note-type schemas, and templates.
 - `CM-24` Validators and agents MUST derive governed artifact locations from `metadata_directory`.
 - `CM-25` `exclude_paths` MAY be omitted, and when omitted its effective value is a list containing `.git/**`.
 - `CM-26` Each `exclude_paths` entry is a glob pattern matched against the entire normalized collection-relative path, using forward slashes.
@@ -158,6 +159,7 @@ Rules:
 - `CM-55` `duplicate_unique_value` applies when a field declared with `unique: true` repeats a non-null stored value in more than one managed note of the same note type, when a field declared with `unique: collection` repeats a non-null stored value across any managed notes, or when the core-defined `id` field repeats a value across managed notes.
 - `CM-56` `invalid_note_count` applies when the number of managed notes of a note type violates that type's effective `count` constraint, as defined in [Note Type Schemas](note-type-schemas.md).
 - `CM-57` `invalid_property_set` applies when a property set file, a `typedmark.md` `default_property_sets` or `folder_scopes` declaration, or a note-type schema `property_sets` or `exclude_property_sets` reference violates the property-set rules defined on this page.
+- `CM-476` `invalid_dataset` applies when a dataset artifact violates the shape, reference-resolution, query, row-identity, mapped-column, or evaluation rules defined on this page.
 - `CM-407` `invalid_view` applies when a saved-view artifact violates the shape, reference-resolution, query, presentation, or layout rules defined on this page.
 - `CM-58` `invalid_note_type_mapping` applies when a note-type mapping rule violates the mapping-rule contract or when a winning rule produces a candidate note type that does not resolve to exactly one concrete schema.
 - `CM-59` `invalid_composition` applies when the `composition` block in `typedmark.md` violates the composition-provenance rules defined in this page, including a source that does not resolve to exactly one system at the declared version.
@@ -304,7 +306,7 @@ Rules:
 - `CM-405` Query evaluators MUST apply the version-recognition and forward-compatibility behavior of `FND-8` through `FND-14` to query descriptors.
 - `CM-303` `select` MUST be a non-empty ordered list of projection entries.
 - `CM-304` A standalone portable query descriptor is runtime interchange data and MUST NOT become authoritative collection input merely by being stored or transmitted.
-- `CM-473` A portable query embedded in a core-governed saved view or content expansion MUST be evaluated as part of that governed surface.
+- `CM-473` A portable query embedded in a core-governed dataset, saved view, or content expansion MUST be evaluated as part of that governed surface.
 - `CM-305` Query evaluation MUST observe one immutable collection snapshot.
 - `CM-306` The initial candidate set MUST contain every managed note in that snapshot.
 - `CM-386` The initial candidate set MUST exclude governed artifacts, excluded paths, assets, and untyped notes.
@@ -451,13 +453,31 @@ This descriptor orders rows by status and due date, keeps null due dates last, l
 
 Rules:
 
-- `CM-359` Projection entry `kind` values in this specification version are exactly `path`, `note_type`, and `field`.
+- `CM-359` Projection entry `kind` values in this specification version are exactly `path`, `note_type`, `field`, and `mapped_field`.
 - `CM-360` Every projection entry MUST contain an `as` value satisfying the field-name grammar.
 - `CM-361` Projection aliases MUST be unique within one query.
 - `CM-362` A `path` projection MUST produce the matching note's normalized collection-relative path including `.md`.
 - `CM-363` A `note_type` projection MUST produce the matching note's concrete note-type identifier.
 - `CM-364` A `field` projection MUST contain a `field` path governed by `CM-326` through `CM-328`.
 - `CM-365` A `field` projection MUST produce the current parsed field value when the complete path is present and null when it is undeclared or absent.
+- `CM-477` A `mapped_field` projection MUST contain `definition` as its common target field definition and `sources` as a non-empty ordered list of source mappings.
+- `CM-478` A mapped-field source MUST contain a non-empty `note_types` list and one `field` path governed by `CM-326` through `CM-328`.
+- `CM-479` Every mapped-field source note-type identifier MUST resolve under the concrete-and-abstract semantics of `CM-310` through `CM-312` and `CM-387`.
+- `CM-480` For every concrete note type admitted by the query, at most one source mapping in one mapped-field projection MUST match that concrete type.
+- `CM-481` A matching mapped-field source MUST read its declared field from the candidate's effective schema and current parsed value.
+- `CM-482` A mapped-field source without `conversion` MUST have an exact source-to-target conversion under [Field Compatibility and Conversion](field-definition-reference.md#field-compatibility-and-conversion).
+- `CM-483` A mapped-field source with `conversion` MUST declare the conversion's actual `lossless` or `conditional` class under `FDR-254` and `FDR-255`.
+- `CM-484` A non-exact mapped-field conversion MUST declare `conversion` explicitly.
+- `CM-485` A mapped source value MUST be converted to `definition` under `FDR-257` through `FDR-264`.
+- `CM-486` A mapped field with no source matching the candidate's concrete note type MUST produce null only when `definition` permits null.
+- `CM-487` An absent matching source field MUST produce null only when `definition` permits null.
+- `CM-488` A missing, null, or non-null source value that is incompatible with `definition` MUST make query evaluation fail rather than being coerced, dropped, or replaced.
+- `CM-489` A mapped-field `definition` MUST NOT declare `validate_exists`, `generated`, `computed`, `unique`, `deprecated`, `immutable`, `optional`, `default_value`, `const_value`, `value_from_schema`, or `relationship_kind` because it describes a result value rather than stored field materialization.
+- `CM-490` A projection result is source-backed for one row only when it comes from exactly one physical field and any conversion has a defined reverse conversion that round-trips the presented value under `FDR-270` through `FDR-276`.
+- `CM-491` `path`, `note_type`, absent-source, and non-round-trippable projection results are read-only.
+- `CM-533` An aggregate, derived, or ambiguously sourced value produced outside the portable projected column contract MUST be read-only.
+- `CM-492` A source-backed classification records provenance and write-back eligibility only; this specification version MUST NOT interpret it as authorization to edit through a query, dataset, view, or expansion.
+- `CM-493` A projected result produced from a `generated`, `computed`, or `immutable` source field MUST be read-only.
 - `CM-366` Each result row MUST contain exactly one key for every projection alias in declared `select` order.
 - `CM-367` Result-row order MUST be independent of whether `path` is projected.
 - `CM-368` A present `order_by` MUST be a non-empty ordered list whose entries refer to distinct projection aliases.
@@ -484,9 +504,77 @@ Rules:
 - `CM-383` Rows within each group MUST preserve their relative order from the ordered, limited row sequence.
 - `CM-384` Grouping MUST NOT aggregate, remove, or duplicate a result row.
 
+### Datasets
+
+A dataset gives one portable query a governed identity and a stable row key so several saved views and content expansions can reuse exactly the same ordered rows. Its query projections are the common column contract. A `mapped_field` projection makes heterogeneous source paths explicit and converts them to one declared target definition; display labels never imply that fields are compatible.
+
+This dataset combines projects and tasks whose workflow fields have different stored names:
+
+```markdown
+---
+specification_version: 0.0.1
+dataset: actions
+label: Actions
+description: Projects and tasks exposed through one stable row contract.
+row_identity: path
+query:
+  specification_version: 0.0.1
+  note_types: [project, task]
+  select:
+    - {kind: path, as: path}
+    - {kind: note_type, as: type}
+    - kind: mapped_field
+      as: status
+      definition: {type: text, nullable: true}
+      sources:
+        - {note_types: [project], field: status}
+        - {note_types: [task], field: action_status}
+    - {kind: field, field: title, as: title}
+  order_by:
+    - {column: status, direction: asc}
+    - {column: title, direction: asc}
+---
+
+Shared action rows for tables, cards, boards, and generated indexes.
+```
+
+Rules:
+
+- `CM-494` `<metadata_directory>/datasets/` MAY be omitted when the collection defines no datasets.
+- `CM-495` Every Markdown file directly under `<metadata_directory>/datasets/` MUST define exactly one dataset.
+- `CM-496` A dataset file's basename without `.md` MUST equal its top-level `dataset` value.
+- `CM-497` A separate registry file MUST NOT be maintained for datasets.
+- `CM-498` A dataset artifact MUST physically contain `specification_version`, `dataset`, `description`, `row_identity`, and `query`.
+- `CM-499` A dataset artifact MUST satisfy `schema/json-schema/dataset.schema.json` before semantic evaluation.
+- `CM-500` `dataset` MUST be a slug unique among the collection's datasets.
+- `CM-501` `description` MUST be a non-empty human-facing string.
+- `CM-502` `label` MAY be omitted.
+- `CM-530` A present `label` MUST be a non-empty string.
+- `CM-503` A tool displaying a dataset name SHOULD use `label` when present and `dataset` otherwise.
+- `CM-504` The dataset body MAY contain human guidance.
+- `CM-531` The dataset body MUST NOT alter dataset semantics.
+- `CM-505` `query` MUST be a portable query descriptor governed by [Portable Queries](#portable-queries).
+- `CM-532` A dataset query MUST physically contain `note_types` so the artifact declares the concrete or abstract note-type domain it can return.
+- `CM-506` `query.specification_version` MUST equal the dataset's top-level `specification_version`.
+- `CM-507` The dataset's ordered `query.select` aliases and their applicable built-in, effective-field, or mapped target definitions MUST constitute its common projected column contract.
+- `CM-528` A dataset's direct `field` projection MUST resolve to identical effective field definitions across every admitted concrete note type on which that path is declared; heterogeneous definitions or source paths require `mapped_field`.
+- `CM-529` When a direct projected field can be undeclared or absent on an admitted row, its common effective definition MUST permit null.
+- `CM-508` `row_identity` MUST resolve to exactly one alias in `query.select`.
+- `CM-509` Every evaluated row's `row_identity` value MUST be a non-null scalar.
+- `CM-510` Evaluated `row_identity` values MUST be unique under the projected column's applicable equality rules.
+- `CM-511` A duplicate, null, sequence, or mapping row identity MUST make dataset evaluation fail.
+- `CM-512` A tool evaluating a dataset MUST evaluate its query once against one immutable collection snapshot under `CM-300` through `CM-406` and `CM-477` through `CM-493`.
+- `CM-513` Dataset consumers MUST preserve query membership, projected values, row order, limit boundary, and row identity.
+- `CM-514` Dataset grouping is presentational metadata over the preserved ordered rows and MUST NOT change row semantics.
+- `CM-515` Every note type and field path referenced by a dataset MUST remain valid against the effective collection model.
+- `CM-516` A dataset shape, reference-resolution, query-evaluation, mapped-column, or row-identity failure MUST be an `invalid_dataset` failure.
+- `CM-517` A system release that renames or removes a dataset column MUST update or retire every affected view and content expansion in the same release.
+- `CM-518` A system release that renames or removes a dataset MUST update or retire every reference to it in the same release.
+- `CM-519` Transient UI state and per-embed filters, sorts, grouping, limits, and field overrides MUST NOT alter the governed dataset artifact or a consumer's portable result.
+
 ### Saved Views
 
-A saved view gives a portable query a stable name and a small presentation contract. The query remains responsible for selection, filtering, projection, ordering, grouping, and limiting. The presentation chooses visible projected columns and one layout family; it does not introduce another query language or an editing API.
+A saved view gives an embedded portable query or a reusable dataset a stable presentation contract. The resolved query remains responsible for selection, filtering, projection, ordering, grouping, and limiting. The presentation chooses visible projected columns and one layout family; it does not introduce another query language or an editing API.
 
 [Kanban Action Planner](https://github.com/dsebastien/obsidian-kanban-action-planner) demonstrates three useful boundaries reflected here: board columns come from an explicit definition rather than observed typos, computed values remain read-only presentation inputs, and embedded or per-session UI state does not rewrite the shared portable view.
 
@@ -537,7 +625,7 @@ Rules:
 - `CM-409` Every Markdown file directly under `<metadata_directory>/views/` MUST define exactly one saved view.
 - `CM-410` A saved-view file's basename without `.md` MUST equal its top-level `view` value.
 - `CM-411` A separate registry file MUST NOT be maintained for saved views.
-- `CM-412` A saved-view artifact MUST physically contain `specification_version`, `view`, `description`, `query`, and `presentation`.
+- `CM-412` A saved-view artifact MUST physically contain `specification_version`, `view`, `description`, `presentation`, and exactly one of `query` or `dataset`.
 - `CM-413` A saved-view artifact MUST satisfy `schema/json-schema/view.schema.json` before semantic evaluation.
 - `CM-414` `view` MUST be a slug unique among the collection's saved views.
 - `CM-415` `description` MUST be a non-empty human-facing string.
@@ -546,14 +634,17 @@ Rules:
 - `CM-417` A tool displaying a saved-view name SHOULD use `label` when present and `view` otherwise.
 - `CM-418` The saved-view body MAY contain human guidance.
 - `CM-465` The saved-view body MUST NOT alter the view's query or presentation semantics.
-- `CM-419` `query` MUST be a portable query descriptor governed by [Portable Queries](#portable-queries).
-- `CM-420` `query.specification_version` MUST equal the saved view's top-level `specification_version`.
-- `CM-421` A tool evaluating a saved view MUST first evaluate `query` against one immutable collection snapshot under `CM-300` through `CM-406`.
+- `CM-419` A present `query` MUST be a portable query descriptor governed by [Portable Queries](#portable-queries).
+- `CM-420` A present `query.specification_version` MUST equal the saved view's top-level `specification_version`.
+- `CM-421` A tool evaluating a saved view MUST first evaluate its embedded query or resolved dataset against one immutable collection snapshot under the applicable portable-query and dataset rules.
+- `CM-520` A present `dataset` MUST resolve to exactly one artifact under `<metadata_directory>/datasets/`.
+- `CM-521` A referenced dataset's `specification_version` MUST equal the saved view's top-level `specification_version`.
+- `CM-522` A dataset-backed saved view MUST use the referenced dataset's projected column contract without changing its query, membership, values, ordering, grouping, limit, or row identity.
 - `CM-422` `presentation.layout` MUST be exactly `table`, `list`, `cards`, or `board`.
 - `CM-423` `presentation.fields` MUST be a non-empty ordered list.
 - `CM-424` Every `presentation.fields` entry MUST contain `column`.
 - `CM-466` A `presentation.fields` entry's `label`, if present, MUST be non-empty.
-- `CM-425` Every presented `column` MUST resolve to exactly one alias in `query.select`.
+- `CM-425` Every presented `column` MUST resolve to exactly one alias in the saved view's embedded query or referenced dataset query.
 - `CM-426` Presented `column` values MUST be unique within one saved view.
 - `CM-427` A presented field's display name MUST be its `label` when present and its `column` alias otherwise.
 - `CM-428` For `list`, `cards`, and `board`, the first presented field MUST be the primary field.
@@ -564,7 +655,7 @@ Rules:
 - `CM-432` A non-board layout MUST present query groups, when present, as ordered sections without changing group or row order.
 - `CM-433` A `board` layout MUST contain `presentation.board`.
 - `CM-468` Every non-board layout MUST omit `presentation.board`.
-- `CM-434` A board query's `group_by` MUST contain exactly the alias named by `presentation.board.column`.
+- `CM-434` A board presentation MUST partition the resolved ordered rows by `presentation.board.column` independently of any query `group_by` value.
 - `CM-435` `presentation.board.column` MUST resolve to exactly one projected column whose value is scalar or null in every retained row.
 - `CM-436` `presentation.board.columns` MUST be a non-empty ordered list whose entries contain scalar or null `value`.
 - `CM-469` A board-column `label`, if present, MUST be non-empty.
@@ -581,21 +672,23 @@ Rules:
 - `CM-446` Tools MAY choose visual styling, dimensions, controls, and value widgets beyond the layout family, field order, labels, grouping, and board partition defined here.
 - `CM-447` Cursor position, selection, collapsed groups, scroll offsets, temporary filters, and other per-session state MUST NOT alter the saved-view artifact's portable result.
 - `CM-448` A read-only projected or computed value MUST NOT become writable merely because a saved view presents or groups by it.
+- `CM-523` A saved view MUST NOT perform a write through any presented column in this specification version.
 - `CM-449` Every note type, field path, projection alias, and board value referenced by a saved view MUST remain valid against the effective collection model.
 - `CM-450` A system release that renames or removes a saved-view reference MUST update or retire the affected saved view in the same release.
 - `CM-451` A saved-view shape, reference-resolution, query-evaluation, or presentation-semantics failure MUST be an `invalid_view` failure.
 
-An ordinary collection note can act as a dashboard by combining links, application embeds, and view-backed content expansions. TypedMark does not add a second dashboard artifact: the saved views remain reusable definitions, while the note remains readable Markdown.
+An ordinary collection note can act as a dashboard by combining links, application embeds, and dataset- or view-backed content expansions. TypedMark does not add a second dashboard artifact: datasets and saved views remain reusable definitions, while the note remains readable Markdown.
 
 #### Obsidian Bases Interoperability
 
 Obsidian [Bases syntax](https://help.obsidian.md/bases/syntax) stores shared filters and formulas plus one or more named views in a `.base` YAML file. The models overlap but are not identical, so interoperability is defined as an explicit mapping with diagnostics rather than byte-for-byte identity.
 
-For example, an importer can combine a `.base` file's global filter with one named view's local filter, map its visible `order` to `presentation.fields`, and produce one TypedMark saved-view artifact. A second named view in the same `.base` file becomes a second artifact that reuses an equivalent query prefix.
+For example, an importer can map a `.base` file's shared filter, formulas, and property selections to one dataset, then map each compatible named view to a dataset-backed saved-view artifact. A view-local filter or sort that changes portable row semantics requires an embedded query or a distinct dataset rather than an opaque override.
 
 Rules:
 
 - `CM-452` A tool claiming Obsidian Bases import MUST map each imported named `.base` view to one saved-view artifact.
+- `CM-524` A Bases importer SHOULD map file-level filters, portable formulas, and shared property definitions used by several named views to one reusable dataset when they have equivalent TypedMark semantics.
 - `CM-471` Every `view` identifier produced by one Bases import MUST be unique in the collection.
 - `CM-453` A Bases import MUST combine applicable file-level and view-level filters with logical conjunction before translating them to `query.where`.
 - `CM-454` A Bases import MUST map portable note-property references to TypedMark field paths and `file.path` to a `path` projection when those references have equivalent TypedMark semantics.
@@ -604,6 +697,9 @@ Rules:
 - `CM-456` Built-in Bases table, list, and cards layouts MUST map to the corresponding TypedMark layouts when their selected properties and options are representable.
 - `CM-457` A Bases plugin view, including a Kanban view, MAY map to `layout: board` when its grouping property, explicit column values, visible fields, query behavior, and labels are representable under this section.
 - `CM-458` A Bases formula MAY map only when an equivalent TypedMark computed field or projected value exists.
+- `CM-525` Bases properties with different source paths across note types MAY map to one `mapped_field` projection only when their source note types, target definition, and any non-exact conversions are explicit.
+- `CM-526` A Bases view-local filter, sort, grouping, or limit that changes dataset row semantics MUST map to a separate dataset or embedded saved-view query.
+- `CM-527` A Bases importer MUST NOT persist transient state or plugin-specific per-view overrides in a shared dataset.
 - `CM-459` A Bases file property, formula, function, layout option, plugin configuration, or per-view state without equivalent TypedMark semantics MUST NOT silently change the imported saved view's portable meaning.
 - `CM-460` A tool encountering unsupported or lossy Bases input MUST emit a diagnostic identifying each omitted or approximated construct.
 - `CM-474` A lossy Bases import MUST NOT be described as lossless.
@@ -669,7 +765,7 @@ Rules:
 - `CM-130` A `name` MUST appear at most once in `composition.sources`.
 - `CM-131` A source `name` MUST NOT equal the composing collection's own `name`.
 - `CM-132` Each source MUST resolve to exactly one system whose `name` and `version` match; a source that does not resolve is an `invalid_composition` failure.
-- `CM-133` A composed collection MUST remain self-contained: its materialized schemas, property sets, automation rules, saved views, and templates MUST be physically present under `metadata_directory`, and conformance MUST NOT require re-resolving `composition.sources`.
+- `CM-133` A composed collection MUST remain self-contained: its materialized schemas, property sets, automation rules, datasets, saved views, and templates MUST be physically present under `metadata_directory`, and conformance MUST NOT require re-resolving `composition.sources`.
 - `CM-134` `composition` records provenance only; it does not relocate, replace, or override any governed artifact physically present under `metadata_directory`.
 
 ### Default Property Sets

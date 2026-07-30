@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developassion.github.io/TypedMarkSpecification/schema/dataset.schema.json",
+  "title": "TypedMark dataset (<metadata_directory>/datasets/<dataset>.md frontmatter)",
+  "description": "A reusable portable query with stable row identity. Authoritative semantics: collection-model.md (Datasets).",
+  "type": "object",
+  "required": [
+    "specification_version",
+    "dataset",
+    "description",
+    "row_identity",
+    "query"
+  ],
+  "properties": {
+    "specification_version": {
+      "$ref": "defs.schema.json#/$defs/specification_version"
+    },
+    "dataset": {
+      "$ref": "defs.schema.json#/$defs/slug"
+    },
+    "label": {
+      "$ref": "defs.schema.json#/$defs/non_empty_string"
+    },
+    "description": {
+      "$ref": "defs.schema.json#/$defs/non_empty_string"
+    },
+    "row_identity": {
+      "$ref": "defs.schema.json#/$defs/field_name"
+    },
+    "query": {
+      "allOf": [
+        {
+          "$ref": "query.schema.json"
+        },
+        {
+          "required": [
+            "note_types"
+          ]
+        }
+      ]
+    }
+  },
+  "additionalProperties": false
+}

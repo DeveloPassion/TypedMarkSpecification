@@ -73,9 +73,9 @@ A property set is the single named reusable bundle for shared `frontmatter`, `re
 
 The effective note-type schema is the normative result of taking one concrete note-type schema, its abstract ancestor chain through `extends`, and then applying default property sets, composed property sets, and local schema definitions in the order defined by this specification. Managed-note conformance is evaluated against that effective schema, not against isolated fragments.
 
-### Saved Views
+### Datasets and Saved Views
 
-A saved view is a governed, named pairing of one portable query with a declarative presentation. It lives under `<metadata_directory>/views/` and can be rendered directly or reused by content expansion. Details: [Collection Model](collection-model.md#saved-views).
+A dataset is a governed reusable query with stable row identity and an explicit projected column contract; it lives under `<metadata_directory>/datasets/`. A saved view pairs either a dataset reference or an embedded portable query with a declarative presentation under `<metadata_directory>/views/`. Both can be reused by content expansion. Details: [Collection Model](collection-model.md#datasets).
 
 ### Relationships, Headings, and Templates
 
@@ -132,7 +132,7 @@ TypedMark defines:
 - where notes of each type live and how their note names are formed
 - which frontmatter fields, relationships, headings, and templates each type declares
 - how portable queries filter, project, order, group, and limit managed notes
-- how saved views name a query and present its results as a table, list, cards, or board
+- how datasets make query results reusable and how saved views present those results as a table, list, cards, or board
 - how systems package, version, compose, scaffold, and evolve collections, and how a collection records its composition provenance
 - how conformance is evaluated
 
@@ -156,7 +156,7 @@ Rules:
 - `FND-75` A Core Profile collection MUST declare `typedmark.md`.
 - `FND-76` A Core Profile collection MUST declare at least one concrete note-type schema.
 - `FND-77` A Core Profile collection MUST provide every template referenced or defaulted by its concrete schemas.
-- `FND-78` A Core Profile collection MAY omit automation rules, saved views, property sets, `folder_scopes`, vocabularies, explicit note-type mappings, system fields, composition provenance, and `history.md`.
+- `FND-78` A Core Profile collection MAY omit automation rules, datasets, saved views, property sets, `folder_scopes`, vocabularies, explicit note-type mappings, system fields, composition provenance, and `history.md`.
 - `FND-79` Authoring shorthand is a governed artifact shape that omits a value only when the authoritative rule for that key defines one deterministic effective default.
 - `FND-80` A conforming tool MUST expand omitted shorthand defaults before computing effective note-type schemas, storage paths, template paths, validation severities, relationship constraints, heading constraints, or conformance results.
 - `FND-81` Canonical expansion MUST NOT invent domain content, note types, fields, relationships, headings, templates, scaffold notes, or migration history.
@@ -240,7 +240,7 @@ Rules:
 
 ## Governed Artifact Format
 
-Every governed TypedMark artifact — `typedmark.md`, the note-type schemas, property sets, automation rules, saved views, templates, and `history.md` — is a Markdown file with YAML frontmatter.
+Every governed TypedMark artifact — `typedmark.md`, the note-type schemas, property sets, automation rules, datasets, saved views, templates, and `history.md` — is a Markdown file with YAML frontmatter.
 
 Rules:
 
@@ -285,6 +285,8 @@ typedmark.md
   history.md
   automations/
     <automation>.md
+  datasets/
+    <dataset>.md
   property-sets/
     <property_set>.md
   schemas/
@@ -303,6 +305,7 @@ The authoritative contract for each governed element and cross-tool runtime surf
 - `typedmark.md` system fields, including release version, publishing metadata, and scaffold: [Systems, Composition, and Evolution](systems-composition-evolution.md)
 - `<metadata_directory>/history.md`: [Systems, Composition, and Evolution](systems-composition-evolution.md)
 - `<metadata_directory>/automations/<automation>.md`: [Collection Model](collection-model.md)
+- `<metadata_directory>/datasets/<dataset>.md`: [Collection Model](collection-model.md)
 - `<metadata_directory>/property-sets/<property_set>.md`: [Collection Model](collection-model.md)
 - `<metadata_directory>/schemas/<note_type>.md`: [Note Type Schemas](note-type-schemas.md)
 - `<metadata_directory>/templates/<note_type_template>.md`: [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
@@ -315,6 +318,7 @@ The authoritative contract for each governed element and cross-tool runtime surf
 - template-region marker, receipt, digest, drift-state, reconciliation, and detachment semantics: [Template Drift Tracking](relationships-headings-and-templates.md#template-drift-tracking)
 - content-expansion marker, source, rendering, synchronization, and ejection semantics: [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md#content-expansion)
 - portable query descriptor and evaluation semantics: [Collection Model](collection-model.md#portable-queries)
+- reusable dataset artifact, row identity, mapped columns, and dataset evaluation: [Collection Model](collection-model.md#datasets)
 - saved-view artifact, presentation, and Obsidian Bases interoperability: [Collection Model](collection-model.md#saved-views)
 - portable validation-report and automation-interchange formats: [Conformance and Roadmap](conformance-and-roadmap.md)
 - conformance modes and required artifact sets: [Conformance and Roadmap](conformance-and-roadmap.md)

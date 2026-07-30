@@ -51,6 +51,9 @@
           "$ref": "#/$defs/view_source"
         },
         {
+          "$ref": "#/$defs/dataset_source"
+        },
+        {
           "$ref": "#/$defs/file_source"
         },
         {
@@ -219,6 +222,26 @@
           "const": "view"
         },
         "view": {
+          "$ref": "defs.schema.json#/$defs/slug"
+        },
+        "column": {
+          "$ref": "defs.schema.json#/$defs/field_name"
+        }
+      },
+      "additionalProperties": false
+    },
+    "dataset_source": {
+      "type": "object",
+      "required": [
+        "kind",
+        "dataset",
+        "column"
+      ],
+      "properties": {
+        "kind": {
+          "const": "dataset"
+        },
+        "dataset": {
           "$ref": "defs.schema.json#/$defs/slug"
         },
         "column": {

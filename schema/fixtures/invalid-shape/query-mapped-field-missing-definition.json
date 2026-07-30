@@ -1,0 +1,13 @@
+{
+  "specification_version": "0.0.1",
+  "note_types": ["project"],
+  "select": [
+    {
+      "kind": "mapped_field",
+      "as": "status",
+      "sources": [
+        {"note_types": ["project"], "field": "status"}
+      ]
+    }
+  ]
+}
