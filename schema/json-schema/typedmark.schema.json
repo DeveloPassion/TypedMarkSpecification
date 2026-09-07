@@ -153,6 +153,27 @@
         "unsupported_extension": {
           "$ref": "defs.schema.json#/$defs/validation_severity"
         },
+        "invalid_collection_configuration": {
+          "$ref": "defs.schema.json#/$defs/validation_severity"
+        },
+        "invalid_note_type_schema": {
+          "$ref": "defs.schema.json#/$defs/validation_severity"
+        },
+        "invalid_template": {
+          "$ref": "defs.schema.json#/$defs/validation_severity"
+        },
+        "invalid_system": {
+          "$ref": "defs.schema.json#/$defs/validation_severity"
+        },
+        "invalid_history": {
+          "$ref": "defs.schema.json#/$defs/validation_severity"
+        },
+        "invalid_note_frontmatter": {
+          "$ref": "defs.schema.json#/$defs/validation_severity"
+        },
+        "extension_violation": {
+          "$ref": "defs.schema.json#/$defs/validation_severity"
+        },
         "invalid_note_link": {
           "$ref": "defs.schema.json#/$defs/validation_severity"
         },

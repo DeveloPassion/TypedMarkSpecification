@@ -158,6 +158,10 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
   of required extensions, and truthful claims about which core and extension
   contracts were actually interpreted; standard JSON Schema cannot compare
   these dynamic property maps or observe tool capabilities
+- report rule ownership: a well-formed built-in identifier still needs to name
+  an active rule, and a qualified extension rule needs matching extension
+  context and an actually evaluated required contract; report shape permits
+  qualified third-party IDs without assigning them a repository-global prefix
 - conformance evaluation: resolving the target mode, assigning effective
   severities (including fixed structural-key error severity), producing findings,
   and ordering validation results

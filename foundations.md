@@ -124,7 +124,7 @@ Rules:
 
 - `FND-5` `specification_version` MUST be a Semantic Versioning x.y.z string.
 - `FND-6` Every governed artifact other than a template declares its own `specification_version` in its frontmatter, and each artifact is evaluated under the rules of the version it declares.
-- `FND-89` A template MUST be evaluated under the specification version declared by the concrete note-type schema that references it, rather than declaring `specification_version` in its starter note frontmatter.
+- `FND-89` A template MUST be evaluated under the specification version declared by the concrete note-type schema that references it.
 - `FND-7` Governed artifacts in one collection MAY declare different `specification_version` values, because composition MAY combine artifacts authored against different specification versions; each artifact is evaluated under its own declared version.
 - `FND-8` A tool MUST advertise each specification compatibility line it implements together with the highest specification version it implements within that line.
 - `FND-9` Within an implemented compatibility line, a tool MUST evaluate an artifact whose declared version is less than or equal to its highest implemented version under that artifact's declared version.

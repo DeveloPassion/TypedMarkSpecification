@@ -156,6 +156,14 @@ Rules:
 - `CM-534` An undeclared structural key in a governed artifact MUST have severity `error` when the tool implements the applicable core and extension contracts, regardless of the configured `unknown_field` severity.
 - `CM-535` `invalid_extension_declaration` applies when extension declarations, required dependencies, or declaration requirements violate [Extensions and Capabilities](extensions.md).
 - `CM-536` `unsupported_extension` applies when a required exact extension version cannot be interpreted by the tool.
+- `CM-537` `invalid_collection_configuration` applies when `typedmark.md` cannot be parsed as a collection configuration or violates a collection-configuration requirement not covered by a more specific category.
+- `CM-538` `invalid_note_type_schema` applies when a note-type schema cannot be parsed, violates its artifact contract, or yields an invalid effective schema.
+- `CM-539` `invalid_template` applies when a template required by the template contract is missing or an existing template violates that contract.
+- `CM-540` `invalid_system` applies when system fields or a system-definition requirement violate [Systems, Composition, and Evolution](systems-composition-evolution.md).
+- `CM-541` `invalid_history` applies when `history.md` violates its history contract, including an inventory inconsistency found by a replay check.
+- `CM-542` `extension_violation` applies to a violation of a recognized extension rule for which no more specific standard diagnostic category applies.
+- `CM-543` `invalid_automation` applies when an automation artifact violates [Automation Artifacts](automation-artifacts.md).
+- `CM-544` `invalid_note_frontmatter` applies when a recognized note frontmatter block needed for note-type association or managed-note validation cannot be parsed as a valid frontmatter mapping.
 - `CM-54` `invalid_field_value` applies when a field value violates a declared field-level value constraint such as `format`, `regex`, `not_empty`, `not_blank`, `min`, `max`, `allowed_values`, or `targets`, when a matching conditional `require_null` constraint defined in [Note Type Schemas](note-type-schemas.md) is violated, or when a managed note lacks an effective mandatory tag. `format: note_link` syntax and resolution failures still use `invalid_note_link`.
 - `CM-55` `duplicate_unique_value` applies when a field declared with `unique: true` repeats a non-null stored value in more than one managed note of the same note type, when a field declared with `unique: collection` repeats a non-null stored value across any managed notes, or when the core-defined `id` field repeats a value across managed notes.
 - `CM-56` `invalid_note_count` applies when the number of managed notes of a note type violates that type's effective `count` constraint, as defined in [Note Type Schemas](note-type-schemas.md).

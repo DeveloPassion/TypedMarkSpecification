@@ -143,6 +143,13 @@
             "unsupported_specification_version",
             "invalid_extension_declaration",
             "unsupported_extension",
+            "invalid_collection_configuration",
+            "invalid_note_type_schema",
+            "invalid_template",
+            "invalid_system",
+            "invalid_history",
+            "invalid_note_frontmatter",
+            "extension_violation",
             "invalid_note_link",
             "invalid_relationship_definition",
             "invalid_relationship_instance",
@@ -165,7 +172,7 @@
         },
         "rule_id": {
           "type": "string",
-          "pattern": "^(FND|EXT|CM|NTS|FDR|MN|NL|RHT|SCE|ME|CR)-[1-9][0-9]*$"
+          "pattern": "^(?:[A-Z]{2,3}-[1-9][0-9]*|[a-z0-9]+(?:[.-][a-z0-9]+)*:[a-z0-9]+(?:-[a-z0-9]+)*/[A-Z]{2,3}-[1-9][0-9]*)(?![\\s\\S])"
         },
         "message": {
           "$ref": "defs.schema.json#/$defs/non_empty_string"
@@ -210,6 +217,36 @@
         }
       },
       "allOf": [
+        {
+          "if": {
+            "properties": {
+              "rule_id": {
+                "pattern": "/"
+              }
+            },
+            "required": ["rule_id"]
+          },
+          "then": {
+            "properties": {
+              "code": {
+                "const": "extension_violation"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "extension_violation"
+              }
+            },
+            "required": ["code"]
+          },
+          "then": {
+            "required": ["extension"]
+          }
+        },
         {
           "if": {
             "properties": {

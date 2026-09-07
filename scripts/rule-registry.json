@@ -1,7 +1,7 @@
 {
   "prefixes": {
     "FND": { "page": "foundations.md", "last": 92 },
-    "CM": { "page": "collection-model.md", "last": 536 },
+    "CM": { "page": "collection-model.md", "last": 544 },
     "NTS": { "page": "note-type-schemas.md", "last": 173 },
     "FDR": { "page": "field-definition-reference.md", "last": 280 },
     "MN": { "page": "managed-notes-and-properties.md", "last": 294 },
@@ -9,7 +9,7 @@
     "RHT": { "page": "relationships-headings-and-templates.md", "last": 284 },
     "SCE": { "page": "systems-composition-evolution.md", "last": 150 },
     "ME": { "page": "migration-effects.md", "last": 49 },
-    "CR": { "page": "conformance-and-roadmap.md", "last": 105 },
+    "CR": { "page": "conformance-and-roadmap.md", "last": 109 },
     "EXT": { "page": "extensions.md", "last": 28 }
   },
   "relocations": {

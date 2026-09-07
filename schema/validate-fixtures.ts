@@ -29,6 +29,8 @@ import { basename, extname, join } from "node:path";
 import { Ajv2020, type ValidateFunction } from "ajv/dist/2020";
 import { Lexer, type Token } from "marked";
 import { parse as parseYaml } from "yaml";
+import ruleRegistry from "../scripts/rule-registry.json";
+import type { RuleRegistry } from "../scripts/lint-rule-ids";
 
 const SCHEMA_DIR = join(import.meta.dir, "json-schema");
 const FIXTURE_DIR = join(import.meta.dir, "fixtures");
@@ -258,7 +260,7 @@ function validateShape(
   }
 }
 
-function validateExpectedReportCoverage(
+export function validateExpectedReportCoverage(
   report: unknown,
   collection: unknown,
   label: string,
@@ -282,6 +284,35 @@ function validateExpectedReportCoverage(
   }
   if (reportObject?.evaluation === "complete" && !exactSubset(required, evaluated)) {
     failures.push(`${label}: complete report must evaluate every required extension`);
+  }
+  for (const entry of Array.isArray(reportObject?.results) ? reportObject.results : []) {
+    const result = objectValue(entry);
+    if (!result) continue;
+    const extension = result.extension;
+    const rule = result.rule_id;
+    if (typeof rule === "string" && !rule.includes("/")) {
+      const [prefix, number] = rule.split("-");
+      const prefixes: RuleRegistry["prefixes"] = ruleRegistry.prefixes;
+      const retired: RuleRegistry["retired"] = ruleRegistry.retired;
+      const allocation = prefix === undefined ? undefined : prefixes[prefix];
+      if (!allocation || Number(number) < 1 || Number(number) > allocation.last
+        || Object.hasOwn(retired, rule)) {
+        failures.push(`${label}: unknown or retired built-in rule ${rule}`);
+      }
+    }
+    if (typeof rule === "string" && rule.includes("/")
+      && rule.slice(0, rule.indexOf("/")) !== extension) {
+      failures.push(`${label}: qualified rule must match its extension context`);
+    }
+    if (result.code === "extension_violation"
+      && (typeof extension !== "string" || !Object.hasOwn(evaluated, extension))) {
+      failures.push(`${label}: extension_violation must identify an evaluated required extension`);
+    }
+    if (result.code === "unsupported_extension"
+      && (typeof extension !== "string" || !Object.hasOwn(required, extension)
+        || Object.hasOwn(evaluated, extension))) {
+      failures.push(`${label}: unsupported_extension must identify a required extension not claimed as evaluated`);
+    }
   }
 }
 

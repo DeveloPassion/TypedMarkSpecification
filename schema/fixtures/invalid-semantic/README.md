@@ -25,6 +25,8 @@ full boundary.
 | `query-relationship-count-range.json` | A relationship predicate's minimum count must not exceed its maximum count. |
 | `query-unknown-order-column.json` | Every ordering column must resolve to exactly one projected alias; `priority` is not projected. |
 | `view-unknown-column.md` | Every presented column must resolve to exactly one alias in the saved view's query; `missing` is not projected. |
+| `validation-report-qualified-rule-context-mismatch.json` | The rule's `example:review` qualification disagrees with its `example:other` context (`CR-107`); both versions are otherwise declared and evaluated. |
+| `validation-report-unknown-builtin-rule.json` | `ZZZ-1` is well-formed but is not an active built-in rule (`CR-106`). |
 
 ## Extension and evaluation boundaries
 

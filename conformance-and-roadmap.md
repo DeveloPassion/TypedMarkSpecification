@@ -122,6 +122,35 @@ Rules:
 - `CR-103` `evaluation` MUST be `complete` otherwise, including when interpretation establishes that the target violates its contracts.
 - `CR-104` Changing or suppressing a diagnostic's configured severity MUST NOT change evaluation completeness.
 - `CR-105` Every `unsupported_extension` result MUST contain an `extension` identifying the required extension.
+- `CR-106` `rule_id` MUST identify either a built-in rule from the evaluated specification or a qualified extension rule of the form `<extension-id>/<local-id>`, where `local-id` matches `[A-Z]{2,3}-[1-9][0-9]*`.
+- `CR-107` A qualified extension rule's identifier prefix MUST equal its result's `extension` value.
+- `CR-108` A result identifying a qualified extension rule MUST use the `extension_violation` category.
+- `CR-109` Every `extension_violation` result MUST contain an `extension` identifying an evaluated required contract.
+
+Built-in rule identifiers retain their existing spelling. A third-party
+extension can report its own rule without reserving a global prefix in this
+repository: `example:review/REV-1` is qualified by its required exact extension
+version through the report's extension maps. For example:
+
+<!-- typedmark-example: artifact=validation-report -->
+```json
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {"example:review": "1.2.0"},
+  "evaluated_extensions": {"example:review": "1.2.0"},
+  "valid": false,
+  "results": [{
+    "code": "extension_violation",
+    "severity": "error",
+    "path": "notes/review.md",
+    "rule_id": "example:review/REV-1",
+    "extension": "example:review",
+    "message": "The review extension's declared constraint is not satisfied."
+  }]
+}
+```
 
 For example, this report cannot establish full conformance because the tool
 does not support the required illustrative extension:

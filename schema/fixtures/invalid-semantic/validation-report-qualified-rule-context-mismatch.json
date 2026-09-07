@@ -1,0 +1,16 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {"example:review": "1.2.0", "example:other": "1.0.0"},
+  "evaluated_extensions": {"example:review": "1.2.0", "example:other": "1.0.0"},
+  "valid": false,
+  "results": [{
+    "code": "extension_violation",
+    "severity": "error",
+    "path": "notes/review.md",
+    "rule_id": "example:review/REV-1",
+    "extension": "example:other",
+    "message": "The qualified rule namespace disagrees with extension under CR-107."
+  }]
+}
