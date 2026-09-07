@@ -37,7 +37,7 @@ const ROOT = join(import.meta.dir, "..");
 
 const SPEC_PAGES = [
   "index.md", "manifesto.md", "getting-started.md", "foundations.md", "extensions.md",
-  "collection-model.md", "note-type-schemas.md", "field-definition-reference.md",
+  "collection-model.md", "note-type-schemas.md", "field-definition-reference.md", "field-conversions.md",
   "managed-notes-and-properties.md", "note-links.md",
   "relationships-headings-and-templates.md", "systems-composition-evolution.md",
   "migration-effects.md", "conformance-and-roadmap.md", "quick-reference.md",

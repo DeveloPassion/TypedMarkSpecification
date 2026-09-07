@@ -182,9 +182,29 @@ Rules:
 - `CM-299` `invalid_template_region` applies when a template-region marker, descriptor, receipt, marker pairing, nesting boundary, or marker-to-receipt correspondence violates [Template Drift Tracking](relationships-headings-and-templates.md#template-drift-tracking).
 - `CM-200` The effective `metadata_directory`, `exclude_paths`, `validation_defaults`, and `automation_defaults` values participate in conformance exactly as if their default values had been physically written in `typedmark.md`.
 
+### Path Matching
+
+Mappings, scopes, and queries share path comparisons without sharing a wire
+shape. Each consumer supplies a normalized collection-relative note path,
+including its `.md` extension. The `when.path.regex` carrier named below is
+defined by note-type mappings; other consumers reuse its matching semantics.
+
+| Candidate | Predicate | Match |
+| --- | --- | --- |
+| `Projects/Alpha.md` | `under: Projects/` | yes |
+| `ProjectsArchive/Alpha.md` | `under: Projects/` | no |
+| `Projects/Alpha.md` | `equals: projects/Alpha.md` | no |
+
+Rules:
+
+- `CM-406` Path `equals` matches exactly when the normalized candidate path equals `value` under `FND-38`.
+- `CM-404` Path `under` matches exactly when its normalized, trailing-slash directory `value` is a prefix of the normalized candidate path after NFC normalization.
+- `CM-101` `when.path.regex` MUST be a non-empty string and is matched against the entire normalized collection-relative note path.
+- `CM-102` Regex evaluation in `note_type_mappings` uses the ECMA-262 regular expression dialect defined in [Foundations](foundations.md).
+
 ### Note-Type Mappings
 
-`typedmark.md` can define `note_type_mappings` to control how collection notes are associated with note types.
+`typedmark.md` can define `note_type_mappings` to control how collection notes are associated with note types. Path comparisons use [Path Matching](#path-matching).
 
 Shape at a glance:
 
@@ -258,8 +278,6 @@ Rules:
 - `CM-98` Path conditions are evaluated against the collection-relative note path including the `.md` extension and normalized to use forward slashes.
 - `CM-99` `when.path.equals` MUST be a non-empty collection-relative path string.
 - `CM-100` `when.path.under` MUST be a non-empty collection-relative directory string and MUST end with `/`.
-- `CM-101` `when.path.regex` MUST be a non-empty string and is matched against the entire normalized collection-relative note path.
-- `CM-102` Regex evaluation in `note_type_mappings` uses the ECMA-262 regular expression dialect defined in [Foundations](foundations.md).
 - `CM-103` `when.frontmatter` is a mapping from top-level stored frontmatter field name to one predicate mapping.
 - `CM-104` Nested frontmatter field paths are not supported in `note_type_mappings` in this specification version.
 - `CM-105` If a note has no YAML frontmatter, all `when.frontmatter` predicates fail.
@@ -368,8 +386,6 @@ Rules:
 - `CM-324` Path predicates MUST evaluate the candidate's normalized collection-relative path, including its `.md` extension.
 - `CM-325` Path `equals`, `under`, and `regex` MUST use the matching semantics defined by `CM-406`, `CM-404`, `CM-101`, and `CM-102`.
 - `CM-403` A path `equals` value MUST be a normalized collection-relative note path including its `.md` extension.
-- `CM-406` Path `equals` matches exactly when the normalized candidate path equals `value` under `FND-38`.
-- `CM-404` Path `under` matches exactly when its normalized, trailing-slash directory `value` is a prefix of the normalized candidate path after NFC normalization.
 - `CM-326` A field predicate's `field` MUST be a dot-separated field path beginning with one effective top-level field or core-defined managed-note field.
 - `CM-327` Each field-path segment after the first MUST name a declared field in the preceding `object.fields` mapping.
 - `CM-328` Field paths MUST NOT traverse a list or use an index.
@@ -478,7 +494,7 @@ Rules:
 - `CM-479` Every mapped-field source note-type identifier MUST resolve under the concrete-and-abstract semantics of `CM-310` through `CM-312` and `CM-387`.
 - `CM-480` For every concrete note type admitted by the query, at most one source mapping in one mapped-field projection MUST match that concrete type.
 - `CM-481` A matching mapped-field source MUST read its declared field from the candidate's effective schema and current parsed value.
-- `CM-482` A mapped-field source without `conversion` MUST have an exact source-to-target conversion under [Field Compatibility and Conversion](field-definition-reference.md#field-compatibility-and-conversion).
+- `CM-482` A mapped-field source without `conversion` MUST have an exact source-to-target conversion under [Field Compatibility and Conversion](field-conversions.md#field-compatibility-and-conversion).
 - `CM-483` A mapped-field source with `conversion` MUST declare the conversion's actual `lossless` or `conditional` class under `FDR-254` and `FDR-255`.
 - `CM-484` A non-exact mapped-field conversion MUST declare `conversion` explicitly.
 - `CM-485` A mapped source value MUST be converted to `definition` under `FDR-257` through `FDR-264`.
@@ -835,7 +851,7 @@ Rules:
 - `CM-206` A folder-scope `path` MUST declare exactly one of `equals`, `under`, or `regex`.
 - `CM-207` Folder-scope path matching MUST use the managed note's normalized collection-relative path, including its `.md` extension and using forward slashes.
 - `CM-208` `path.equals` MUST be a non-empty collection-relative path and matches only that exact path.
-- `CM-209` `path.under` MUST be a non-empty collection-relative directory ending in `/` and matches the same subtree defined for `when.path.under` under [Note-Type Mappings](#note-type-mappings).
+- `CM-209` `path.under` MUST be a non-empty collection-relative directory ending in `/` and matches the subtree defined in [Path Matching](#path-matching).
 - `CM-210` `path.regex` MUST be a non-empty ECMA-262 regular expression matched against the entire normalized collection-relative note path.
 - `CM-211` Folder scopes MUST be evaluated after note-type mapping and before the managed note's effective schema is computed.
 - `CM-212` Folder scopes apply only to managed notes and MUST NOT make an otherwise untyped note managed.
@@ -956,7 +972,7 @@ Rules:
 - `CM-281` A target matches `scope` only when every declared scope constraint matches.
 - `CM-253` Each identifier in `scope.note_types` MUST resolve to exactly one concrete note type.
 - `CM-254` `scope.path` MUST declare exactly one of `equals`, `under`, or `regex`.
-- `CM-282` `scope.path` uses the folder-scope path semantics defined on this page.
+- `CM-282` `scope.path` uses the common [Path Matching](#path-matching) semantics.
 - `CM-255` `when`, when present, MUST use the frontmatter predicate shape and semantics defined for `note_type_mappings` on this page.
 - `CM-256` `trigger.scope_transition` MAY be omitted, and when omitted its effective value is `matches_after`.
 - `CM-257` `trigger.scope_transition` MUST be `matches_after`, `enters`, or `leaves`.

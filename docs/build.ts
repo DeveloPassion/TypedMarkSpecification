@@ -13,7 +13,8 @@
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { isAbsolute, join, relative, resolve } from "node:path";
 import { marked } from "marked";
-import { rewritePageLinks } from "./links";
+import { renderMovedRuleLinks, rewritePageLinks } from "./links";
+import ruleRegistry from "../scripts/rule-registry.json";
 
 const ROOT = join(import.meta.dir, "..");
 const DIST = join(ROOT, "dist");
@@ -34,6 +35,7 @@ const PAGES: Page[] = [
   { file: "collection-model.md", out: "collection-model.html", nav: "Collection Model", section: "Specification" },
   { file: "note-type-schemas.md", out: "note-type-schemas.html", nav: "Note Type Schemas", section: "Specification" },
   { file: "field-definition-reference.md", out: "field-definition-reference.html", nav: "Field Definition Reference", section: "Specification" },
+  { file: "field-conversions.md", out: "field-conversions.html", nav: "Field Conversions", section: "Specification" },
   { file: "managed-notes-and-properties.md", out: "managed-notes-and-properties.html", nav: "Managed Notes and Properties", section: "Specification" },
   { file: "note-links.md", out: "note-links.html", nav: "Note Links", section: "Specification" },
   { file: "relationships-headings-and-templates.md", out: "relationships-headings-and-templates.html", nav: "Relationships, Headings, Templates, and Content Expansion", section: "Specification" },
@@ -103,6 +105,7 @@ function renderPage(markdown: string, sourceFile: string): { html: string; toc: 
   html = html.replace(/<li><code>([A-Z]{2,3}-\d+)<\/code>/g,
     '<li id="$1"><a class="rule-id" href="#$1">$1</a>');
 
+  html += renderMovedRuleLinks(sourceFile, PAGES, ruleRegistry);
   return { html, toc };
 }
 

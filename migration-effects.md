@@ -34,7 +34,7 @@ Rules:
 - `ME-3` `add_field` MUST add the new field to every affected managed note, materialized to a freshly generated value when the field declares a generation strategy, and otherwise to its `default_value` or to `null` under the Canonical Field Materialization rules defined in [Managed Notes and Properties](managed-notes-and-properties.md).
 - `ME-4` `remove_field` MUST remove the named field from every affected managed note.
 - `ME-5` `rename_field` MUST move the stored value from the old field name to the new field name in every affected managed note, preserving the value unchanged.
-- `ME-6` `retype_field` MUST convert each stored value under the shared [Field Compatibility and Conversion](field-definition-reference.md#field-compatibility-and-conversion) rules.
+- `ME-6` `retype_field` MUST convert each stored value under the shared [Field Compatibility and Conversion](field-conversions.md#field-compatibility-and-conversion) rules.
 - `ME-7` `change_field` MUST re-validate every affected managed note against the field's new constraints; a stored value that violates the new constraints MUST be reported rather than silently dropped or altered.
 - `ME-8` `rename_note_type` MUST update the stored `note_type` field when present, MUST re-resolve the note's storage path under the renamed type's effective storage rules, and MUST update internal note links and relationship-bearing fields that target the renamed type.
 - `ME-9` `change_storage` MUST re-resolve the storage path of every affected managed note under the new effective storage rules, MUST move each note whose stored path no longer conforms, and MUST update internal note links so moved notes still resolve; a move or link update that cannot be applied safely MUST be reported for explicit resolution.
@@ -72,7 +72,7 @@ Rules:
 
 ### Field Type Conversions
 
-A `retype_field` migration is one consumer of the shared conversion contract in [Field Definition Reference](field-definition-reference.md#field-compatibility-and-conversion). It changes the field definition and writes compatible converted values back to affected notes; other consumers can use the same conversion semantics without mutating their sources.
+A `retype_field` migration is one consumer of the shared [Field Compatibility and Conversion](field-conversions.md#field-compatibility-and-conversion) contract. It changes the field definition and writes compatible converted values back to affected notes; other consumers can use the same conversion semantics without mutating their sources.
 
 For example, retyping `estimate` from `integer` to `number` applies a lossless conversion to every stored value. Retyping it from `number` to `integer` proceeds automatically only when the complete affected value set contains no fractional value.
 

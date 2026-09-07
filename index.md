@@ -50,7 +50,8 @@ New here? Read the [Manifesto](manifesto.md) for the why, then follow [Getting S
 - [Extensions and Capabilities](extensions.md): required optional contracts, capability matching, and inert vendor metadata
 - [Collection Model](collection-model.md): collection configuration plus portable queries, reusable datasets, and saved table, list, cards, and board views
 - [Note Type Schemas](note-type-schemas.md): how one note type is defined — its fields, storage location, naming, and constraints
-- [Field Definition Reference](field-definition-reference.md): every property a field can declare, plus compatibility and conversion between fields
+- [Field Definition Reference](field-definition-reference.md): every property a field can declare
+- [Field Compatibility and Conversion](field-conversions.md): an optional shared contract for queries, datasets, and migrations
 - [Managed Notes and Properties](managed-notes-and-properties.md): what a typed note must look like on disk, including automation execution and dependency propagation
 - [Note Links](note-links.md): how links between notes are written and resolved
 - [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md): documenting how note types relate, what a note's body must contain, how template-owned regions drift, and how derived Markdown stays synchronized
