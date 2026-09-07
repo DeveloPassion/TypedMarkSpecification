@@ -1,6 +1,9 @@
 {
   "specification_version": "0.1.0",
   "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
   "valid": false,
   "results": [
     {
@@ -8,6 +11,8 @@
       "severity": "warn",
       "path": "notes/typed-mark.md",
       "rule_id": "RHT-74",
+      "template_region": "summary",
+      "drift_kind": "template_changed",
       "message": "warnings alone do not make the report invalid"
     }
   ]

@@ -13,6 +13,7 @@
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { isAbsolute, join, relative, resolve } from "node:path";
 import { marked } from "marked";
+import { rewritePageLinks } from "./links";
 
 const ROOT = join(import.meta.dir, "..");
 const DIST = join(ROOT, "dist");
@@ -29,6 +30,7 @@ const PAGES: Page[] = [
   { file: "manifesto.md", out: "manifesto.html", nav: "Manifesto", section: "Specification" },
   { file: "getting-started.md", out: "getting-started.html", nav: "Getting Started", section: "Specification" },
   { file: "foundations.md", out: "foundations.html", nav: "Foundations", section: "Specification" },
+  { file: "extensions.md", out: "extensions.html", nav: "Extensions and Capabilities", section: "Specification" },
   { file: "collection-model.md", out: "collection-model.html", nav: "Collection Model", section: "Specification" },
   { file: "note-type-schemas.md", out: "note-type-schemas.html", nav: "Note Type Schemas", section: "Specification" },
   { file: "field-definition-reference.md", out: "field-definition-reference.html", nav: "Field Definition Reference", section: "Specification" },
@@ -40,6 +42,7 @@ const PAGES: Page[] = [
   { file: "conformance-and-roadmap.md", out: "conformance-and-roadmap.html", nav: "Conformance and Roadmap", section: "Specification" },
   { file: "quick-reference.md", out: "quick-reference.html", nav: "Quick Reference", section: "Specification" },
   { file: "schema/docs/schema-boundary.md", out: "schema-boundary.html", nav: "Schema Boundary", section: "Resources" },
+  { file: "schema/docs/conformance-runner.md", out: "conformance-runner.html", nav: "Semantic Runner", section: "Resources" },
 ];
 
 const REPO_URL = "https://github.com/DeveloPassion/TypedMarkSpecification";
@@ -77,16 +80,11 @@ interface TocEntry {
   id: string;
 }
 
-function renderPage(markdown: string): { html: string; toc: TocEntry[] } {
+function renderPage(markdown: string, sourceFile: string): { html: string; toc: TocEntry[] } {
   let html = marked.parse(markdown, { async: false }) as string;
 
   // Rewrite internal links between spec pages: foo.md(#anchor) -> foo.html(#anchor)
-  const known = new Map(PAGES.map((p) => [p.file.split("/").pop()!, p.out]));
-  html = html.replace(/href="([a-z][a-z0-9./-]*\.md)(#[^"]*)?"/g, (m, target: string, anchor?: string) => {
-    const base = target.split("/").pop()!;
-    const out = known.get(base);
-    return out ? `href="${out}${anchor ?? ""}"` : m;
-  });
+  html = rewritePageLinks(html, sourceFile, PAGES);
 
   // Add ids to h2/h3 headings and collect the table of contents.
   const toc: TocEntry[] = [];
@@ -150,7 +148,7 @@ function validateInternalLinks(): void {
       if (/^[a-z][a-z0-9+.-]*:/i.test(href)) continue;
 
       const [targetPart, fragment] = href.split("#", 2);
-      const target = targetPart || page.out;
+      const target = (targetPart || page.out).split("?", 1)[0]!;
       const targetPath = resolve(DIST, target);
       const relativeTarget = relative(DIST, targetPath);
       if (relativeTarget.startsWith("..") || isAbsolute(relativeTarget)) {
@@ -219,7 +217,7 @@ const searchIndex: Array<{ page: string; heading: string | null; url: string }> 
 for (const page of PAGES) {
   const raw = readFileSync(join(ROOT, page.file), "utf8");
   const { body, title, audience } = stripFrontmatter(raw);
-  const { html, toc } = renderPage(body);
+  const { html, toc } = renderPage(body, page.file);
   const pageTitle = title ?? page.nav;
   writeFileSync(join(DIST, page.out), shell(page, pageTitle, html, toc, audience));
   searchIndex.push({ page: pageTitle, heading: null, url: page.out });

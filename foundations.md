@@ -19,6 +19,7 @@ Authoritative for:
 See also:
 
 - [Collection Model](collection-model.md): the structural fields of `typedmark.md`
+- [Extensions and Capabilities](extensions.md): required optional contracts and inert vendor metadata
 - [Note Type Schemas](note-type-schemas.md): effective note-type schemas
 - [Conformance and Roadmap](conformance-and-roadmap.md): conformance modes and artifact sets
 
@@ -127,7 +128,7 @@ Rules:
 - `FND-8` A tool MUST advertise each specification compatibility line it implements together with the highest specification version it implements within that line.
 - `FND-9` Within an implemented compatibility line, a tool MUST evaluate an artifact whose declared version is less than or equal to its highest implemented version under that artifact's declared version.
 - `FND-10` If an artifact declares a newer version within a compatibility line the tool implements, the tool MUST evaluate it on a best-effort basis under its highest implemented version in that line.
-- `FND-90` A tool MUST NOT reject an artifact solely because its version is newer within an implemented compatibility line.
+- `FND-90` A tool MUST NOT classify an artifact as invalid solely because its version is newer within an implemented compatibility line.
 - `FND-91` During best-effort evaluation of a newer version in an implemented compatibility line, a tool SHOULD report constructs it does not recognize as warnings rather than errors.
 - `FND-11` A construct introduced by a newer version that a tool does not recognize MUST be reported under `unknown_field` or as an unrecognized construct; it MUST NOT be silently accepted as structure the tool understands.
 - `FND-12` If an artifact declares a compatibility line the tool does not implement, the tool MUST NOT assert conformance for that artifact.
@@ -319,6 +320,7 @@ In path notation below, `<metadata_directory>` is the directory name declared by
 The authoritative contract for each governed element and cross-tool runtime surface lives in exactly one place, except that `typedmark.md` is documented by concern: its structural fields are authoritative on [Collection Model](collection-model.md) and its optional system fields are authoritative on [Systems, Composition, and Evolution](systems-composition-evolution.md).
 
 - `typedmark.md` structural fields: [Collection Model](collection-model.md)
+- `typedmark.md` extension requirements and governed-artifact vendor metadata: [Extensions and Capabilities](extensions.md)
 - `typedmark.md` system fields, including release version, publishing metadata, and scaffold: [Systems, Composition, and Evolution](systems-composition-evolution.md)
 - `<metadata_directory>/history.md`: [Systems, Composition, and Evolution](systems-composition-evolution.md)
 - `<metadata_directory>/automations/<automation>.md`: [Collection Model](collection-model.md)

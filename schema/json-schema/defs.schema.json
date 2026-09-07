@@ -12,6 +12,22 @@
       "type": "string",
       "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-(?:0|[1-9]\\d*|\\d*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[A-Za-z-][0-9A-Za-z-]*))*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"
     },
+    "extension_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*:[a-z0-9]+(?:-[a-z0-9]+)*(?![\\s\\S])"
+    },
+    "extension_requirements": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/$defs/extension_id"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/semver",
+        "not": {
+          "pattern": "\\s"
+        }
+      }
+    },
     "non_empty_string": {
       "type": "string",
       "minLength": 1

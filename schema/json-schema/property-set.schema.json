@@ -69,5 +69,8 @@
       "$ref": "defs.schema.json#/$defs/headings_block"
     }
   },
+  "patternProperties": {
+    "^x_[a-z][a-z0-9_]*(?![\\s\\S])": {}
+  },
   "additionalProperties": false
 }

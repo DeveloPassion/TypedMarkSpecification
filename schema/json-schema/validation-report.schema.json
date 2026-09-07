@@ -7,6 +7,9 @@
   "required": [
     "specification_version",
     "mode",
+    "evaluation",
+    "required_extensions",
+    "evaluated_extensions",
     "valid",
     "results"
   ],
@@ -20,6 +23,18 @@
         "instantiated_collection",
         "both"
       ]
+    },
+    "evaluation": {
+      "enum": [
+        "complete",
+        "incomplete"
+      ]
+    },
+    "required_extensions": {
+      "$ref": "defs.schema.json#/$defs/extension_requirements"
+    },
+    "evaluated_extensions": {
+      "$ref": "defs.schema.json#/$defs/extension_requirements"
     },
     "valid": {
       "type": "boolean"
@@ -45,6 +60,9 @@
       },
       "then": {
         "properties": {
+          "evaluation": {
+            "const": "complete"
+          },
           "results": {
             "not": {
               "contains": {
@@ -67,10 +85,14 @@
         "properties": {
           "valid": {
             "const": false
+          },
+          "evaluation": {
+            "const": "complete"
           }
         },
         "required": [
-          "valid"
+          "valid",
+          "evaluation"
         ]
       },
       "then": {
@@ -119,6 +141,8 @@
             "invalid_note_type_mapping",
             "invalid_composition",
             "unsupported_specification_version",
+            "invalid_extension_declaration",
+            "unsupported_extension",
             "invalid_note_link",
             "invalid_relationship_definition",
             "invalid_relationship_instance",
@@ -141,7 +165,7 @@
         },
         "rule_id": {
           "type": "string",
-          "pattern": "^(FND|CM|NTS|FDR|MN|NL|RHT|SCE|ME|CR)-[1-9][0-9]*$"
+          "pattern": "^(FND|EXT|CM|NTS|FDR|MN|NL|RHT|SCE|ME|CR)-[1-9][0-9]*$"
         },
         "message": {
           "$ref": "defs.schema.json#/$defs/non_empty_string"
@@ -170,6 +194,9 @@
         "template_region": {
           "$ref": "defs.schema.json#/$defs/slug"
         },
+        "extension": {
+          "$ref": "defs.schema.json#/$defs/extension_id"
+        },
         "drift_kind": {
           "enum": [
             "template_added",
@@ -183,6 +210,23 @@
         }
       },
       "allOf": [
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "unsupported_extension"
+              }
+            },
+            "required": [
+              "code"
+            ]
+          },
+          "then": {
+            "required": [
+              "extension"
+            ]
+          }
+        },
         {
           "if": {
             "properties": {

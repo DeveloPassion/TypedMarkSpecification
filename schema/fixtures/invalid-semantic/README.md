@@ -26,6 +26,34 @@ full boundary.
 | `query-unknown-order-column.json` | Every ordering column must resolve to exactly one projected alias; `priority` is not projected. |
 | `view-unknown-column.md` | Every presented column must resolve to exactly one alias in the saved view's query; `missing` is not projected. |
 
+## Extension and evaluation boundaries
+
+The following cases also pass JSON Schema. The `example:*` contracts are
+illustrative external test assumptions, not installed or registered extensions.
+Their dependency graphs and core compatibility are described in each Markdown
+fixture's body. The fixture command does not resolve these assumptions or infer
+semantic findings; it checks that these deliberately semantic-only cases remain
+shape-valid.
+
+| Fixture | Semantic rule violated |
+| --- | --- |
+| `typedmark-extension-missing-dependency.md` | EXT-14: the known review contract requires the omitted exact labels dependency. |
+| `typedmark-extension-conflicting-dependencies.md` | EXT-15: review and tasks require different exact labels versions. |
+| `typedmark-extension-dependency-cycle.md` | EXT-15: review and labels require each other. |
+| `typedmark-extension-incompatible-core.md` | EXT-20: the known contract excludes the applicable artifact's Core `0.1` line. |
+| `typedmark-extension-undeclared-use.md` | EXT-16: the external collection setup uses an extension-owned review-queue artifact but omits its declaration. |
+| `validation-report-extension-version-mismatch.json` | CR-100: the evaluated version differs in its build suffix from the required exact version. |
+| `validation-report-extension-undeclared-evaluated.json` | CR-100: an evaluated extension does not occur in the required map. |
+| `validation-report-complete-missing-extension.json` | CR-101–103: a required extension is unevaluated, so evaluation cannot be complete. |
+| `validation-report-required-map-mismatch.json` | CR-99: assume the target declares `example:review: 1.2.0`; the required report map omits it. |
+| `validation-report-unsupported-claimed-evaluated.json` | EXT-19/21 and CR-101–103: assume the tool supports only `example:review` at `1.2.0`, but the report falsely claims it interpreted `9.0.0`. Matching maps alone cannot prove capability. |
+
+The golden-vector checker separately checks expected reports' map consistency
+against their collection declaration, as it checks canonical ordering. That
+fixture-integrity check is not an extension evaluator and does not run against
+this bucket. The illustrative supported/unsupported matrix is documented in
+[`../valid/README.md`](../valid/README.md).
+
 Managed-note semantics — note-link resolution, allowed unresolved placeholder links,
 relationship cardinality, canonical field materialization — are also semantic-layer
 concerns: managed-note frontmatter is validated against the collection's *effective

@@ -28,9 +28,15 @@ yet released. The refocusing work is tracked in
   `0.1.x` does not imply support for `0.0.x`; patch changes remain compatible.
 - Templates take their specification version from their referencing concrete
   schema rather than storing it in starter note frontmatter.
+- Required extensions use an exact-version map; validation reports distinguish
+  complete interpretation from unsupported or deliberately limited evaluation.
+- Unknown artifact-structure keys are errors under implemented contracts;
+  explicitly scoped `x_*` metadata provides an inert carrier instead.
 
 The authoritative rules are in
-[Specification Versioning](foundations.md#specification-versioning). Other
+[Specification Versioning](foundations.md#specification-versioning),
+[Extensions and Capabilities](extensions.md), and
+[Validation Reports](conformance-and-roadmap.md#validation-reports). Other
 decisions recorded in the epic remain planned until their corresponding
 contracts land; this summary does not itself change those contracts.
 
@@ -41,6 +47,7 @@ New here? Read the [Manifesto](manifesto.md) for the why, then follow [Getting S
 - [Manifesto](manifesto.md): why note types matter
 - [Getting Started](getting-started.md): your first typed collection, step by step (non-normative)
 - [Foundations](foundations.md): the core concepts, the file format of governed artifacts, and the parsing baselines everything else builds on
+- [Extensions and Capabilities](extensions.md): required optional contracts, capability matching, and inert vendor metadata
 - [Collection Model](collection-model.md): collection configuration plus portable queries, reusable datasets, and saved table, list, cards, and board views
 - [Note Type Schemas](note-type-schemas.md): how one note type is defined — its fields, storage location, naming, and constraints
 - [Field Definition Reference](field-definition-reference.md): every property a field can declare, plus compatibility and conversion between fields
@@ -78,6 +85,7 @@ New here? Read the [Manifesto](manifesto.md) for the why, then follow [Getting S
 
 12. [Conformance and Roadmap](conformance-and-roadmap.md)
 13. The parsing and matching baselines in [Foundations](foundations.md) and the [machine-readable schemas](https://github.com/DeveloPassion/TypedMarkSpecification/tree/main/schema)
+14. [Extensions and Capabilities](extensions.md) for interpreting declarations and reporting unsupported contracts
 
 ## Machine-Readable Schemas
 

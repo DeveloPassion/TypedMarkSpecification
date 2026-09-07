@@ -36,7 +36,7 @@ const GOLDEN_DIR = join(FIXTURE_DIR, "golden");
 const ROOT = join(import.meta.dir, "..");
 
 const SPEC_PAGES = [
-  "index.md", "manifesto.md", "getting-started.md", "foundations.md",
+  "index.md", "manifesto.md", "getting-started.md", "foundations.md", "extensions.md",
   "collection-model.md", "note-type-schemas.md", "field-definition-reference.md",
   "managed-notes-and-properties.md", "note-links.md",
   "relationships-headings-and-templates.md", "systems-composition-evolution.md",
@@ -229,7 +229,7 @@ function compareReportResults(left: unknown, right: unknown): number {
   const rightResult = objectValue(right) ?? {};
   const keys = [
     "path", "rule_id", "code", "note_type", "field", "relationship", "heading",
-    "expansion", "dataset", "view", "template_region", "drift_kind",
+    "expansion", "dataset", "view", "template_region", "drift_kind", "extension",
   ];
   for (const key of keys) {
     const compared = compareCodePoints(
@@ -251,6 +251,33 @@ function validateShape(
   failures.push(`${label}: expected to pass shape validation`);
   for (const error of (validate.errors ?? []).slice(0, 3)) {
     failures.push(`  ${error.instancePath || "/"}: ${error.message}`);
+  }
+}
+
+function validateExpectedReportCoverage(
+  report: unknown,
+  collection: unknown,
+  label: string,
+  failures: string[],
+): void {
+  const reportObject = objectValue(report);
+  const collectionObject = objectValue(collection);
+  const required = objectValue(reportObject?.required_extensions);
+  const evaluated = objectValue(reportObject?.evaluated_extensions);
+  const declared = objectValue(collectionObject?.extensions ?? {});
+  if (!required || !evaluated || !declared) return;
+
+  const exactSubset = (subset: Record<string, unknown>, superset: Record<string, unknown>) =>
+    Object.entries(subset).every(([id, version]) => Object.hasOwn(superset, id) && superset[id] === version);
+
+  if (!exactSubset(required, declared) || !exactSubset(declared, required)) {
+    failures.push(`${label}: required_extensions must match the collection's declared extensions`);
+  }
+  if (!exactSubset(evaluated, required)) {
+    failures.push(`${label}: evaluated_extensions must be an exact subset of required_extensions`);
+  }
+  if (reportObject?.evaluation === "complete" && !exactSubset(required, evaluated)) {
+    failures.push(`${label}: complete report must evaluate every required extension`);
   }
 }
 
@@ -309,6 +336,7 @@ export function validateGoldenVectors(
       validators.typedmark!, typedmark,
       `golden/${vector}/collection/typedmark.md`, failures,
     );
+    validateExpectedReportCoverage(report, typedmark, `golden/${vector}`, failures);
 
     const reportObject = objectValue(report);
     const results = Array.isArray(reportObject?.results) ? reportObject.results : [];

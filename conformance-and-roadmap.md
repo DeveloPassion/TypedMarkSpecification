@@ -14,12 +14,14 @@ Authoritative for:
 - the specification's non-goals
 - conformance modes and their required artifact sets
 - the portable validation-report format
+- evaluation completeness and the required/evaluated extension sets in reports
 - portable automation event and run-report interchange
 - the recommended implementation order
 
 See also:
 
 - [Foundations](foundations.md): authoring profiles and shared baselines
+- [Extensions and Capabilities](extensions.md): declarations and capability matching
 - [Collection Model](collection-model.md): collection-level validation severities
 - [Systems, Composition, and Evolution](systems-composition-evolution.md): system-definition and migration contracts
 
@@ -57,11 +59,25 @@ Conformance modes:
 
 Validators can serialize their findings as one portable JSON report for editors, CI pipelines, and other tools. The report states what was evaluated and whether any configured error remains; individual results identify both a stable diagnostic category and the exact normative rule that produced it.
 
+`evaluation` distinguishes an interpreted contract that has validation errors
+from a contract the tool could not fully interpret. `valid: false` therefore
+means conformance has not been established; with `evaluation: incomplete`, it
+does not by itself prove that the collection is invalid. Extension declarations
+and their map shape are authoritative in [Extensions and Capabilities](extensions.md).
+
+This is a report-shape change from the `0.0` line. Producers populate the new
+fields from actual evaluation; adding `evaluation: complete` to an old report
+without establishing its coverage is not a migration. Consumers distinguish
+incomplete evaluation from a complete report containing validation errors.
+
 <!-- typedmark-example: artifact=validation-report -->
 ```json
 {
   "specification_version": "0.1.0",
   "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
   "valid": false,
   "results": [
     {
@@ -79,24 +95,64 @@ Validators can serialize their findings as one portable JSON report for editors,
 
 Rules:
 
-- `CR-24` A tool that serializes validation findings for interchange MUST encode the report as UTF-8 JSON with the top-level keys `specification_version`, `mode`, `valid`, and `results`.
+- `CR-24` A tool that serializes validation findings for interchange MUST encode the report as UTF-8 JSON with the top-level keys `specification_version`, `mode`, `evaluation`, `required_extensions`, `evaluated_extensions`, `valid`, and `results`.
 - `CR-25` `specification_version` MUST identify the TypedMark specification version under which the validator evaluated the target.
 - `CR-26` `mode` MUST be `system_definition`, `instantiated_collection`, or `both`, corresponding to the conformance targets defined on this page.
-- `CR-27` `valid` MUST be `true` exactly when `results` contains no result whose `severity` is `error`.
+- `CR-27` `valid` MUST be `true` exactly when `evaluation` is `complete` and `results` contains no result whose `severity` is `error`.
 - `CR-28` `results` MUST be a list containing zero or more validation-result objects.
 - `CR-29` Each validation result MUST contain `code`, `severity`, `path`, `rule_id`, and `message`.
 - `CR-30` `code` MUST be one of the validation keys defined authoritatively under `validation_defaults` in [Collection Model](collection-model.md).
-- `CR-31` `severity` MUST be the result's effective configured severity after applying the defaults and overrides defined in [Collection Model](collection-model.md) and [Note Type Schemas](note-type-schemas.md).
+- `CR-31` `severity` MUST be the result's effective severity after applying artifact-specific fixed severities and the applicable defaults and overrides defined in [Collection Model](collection-model.md) and [Note Type Schemas](note-type-schemas.md).
 - `CR-32` A validator MUST NOT emit a result whose effective configured severity is `off`.
 - `CR-33` `path` MUST be the normalized collection-relative path of the governed artifact or managed note that the result describes, using forward slashes.
 - `CR-34` `rule_id` MUST identify the stable rule whose violation produced the result.
 - `CR-35` `message` MUST be a non-empty human-readable explanation of the specific finding.
 - `CR-36` Consumers MUST NOT use `message` as a machine-stable identifier.
-- `CR-37` A result MAY include `note_type`, `field`, `relationship`, `heading`, `expansion`, `dataset`, `view`, `template_region`, or `drift_kind` when that context applies.
+- `CR-37` A result MAY include `note_type`, `field`, `relationship`, `heading`, `expansion`, `dataset`, `view`, `template_region`, `drift_kind`, or `extension` when that context applies.
 - `CR-38` A nested field context MUST use `field` as a dot-separated path from its top-level frontmatter field.
-- `CR-39` Validators MUST order results by `path`, `rule_id`, `code`, `note_type`, `field`, `relationship`, `heading`, `expansion`, `dataset`, `view`, `template_region`, and `drift_kind`, in that sequence, comparing each component as exact Unicode code points and treating absent values as empty strings.
+- `CR-39` Validators MUST order results by `path`, `rule_id`, `code`, `note_type`, `field`, `relationship`, `heading`, `expansion`, `dataset`, `view`, `template_region`, `drift_kind`, and `extension`, in that sequence, comparing each component as exact Unicode code points and treating absent values as empty strings.
 - `CR-40` Validation MUST NOT modify the collection or any governed artifact it evaluates.
 - `CR-86` Every `template_drift` result MUST contain `template_region` and `drift_kind`.
+- `CR-97` `evaluation` MUST be either `complete` or `incomplete`.
+- `CR-98` `required_extensions` and `evaluated_extensions` MUST each have the extension-identifier-to-exact-version map shape defined in [Extensions and Capabilities](extensions.md#required-extensions).
+- `CR-99` `required_extensions` MUST record the collection's declared required extension map, using `{}` when the declaration is absent.
+- `CR-100` Every entry in `evaluated_extensions` MUST occur with the same exact version in `required_extensions`.
+- `CR-101` An extension MUST appear in `evaluated_extensions` exactly when its required contract was interpreted for the target, whether or not that evaluation found violations.
+- `CR-102` `evaluation` MUST be `incomplete` if any applicable core version or required extension contract was not interpreted, including deliberately limited evaluation or best-effort evaluation under an older core version.
+- `CR-103` `evaluation` MUST be `complete` otherwise, including when interpretation establishes that the target violates its contracts.
+- `CR-104` Changing or suppressing a diagnostic's configured severity MUST NOT change evaluation completeness.
+- `CR-105` Every `unsupported_extension` result MUST contain an `extension` identifying the required extension.
+
+For example, this report cannot establish full conformance because the tool
+does not support the required illustrative extension:
+
+<!-- typedmark-example: artifact=validation-report -->
+```json
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "incomplete",
+  "required_extensions": {"example:review": "1.2.0"},
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [
+    {
+      "code": "unsupported_extension",
+      "severity": "error",
+      "path": "typedmark.md",
+      "rule_id": "EXT-19",
+      "extension": "example:review",
+      "message": "example:review at 1.2.0 is required but unsupported"
+    }
+  ]
+}
+```
+
+Suppressing that diagnostic can make `results` empty, but leaves
+`evaluation: incomplete` and `valid: false`. A Core-only evaluation of an
+extension-using collection is similarly incomplete, rather than a claim about
+the entire collection. Invalid field values under fully interpreted contracts,
+on the other hand, yield a complete report with errors.
 
 ### Automation Run Reports
 
@@ -241,6 +297,11 @@ Additional rules:
 - `CR-22` Validators MUST evaluate every winning note-type mapping candidate under `CM-114`, including candidates that do not resolve to a concrete schema.
 
 ## Recommended Next Steps
+
+The [semantic conformance runner guide](schema/docs/conformance-runner.md)
+describes the non-normative adapter boundary, capability-based vector selection,
+and report comparison used to collect implementation evidence. It does not
+replace the rules on this page.
 
 Recommended implementation order:
 

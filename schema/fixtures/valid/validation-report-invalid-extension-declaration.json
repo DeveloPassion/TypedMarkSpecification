@@ -1,0 +1,18 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {"example:review": "1.2.0"},
+  "evaluated_extensions": {"example:review": "1.2.0"},
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_extension_declaration",
+      "severity": "error",
+      "path": "typedmark.md",
+      "rule_id": "EXT-14",
+      "extension": "example:review",
+      "message": "The interpreted review contract requires an omitted dependency."
+    }
+  ]
+}

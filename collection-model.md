@@ -23,6 +23,7 @@ See also:
 - [Systems, Composition, and Evolution](systems-composition-evolution.md): the optional system fields, composition, and change history
 - [Note Type Schemas](note-type-schemas.md): the effective note-type schema the merge rules feed
 - [Field Definition Reference](field-definition-reference.md): the semantics of the field definitions property sets contribute
+- [Extensions and Capabilities](extensions.md): required extension declarations and inert vendor metadata
 - [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md): relationship resolution and query-backed content expansion
 
 Core Profile authors usually need only `specification_version`, `name`, and `description` in `typedmark.md`; deterministic defaults provide the metadata directory, ignored Git content, validation severities, automation propagation limit, and frontmatter-based note-type mapping. Mandatory tags, automation rules, datasets, saved views, property sets, folder scopes, vocabularies, composition provenance, and advanced mappings are optional layers for larger collections.
@@ -42,6 +43,7 @@ Shape at a glance:
 | Key | Physical requirement | Effective default | Purpose |
 | --- | --- | --- | --- |
 | `specification_version` | Required | none | Selects the TypedMark specification version |
+| `extensions` | Optional | `{}` | Required contracts, defined in [Extensions and Capabilities](extensions.md) |
 | `name` | Required | none | Collection identity |
 | `description` | Required | none | Human-facing summary |
 | `label` | Optional | application fallback to `name` | Display name |
@@ -87,6 +89,8 @@ validation_defaults:
   invalid_note_type_mapping: error
   invalid_composition: error
   unsupported_specification_version: error
+  invalid_extension_declaration: error
+  unsupported_extension: error
   invalid_note_link: error
   invalid_relationship_definition: error
   invalid_relationship_instance: error
@@ -155,7 +159,10 @@ Rules:
 - `CM-50` `path` applies when a managed note path violates the storage rules defined in [Note Type Schemas](note-type-schemas.md).
 - `CM-51` `missing_required_field` applies when a field declared in `frontmatter` with `optional: false` lacks a concrete value required for conformance after applying the rules in [Managed Notes and Properties](managed-notes-and-properties.md), or when a matching conditional constraint defined in [Note Type Schemas](note-type-schemas.md) requires a concrete value the note does not hold.
 - `CM-52` `missing_declared_field` applies when a field declared in `frontmatter` is absent from stored note frontmatter.
-- `CM-53` `unknown_field` applies when an undeclared field appears in the frontmatter of `typedmark.md` or any other governed artifact, or in managed note frontmatter; a note-type schema MAY override its severity for managed notes of that type, as defined in [Note Type Schemas](note-type-schemas.md).
+- `CM-53` `unknown_field` applies to undeclared structural keys in governed artifacts and undeclared managed-note fields, excluding the inert metadata permitted by [Extensions and Capabilities](extensions.md#inert-vendor-metadata).
+- `CM-534` An undeclared structural key in a governed artifact MUST have severity `error` when the tool implements the applicable core and extension contracts, regardless of the configured `unknown_field` severity.
+- `CM-535` `invalid_extension_declaration` applies when extension declarations, required dependencies, or declaration requirements violate [Extensions and Capabilities](extensions.md).
+- `CM-536` `unsupported_extension` applies when a required exact extension version cannot be interpreted by the tool.
 - `CM-54` `invalid_field_value` applies when a field value violates a declared field-level value constraint such as `format`, `regex`, `not_empty`, `not_blank`, `min`, `max`, `allowed_values`, or `targets`, when a matching conditional `require_null` constraint defined in [Note Type Schemas](note-type-schemas.md) is violated, or when a managed note lacks an effective mandatory tag. `format: note_link` syntax and resolution failures still use `invalid_note_link`.
 - `CM-55` `duplicate_unique_value` applies when a field declared with `unique: true` repeats a non-null stored value in more than one managed note of the same note type, when a field declared with `unique: collection` repeats a non-null stored value across any managed notes, or when the core-defined `id` field repeats a value across managed notes.
 - `CM-56` `invalid_note_count` applies when the number of managed notes of a note type violates that type's effective `count` constraint, as defined in [Note Type Schemas](note-type-schemas.md).
@@ -163,7 +170,7 @@ Rules:
 - `CM-476` `invalid_dataset` applies when a dataset artifact violates the shape, reference-resolution, query, row-identity, mapped-column, or evaluation rules defined on this page.
 - `CM-407` `invalid_view` applies when a saved-view artifact violates the shape, reference-resolution, query, presentation, or layout rules defined on this page.
 - `CM-58` `invalid_note_type_mapping` applies when a note-type mapping rule violates the mapping-rule contract or when a winning rule produces a candidate note type that does not resolve to exactly one concrete schema.
-- `CM-59` `invalid_composition` applies when the `composition` block in `typedmark.md` violates the composition-provenance rules defined in this page, including a source that does not resolve to exactly one system at the declared version.
+- `CM-59` `invalid_composition` applies when composition provenance or a composition operation violates its applicable contract in this page, [Systems, Composition, and Evolution](systems-composition-evolution.md), or the vendor-metadata preservation rules in [Extensions and Capabilities](extensions.md).
 - `CM-60` `unsupported_specification_version` applies when a governed artifact declares a `specification_version` whose compatibility line the tool does not implement; version-selection behavior is defined in [Foundations](foundations.md#specification-versioning).
 - `CM-61` `invalid_note_link` applies when an internal note link violates the syntax or resolution rules defined in [Note Links](note-links.md).
 - `CM-62` `invalid_relationship_definition` applies when relationship declarations violate the relationship model defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).

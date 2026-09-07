@@ -46,6 +46,9 @@
       "default": "abort"
     }
   },
+  "patternProperties": {
+    "^x_[a-z][a-z0-9_]*(?![\\s\\S])": {}
+  },
   "additionalProperties": false,
   "allOf": [
     {

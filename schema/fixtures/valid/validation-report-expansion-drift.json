@@ -1,6 +1,9 @@
 {
   "specification_version": "0.1.0",
   "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
   "valid": true,
   "results": [
     {

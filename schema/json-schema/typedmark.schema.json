@@ -18,6 +18,10 @@
     "specification_version": {
       "$ref": "defs.schema.json#/$defs/specification_version"
     },
+    "extensions": {
+      "$ref": "defs.schema.json#/$defs/extension_requirements",
+      "default": {}
+    },
     "name": {
       "$ref": "defs.schema.json#/$defs/collection_name"
     },
@@ -141,6 +145,12 @@
           "$ref": "defs.schema.json#/$defs/validation_severity"
         },
         "unsupported_specification_version": {
+          "$ref": "defs.schema.json#/$defs/validation_severity"
+        },
+        "invalid_extension_declaration": {
+          "$ref": "defs.schema.json#/$defs/validation_severity"
+        },
+        "unsupported_extension": {
           "$ref": "defs.schema.json#/$defs/validation_severity"
         },
         "invalid_note_link": {
@@ -503,6 +513,9 @@
     "license": {
       "$ref": "defs.schema.json#/$defs/non_empty_string"
     }
+  },
+  "patternProperties": {
+    "^x_[a-z][a-z0-9_]*(?![\\s\\S])": {}
   },
   "additionalProperties": false
 }
