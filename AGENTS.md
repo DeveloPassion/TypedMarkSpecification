@@ -69,6 +69,7 @@ The prose specification is the single source of truth. The JSON Schemas under
 - Commits follow Conventional Commits with the `(all)` scope, lowercase summaries,
   e.g. `feat(all): added support for logical deletion`. Reference GitHub issues
   with `Closes #NN` in the body when a commit resolves one.
+- Do not add `Co-authored-by` trailers to commits created in this repository.
 - Spec work is tracked in GitHub issues; check existing issues before filing new
   ones, and cross-reference related issues.
 
