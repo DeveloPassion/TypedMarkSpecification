@@ -12,13 +12,14 @@ Audience: system publishers and tool authors. Collection authors can skip this p
 Authoritative for:
 
 - the system fields of `typedmark.md`: release version, scaffold, and publishing metadata
-- the marketplace catalog, system composition, and canonical serialization
+- system composition and canonical serialization
 - `<metadata_directory>/history.md`, system versioning, and the migration and update flow
 
 See also:
 
 - [Collection Model](collection-model.md): the identity and structural fields, and composition provenance
 - [Migration Effects](migration-effects.md): what each change operation does to governed references and collection content
+- [Marketplace Catalog](marketplace-catalog.md): the companion distribution contract
 
 ## Systems
 
@@ -142,58 +143,7 @@ Rules:
 
 ### Marketplace Catalog
 
-A marketplace publishes the systems it knows in a machine-readable catalog, so tools and websites can browse systems, download them, and compose them into collections.
-
-Example `marketplace.json`:
-
-<!-- typedmark-example: artifact=marketplace -->
-```json
-{
-  "specification_version": "0.1.0",
-  "label": "TypedMark Systems Marketplace",
-  "description": "Community catalog of reusable TypedMark systems.",
-  "systems": [
-    {
-      "name": "@acme/para-system",
-      "version": "1.2.0",
-      "label": "PARA System",
-      "description": "PARA-style organization system.",
-      "keywords": ["para", "organization"],
-      "source": {
-        "path": "systems/para-system"
-      }
-    },
-    {
-      "name": "dev-team-ai-context",
-      "version": "0.3.0",
-      "description": "AI context system for development teams.",
-      "source": {
-        "repository": "https://github.com/example/dev-team-ai-context",
-        "ref": "v0.3.0"
-      }
-    }
-  ]
-}
-```
-
-Rules:
-
-- `SCE-28` A marketplace catalog is a JSON document named `marketplace.json` at the root of the marketplace repository.
-- `SCE-29` The catalog is machine-facing distribution metadata, not collection content; it is plain JSON rather than a Markdown artifact with frontmatter.
-- `SCE-30` The catalog MUST contain `specification_version` and `systems`, and MAY contain `label` and `description` describing the marketplace itself.
-- `SCE-31` `systems` MUST be a list of catalog entries; each entry describes exactly one system release.
-- `SCE-32` Each catalog entry MUST declare `name`, `version`, and `source`.
-- `SCE-33` An entry's `name` follows the collection identity rules defined in [Collection Model](collection-model.md), and its `version` MUST be a Semantic Versioning 2.0.0 string.
-- `SCE-34` The pair of `name` and `version` MUST be unique within one catalog.
-- `SCE-35` An entry MAY restate the system's discovery metadata — `label`, `description`, `keywords`, `audiences`, `publisher`, and `license`; when present, these SHOULD equal the values in the system's `typedmark.md`, which remains authoritative.
-- `SCE-36` `source` declares where the system lives and MUST take exactly one of two forms:
-  - the path form: `path` names the folder containing the system's `typedmark.md`, relative to the catalog's own repository root
-  - the repository form: `repository` is an absolute URL of the repository hosting the system, with an optional `path` to the system folder inside that repository, defaulting to the repository root, and an optional `ref` naming a tag, branch, or commit
-- `SCE-37` When `ref` is omitted, the hosting repository's default state is used; publishers SHOULD pin a tag or commit so resolution stays reproducible.
-- `SCE-38` A `source` MUST lead to a folder containing a `typedmark.md` whose `name` and `version` equal the entry's `name` and `version`.
-- `SCE-39` Composition source resolution MAY use one or more marketplace catalogs to resolve `composition.sources` entries; a source that resolves through a catalog to a mismatching system is an `invalid_composition` failure.
-- `SCE-40` A marketplace SHOULD validate every listed system as a valid system definition before listing it.
-- `SCE-41` The machine-readable JSON Schema for the catalog is published in the specification repository under `schema/json-schema/`.
+The authoritative contract is now in [Marketplace Catalog](marketplace-catalog.md).
 
 ### Importing and Instantiating a System
 
@@ -419,3 +369,36 @@ Rules:
 - `SCE-118` The collection-content effect of each change operation is defined in [Migration Effects](migration-effects.md).
 - `SCE-119` After a migration completes, the collection MUST conform to the recomposed effective schemas, and `typedmark.md` `composition.sources` MUST record the new resolved versions.
 - `SCE-120` A tool MUST NOT silently discard managed-note data; a migration step that cannot preserve data, such as an unclassifiable `retype_field`, MUST be reported for explicit resolution rather than applied destructively.
+
+## Composition Provenance
+
+`typedmark.md` can define `composition` to record the systems this collection's structure was composed from. The lineage is both provenance and the reproducible recipe: re-composing the same sources at the same versions reconstructs the same collection. It is also the input the update flow uses to migrate a collection to newer system versions. System composition, its deterministic merge semantics, and the migration flow are defined in [Systems, Composition, and Evolution](systems-composition-evolution.md).
+
+This is an advanced system concern. Hand-authored Core Profile collections omit `composition`.
+
+Example:
+
+<!-- typedmark-example: fragment: Collection composition provenance. -->
+```yaml
+composition:
+  sources:
+    - name: "@acme/para-system"
+      version: 1.2.0
+    - name: dev-team-ai-context
+      version: 0.3.0
+```
+
+Rules:
+
+- `CM-123` `composition` MAY be omitted. A collection authored directly, without composing any system, omits it.
+- `CM-124` If present, `composition` MUST physically contain `sources`.
+- `CM-125` `composition.sources` MUST be a non-empty ordered list.
+- `CM-126` The order of `composition.sources` is significant and defines the composition merge order defined in [Systems, Composition, and Evolution](systems-composition-evolution.md).
+- `CM-127` Each source MUST declare `name` and `version`.
+- `CM-128` A source `name` MUST follow the collection identity rules in [Collection Model](collection-model.md), including the scope and length rules.
+- `CM-129` A source `version` MUST be a Semantic Versioning 2.0.0 string.
+- `CM-130` A `name` MUST appear at most once in `composition.sources`.
+- `CM-131` A source `name` MUST NOT equal the composing collection's own `name`.
+- `CM-132` Each source MUST resolve to exactly one system whose `name` and `version` match; a source that does not resolve is an `invalid_composition` failure.
+- `CM-133` A composed collection MUST remain self-contained: its materialized schemas, property sets, automation rules, datasets, saved views, and templates MUST be physically present under `metadata_directory`, and conformance MUST NOT require re-resolving `composition.sources`.
+- `CM-134` `composition` records provenance only; it does not relocate, replace, or override any governed artifact physically present under `metadata_directory`.

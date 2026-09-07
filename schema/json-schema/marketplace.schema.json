@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://developassion.github.io/TypedMarkSpecification/schema/marketplace.schema.json",
   "title": "TypedMark marketplace catalog (marketplace.json)",
-  "description": "Document shape of a marketplace catalog. Unlike collection artifacts, the catalog is plain JSON, not Markdown with frontmatter. Authoritative semantics: systems-composition-evolution.md (Marketplace Catalog). Semantic-layer checks include: name+version uniqueness across entries, source resolution to a folder whose typedmark.md matches the entry, and discovery-metadata consistency with the listed system.",
+  "description": "Document shape of a marketplace catalog. Unlike collection artifacts, the catalog is plain JSON, not Markdown with frontmatter. Authoritative semantics: marketplace-catalog.md (Marketplace Catalog). Semantic-layer checks include: name+version uniqueness across entries, source resolution to a folder whose typedmark.md matches the entry, and discovery-metadata consistency with the listed system.",
   "type": "object",
   "required": ["specification_version", "systems"],
   "properties": {

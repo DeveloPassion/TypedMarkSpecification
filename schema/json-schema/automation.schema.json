@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://developassion.github.io/TypedMarkSpecification/schema/automation.schema.json",
   "title": "TypedMark automation (<metadata_directory>/automations/<automation>.md frontmatter)",
-  "description": "Declarative automation rule shape. Authoritative semantics: collection-model.md and managed-notes-and-properties.md.",
+  "description": "Declarative automation rule shape. Authoritative semantics: automation-artifacts.md and managed-notes-and-properties.md.",
   "type": "object",
   "required": [
     "specification_version",

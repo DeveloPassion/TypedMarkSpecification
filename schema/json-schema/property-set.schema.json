@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://developassion.github.io/TypedMarkSpecification/schema/property-set.schema.json",
   "title": "TypedMark property set (<metadata_directory>/property-sets/<property_set>.md frontmatter)",
-  "description": "Frontmatter document shape; the artifact is a Markdown file whose YAML frontmatter is the governed content and whose body is non-normative. Authoritative semantics: collection-model.md. Semantic-layer checks include: file basename equals property_set, and relationship-target resolution against the composed collection. A property set must not declare storage, template, guidance, or any composition reference; additionalProperties: false enforces that here.",
+  "description": "Frontmatter document shape; the artifact is a Markdown file whose YAML frontmatter is the governed content and whose body is non-normative. Authoritative semantics: property-sets.md. Semantic-layer checks include: file basename equals property_set, and relationship-target resolution against the composed collection. A property set must not declare storage, template, guidance, or any composition reference; additionalProperties: false enforces that here.",
   "type": "object",
   "required": [
     "specification_version",

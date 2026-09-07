@@ -119,6 +119,6 @@ That note is a conforming managed note: its `note_type` maps it to the `meeting`
 ## Where to go next
 
 - Link notes together and document relationships between types: [Note Links](note-links.md) and [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
-- Reuse shared fields across note types: [property sets](collection-model.md#property-set-definitions)
+- Reuse shared fields across note types: [property sets](property-sets.md#property-set-definitions)
 - Share your setup as a versioned system: [Systems, Composition, and Evolution](systems-composition-evolution.md)
 - Shape-valid examples of every artifact live in [`schema/fixtures/valid/`](https://github.com/DeveloPassion/TypedMarkSpecification/tree/main/schema/fixtures/valid). Complete collection trees with expected portable validation reports live in [`schema/fixtures/golden/`](https://github.com/DeveloPassion/TypedMarkSpecification/tree/main/schema/fixtures/golden). Both are checked in CI on every change.

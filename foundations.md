@@ -12,7 +12,7 @@ Audience: everyone — start here after the [Manifesto](manifesto.md).
 Authoritative for:
 
 - the core concepts and the vocabulary the other pages build on
-- specification versioning, parsing and matching baselines, the shared expression language, and string comparison
+- specification versioning, parsing and matching baselines, and string comparison
 - the governed artifact format, the artifact map, and structural precedence
 - the authoring profiles and the distinction between authored shorthand and effective canonical values
 
@@ -20,6 +20,7 @@ See also:
 
 - [Collection Model](collection-model.md): the structural fields of `typedmark.md`
 - [Extensions and Capabilities](extensions.md): required optional contracts and inert vendor metadata
+- [Expressions](expressions.md): the optional shared expression language and computed fields
 - [Note Type Schemas](note-type-schemas.md): effective note-type schemas
 - [Conformance and Roadmap](conformance-and-roadmap.md): conformance modes and artifact sets
 
@@ -76,7 +77,7 @@ The effective note-type schema is the normative result of taking one concrete no
 
 ### Datasets and Saved Views
 
-A dataset is a governed reusable query with stable row identity and an explicit projected column contract; it lives under `<metadata_directory>/datasets/`. A saved view pairs either a dataset reference or an embedded portable query with a declarative presentation under `<metadata_directory>/views/`. Both can be reused by content expansion. Details: [Collection Model](collection-model.md#datasets).
+A dataset is a governed reusable query with stable row identity and an explicit projected column contract; it lives under `<metadata_directory>/datasets/`. A saved view pairs either a dataset reference or an embedded portable query with a declarative presentation under `<metadata_directory>/views/`. Both can be reused by content expansion. Details: [Collection Model](datasets-and-views.md#datasets).
 
 ### Relationships, Headings, and Templates
 
@@ -159,7 +160,7 @@ TypedMark is the structural contract for a note collection. Artifact-specific ru
 
 TypedMark separates the authoring surface from the values tools evaluate. Authors can start with the Core Profile and omit deterministic boilerplate; tools expand omitted defaults before computing conformance. Larger collections add reuse, publishing, composition, and migration without replacing the core model.
 
-Here, *canonical expansion* means filling deterministic defaults in governed artifacts. It is distinct from the marker-delimited *content expansion* defined in [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md#content-expansion), which materializes derived Markdown inside note and template bodies.
+Here, *canonical expansion* means filling deterministic defaults in governed artifacts. It is distinct from the marker-delimited *content expansion* defined in [Relationships, Headings, Templates, and Content Expansion](content-expansion.md#content-expansion), which materializes derived Markdown inside note and template bodies.
 
 | Profile | Purpose | Requires | Defers |
 | --- | --- | --- | --- |
@@ -323,24 +324,28 @@ The authoritative contract for each governed element and cross-tool runtime surf
 - `typedmark.md` extension requirements and governed-artifact vendor metadata: [Extensions and Capabilities](extensions.md)
 - `typedmark.md` system fields, including release version, publishing metadata, and scaffold: [Systems, Composition, and Evolution](systems-composition-evolution.md)
 - `<metadata_directory>/history.md`: [Systems, Composition, and Evolution](systems-composition-evolution.md)
-- `<metadata_directory>/automations/<automation>.md`: [Collection Model](collection-model.md)
-- `<metadata_directory>/datasets/<dataset>.md`: [Collection Model](collection-model.md)
-- `<metadata_directory>/property-sets/<property_set>.md`: [Collection Model](collection-model.md)
+- `<metadata_directory>/automations/<automation>.md`: [Automation Artifacts](automation-artifacts.md)
+- `<metadata_directory>/datasets/<dataset>.md`: [Datasets and Views](datasets-and-views.md)
+- `<metadata_directory>/property-sets/<property_set>.md`: [Property Sets](property-sets.md)
 - `<metadata_directory>/schemas/<note_type>.md`: [Note Type Schemas](note-type-schemas.md)
 - `<metadata_directory>/templates/<note_type_template>.md`: [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
-- `<metadata_directory>/views/<view>.md`: [Collection Model](collection-model.md)
+- `<metadata_directory>/views/<view>.md`: [Datasets and Views](datasets-and-views.md)
 - managed note contract, field names, core-defined fields, and field materialization: [Managed Notes and Properties](managed-notes-and-properties.md)
 - frontmatter property types and field-definition properties: [Field Definition Reference](field-definition-reference.md)
 - field compatibility and conversion: [Field Compatibility and Conversion](field-conversions.md)
 - note-link syntax, resolution, and body extraction: [Note Links](note-links.md)
 - managed-note effects of migration operations: [Migration Effects](migration-effects.md)
 - relationship semantics, heading constraints, and template obligations: [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md)
-- template-region marker, receipt, digest, drift-state, reconciliation, and detachment semantics: [Template Drift Tracking](relationships-headings-and-templates.md#template-drift-tracking)
-- content-expansion marker, source, rendering, synchronization, and ejection semantics: [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md#content-expansion)
-- portable query descriptor and evaluation semantics: [Collection Model](collection-model.md#portable-queries)
-- reusable dataset artifact, row identity, mapped columns, and dataset evaluation: [Collection Model](collection-model.md#datasets)
-- saved-view artifact, presentation, and Obsidian Bases interoperability: [Collection Model](collection-model.md#saved-views)
-- portable validation-report and automation-interchange formats: [Conformance and Roadmap](conformance-and-roadmap.md)
+- template-region marker, receipt, digest, drift-state, reconciliation, and detachment semantics: [Template Drift Tracking](template-tracking.md#template-drift-tracking)
+- content-expansion marker, source, rendering, synchronization, and ejection semantics: [Relationships, Headings, Templates, and Content Expansion](content-expansion.md#content-expansion)
+- portable query descriptor and evaluation semantics: [Portable Queries](queries.md)
+- reusable datasets, saved views, and Obsidian Bases interoperability: [Datasets and Views](datasets-and-views.md)
+- shared expressions and computed fields: [Expressions](expressions.md)
+- optional generation and immutability contracts: [Authoring](authoring.md)
+- portable validation reports: [Conformance and Roadmap](conformance-and-roadmap.md)
+- automation execution and propagation: [Automation Runtime](automation-runtime.md)
+- automation-interchange formats: [Automation Interchange Reports](automation-reports.md)
+- marketplace catalog: [Marketplace Catalog](marketplace-catalog.md)
 - conformance modes and required artifact sets: [Conformance and Roadmap](conformance-and-roadmap.md)
 
 `typedmark.md` lives at the root of the managed collection, as required by [Collection Model](collection-model.md).
@@ -373,30 +378,4 @@ Rules:
 
 ## Shared Expression Language
 
-Several governed surfaces need to derive values from structured data. Rather than defining separate mini-languages for each feature, TypedMark defines one shared expression language and lets each consumer define its own input scope, required result type, and evaluation timing.
-
-Example:
-
-<!-- typedmark-example: fragment: Computed expression within a field definition. -->
-```yaml
-computed: '${capitalize(note_type)}: ${title}'
-```
-
-Rules:
-
-- `FND-58` TypedMark defines one shared expression language. A governed surface uses it only when another rule explicitly says so.
-- `FND-59` This specification version defines exactly one shared expression context: the text-template context.
-- `FND-60` A text-template expression is a string composed of literal text plus zero or more placeholders.
-- `FND-61` A placeholder has the form `${name}` or `${transform(name)}`.
-- `FND-62` `name` and `transform` in the shared expression language MUST each match the field-name grammar `^[a-z][a-z0-9_]*$`.
-- `FND-63` The shared expression parser operates on the decoded string value after parsing its containing YAML or JSON syntax. Within that string, `\\` represents a literal backslash and `\${` represents a literal `${`; any other backslash escape is invalid.
-- `FND-64` Shared-expression evaluation MUST be deterministic and side-effect free.
-- `FND-65` Shared expressions MUST NOT read the current time, random sources, the filesystem, the network, or any state outside the consumer-defined input scope.
-- `FND-66` The shared transform library in this specification version contains exactly `uppercase`, `lowercase`, and `capitalize`.
-- `FND-67` `uppercase(name)` and `lowercase(name)` each take exactly one reference-name argument and return the referenced string converted to uppercase or lowercase respectively, using locale-independent Unicode case mapping.
-- `FND-68` `capitalize(name)` takes exactly one reference-name argument and returns the referenced string with its first Unicode code point converted to uppercase and its remaining code points converted to lowercase; the empty string remains empty.
-- `FND-69` This specification version defines no other placeholder forms, no nested transform calls, and no transform arguments other than one reference name.
-- `FND-70` This specification version defines no dot access, bracket access, arithmetic, comparisons, boolean operators, conditionals, list indexing, link traversal, regex operators, or date arithmetic in the shared expression language.
-- `FND-71` Every consumer of the shared expression language MUST define the expression's available reference names, required result type, evaluation timing, and how absent or null input values are handled.
-- `FND-72` A consumer MAY narrow the shared language's available reference names or result types, but it MUST NOT redefine the shared syntax or transform semantics.
-- `FND-73` A syntactically invalid shared expression or an unknown transform name makes the declaring artifact invalid.
+The optional [expression contract](expressions.md#shared-expression-language) is authoritative on its own page.

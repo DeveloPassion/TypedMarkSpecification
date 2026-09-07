@@ -41,9 +41,9 @@ Repository scripts are TypeScript run with Bun (`bun install` once, then
 - [TypedMarkSystemsMarketplace](https://github.com/DeveloPassion/TypedMarkSystemsMarketplace) —
   the systems marketplace: it hosts systems, a website under `docs/` to browse,
   download, and compose them, and the `marketplace.json` catalog listing all
-  known systems (in that repository or in others). The catalog's contract lives
-  in this specification (Systems, Composition, and Evolution → Marketplace
-  Catalog) and its JSON Schema in `schema/json-schema/marketplace.schema.json`.
+  known systems (in that repository or in others). The companion catalog
+  contract currently lives in `marketplace-catalog.md`, with its JSON Schema
+  in `schema/json-schema/marketplace.schema.json`.
 
 This repository holds only the specification and its schema layer; tooling,
 example-system, and marketplace work belongs in those repositories.

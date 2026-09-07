@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://developassion.github.io/TypedMarkSpecification/schema/dataset.schema.json",
   "title": "TypedMark dataset (<metadata_directory>/datasets/<dataset>.md frontmatter)",
-  "description": "A reusable portable query with stable row identity. Authoritative semantics: collection-model.md (Datasets).",
+  "description": "A reusable portable query with stable row identity. Authoritative semantics: datasets-and-views.md (Datasets).",
   "type": "object",
   "required": [
     "specification_version",

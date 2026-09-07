@@ -53,7 +53,7 @@ Rules:
 - `ME-25` A `change_collection` operation that changes only `automation_defaults` has no direct managed-note effect.
 - `ME-26` A `change_template` operation MUST NOT copy changed content-expansion descriptors or regions into existing managed notes.
 - `ME-27` A `change_template` operation MUST preserve each affected note's body and `template_regions` receipts while computing its post-migration template-drift states.
-- `ME-28` A migration tool MUST NOT reconcile a post-migration template-drift state without a separate reconciliation request under [Template Drift Tracking](relationships-headings-and-templates.md#reconciliation-and-detachment).
+- `ME-28` A migration tool MUST NOT reconcile a post-migration template-drift state without a separate reconciliation request under [Template Drift Tracking](template-tracking.md#reconciliation-and-detachment).
 - `ME-29` `add_view` has no direct managed-note write effect.
 - `ME-30` `change_view` MUST re-evaluate every auto-synchronized content expansion that references the changed saved view.
 - `ME-31` `change_view` MUST NOT rewrite a manual content expansion that references the changed saved view without an explicit refresh request.

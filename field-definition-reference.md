@@ -12,7 +12,7 @@ Audience: collection authors.
 Authoritative for:
 
 - frontmatter property types
-- every field-definition property: human-facing metadata, constraints, generation, uniqueness, immutability, relationship contribution, and vocabulary references
+- core field-definition properties: human-facing metadata, constraints, generation and materialization, uniqueness, relationship contribution, and vocabulary references
 
 See also:
 
@@ -21,6 +21,8 @@ See also:
 - [Note Links](note-links.md): the link forms and resolution used by `format: note_link` fields
 - [Collection Model](collection-model.md): property sets and vocabularies
 - [Field Compatibility and Conversion](field-conversions.md): the shared optional conversion contract
+- [Expressions](expressions.md): computed field definitions and sibling-field derivation
+- [Authoring](authoring.md): immutable fields and additional optional generation strategies
 
 ## Frontmatter Property Types
 
@@ -34,11 +36,11 @@ Property applicability at a glance:
 | `items` | `list` | required for lists; absent elsewhere |
 | `fields` | `object` | required for objects; absent elsewhere |
 | `label`, `description`, `icon` | any declared field | optional human-facing metadata |
-| `generated` | declared fields | `false`; strategies are unavailable on anonymous `items` |
-| `computed` | top-level `text` fields | sibling-field derivation only |
+| `generated` | declared fields | `false`; strategies are unavailable on anonymous `items`; [additional strategies](authoring.md#additional-generation-strategies) |
+| [`computed`](expressions.md#computed) | top-level `text` fields | sibling-field derivation only |
 | `unique` | top-level scalar fields | `false`; per-note-type or collection scope |
 | `deprecated` | declared fields | `false` |
-| `immutable` | top-level and nested object fields | `false`; unavailable on anonymous `items` |
+| [`immutable`](authoring.md#immutable) | top-level and nested object fields | `false`; unavailable on anonymous `items` |
 | `optional` | declared fields | `false`; changes value requirements, not storage shape |
 | `nullable` | declared fields except anonymous `items` | derived from `optional` when omitted |
 | `default_value` | declared fields except anonymous `items` | unavailable with generation strategies or `computed` |
@@ -185,9 +187,9 @@ Supported generation strategies:
 - `FDR-248` A tool MUST NOT overwrite an existing concrete non-null value of a `now` field.
 - `FDR-69` `now_on_write` is valid for `date`, `time`, and `datetime` fields. Every tool that writes changes to the managed note MUST set the field to the current instant in the collection timezone as part of that write; the refresh itself does not count as a further change. A field with `now_on_write` MUST NOT declare `immutable: true`.
 - `FDR-70` `uuid` is valid for `text` fields. The tool MUST generate an RFC 4122 version 4 UUID in lowercase form, once; it MUST NOT overwrite an existing concrete non-null value. Lowercase UUIDs satisfy `format: slug`, so `uuid` MAY be used for the core-defined `id` field.
-- `FDR-71` `ulid` is valid for `text` fields. The tool MUST generate a ULID written in lowercase, so the value satisfies `format: slug`, once; it MUST NOT overwrite an existing concrete non-null value.
-- `FDR-72` `{ random: n }` is valid for `text` fields. `random` MUST be a positive integer. The tool MUST generate `n` characters drawn uniformly from the lowercase letters `a` through `z` and the digits `0` through `9`, once; it MUST NOT overwrite an existing concrete non-null value.
-- `FDR-73` `{ sequence: { start, scope } }` is valid for `integer` fields. `start` MAY be omitted and defaults to `1`; `scope` MAY be omitted, MUST be `note_type` or `collection` when present, and defaults to `note_type`. The generated value is one greater than the highest stored value of this field across the managed notes in scope, or `start` when no stored value exists; `note_type` scope spans managed notes of the same note type and `collection` scope spans all managed notes. The value is produced once: a tool MUST NOT overwrite an existing concrete non-null value.
+
+Additional optional generation strategies are defined in
+[Authoring](authoring.md#additional-generation-strategies).
 
 Generation behavior rules:
 
@@ -198,47 +200,7 @@ Generation behavior rules:
 
 ### `computed`
 
-`computed` defines a stored text field whose value is derived from sibling frontmatter fields instead of being authored directly. Unlike `generated`, it is not about value origination from time, randomness, identity, or tool-specific automation; it is the single schema-defined mechanism for sibling-field derivation in this specification version. It uses the shared text-template expression context defined in [Foundations](foundations.md).
-
-Example:
-
-<!-- typedmark-example: fragment: Field definitions within a frontmatter declaration. -->
-```yaml
-first_name:
-  type: text
-  nullable: false
-last_name:
-  type: text
-  nullable: false
-full_name:
-  type: text
-  computed: '${capitalize(first_name)} ${capitalize(last_name)}'
-  nullable: false
-```
-
-Rules:
-
-- `FDR-218` `computed` MAY be omitted.
-- `FDR-219` If present, `computed` MUST be a non-empty string in the shared text-template expression context defined in [Foundations](foundations.md).
-- `FDR-220` `computed` MAY be declared only on top-level frontmatter fields.
-- `FDR-221` `computed` is the single schema-defined mechanism for deriving a field value from sibling fields of the same managed note.
-- `FDR-222` `generated` and `computed` are distinct: `generated` covers value origination without sibling-field inputs; `computed` covers sibling-field derivation.
-- `FDR-223` A field declaring `computed` MUST declare `type: text`.
-- `FDR-224` A field declaring `computed` MUST NOT declare `generated`, `default_value`, `const_value`, or `value_from_schema`; the computed expression is the field's materialization behavior.
-- `FDR-225` A field declaring `computed` MUST NOT declare `immutable: true`, because its stored value is recomputed from its dependencies.
-- `FDR-226` `computed` does not make a field virtual. Computed fields still follow the same type validation, optionality, stored-frontmatter, and canonical materialization rules as other declared fields.
-- `FDR-227` For `computed`, the shared expression-language scope is the managed note's sibling top-level fields in the effective `frontmatter`.
-- `FDR-228` Every reference name used by a `computed` expression MUST resolve to a sibling top-level field declared in the same effective `frontmatter`, and MUST NOT resolve to the declaring field itself or to a field that itself declares `computed`.
-- `FDR-229` Every field referenced by a `computed` expression MUST declare `type: text`.
-- `FDR-230` `computed` uses the shared expression-language syntax and shared transform semantics defined in [Foundations](foundations.md); it defines no local syntax extensions.
-- `FDR-231` A `computed` expression is evaluated against the managed note's materialized sibling-field values after non-computed defaults, schema-derived values, and generation strategies have been applied.
-- `FDR-232` Every referenced field MUST hold a concrete non-null string when the `computed` expression is evaluated; otherwise the computed field has no conforming value and MUST be reported as `invalid_field_value`.
-- `FDR-233` Tools that create, scaffold, import, normalize, or otherwise write managed-note frontmatter MUST evaluate every `computed` expression and store the resulting value before writing the note.
-- `FDR-234` A stored computed value MUST equal the result of its `computed` expression; a mismatch is an `invalid_field_value` failure.
-- `FDR-235` The computed result MUST satisfy the field's declared constraints; a schema MUST NOT combine `computed` with constraints its expression cannot satisfy.
-- `FDR-236` `computed` MUST NOT depend on the note body, resolved note links, query results, collection-global state, or any data outside the sibling-field scope defined above.
-- `FDR-237` A `computed` field whose stored value disagrees with its evaluated expression is a note-level `invalid_field_value` failure, not a schema-shape failure.
-- `FDR-238` A syntactically invalid shared expression, an unresolved sibling-field reference, a type-incompatible reference, or an unknown transform name makes the declaring artifact invalid.
+Stored sibling-field derivation is defined in [Expressions](expressions.md#computed).
 
 ### `unique`
 
@@ -269,17 +231,7 @@ Rules:
 
 ### `immutable`
 
-Rules:
-
-- `FDR-95` `immutable` MAY be omitted.
-- `FDR-96` `immutable` MUST be a boolean.
-- `FDR-97` If omitted, `immutable` defaults to `false`.
-- `FDR-98` `immutable: true` means that once the field holds a concrete non-null stored value, that value MUST NOT change.
-- `FDR-99` Immutability is an obligation on tools and operations that modify managed notes; because conformance evaluation is stateless, a validator MAY verify immutability only when it has access to historical state.
-- `FDR-100` A `rename_field` migration moves an immutable value unchanged; a `change_field` migration MAY change a field's `immutable` declaration.
-- `FDR-101` `const_value` and `value_from_schema` are stronger guarantees than `immutable`; a field declaring either need not also declare `immutable`.
-- `FDR-102` The core-defined `id` field is immutable whether or not its definition declares it.
-- `FDR-103` `immutable` MAY be declared on top-level fields and on nested fields inside `object.fields`; it MUST NOT be declared on `items`.
+Immutable field semantics are defined in [Authoring](authoring.md#immutable).
 
 ### `optional`
 

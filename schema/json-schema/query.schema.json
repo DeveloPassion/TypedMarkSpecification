@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://developassion.github.io/TypedMarkSpecification/schema/query.schema.json",
   "title": "TypedMark portable query descriptor",
-  "description": "A read-only query over a TypedMark collection. Authoritative semantics: collection-model.md (Portable Queries).",
+  "description": "A read-only query over a TypedMark collection. Authoritative semantics: queries.md (Portable Queries).",
   "type": "object",
   "required": [
     "specification_version",

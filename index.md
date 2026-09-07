@@ -48,15 +48,21 @@ New here? Read the [Manifesto](manifesto.md) for the why, then follow [Getting S
 - [Getting Started](getting-started.md): your first typed collection, step by step (non-normative)
 - [Foundations](foundations.md): the core concepts, the file format of governed artifacts, and the parsing baselines everything else builds on
 - [Extensions and Capabilities](extensions.md): required optional contracts, capability matching, and inert vendor metadata
-- [Collection Model](collection-model.md): collection configuration plus portable queries, reusable datasets, and saved table, list, cards, and board views
-- [Note Type Schemas](note-type-schemas.md): how one note type is defined — its fields, storage location, naming, and constraints
+- [Collection Model](collection-model.md): collection configuration, mappings, vocabularies, and shared path matching
+- [Note Type Schemas](note-type-schemas.md): local note-type definitions, storage, naming, and effective-schema construction
 - [Field Definition Reference](field-definition-reference.md): every property a field can declare
 - [Field Compatibility and Conversion](field-conversions.md): an optional shared contract for queries, datasets, and migrations
-- [Managed Notes and Properties](managed-notes-and-properties.md): what a typed note must look like on disk, including automation execution and dependency propagation
+- [Managed Notes and Properties](managed-notes-and-properties.md): managed-note metadata and field materialization
 - [Note Links](note-links.md): how links between notes are written and resolved
-- [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md): documenting how note types relate, what a note's body must contain, how template-owned regions drift, and how derived Markdown stays synchronized
+- [Relationships, Headings, and Templates](relationships-headings-and-templates.md): relationships, body headings, and starter templates
+- [Schema Reuse](schema-reuse.md) and [Property Sets](property-sets.md): optional inheritance, shared blocks, and conditional constraints
+- [Portable Queries](queries.md) and [Datasets and Views](datasets-and-views.md): optional querying and presentation contracts
+- [Expressions](expressions.md) and [Authoring](authoring.md): optional derivation, extra generators, and immutability
+- [Template Tracking](template-tracking.md) and [Content Expansion](content-expansion.md): optional tracked and derived body content
+- [Automation Artifacts](automation-artifacts.md), [Automation Runtime](automation-runtime.md), and [Automation Interchange](automation-reports.md): optional automation declarations and execution
 - [Systems, Composition, and Evolution](systems-composition-evolution.md): packaging a collection as a shareable, versioned, composable system
 - [Migration Effects](migration-effects.md): what happens to existing notes when a system changes
+- [Marketplace Catalog](marketplace-catalog.md): the companion distribution contract
 - [Conformance and Roadmap](conformance-and-roadmap.md): what it means for a tool or collection to conform
 - [Quick Reference](quick-reference.md): glossary and "how do I…" index (non-normative)
 
@@ -70,12 +76,12 @@ New here? Read the [Manifesto](manifesto.md) for the why, then follow [Getting S
 4. [Collection Model](collection-model.md) for `typedmark.md` identity and defaults
 5. [Note Type Schemas](note-type-schemas.md) for one concrete note type and the effective schema
 6. [Managed Notes and Properties](managed-notes-and-properties.md), with the [Field Definition Reference](field-definition-reference.md) at hand
-7. [Note Links](note-links.md) and [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md) when the collection needs links, headings, template drift tracking, or synchronized derived Markdown
+7. [Note Links](note-links.md) and [Relationships, Headings, and Templates](relationships-headings-and-templates.md) for links, headings, and starter templates
 
 **Essentials plus reuse** — for larger personal or team collections:
 
-8. [Collection Model](collection-model.md) sections on property sets, vocabularies, advanced note-type mappings, portable queries, datasets, and saved views
-9. [Note Type Schemas](note-type-schemas.md) sections on abstract inheritance, conditions, counts, and storage variations
+8. [Collection Model](collection-model.md) for mappings and vocabularies, then [Property Sets](property-sets.md) when shared blocks are needed
+9. [Schema Reuse](schema-reuse.md) for abstract inheritance and conditions; query and presentation contracts are separate optional reading
 
 **Advanced** — for publishing, composing, and migrating systems:
 

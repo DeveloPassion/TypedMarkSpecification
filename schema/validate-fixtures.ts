@@ -41,6 +41,10 @@ const SPEC_PAGES = [
   "managed-notes-and-properties.md", "note-links.md",
   "relationships-headings-and-templates.md", "systems-composition-evolution.md",
   "migration-effects.md", "conformance-and-roadmap.md", "quick-reference.md",
+  "schema-reuse.md", "property-sets.md", "queries.md", "datasets-and-views.md",
+  "expressions.md", "authoring.md", "template-tracking.md", "content-expansion.md",
+  "automation-artifacts.md", "automation-runtime.md", "automation-reports.md",
+  "marketplace-catalog.md",
 ];
 
 const ARTIFACT_SCHEMAS: Record<string, string> = {
