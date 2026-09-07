@@ -76,11 +76,13 @@ The prose specification is the single source of truth. The JSON Schemas under
 
 - One normative statement per rule bullet; normative keywords appear only
   inside `Rules:` lists, never in prose paragraphs.
-- Every rule bullet carries a stable identifier chip, e.g. `` `CM-12` ``,
-  using the page prefix (FND, CM, NTS, FDR, MN, NL, RHT, SCE, ME, CR).
-  When adding a rule, take the next unused number for that page; NEVER
-  renumber existing rules, and retire the ID of a removed rule instead of
-  reusing it. `bun run lint-rule-ids` MUST pass.
+- Every rule bullet carries a stable identifier chip, e.g. `` `CM-12` ``.
+  `scripts/rule-registry.json` records each prefix's default owning page and
+  highest allocated number (`last`); increase `last` when allocating new IDs,
+  never decrease it or fill an old gap. A moved rule keeps its original ID:
+  record its new owning page in `relocations`. Record removed IDs permanently
+  in `retired` with a reason instead of reusing them. New prefixes also need
+  support in the validation-report schema. `bun run lint-rule-ids` MUST pass.
 - Each page opens with a compact preamble: an `Audience:` line, an
   `Authoritative for:` list, and a `See also:` list. Pages declare
   `audience: essentials | advanced | tool-authors` in their frontmatter. The
@@ -92,3 +94,12 @@ The prose specification is the single source of truth. The JSON Schemas under
 - Artifact-shaped example blocks in the spec pages are validated against
   the JSON Schemas by `bun run validate-fixtures`; keep them valid.
 - Getting Started and Quick Reference are non-normative and must say so.
+
+## Repository tooling
+
+`bun run test` runs the tooling regression tests with Bun's built-in runner.
+Run the targeted tests when changing a script, as well as its normal repository
+command. CI runs the regression suite before the fixture, rule-ID, and site gates.
+The rule linter checks registered ownership, allocation gaps, retirements, and
+live rule references; the registry is maintenance metadata, not a second source
+of normative rule text.
