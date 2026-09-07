@@ -45,7 +45,7 @@ Example `typedmark.md` for a publishable system, showing the system fields toget
 
 <!-- typedmark-example: artifact=typedmark -->
 ```yaml
-specification_version: 0.0.1
+specification_version: 0.1.0
 name: "@example/knowledge-system"
 label: Example Knowledge System
 description: Reusable knowledge note system.
@@ -149,7 +149,7 @@ Example `marketplace.json`:
 <!-- typedmark-example: artifact=marketplace -->
 ```json
 {
-  "specification_version": "0.0.1",
+  "specification_version": "0.1.0",
   "label": "TypedMark Systems Marketplace",
   "description": "Community catalog of reusable TypedMark systems.",
   "systems": [
@@ -324,7 +324,7 @@ History example:
 
 <!-- typedmark-example: artifact=history -->
 ```yaml
-specification_version: 0.0.1
+specification_version: 0.1.0
 history:
   - version: 0.1.0
     changes:

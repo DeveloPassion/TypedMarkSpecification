@@ -1,5 +1,5 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 name: invalid-folder-scope
 description: A folder scope must select exactly one path matcher.
 folder_scopes:

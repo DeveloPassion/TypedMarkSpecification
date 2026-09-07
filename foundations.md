@@ -100,24 +100,40 @@ Rules:
 
 `specification_version` identifies the version of the TypedMark core specification that governs an artifact. It is distinct from a system's release `version` and from the change history in `<metadata_directory>/history.md`, both defined in [Systems, Composition, and Evolution](systems-composition-evolution.md): `specification_version` versions the specification itself, while `version` and `history.md` version a system built with it.
 
-The specification's own version uses Semantic Versioning change classes:
+The specification's own version uses Semantic Versioning change classes. A
+*compatibility line* is one major version from `1.0.0` onward, or one `0.MINOR`
+line before `1.0.0`. For example, `0.0.x` and `0.1.x` are different compatibility
+lines, while `1.2.x` and `1.3.x` belong to the same line.
 
-- MAJOR: a breaking change to the specification. An artifact valid under an earlier major can be invalid under a new major.
-- MINOR: a backward-compatible addition, such as a new optional field, property type, or construct. An artifact valid under `x.y` remains valid under `x.(y+1)`.
-- PATCH: an editorial clarification that does not change structural requirements.
+- MAJOR: a new compatibility line that can introduce breaking changes.
+- MINOR: before `1.0.0`, a new compatibility line that can introduce breaking
+  changes; from `1.0.0` onward, a backward-compatible addition such as a new
+  optional field, property type, or construct.
+- PATCH: a compatible editorial clarification that does not change structural
+  requirements.
+
+A tool implementing `0.1.0` does not thereby implement `0.0.1` or `0.2.0`.
+An artifact declaring either of those versions needs support for its own line;
+it is not silently reinterpreted as `0.1.0`. A newer patch such as `0.1.1`
+remains in the `0.1` line. Artifact-local version selection is independent of
+a system's release version and of the versions of any extensions it requires.
 
 Rules:
 
 - `FND-5` `specification_version` MUST be a Semantic Versioning x.y.z string.
-- `FND-6` Every governed artifact declares its own `specification_version` in its frontmatter, and each artifact is evaluated under the rules of the version it declares.
+- `FND-6` Every governed artifact other than a template declares its own `specification_version` in its frontmatter, and each artifact is evaluated under the rules of the version it declares.
+- `FND-89` A template MUST be evaluated under the specification version declared by the concrete note-type schema that references it, rather than declaring `specification_version` in its starter note frontmatter.
 - `FND-7` Governed artifacts in one collection MAY declare different `specification_version` values, because composition MAY combine artifacts authored against different specification versions; each artifact is evaluated under its own declared version.
-- `FND-8` A tool MUST advertise the specification major version, and the highest minor within it, that it implements.
-- `FND-9` Within a single major, the specification is additive and forward-compatible: a tool MUST evaluate an artifact whose declared minor is less than or equal to the tool's implemented minor under that artifact's declared version.
-- `FND-10` If an artifact declares a minor greater than the tool's implemented minor within a major the tool implements, the tool MUST evaluate it on a best-effort basis under the highest minor it implements, MUST NOT reject it solely because the minor is newer, and SHOULD report constructs it does not recognize as warnings rather than errors.
-- `FND-11` A construct introduced by a newer minor that a tool does not recognize MUST be reported under `unknown_field` or as an unrecognized construct; it MUST NOT be silently accepted as structure the tool understands.
-- `FND-12` If an artifact declares a major the tool does not implement, the tool MUST NOT assert conformance for that artifact and MUST report `unsupported_specification_version`, as defined in [Collection Model](collection-model.md).
-- `FND-13` The specification MAY mark a feature deprecated in a minor release and MAY remove it only in a subsequent major release.
-- `FND-14` A major release of the specification MUST document the breaking changes it introduces, so that migration tools can transform artifacts from the previous major to the new one.
+- `FND-8` A tool MUST advertise each specification compatibility line it implements together with the highest specification version it implements within that line.
+- `FND-9` Within an implemented compatibility line, a tool MUST evaluate an artifact whose declared version is less than or equal to its highest implemented version under that artifact's declared version.
+- `FND-10` If an artifact declares a newer version within a compatibility line the tool implements, the tool MUST evaluate it on a best-effort basis under its highest implemented version in that line.
+- `FND-90` A tool MUST NOT reject an artifact solely because its version is newer within an implemented compatibility line.
+- `FND-91` During best-effort evaluation of a newer version in an implemented compatibility line, a tool SHOULD report constructs it does not recognize as warnings rather than errors.
+- `FND-11` A construct introduced by a newer version that a tool does not recognize MUST be reported under `unknown_field` or as an unrecognized construct; it MUST NOT be silently accepted as structure the tool understands.
+- `FND-12` If an artifact declares a compatibility line the tool does not implement, the tool MUST NOT assert conformance for that artifact.
+- `FND-92` A tool MUST report an artifact in an unimplemented compatibility line as `unsupported_specification_version`, as defined in [Collection Model](collection-model.md).
+- `FND-13` A deprecated feature MUST NOT be removed until a subsequent compatibility line.
+- `FND-14` A release that starts a new compatibility line MUST document the breaking changes it introduces, so that migration tools can transform artifacts from the previous line to the new one.
 - `FND-15` Migrating a system's own schemas across its releases uses `history.md` and the migration flow defined in [Systems, Composition, and Evolution](systems-composition-evolution.md); that mechanism is independent of `specification_version`.
 
 
@@ -259,7 +275,7 @@ A complete minimal `typedmark.md`, showing the governed frontmatter together wit
 <!-- typedmark-example: artifact=typedmark -->
 ```markdown
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 name: example-knowledge-base
 description: Personal knowledge base.
 metadata_directory: .typedmark

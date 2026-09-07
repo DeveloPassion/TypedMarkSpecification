@@ -1,5 +1,5 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 name: invalid-empty-folder-scope
 description: Invalid folder scope without an action.
 folder_scopes:

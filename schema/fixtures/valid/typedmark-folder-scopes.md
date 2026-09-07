@@ -1,5 +1,5 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 name: folder-scoped-notes
 description: Collection with path-selected property sets.
 folder_scopes:

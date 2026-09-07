@@ -60,7 +60,7 @@ Validators can serialize their findings as one portable JSON report for editors,
 <!-- typedmark-example: artifact=validation-report -->
 ```json
 {
-  "specification_version": "0.0.1",
+  "specification_version": "0.1.0",
   "mode": "instantiated_collection",
   "valid": false,
   "results": [
@@ -105,7 +105,7 @@ Automation executors serialize one-hop and propagation outcomes as portable JSON
 <!-- typedmark-example: artifact=automation-run-report -->
 ```json
 {
-  "specification_version": "0.0.1",
+  "specification_version": "0.1.0",
   "run_id": "run-01k0projectdone",
   "mode": "one_hop",
   "status": "committed",

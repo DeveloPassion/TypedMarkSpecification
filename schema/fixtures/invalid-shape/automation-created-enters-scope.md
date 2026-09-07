@@ -1,5 +1,5 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 automation: invalid-created-enters
 description: A created event cannot express an enters transition.
 trigger:

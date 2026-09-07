@@ -1,5 +1,5 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 name: my-collection
 description: Collection that wrongly lists itself as a composition source.
 metadata_directory: .typedmark

@@ -129,6 +129,10 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
 - automation semantics: artifact basenames and reference resolution, schedule
   due-instant evaluation, event matching, action target compatibility,
   capability negotiation, staged execution, and propagation termination
+- specification-version support: artifact-local version selection, template
+  version inheritance, and tool support for the compatibility lines defined in
+  [Foundations](https://developassion.github.io/TypedMarkSpecification/foundations.html#specification-versioning); a shape-valid
+  version string does not establish that a tool implements that version
 - conformance evaluation: resolving the target mode, assigning effective
   severities, producing findings, and ordering validation results
 

@@ -1,5 +1,5 @@
 {
-  "specification_version": "0.0.1",
+  "specification_version": "0.1.0",
   "run_id": "run-invalid-no-change",
   "mode": "one_hop",
   "status": "no_change",

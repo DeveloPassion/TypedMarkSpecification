@@ -277,7 +277,7 @@ Automation execution consumes an immutable event envelope and produces a staged 
 <!-- typedmark-example: artifact=automation-event -->
 ```json
 {
-  "specification_version": "0.0.1",
+  "specification_version": "0.1.0",
   "event_id": "evt-01k0projectdone",
   "kind": "note.updated",
   "occurred_at": "2026-07-24T09:30:00+02:00",
@@ -414,7 +414,7 @@ Propagation mode deliberately follows automation-produced and derived body-updat
 <!-- typedmark-example: artifact=automation-run-report -->
 ```json
 {
-  "specification_version": "0.0.1",
+  "specification_version": "0.1.0",
   "run_id": "run-01k0propagation",
   "mode": "propagation",
   "status": "committed",

@@ -1,5 +1,5 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 property_set: location-context
 description: Location metadata for records stored under Meetings.
 frontmatter:

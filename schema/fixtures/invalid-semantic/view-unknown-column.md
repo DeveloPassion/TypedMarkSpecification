@@ -1,9 +1,9 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 view: broken-project-list
 description: Shape-valid view with an unresolved visible column.
 query:
-  specification_version: 0.0.1
+  specification_version: 0.1.0
   select:
     - kind: field
       field: title

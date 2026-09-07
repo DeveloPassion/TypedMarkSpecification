@@ -24,7 +24,7 @@ At the root of your notes folder, create `typedmark.md`. The frontmatter is the 
 <!-- typedmark-example: artifact=typedmark -->
 ```markdown
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 name: my-notes
 description: My personal notes.
 ---
@@ -43,7 +43,7 @@ Create `.typedmark/schemas/meeting.md`. The file name (without `.md`) must equal
 <!-- typedmark-example: artifact=note-type -->
 ```markdown
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 note_type: meeting
 label: Meeting
 icon: calendar

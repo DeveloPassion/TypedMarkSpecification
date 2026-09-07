@@ -1,12 +1,12 @@
 {
-  "specification_version": "0.0.1",
+  "specification_version": "0.1.0",
   "id": "active-projects",
   "mode": "manual",
   "state": "materialized",
   "source": {
     "kind": "query",
     "query": {
-      "specification_version": "0.0.1",
+      "specification_version": "0.1.0",
       "select": [
         {
           "kind": "field",

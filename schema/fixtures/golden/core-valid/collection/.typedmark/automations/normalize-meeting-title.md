@@ -1,5 +1,5 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 automation: normalize-meeting-title
 description: Give newly created meeting notes a stable initial title.
 trigger:

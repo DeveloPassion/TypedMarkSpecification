@@ -104,7 +104,7 @@ Each `<metadata_directory>/schemas/<note_type>.md` defines one note type and fol
 
 <!-- typedmark-example: artifact=note-type -->
 ```yaml
-specification_version: 0.0.1
+specification_version: 0.1.0
 note_type: topic
 abstract: false
 label: Topic
@@ -338,7 +338,7 @@ Rules:
 <!-- typedmark-example: artifact=note-type -->
 ```yaml
 # <metadata_directory>/schemas/person.md
-specification_version: 0.0.1
+specification_version: 0.1.0
 note_type: person
 abstract: true
 label: Person
@@ -379,7 +379,7 @@ guidance:
 <!-- typedmark-example: artifact=note-type -->
 ```yaml
 # <metadata_directory>/schemas/customer.md
-specification_version: 0.0.1
+specification_version: 0.1.0
 note_type: customer
 abstract: false
 extends: person

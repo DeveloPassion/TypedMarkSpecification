@@ -1,5 +1,5 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 name: unresolved-folder-scope
 description: Folder scope with an unresolved property-set reference.
 folder_scopes:

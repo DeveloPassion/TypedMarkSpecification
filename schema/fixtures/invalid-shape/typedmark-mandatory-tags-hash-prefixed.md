@@ -1,5 +1,5 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 name: invalid-hash-prefixed-mandatory-tag
 description: Invalid hash-prefixed mandatory tag.
 mandatory_tags:

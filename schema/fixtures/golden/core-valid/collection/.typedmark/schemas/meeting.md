@@ -1,5 +1,5 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 note_type: meeting
 label: Meeting
 icon: calendar

@@ -1,9 +1,9 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 view: records
 description: Records ordered by category and title.
 query:
-  specification_version: 0.0.1
+  specification_version: 0.1.0
   note_types: [record]
   select:
     - kind: field

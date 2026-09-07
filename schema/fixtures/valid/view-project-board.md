@@ -1,10 +1,10 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 view: project-board
 label: Project Board
 description: Active projects arranged by workflow state.
 query:
-  specification_version: 0.0.1
+  specification_version: 0.1.0
   note_types: [project]
   where:
     kind: field

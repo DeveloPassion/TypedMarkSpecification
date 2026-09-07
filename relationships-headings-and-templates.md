@@ -186,7 +186,7 @@ For example, a canonical template marks its owned guidance like this:
 
 <!-- typedmark-example: body: Template-owned region markers and Markdown content. -->
 ```markdown
-<!-- typedmark:template-region {"specification_version":"0.0.1","id":"review-guidance"} -->
+<!-- typedmark:template-region {"specification_version":"0.1.0","id":"review-guidance"} -->
 Follow the current review checklist.
 <!-- /typedmark:template-region -->
 ```
@@ -204,7 +204,7 @@ template_regions:
 
 # Quarterly Review
 
-<!-- typedmark:template-region {"specification_version":"0.0.1","id":"review-guidance"} -->
+<!-- typedmark:template-region {"specification_version":"0.1.0","id":"review-guidance"} -->
 Follow the current review checklist.
 <!-- /typedmark:template-region -->
 
@@ -340,7 +340,7 @@ For example, this expansion mirrors the note's `summary` field:
 
 <!-- typedmark-example: body: Materialized content-expansion markers and Markdown content. -->
 ```markdown
-<!-- typedmark:expansion {"specification_version":"0.0.1","id":"project-summary","mode":"auto","state":"materialized","source":{"kind":"self_field","field":"summary"},"render":{"item":"${value}"}} -->
+<!-- typedmark:expansion {"specification_version":"0.1.0","id":"project-summary","mode":"auto","state":"materialized","source":{"kind":"self_field","field":"summary"},"render":{"item":"${value}"}} -->
 The current project summary.
 <!-- /typedmark:expansion -->
 ```
@@ -379,7 +379,7 @@ This descriptor renders outbound `related_to` targets as a Markdown list:
 <!-- typedmark-example: artifact=expansion -->
 ```json
 {
-  "specification_version": "0.0.1",
+  "specification_version": "0.1.0",
   "id": "related-sources",
   "mode": "manual",
   "state": "materialized",
@@ -403,14 +403,14 @@ This query source renders the projected title column from every active project i
 <!-- typedmark-example: artifact=expansion -->
 ```json
 {
-  "specification_version": "0.0.1",
+  "specification_version": "0.1.0",
   "id": "active-projects",
   "mode": "auto",
   "state": "materialized",
   "source": {
     "kind": "query",
     "query": {
-      "specification_version": "0.0.1",
+      "specification_version": "0.1.0",
       "note_types": ["project"],
       "where": {"kind": "field", "field": "status", "operator": "equals", "value": "active"},
       "select": [
@@ -434,7 +434,7 @@ The equivalent view source reuses a visible column from the saved `project-board
 <!-- typedmark-example: artifact=expansion -->
 ```json
 {
-  "specification_version": "0.0.1",
+  "specification_version": "0.1.0",
   "id": "active-projects",
   "mode": "auto",
   "state": "materialized",
@@ -544,7 +544,7 @@ For example, a template can seed an expansion without pretending that placeholde
 
 <!-- typedmark-example: body: Pending content-expansion markers within a template body. -->
 ```markdown
-<!-- typedmark:expansion {"specification_version":"0.0.1","id":"owner","mode":"auto","state":"pending","source":{"kind":"self_field","field":"owner"},"render":{"item":"Owner: ${value}"}} -->
+<!-- typedmark:expansion {"specification_version":"0.1.0","id":"owner","mode":"auto","state":"pending","source":{"kind":"self_field","field":"owner"},"render":{"item":"Owner: ${value}"}} -->
 <!-- /typedmark:expansion -->
 ```
 

@@ -1,10 +1,10 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 view: ambiguous-source
 description: A view cannot own and reference a row source simultaneously.
 dataset: actions
 query:
-  specification_version: 0.0.1
+  specification_version: 0.1.0
   select:
     - {kind: path, as: path}
 presentation:

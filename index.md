@@ -18,6 +18,22 @@ See also:
 
 TypedMark is an open specification for typed Markdown note systems.
 
+**Current edition: 0.1.0 draft.** This edition is under development and is not
+yet released. The refocusing work is tracked in
+[#123](https://github.com/DeveloPassion/TypedMarkSpecification/issues/123).
+
+### Changes in this draft
+
+- Pre-1.0 minor lines are separate compatibility boundaries. Implementing
+  `0.1.x` does not imply support for `0.0.x`; patch changes remain compatible.
+- Templates take their specification version from their referencing concrete
+  schema rather than storing it in starter note frontmatter.
+
+The authoritative rules are in
+[Specification Versioning](foundations.md#specification-versioning). Other
+decisions recorded in the epic remain planned until their corresponding
+contracts land; this summary does not itself change those contracts.
+
 New here? Read the [Manifesto](manifesto.md) for the why, then follow [Getting Started](getting-started.md) to build your first Core Profile collection in five minutes. The [Quick Reference](quick-reference.md) maps terms and everyday tasks to the rules that govern them.
 
 ## The Pages

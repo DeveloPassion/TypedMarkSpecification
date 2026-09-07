@@ -1,5 +1,5 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 automation: project-completed
 description: Archive a project when its status becomes done.
 priority: 100

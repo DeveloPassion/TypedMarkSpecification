@@ -1,5 +1,5 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 name: golden-folder-scoped-property-set
 description: Valid collection with path-selected reusable structure.
 folder_scopes:

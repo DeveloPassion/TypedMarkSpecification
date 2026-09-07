@@ -1,5 +1,5 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 automation: set-unknown-project-field
 description: Demonstrate an unresolved automation field target.
 trigger:

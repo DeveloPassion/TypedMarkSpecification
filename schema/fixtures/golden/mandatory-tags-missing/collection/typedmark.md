@@ -1,5 +1,5 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 name: mandatory-tags-missing
 description: Golden collection with a missing folder-scoped mandatory tag.
 mandatory_tags:

@@ -63,7 +63,7 @@ Expanded example:
 
 <!-- typedmark-example: artifact=typedmark -->
 ```yaml
-specification_version: 0.0.1
+specification_version: 0.1.0
 name: example-knowledge-base
 label: Example Knowledge Base
 description: Personal knowledge base.
@@ -164,7 +164,7 @@ Rules:
 - `CM-407` `invalid_view` applies when a saved-view artifact violates the shape, reference-resolution, query, presentation, or layout rules defined on this page.
 - `CM-58` `invalid_note_type_mapping` applies when a note-type mapping rule violates the mapping-rule contract or when a winning rule produces a candidate note type that does not resolve to exactly one concrete schema.
 - `CM-59` `invalid_composition` applies when the `composition` block in `typedmark.md` violates the composition-provenance rules defined in this page, including a source that does not resolve to exactly one system at the declared version.
-- `CM-60` `unsupported_specification_version` applies when a governed artifact declares a `specification_version` whose major version the tool does not implement; the tool MUST report it and MUST NOT assert conformance for that artifact, as defined in [Foundations](foundations.md).
+- `CM-60` `unsupported_specification_version` applies when a governed artifact declares a `specification_version` whose compatibility line the tool does not implement; version-selection behavior is defined in [Foundations](foundations.md#specification-versioning).
 - `CM-61` `invalid_note_link` applies when an internal note link violates the syntax or resolution rules defined in [Note Links](note-links.md).
 - `CM-62` `invalid_relationship_definition` applies when relationship declarations violate the relationship model defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - `CM-63` `invalid_relationship_instance` applies when resolved typed relationship instances violate the declared relationship cardinality constraints defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
@@ -280,7 +280,7 @@ This query selects active projects in one area and names each projected column e
 <!-- typedmark-example: artifact=query -->
 ```json
 {
-  "specification_version": "0.0.1",
+  "specification_version": "0.1.0",
   "note_types": ["project"],
   "where": {
     "kind": "relationship",
@@ -335,7 +335,7 @@ For example, this predicate selects notes under `Projects/` that carry either of
 <!-- typedmark-example: artifact=query -->
 ```json
 {
-  "specification_version": "0.0.1",
+  "specification_version": "0.1.0",
   "where": {
     "kind": "all",
     "predicates": [
@@ -399,7 +399,7 @@ A relationship predicate counts unique resolved notes, optionally narrowing them
 <!-- typedmark-example: artifact=query -->
 ```json
 {
-  "specification_version": "0.0.1",
+  "specification_version": "0.1.0",
   "where": {
     "kind": "relationship",
     "relationship": "related_to",
@@ -440,7 +440,7 @@ This descriptor orders rows by status and due date, keeps null due dates last, l
 <!-- typedmark-example: artifact=query -->
 ```json
 {
-  "specification_version": "0.0.1",
+  "specification_version": "0.1.0",
   "note_types": ["project"],
   "select": [
     {"kind": "field", "field": "status", "as": "status"},
@@ -519,13 +519,13 @@ This dataset combines projects and tasks whose workflow fields have different st
 <!-- typedmark-example: artifact=dataset -->
 ```markdown
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 dataset: actions
 label: Actions
 description: Projects and tasks exposed through one stable row contract.
 row_identity: path
 query:
-  specification_version: 0.0.1
+  specification_version: 0.1.0
   note_types: [project, task]
   select:
     - {kind: path, as: path}
@@ -590,12 +590,12 @@ This board keeps workflow columns explicit, including empty columns, while prese
 <!-- typedmark-example: artifact=view -->
 ```markdown
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 view: project-board
 label: Project Board
 description: Active projects arranged by workflow state.
 query:
-  specification_version: 0.0.1
+  specification_version: 0.1.0
   note_types: [project]
   where:
     kind: field
@@ -904,7 +904,7 @@ Automation rules declare portable reactions without embedding executable code. E
 
 <!-- typedmark-example: artifact=automation -->
 ```yaml
-specification_version: 0.0.1
+specification_version: 0.1.0
 automation: project-completed
 description: Archive a project when its status becomes done.
 priority: 100
@@ -1005,7 +1005,7 @@ Property set file shape:
 
 <!-- typedmark-example: artifact=property-set -->
 ```yaml
-specification_version: 0.0.1
+specification_version: 0.1.0
 property_set: review-metadata
 description: Reusable review and publication fields.
 frontmatter:
@@ -1075,7 +1075,7 @@ A property set can also contribute shared `relationships` and `headings`, which 
 
 <!-- typedmark-example: artifact=property-set -->
 ```yaml
-specification_version: 0.0.1
+specification_version: 0.1.0
 property_set: base
 description: Shared fields, relationships, and headings for every note type.
 frontmatter:

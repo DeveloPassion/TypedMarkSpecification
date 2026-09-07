@@ -1,10 +1,10 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 dataset: duplicate-identity
 description: A dataset whose selected identity values are not unique at evaluation time.
 row_identity: status
 query:
-  specification_version: 0.0.1
+  specification_version: 0.1.0
   note_types: [project]
   select:
     - {kind: field, field: status, as: status}
