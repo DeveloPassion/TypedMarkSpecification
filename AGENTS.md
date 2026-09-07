@@ -92,12 +92,16 @@ The prose specification is the single source of truth. The JSON Schemas under
 - Lead each major section with a short narrative paragraph before the
   rule list, and give every major section at least one example.
 - Artifact-shaped example blocks in the spec pages are validated against
-  the JSON Schemas by `bun run validate-fixtures`; keep them valid.
+  the JSON Schemas by `bun run validate-fixtures`; keep them valid. Classify
+  every YAML, JSON, or Markdown example with the non-rendered annotation
+  described in [Schema Boundary](schema/docs/schema-boundary.md#specification-example-annotations).
+  Intentional fragments and note/template bodies need an explicit reason.
 - Getting Started and Quick Reference are non-normative and must say so.
 
 ## Repository tooling
 
 `bun run test` runs the tooling regression tests with Bun's built-in runner.
+Its explicit source directories exclude copies published under `dist/`.
 Run the targeted tests when changing a script, as well as its normal repository
 command. CI runs the regression suite before the fixture, rule-ID, and site gates.
 The rule linter checks registered ownership, allocation gaps, retirements, and

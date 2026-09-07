@@ -17,6 +17,7 @@ specification wins and the schema has a bug.
 | `<metadata_directory>/schemas/<note_type>.md` | `note-type.schema.json` |
 | `<metadata_directory>/property-sets/<property_set>.md` | `property-set.schema.json` |
 | `<metadata_directory>/automations/<automation>.md` | `automation.schema.json` |
+| `<metadata_directory>/datasets/<dataset>.md` | `dataset.schema.json` |
 | `<metadata_directory>/views/<view>.md` | `view.schema.json` |
 | `<metadata_directory>/history.md` | `history.schema.json` |
 | `marketplace.json` (marketplace repository root; plain JSON, not Markdown) | `marketplace.schema.json` |
@@ -153,14 +154,42 @@ Fixtures are mapped to artifact schemas by filename prefix (`typedmark-*`,
 `note-type-*`, `property-set-*`, `history*`, `marketplace*`,
 `validation-report-*`, `automation-*`, `automation-event-*`, and
 `automation-run-report-*`, `expansion-*`, `template-region-*`, and
-`template-tracking-*`, `query-*`, and `view-*`). Markdown fixtures are validated through their extracted
+`template-tracking-*`, `query-*`, `dataset-*`, and `view-*`). Markdown fixtures are validated through their extracted
 frontmatter; `.json` fixtures such as marker descriptors, tracking receipts, the
 marketplace catalog, and validation reports are validated directly.
 
 The golden-vector check validates collection layout, governed-artifact shapes,
-schema, automation, and view basenames, referenced template existence, report shape,
+schema, automation, dataset, and view basenames, referenced template existence, report shape,
 and canonical result ordering. It deliberately does not infer semantic findings;
 that behavior belongs to an executable conformance runner.
+
+### Specification example annotations
+
+The same command checks fenced `yaml`, `yml`, `json`, `markdown`, and `md`
+examples in the root specification pages. Each has a preceding HTML comment
+classifying its validation scope; missing, malformed, unknown, and orphaned
+classifications fail the check. Backtick and tilde fences, including longer
+fences containing shorter ones, are recognized by the existing Markdown lexer.
+Diagnostics include the source page and opening fence line.
+
+- `<!-- typedmark-example: artifact=typedmark -->` selects the full artifact
+  schema explicitly, independently of keys present in the example. The target
+  is a name in `ARTIFACT_SCHEMAS` in `schema/validate-fixtures.ts`, including
+  standalone descriptors and reports. YAML and JSON are parsed directly;
+  Markdown examples have their governed frontmatter extracted. Parse failures,
+  missing identification fields, and missing versions are errors, not skips.
+- `<!-- typedmark-example: fragment: Individual field declaration. -->`
+  marks an intentional partial YAML or JSON example. A non-empty reason explains
+  the scope. Fragments are syntax-checked, but not counted as full schema checks.
+- `<!-- typedmark-example: body: Managed-note template. -->` marks a Markdown
+  body, managed note, or template rather than a governed frontmatter artifact.
+  A non-empty reason is required. These examples are not artifact-schema checks;
+  managed-note conformance, embedded marker semantics, and template content are
+  outside this check.
+
+These non-rendered comments are repository authoring metadata, not a new
+TypedMark artifact format or normative contract. The command's fixture total
+counts full artifact examples, not fragments or body examples.
 
 ## Recommended validation workflow for implementations
 

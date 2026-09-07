@@ -61,6 +61,7 @@ Shape at a glance:
 
 Expanded example:
 
+<!-- typedmark-example: artifact=typedmark -->
 ```yaml
 specification_version: 0.0.1
 name: example-knowledge-base
@@ -190,6 +191,7 @@ Shape at a glance:
 
 Example:
 
+<!-- typedmark-example: fragment: Collection note-type mapping declarations. -->
 ```yaml
 note_type_mappings:
   - kind: frontmatter_field
@@ -275,6 +277,7 @@ Evaluation begins from managed notes after note-type association and effective-s
 
 This query selects active projects in one area and names each projected column explicitly:
 
+<!-- typedmark-example: artifact=query -->
 ```json
 {
   "specification_version": "0.0.1",
@@ -329,6 +332,7 @@ Predicates are recursive JSON objects rather than strings. Boolean nodes compose
 
 For example, this predicate selects notes under `Projects/` that carry either of two tags and do not have a review timestamp:
 
+<!-- typedmark-example: artifact=query -->
 ```json
 {
   "specification_version": "0.0.1",
@@ -392,6 +396,7 @@ Rules:
 
 A relationship predicate counts unique resolved notes, optionally narrowing them by target type and another recursive predicate. This supports direct questions such as “projects belonging to at least one active area” while retaining the relationship model's direction and abstract-target behavior.
 
+<!-- typedmark-example: artifact=query -->
 ```json
 {
   "specification_version": "0.0.1",
@@ -432,6 +437,7 @@ Projection produces one conceptual row per matching note. Every column has an ex
 
 This descriptor orders rows by status and due date, keeps null due dates last, limits the ordered result, and then presents the retained rows in status groups:
 
+<!-- typedmark-example: artifact=query -->
 ```json
 {
   "specification_version": "0.0.1",
@@ -510,6 +516,7 @@ A dataset gives one portable query a governed identity and a stable row key so s
 
 This dataset combines projects and tasks whose workflow fields have different stored names:
 
+<!-- typedmark-example: artifact=dataset -->
 ```markdown
 ---
 specification_version: 0.0.1
@@ -580,6 +587,7 @@ A saved view gives an embedded portable query or a reusable dataset a stable pre
 
 This board keeps workflow columns explicit, including empty columns, while preserving unexpected status values in a final fallback column:
 
+<!-- typedmark-example: artifact=view -->
 ```markdown
 ---
 specification_version: 0.0.1
@@ -716,6 +724,7 @@ Core Profile collections can skip vocabularies and use direct `allowed_values` u
 
 Example:
 
+<!-- typedmark-example: fragment: Collection vocabulary declarations. -->
 ```yaml
 vocabularies:
   workflow-state:
@@ -744,6 +753,7 @@ This is an advanced system concern. Hand-authored Core Profile collections omit 
 
 Example:
 
+<!-- typedmark-example: fragment: Collection composition provenance. -->
 ```yaml
 composition:
   sources:
@@ -774,6 +784,7 @@ Rules:
 
 Example:
 
+<!-- typedmark-example: fragment: Collection default property-set references. -->
 ```yaml
 default_property_sets:
   - base
@@ -792,6 +803,7 @@ Rules:
 
 Folder scopes select managed notes by their actual collection-relative paths and contribute reusable property sets, mandatory tags, or both. They do not choose a note type: note-type mapping wins first, then matching folder scopes refine the effective schema and mandatory-tag policy used for that managed note.
 
+<!-- typedmark-example: fragment: Collection folder-scope declarations. -->
 ```yaml
 folder_scopes:
   - path:
@@ -834,6 +846,7 @@ Rules:
 
 Mandatory-tag declarations constrain the ordinary top-level managed-note field named `tags`. They do not create that field implicitly and they do not participate in note-type mapping. The ordered policy is assembled from collection, folder, and note-type scopes so tools can validate and materialize it deterministically.
 
+<!-- typedmark-example: fragment: Collection and folder-scope mandatory tags. -->
 ```yaml
 mandatory_tags:
   - managed
@@ -870,6 +883,7 @@ Rules:
 
 `automation_defaults` holds collection-wide safety policy for automation execution. Its propagation limit bounds forward progress even when a cascade never repeats a state exactly.
 
+<!-- typedmark-example: fragment: Collection automation defaults. -->
 ```yaml
 automation_defaults:
   max_propagation_waves: 100
@@ -888,6 +902,7 @@ Rules:
 
 Automation rules declare portable reactions without embedding executable code. Each rule is a governed Markdown artifact under `<metadata_directory>/automations/`; its frontmatter identifies one trigger, optional targeting predicates, and an ordered action list, while its body explains the rule to humans and agents. Execution and propagation behavior are authoritative in [Managed Notes and Properties](managed-notes-and-properties.md).
 
+<!-- typedmark-example: artifact=automation -->
 ```yaml
 specification_version: 0.0.1
 automation: project-completed
@@ -988,6 +1003,7 @@ Shape at a glance:
 
 Property set file shape:
 
+<!-- typedmark-example: artifact=property-set -->
 ```yaml
 specification_version: 0.0.1
 property_set: review-metadata
@@ -1057,6 +1073,7 @@ frontmatter:
 
 A property set can also contribute shared `relationships` and `headings`, which is how collection-wide relationship and heading defaults are expressed:
 
+<!-- typedmark-example: artifact=property-set -->
 ```yaml
 specification_version: 0.0.1
 property_set: base
@@ -1112,6 +1129,7 @@ A managed note receives collection-controlled property sets through `default_pro
 
 Example opt-in composition:
 
+<!-- typedmark-example: fragment: Note-type property-set composition and local fields. -->
 ```yaml
 note_type: review
 property_sets:
@@ -1131,6 +1149,7 @@ frontmatter:
 
 Example excluding a default property set:
 
+<!-- typedmark-example: fragment: Note-type property-set exclusions. -->
 ```yaml
 note_type: glossary
 exclude_property_sets:
@@ -1139,6 +1158,7 @@ exclude_property_sets:
 
 Example field subtraction:
 
+<!-- typedmark-example: fragment: Note-type inherited field removal. -->
 ```yaml
 note_type: home
 frontmatter_remove:

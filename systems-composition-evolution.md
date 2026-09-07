@@ -43,6 +43,7 @@ The system fields are the part of `typedmark.md` that makes a collection a publi
 
 Example `typedmark.md` for a publishable system, showing the system fields together with the identity and structural fields they accompany:
 
+<!-- typedmark-example: artifact=typedmark -->
 ```yaml
 specification_version: 0.0.1
 name: "@example/knowledge-system"
@@ -145,6 +146,7 @@ A marketplace publishes the systems it knows in a machine-readable catalog, so t
 
 Example `marketplace.json`:
 
+<!-- typedmark-example: artifact=marketplace -->
 ```json
 {
   "specification_version": "0.0.1",
@@ -320,6 +322,7 @@ Rules:
 
 History example:
 
+<!-- typedmark-example: artifact=history -->
 ```yaml
 specification_version: 0.0.1
 history:

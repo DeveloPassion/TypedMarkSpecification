@@ -11,6 +11,11 @@ canonical result order. The `message` strings are illustrative; `CR-36` makes
 them explicitly unsuitable for exact machine comparison.
 
 `bun run validate-fixtures` checks the vector layout, governed-artifact shapes,
-schema and automation basenames, template references, report shape, and result
+schema, automation, dataset, and view basenames, template references, report shape, and result
 ordering. It does not replace a conformance runner or infer the expected
 semantic findings.
+
+`core-valid` includes a reusable dataset so the collection check exercises
+dataset frontmatter shape and basename agreement as well as automation shape.
+Dataset query evaluation and row-identity semantics remain conformance-runner
+responsibilities.

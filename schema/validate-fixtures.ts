@@ -9,8 +9,8 @@
  * template-region descriptors, template-tracking receipts, the marketplace
  * catalog, and portable validation reports.
  *
- * It also extracts artifact-shaped example blocks from the specification pages
- * and validates them, so the prose examples can never drift from the schemas.
+ * It also validates explicitly classified examples from the specification pages:
+ * artifact shapes, fragment syntax, and classification of Markdown body examples.
  *
  * Expectations:
  * - every fixture under fixtures/valid/ passes its artifact schema
@@ -27,6 +27,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { basename, extname, join } from "node:path";
 import { Ajv2020, type ValidateFunction } from "ajv/dist/2020";
+import { Lexer, type Token } from "marked";
 import { parse as parseYaml } from "yaml";
 
 const SCHEMA_DIR = join(import.meta.dir, "json-schema");
@@ -60,7 +61,7 @@ const ARTIFACT_SCHEMAS: Record<string, string> = {
   "validation-report": "validation-report.schema.json",
 };
 
-function buildValidators(): Record<string, ValidateFunction> {
+export function buildValidators(): Record<string, ValidateFunction> {
   const ajv = new Ajv2020({ allErrors: true, strict: false });
   const idsByFile: Record<string, string> = {};
   for (const file of readdirSync(SCHEMA_DIR)) {
@@ -100,69 +101,102 @@ function extractFrontmatter(text: string): unknown {
   return parseYaml(lines.slice(1, end).join("\n"));
 }
 
-function classify(document: unknown): string | null {
-  if (typeof document !== "object" || document === null || Array.isArray(document)) return null;
-  const doc = document as Record<string, unknown>;
-  if (!("specification_version" in doc)) return null;
-  if ("event_id" in doc && "kind" in doc && "occurred_at" in doc) return "automation-event";
-  if ("run_id" in doc && "mode" in doc && "status" in doc) return "automation-run-report";
-  if ("automation" in doc && "trigger" in doc && "actions" in doc) return "automation";
-  if ("note_type" in doc) return "note-type";
-  if ("property_set" in doc) return "property-set";
-  if ("history" in doc) return "history";
-  if ("dataset" in doc && "row_identity" in doc && "query" in doc) return "dataset";
-  if ("view" in doc && "presentation" in doc) return "view";
-  if ("select" in doc) return "query";
-  if ("id" in doc && "source" in doc && "render" in doc && "state" in doc) return "expansion";
-  if ("id" in doc && Object.keys(doc).every((key) => ["specification_version", "id"].includes(key))) return "template-region";
-  if ("systems" in doc) return "marketplace";
-  if ("mode" in doc && "valid" in doc && "results" in doc) return "validation-report";
-  if ("metadata_directory" in doc || "name" in doc) return "typedmark";
-  return null;
-}
+export function validateExamples(
+  text: string,
+  pageName: string,
+  validators: Record<string, ValidateFunction>,
+  failures: string[],
+): number {
+  let checked = 0;
+  const newlineCount = (value: string) => value.split("\n").length - 1;
+  const eligible = new Set(["yaml", "yml", "json", "markdown", "md"]);
 
-/** Extract fenced yaml/json/markdown example blocks from a spec page. */
-function extractExamples(text: string): Array<{ lang: string; body: string }> {
-  const blocks: Array<{ lang: string; body: string }> = [];
-  const fence = /^```(yaml|json|markdown)\r?\n([\s\S]*?)^```\r?$/gm;
-  let match: RegExpExecArray | null;
-  while ((match = fence.exec(text)) !== null) {
-    blocks.push({ lang: match[1]!, body: match[2]! });
+  function visit(tokens: Token[], startLine: number): void {
+    let line = startLine;
+    let pending: { kind: string; schema?: string; line: number } | undefined;
+    for (const token of tokens) {
+      const tokenLine = line;
+      line += newlineCount(token.raw);
+      if (token.type === "space") continue;
+      const label = `${pageName}:${tokenLine}`;
+      const lang = token.type === "code" ? token.lang?.trim().split(/\s+/)[0]?.toLowerCase() : "";
+      const isExample = token.type === "code" && eligible.has(lang ?? "");
+      const annotation = pending;
+      pending = undefined;
+      if (annotation && !isExample) {
+        failures.push(`${pageName}:${annotation.line}: annotation must precede an eligible fenced example`);
+      }
+
+      if (token.type === "html" && token.raw.includes("typedmark-example")) {
+        const match = /^<!-- typedmark-example: (?:artifact=([a-z][a-z0-9-]*)|(fragment|body): (\S[^\r\n]*)) -->$/
+          .exec(token.raw.trim());
+        if (!match) {
+          failures.push(`${label}: invalid typedmark-example annotation`);
+        } else if (match[1] && !Object.hasOwn(validators, match[1])) {
+          failures.push(`${label}: unknown artifact schema ${match[1]}`);
+        } else {
+          pending = { kind: match[1] ? "artifact" : match[2]!, schema: match[1], line: tokenLine };
+        }
+      } else if (isExample && token.type === "code") {
+        if (!annotation) {
+          failures.push(`${label}: missing typedmark-example annotation`);
+          continue;
+        }
+        const fence = /^ {0,3}(`{3,}|~{3,})/.exec(token.raw)?.[1];
+        const closing = fence && new RegExp(`^ {0,3}${fence[0]}{${fence.length},}[ \\t]*$`, "m");
+        if (!closing || !closing.test(token.raw.slice(token.raw.indexOf("\n") + 1))) {
+          failures.push(`${label}: unclosed example fence`);
+          continue;
+        }
+        const markdown = lang === "markdown" || lang === "md";
+        if (annotation.kind === "body") {
+          if (!markdown) failures.push(`${label}: body classification requires markdown or md`);
+          continue;
+        }
+        if (annotation.kind === "fragment" && markdown) {
+          failures.push(`${label}: fragment classification requires yaml, yml, or json`);
+          continue;
+        }
+        try {
+          const document = lang === "json" ? JSON.parse(token.text)
+            : markdown ? extractFrontmatter(token.text) : parseYaml(token.text);
+          if (annotation.kind === "artifact") {
+            checked += 1;
+            validateShape(validators[annotation.schema!]!, document, `${label} (${annotation.schema})`, failures);
+          }
+        } catch (error) {
+          failures.push(`${label}: ${error instanceof Error ? error.message : String(error)}`);
+        }
+      } else if (token.type === "blockquote") {
+        visit(token.tokens, tokenLine);
+      } else if (token.type === "list") {
+        let offset = 0;
+        for (const item of token.items) {
+          const itemOffset = token.raw.indexOf(item.raw, offset);
+          visit(item.tokens, tokenLine + newlineCount(token.raw.slice(0, itemOffset)));
+          offset = itemOffset + item.raw.length;
+        }
+      }
+    }
+    if (pending) {
+      failures.push(`${pageName}:${pending.line}: annotation must precede an eligible fenced example`);
+    }
   }
-  return blocks;
+
+  visit(Lexer.lex(text.replace(/\r\n?/g, "\n")), 1);
+  return checked;
 }
 
 function validateSpecExamples(
   validators: Record<string, ValidateFunction>,
   failures: string[],
 ): number {
-  let checked = 0;
-  for (const pageName of SPEC_PAGES) {
-    const text = readFileSync(join(ROOT, pageName), "utf8");
-    extractExamples(text).forEach((block, index) => {
-      let document: unknown;
-      try {
-        if (block.lang === "json") document = JSON.parse(block.body);
-        else if (block.lang === "markdown") document = extractFrontmatter(block.body);
-        else document = parseYaml(block.body);
-      } catch {
-        return; // fragments and illustrative non-artifact blocks are skipped
-      }
-      const kind = classify(document);
-      if (!kind) return;
-      checked += 1;
-      const validate = validators[kind]!;
-      if (!validate(document)) {
-        failures.push(`spec example ${pageName} #${index + 1} (${kind}): expected to pass shape validation`);
-        for (const error of (validate.errors ?? []).slice(0, 3)) {
-          failures.push(`  ${error.instancePath || "/"}: ${error.message}`);
-        }
-      } else {
-        console.log(`ok spec-example ${pageName} #${index + 1} (${kind})`);
-      }
-    });
-  }
-  return checked;
+  return SPEC_PAGES.reduce((checked, pageName) => {
+    const failureCount = failures.length;
+    const count = validateExamples(readFileSync(join(ROOT, pageName), "utf8"), pageName, validators, failures);
+    if (failureCount === failures.length) console.log(`ok spec-examples ${pageName} (${count} artifact shapes)`);
+    return checked + count;
+  }, 0);
 }
 
 function objectValue(value: unknown): Record<string, unknown> | null {
@@ -220,15 +254,16 @@ function validateShape(
   }
 }
 
-function validateGoldenVectors(
+export function validateGoldenVectors(
   validators: Record<string, ValidateFunction>,
   failures: string[],
+  goldenDirectory = GOLDEN_DIR,
 ): number {
-  if (!existsSync(GOLDEN_DIR)) {
+  if (!existsSync(goldenDirectory)) {
     failures.push("golden fixtures: expected schema/fixtures/golden to exist");
     return 0;
   }
-  const vectors = readdirSync(GOLDEN_DIR, { withFileTypes: true })
+  const vectors = readdirSync(goldenDirectory, { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
     .map((entry) => entry.name)
     .sort();
@@ -238,7 +273,7 @@ function validateGoldenVectors(
 
   for (const vector of vectors) {
     const failureCount = failures.length;
-    const vectorRoot = join(GOLDEN_DIR, vector);
+    const vectorRoot = join(goldenDirectory, vector);
     const collectionRoot = join(vectorRoot, "collection");
     const reportPath = join(vectorRoot, "expected-validation-report.json");
     const typedmarkPath = join(collectionRoot, "typedmark.md");
@@ -372,6 +407,22 @@ function validateGoldenVectors(
       }
     }
 
+    const datasetRoot = join(metadataRoot, "datasets");
+    if (existsSync(datasetRoot)) {
+      for (const datasetPath of collectFiles(datasetRoot).filter((path) => extname(path) === ".md")) {
+        try {
+          const dataset = extractFrontmatter(readFileSync(datasetPath, "utf8"));
+          validateShape(validators.dataset!, dataset, `golden/${vector}/${basename(datasetPath)}`, failures);
+          const datasetId = objectValue(dataset)?.dataset;
+          if (typeof datasetId === "string" && basename(datasetPath, ".md") !== datasetId) {
+            failures.push(`golden/${vector}: dataset basename does not match dataset ${datasetId}`);
+          }
+        } catch (error) {
+          failures.push(`golden/${vector}/${basename(datasetPath)}: ${error instanceof Error ? error.message : String(error)}`);
+        }
+      }
+    }
+
     const historyPath = join(metadataRoot, "history.md");
     if (existsSync(historyPath)) {
       try {
@@ -443,4 +494,4 @@ function main(): number {
   return 0;
 }
 
-process.exit(main());
+if (import.meta.main) process.exit(main());

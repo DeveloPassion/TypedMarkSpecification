@@ -21,6 +21,7 @@ This page is a non-normative tutorial. It shows how little is needed to turn a f
 
 At the root of your notes folder, create `typedmark.md`. The frontmatter is the configuration; the body is yours to use for explanations ([governed artifact format](foundations.md#governed-artifact-format)).
 
+<!-- typedmark-example: artifact=typedmark -->
 ```markdown
 ---
 specification_version: 0.0.1
@@ -39,6 +40,7 @@ Those three frontmatter keys are enough for the Core Profile ([Collection Model]
 
 Create `.typedmark/schemas/meeting.md`. The file name (without `.md`) must equal the `note_type` ([Note Type Schemas](note-type-schemas.md)).
 
+<!-- typedmark-example: artifact=note-type -->
 ```markdown
 ---
 specification_version: 0.0.1
@@ -76,6 +78,7 @@ The omitted schema defaults expand to `abstract: false`, `template.file: "meetin
 
 Create `.typedmark/templates/meeting.md` with valid starter frontmatter ([Templates](relationships-headings-and-templates.md#templates)):
 
+<!-- typedmark-example: body: Managed-note template, not a governed frontmatter artifact. -->
 ```markdown
 ---
 note_type: meeting
@@ -94,6 +97,7 @@ The empty `title` and `null` `meeting_date` are template placeholders. A tool in
 
 Create `Meetings/2026-06-10 - Kickoff.md`:
 
+<!-- typedmark-example: body: Managed note validated against its effective note type, not an artifact schema. -->
 ```markdown
 ---
 note_type: meeting

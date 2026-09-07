@@ -184,6 +184,7 @@ Each tracked note carries a compact receipt in the core-defined `template_region
 
 For example, a canonical template marks its owned guidance like this:
 
+<!-- typedmark-example: body: Template-owned region markers and Markdown content. -->
 ```markdown
 <!-- typedmark:template-region {"specification_version":"0.0.1","id":"review-guidance"} -->
 Follow the current review checklist.
@@ -192,6 +193,7 @@ Follow the current review checklist.
 
 An instantiated note copies that source and records its digest:
 
+<!-- typedmark-example: body: Managed-note template-region receipt and content. -->
 ```markdown
 ---
 note_type: review
@@ -336,6 +338,7 @@ A content expansion keeps a marker-delimited region of ordinary Markdown derived
 
 For example, this expansion mirrors the note's `summary` field:
 
+<!-- typedmark-example: body: Materialized content-expansion markers and Markdown content. -->
 ```markdown
 <!-- typedmark:expansion {"specification_version":"0.0.1","id":"project-summary","mode":"auto","state":"materialized","source":{"kind":"self_field","field":"summary"},"render":{"item":"${value}"}} -->
 The current project summary.
@@ -373,6 +376,7 @@ Every source evaluates to an ordered sequence of text values. A single-value sou
 
 This descriptor renders outbound `related_to` targets as a Markdown list:
 
+<!-- typedmark-example: artifact=expansion -->
 ```json
 {
   "specification_version": "0.0.1",
@@ -396,6 +400,7 @@ This descriptor renders outbound `related_to` targets as a Markdown list:
 
 This query source renders the projected title column from every active project in portable query order:
 
+<!-- typedmark-example: artifact=expansion -->
 ```json
 {
   "specification_version": "0.0.1",
@@ -426,6 +431,7 @@ This query source renders the projected title column from every active project i
 
 The equivalent view source reuses a visible column from the saved `project-board` view:
 
+<!-- typedmark-example: artifact=expansion -->
 ```json
 {
   "specification_version": "0.0.1",
@@ -536,6 +542,7 @@ Pending descriptors are template-time declarations. Materialization evaluates th
 
 For example, a template can seed an expansion without pretending that placeholder frontmatter has already produced current content:
 
+<!-- typedmark-example: body: Pending content-expansion markers within a template body. -->
 ```markdown
 <!-- typedmark:expansion {"specification_version":"0.0.1","id":"owner","mode":"auto","state":"pending","source":{"kind":"self_field","field":"owner"},"render":{"item":"Owner: ${value}"}} -->
 <!-- /typedmark:expansion -->

@@ -57,6 +57,7 @@ Rules:
 
 Common frontmatter shape:
 
+<!-- typedmark-example: fragment: Managed-note frontmatter requires its effective note-type schema. -->
 ```yaml
 note_type: topic
 tags:
@@ -178,6 +179,7 @@ Rules:
 
 `template_regions` is portable note-local tracking state, not a schema field. A baseline records the canonical region version last shared by the note and its template; a detached receipt records a deliberate opt-out for one identifier.
 
+<!-- typedmark-example: fragment: Managed-note template-region receipts within frontmatter. -->
 ```yaml
 template_regions:
   review-guidance:
@@ -204,6 +206,7 @@ Rules:
 
 Mandatory tags are value requirements on the ordinary top-level `tags` field. They do not turn `tags` into a core-defined field, and they do not authorize tools to overwrite author-added tags. A conforming note contains the effective policy values alongside any other tags allowed by its field definition.
 
+<!-- typedmark-example: fragment: Managed-note tags after mandatory-tag materialization. -->
 ```yaml
 tags:
   - personal
@@ -271,6 +274,7 @@ Rules:
 
 Automation execution consumes an immutable event envelope and produces a staged collection patch. Event triggers describe note lifecycle changes; schedule triggers are represented at runtime by targeted `schedule.tick` events. A body-only update uses `body_changed: true` instead of inventing a frontmatter field change. This contract standardizes the observable inputs and effects, while [Collection Model](collection-model.md#automation-rules) owns the automation artifact itself.
 
+<!-- typedmark-example: artifact=automation-event -->
 ```json
 {
   "specification_version": "0.0.1",
@@ -407,6 +411,7 @@ Rules:
 
 Propagation mode deliberately follows automation-produced and derived body-update events beyond the first hop. It derives a transient dependency graph from the effective collection, evaluates changes in deterministic waves against one staged state, and commits only after the cascade reaches a valid fixed point. The graph is an execution aid, never a second source of truth.
 
+<!-- typedmark-example: artifact=automation-run-report -->
 ```json
 {
   "specification_version": "0.0.1",

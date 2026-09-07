@@ -57,6 +57,7 @@ Conformance modes:
 
 Validators can serialize their findings as one portable JSON report for editors, CI pipelines, and other tools. The report states what was evaluated and whether any configured error remains; individual results identify both a stable diagnostic category and the exact normative rule that produced it.
 
+<!-- typedmark-example: artifact=validation-report -->
 ```json
 {
   "specification_version": "0.0.1",
@@ -101,6 +102,7 @@ Rules:
 
 Automation executors serialize one-hop and propagation outcomes as portable JSON. The report records the root events, deterministic execution waves, actual semantic changes, and machine-stable diagnostics without making the report part of the collection's authoritative state.
 
+<!-- typedmark-example: artifact=automation-run-report -->
 ```json
 {
   "specification_version": "0.0.1",

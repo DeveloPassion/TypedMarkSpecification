@@ -102,6 +102,7 @@ Each `<metadata_directory>/schemas/<note_type>.md` defines one note type and fol
 | `guidance` | Optional | none | Human-facing usage guidance |
 | `property_sets`, `exclude_property_sets`, `frontmatter_remove` | Optional on concrete types | none | Reuse and subtraction controls |
 
+<!-- typedmark-example: artifact=note-type -->
 ```yaml
 specification_version: 0.0.1
 note_type: topic
@@ -311,6 +312,7 @@ Rules:
 
 A note type can require tags beyond the collection-wide and path-selected policies. The declaration is a top-level note-type policy rather than a field definition; the effective `tags` field remains explicit in `frontmatter`.
 
+<!-- typedmark-example: fragment: Note-type mandatory tags and tags field declaration. -->
 ```yaml
 mandatory_tags:
   - type/project
@@ -333,6 +335,7 @@ Rules:
 
 ### Abstract Inheritance Example
 
+<!-- typedmark-example: artifact=note-type -->
 ```yaml
 # <metadata_directory>/schemas/person.md
 specification_version: 0.0.1
@@ -373,6 +376,7 @@ guidance:
   when_not_to_use: "Do not map notes directly to this abstract type."
 ```
 
+<!-- typedmark-example: artifact=note-type -->
 ```yaml
 # <metadata_directory>/schemas/customer.md
 specification_version: 0.0.1
@@ -403,6 +407,7 @@ A note-type schema can declare `conditions` to express cross-field requirements 
 
 Example:
 
+<!-- typedmark-example: fragment: Note-type conditional validation declarations. -->
 ```yaml
 conditions:
   - description: Archived topics need a reason.
@@ -553,6 +558,7 @@ Rules:
 
 Example creation-oriented storage rules:
 
+<!-- typedmark-example: fragment: Note-type storage configuration. -->
 ```yaml
 storage:
   folder_pattern: "Meetings/{meeting_date:YYYY}/{meeting_date:MM}"

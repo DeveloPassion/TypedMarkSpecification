@@ -256,6 +256,7 @@ Generation behavior rules:
 
 Example:
 
+<!-- typedmark-example: fragment: Field definitions within a frontmatter declaration. -->
 ```yaml
 first_name:
   type: text

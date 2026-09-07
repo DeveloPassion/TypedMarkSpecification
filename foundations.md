@@ -256,6 +256,7 @@ Rules:
 
 A complete minimal `typedmark.md`, showing the governed frontmatter together with a free-form body:
 
+<!-- typedmark-example: artifact=typedmark -->
 ```markdown
 ---
 specification_version: 0.0.1
@@ -357,6 +358,7 @@ Several governed surfaces need to derive values from structured data. Rather tha
 
 Example:
 
+<!-- typedmark-example: fragment: Computed expression within a field definition. -->
 ```yaml
 computed: '${capitalize(note_type)}: ${title}'
 ```
