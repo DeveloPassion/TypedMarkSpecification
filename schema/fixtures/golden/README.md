@@ -19,3 +19,6 @@ semantic findings.
 automation and dataset shapes with explicit capability declarations.
 `explicit-type-property-set-valid` replaces the old folder-scope example with
 explicitly selected types. Query evaluation remains a semantic-runner responsibility.
+`unsupported-required-extension` exercises capability negotiation: a Core-capable
+adapter that lacks the required illustrative extension must report incomplete
+evaluation rather than conformance.
