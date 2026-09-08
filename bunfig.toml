@@ -1,0 +1,6 @@
+[install]
+# Only install package versions published at least 3 days ago
+minimumReleaseAge = 259200
+# bun-types is @types/bun's transitive payload -- excluding one without the
+# other deadlocks installs whenever a fresh Bun ships.
+minimumReleaseAgeExcludes = ["@types/bun", "bun-types", "typescript"]
