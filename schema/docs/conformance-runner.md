@@ -113,6 +113,18 @@ A conformance claim names the edition, capability set, applicable cases, and any
 cases not run. The five-day implementability target in issue #123 is measured
 from recorded implementation effort, not inferred from the fixture count.
 
-This document defines the adapter boundary. It does not claim that the adapter,
-the complete capability-scoped vector inventory, or the reference validator has
-already been implemented.
+## Reference evidence
+
+The first executable adapter slice is available in the
+[TypedMark tooling repository](https://github.com/DeveloPassion/TypedMark/tree/6c664f894cf7dc0cf530cc7e8a1bd8f65144d43b).
+Its [0.1.0 evidence record](https://github.com/DeveloPassion/TypedMark/tree/6c664f894cf7dc0cf530cc7e8a1bd8f65144d43b/evidence/0.1.0)
+identifies the exact specification and adapter revisions, actual reports, and
+read-only snapshot results. The companion
+[system exercise](https://github.com/DeveloPassion/TypedMarkExample/blob/fc952a6474072b6bb31f188104ac8617be2964c5/evidence/0.1.0.md)
+records self-contained instantiation, offline validation, and missing-history
+behavior.
+
+That evidence covers every vector checked in at the recorded specification
+revision. It is not a claim that the current vector inventory exercises every
+normative rule; later conformance claims must continue to name their applicable
+edition, capabilities, and vector set.
