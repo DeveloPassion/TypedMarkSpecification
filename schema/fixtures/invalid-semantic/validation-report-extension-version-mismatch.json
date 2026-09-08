@@ -1,0 +1,9 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {"example:review": "1.2.0-rc.1+build.7"},
+  "evaluated_extensions": {"example:review": "1.2.0-rc.1+build.8"},
+  "valid": true,
+  "results": []
+}

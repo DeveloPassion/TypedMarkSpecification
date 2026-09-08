@@ -1,5 +1,5 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 history:
   - version: 0.1.0
     changes:
@@ -23,7 +23,7 @@ history:
         from: summary
         to: overview
       - op: retype_field
-        note_type: topic
+        property_set: review-metadata
         field: rating
         from_type: number
         to_type: integer
@@ -37,5 +37,5 @@ history:
         to: subject
 ---
 
-Valid change history exercising note-type, field (both scopes), block, and collection operations. In a real collection this file lives at <metadata_directory>/history.yaml.
+Valid change history exercising note-type, field (both scopes), block, and collection operations. In a real collection this file lives at <metadata_directory>/history.md.
 This body is non-normative documentation; tools ignore it for structural reasoning.

@@ -2,10 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://developassion.github.io/TypedMarkSpecification/schema/expansion.schema.json",
   "title": "TypedMark content-expansion descriptor",
-  "description": "The JSON descriptor carried by a typedmark:expansion start marker. Authoritative semantics: relationships-headings-and-templates.md (Content Expansion).",
+  "description": "The JSON descriptor carried by a typedmark:expansion start marker. Authoritative semantics: content-expansion.md (Content Expansion).",
   "type": "object",
   "required": [
-    "specification_version",
     "id",
     "mode",
     "state",
@@ -13,9 +12,6 @@
     "render"
   ],
   "properties": {
-    "specification_version": {
-      "$ref": "defs.schema.json#/$defs/specification_version"
-    },
     "id": {
       "$ref": "defs.schema.json#/$defs/slug"
     },

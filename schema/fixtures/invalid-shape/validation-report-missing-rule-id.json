@@ -1,6 +1,9 @@
 {
-  "specification_version": "0.0.1",
+  "specification_version": "0.1.0",
   "mode": "system_definition",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
   "valid": false,
   "results": [
     {

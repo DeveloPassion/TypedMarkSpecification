@@ -1,5 +1,5 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 property_set: haunted
 description: Property set whose relationship target does not resolve.
 frontmatter: {}

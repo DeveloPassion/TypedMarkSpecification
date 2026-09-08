@@ -12,186 +12,165 @@ Audience: everyone — start here after the [Manifesto](manifesto.md).
 Authoritative for:
 
 - the core concepts and the vocabulary the other pages build on
-- specification versioning, parsing and matching baselines, the shared expression language, and string comparison
+- specification versioning, parsing and matching baselines, and string comparison
 - the governed artifact format, the artifact map, and structural precedence
 - the authoring profiles and the distinction between authored shorthand and effective canonical values
 
 See also:
 
 - [Collection Model](collection-model.md): the structural fields of `typedmark.md`
+- [Extensions and Capabilities](extensions.md): required optional contracts and inert vendor metadata
+- [Expressions](expressions.md): the optional shared expression language and computed fields
 - [Note Type Schemas](note-type-schemas.md): effective note-type schemas
 - [Conformance and Roadmap](conformance-and-roadmap.md): conformance modes and artifact sets
 
+## Purpose
+
+Core answers three questions from the files at rest: what type a note has,
+whether it conforms to that type, and where it belongs. Its contract is defined
+positively by the following concerns, not by subtracting a growing list of
+features from the whole specification.
+
+| Core concern | Authoritative contract |
+| --- | --- |
+| Collection configuration and boundaries | [Collection Model](collection-model.md) |
+| Local concrete note types and effective schemas | [Note Type Schemas](note-type-schemas.md) |
+| Field types, constraints, and deterministic defaults | [Field Definition Reference](field-definition-reference.md) |
+| Managed notes, core fields, and effective values | [Managed Notes and Properties](managed-notes-and-properties.md) |
+| Storage and archive placement | [Note Type Schemas](note-type-schemas.md#storage-rules) |
+| Internal note links and resolution | [Note Links](note-links.md) |
+| Relationships and body headings | [Relationships, Headings, and Templates](relationships-headings-and-templates.md) |
+| Optional starter templates and derivation | [Relationships, Headings, and Templates](relationships-headings-and-templates.md#templates) |
+| Parsing, matching, and version interpretation | This page |
+| Conformance and required-capability reporting | [Conformance](conformance-and-roadmap.md) and [Extensions](extensions.md) |
+
+Vocabularies belong to Core. All abstract inheritance, property-set composition,
+and conditional constraints belong to Reuse. Queries, views, automation,
+expressions, extended authoring, tracking, expansion, and systems are optional
+contracts, not prerequisites for a Core validator.
+
+For example, a collection with one local concrete schema and no optional
+contracts can be validated without a query engine, event processor, or system
+resolver. A collection that declares an unsupported contract receives an
+incomplete report rather than a full-conformance claim.
+
 ## Core Concepts
 
-### Collection
-
-A TypedMark collection is a rooted set of Markdown notes plus the TypedMark-based artifacts that define how those notes are structured. The main configuration file for a TypedMark collection is called `typedmark.md`.
+| Term | Meaning |
+| --- | --- |
+| Collection | A rooted set of notes, assets, and governing artifacts |
+| Configuration | `typedmark.md`, declaring identity and collection-wide settings |
+| Note type | A named structural contract; managed notes use concrete types |
+| Schema | The Markdown artifact defining one note type |
+| Managed note | A collection note associated with a known concrete schema |
+| Untyped note | A note outside Core's managed-note constraints; explicit extensions can govern other surfaces |
+| Asset | Content that is neither a Markdown note nor a governed artifact |
+| Frontmatter | The note's YAML metadata surface |
+| Effective schema | Local definitions plus enabled reuse and deterministic defaults |
+| Effective record | Stored note values plus applicable deterministic defaults |
+| Property set | An optional reusable field/relationship/heading bundle |
+| Dataset or view | An optional query or presentation contract |
+| System | A reusable, versioned collection model with optional publishing/composition contracts |
+| Conformance | Evaluation of the applicable contracts, with explicit completeness and findings |
 
 Rules:
 
-- `FND-1` `collection` is the primary abstraction used by this specification.
 - `FND-2` A collection root is any directory that contains `typedmark.md`.
 
-### Collection Configuration
+The authoritative artifact map below links each concern to its owner. For
+example, a collection can contain untyped prose notes beside managed project
+notes without turning all prose into schema definitions.
 
-The collection configuration is the collection-wide structural contract defined in `typedmark.md`. It declares the collection's identity (`name`, an optional `label`, `description`, and `keywords`) and collection-level rules such as the metadata directory, note-type mappings, validation defaults, excluded paths, mandatory tags, default property sets, composition provenance, and other defaults that apply across note types. Details: [Collection Model](collection-model.md).
 
-### Note Types
-
-A note type is a named structural class that collection notes can be associated with. Note types may be abstract or concrete. Every managed note conforms to exactly one concrete note type, and both schema files and the core-defined note frontmatter field, when stored, use the identifier name `note_type`.
-
-### Note Type Configuration (Schemas)
-
-A note type configuration is the schema file for one note type, stored under `<metadata_directory>/schemas/`. It defines the note type's top-level metadata and the structural blocks that govern its notes or its descendants. Details: [Note Type Schemas](note-type-schemas.md).
-
-### Notes (Collection Content)
-
-The collection content is the set of Markdown notes and assets that belong to the collection as content rather than as TypedMark artifacts. Its notes can include both managed notes and untyped notes.
-
-### Managed Notes
-
-A managed note is a collection note that is associated with exactly one known note type under the note-type association rules defined by this specification version. Managed notes are the subset of notes whose structure, storage location, and conformance are governed by TypedMark. Details: [Managed Notes and Properties](managed-notes-and-properties.md).
-
-### Untyped Notes
-
-An untyped note is a collection note that is not associated with any known note type. TypedMark collections can contain untyped notes, but those notes are outside the managed-note contract and are not validated against note-type schema, storage, relationship, or heading rules unless a future specification version defines additional rules for them.
-
-### Assets
-
-An asset is a collection file that is not a Markdown note and not a TypedMark artifact — an image, a PDF, an audio file, or any other resource referenced by notes. Assets are collection content, but they are not collection notes: they are not evaluated for note-type mapping, carry no frontmatter, and create no typed relationship instances. Asset links are defined in [Note Links](note-links.md), and the optional `assets_directory` is defined in [Collection Model](collection-model.md).
-
-### Frontmatter and Fields (Metadata / Properties)
-
-A managed note's frontmatter is its YAML metadata surface. Field definitions describe the allowed metadata properties, their types, value constraints, defaulting and materialization behavior, and any typed-relationship contribution. The managed note contract is authoritative on [Managed Notes and Properties](managed-notes-and-properties.md); field-definition semantics are authoritative on [Field Definition Reference](field-definition-reference.md).
-
-### Property Sets
-
-A property set is the single named reusable bundle for shared `frontmatter`, `relationships`, and `headings`, defined under `<metadata_directory>/property-sets/`. A collection applies property sets through collection defaults and through concrete note-type composition, exclusions, and field subtraction. Property sets are authoritative on [Collection Model](collection-model.md).
-
-### Effective Note-Type Schema
-
-The effective note-type schema is the normative result of taking one concrete note-type schema, its abstract ancestor chain through `extends`, and then applying default property sets, composed property sets, and local schema definitions in the order defined by this specification. Managed-note conformance is evaluated against that effective schema, not against isolated fragments.
-
-### Datasets and Saved Views
-
-A dataset is a governed reusable query with stable row identity and an explicit projected column contract; it lives under `<metadata_directory>/datasets/`. A saved view pairs either a dataset reference or an embedded portable query with a declarative presentation under `<metadata_directory>/views/`. Both can be reused by content expansion. Details: [Collection Model](collection-model.md#datasets).
-
-### Relationships, Headings, and Templates
-
-A note type governs more than metadata fields. It also defines typed relationship constraints, heading requirements, a canonical template reference, and explicit tracking for template-owned body regions. These rules are authoritative on [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md).
-
-### Systems, Composition, and Evolution
-
-The specification distinguishes collection structure from the systems that package and evolve it. A system is the domain layer of TypedMark: a collection becomes a reusable, versioned, publishable system by declaring the optional system fields of `typedmark.md` — release version, publishing metadata, and scaffold — on top of the domain-agnostic core. There is no separate system manifest. Several systems can be composed into one self-contained collection whose lineage is recorded as provenance in `typedmark.md`. `<metadata_directory>/history.md` records the event-sourced change history that drives migrating a collection to newer system versions. These rules are authoritative on [Systems, Composition, and Evolution](systems-composition-evolution.md).
-
-### Conformance
-
-Conformance is the process of evaluating whether the required artifacts exist and whether governed artifacts and managed notes satisfy the applicable TypedMark rules. Conformance modes and required artifact sets are defined on [Conformance and Roadmap](conformance-and-roadmap.md).
-
-### Keywords
+## Keywords
 
 Rules:
 
-- `FND-3` The uppercase keywords `MUST`, `MUST NOT`, `SHOULD`, `SHOULD NOT`, `MAY`, `OPTIONAL`, and `RECOMMENDED` are normative and are interpreted as described in RFC 2119 and RFC 8174.
-- `FND-4` Lowercase modal verbs such as "must", "should", "may", "can", and "could" are ordinary English unless they appear inside a quoted example.
+- `FND-3` The uppercase keywords `MUST`, `MUST NOT`, `REQUIRED`, `SHOULD`, `SHOULD NOT`, `MAY`, `OPTIONAL`, and `RECOMMENDED` are normative and are interpreted as described in RFC 2119 and RFC 8174.
 
-### Specification Versioning
+## Specification Versioning
 
-`specification_version` identifies the version of the TypedMark core specification that governs an artifact. It is distinct from a system's release `version` and from the change history in `<metadata_directory>/history.md`, both defined in [Systems, Composition, and Evolution](systems-composition-evolution.md): `specification_version` versions the specification itself, while `version` and `history.md` version a system built with it.
+`specification_version` selects an artifact's Core contract. System release
+versions and history are separate, as defined in [Systems](systems-composition-evolution.md).
 
-The specification's own version uses Semantic Versioning change classes:
+The specification's own version uses Semantic Versioning change classes. A
+*compatibility line* is one major version from `1.0.0` onward, or one `0.MINOR`
+line before `1.0.0`. For example, `0.0.x` and `0.1.x` are different compatibility
+lines, while `1.2.x` and `1.3.x` belong to the same line.
 
-- MAJOR: a breaking change to the specification. An artifact valid under an earlier major can be invalid under a new major.
-- MINOR: a backward-compatible addition, such as a new optional field, property type, or construct. An artifact valid under `x.y` remains valid under `x.(y+1)`.
-- PATCH: an editorial clarification that does not change structural requirements.
+- MAJOR: a new compatibility line that can introduce breaking changes.
+- MINOR: before `1.0.0`, a new compatibility line that can introduce breaking
+  changes; from `1.0.0` onward, a backward-compatible addition such as a new
+  optional field, property type, or construct.
+- PATCH: a compatible editorial clarification that does not change structural
+  requirements.
+
+For example, `0.1.0` support does not imply `0.0.1` or `0.2.0` support.
+`0.1.1` remains in the same compatibility line.
 
 Rules:
 
 - `FND-5` `specification_version` MUST be a Semantic Versioning x.y.z string.
-- `FND-6` Every governed artifact declares its own `specification_version` in its frontmatter, and each artifact is evaluated under the rules of the version it declares.
+- `FND-6` Every governed artifact other than a template declares its own `specification_version` in its frontmatter, and each artifact is evaluated under the rules of the version it declares.
+- `FND-89` A template MUST be evaluated under the specification version declared by the concrete note-type schema that references it.
 - `FND-7` Governed artifacts in one collection MAY declare different `specification_version` values, because composition MAY combine artifacts authored against different specification versions; each artifact is evaluated under its own declared version.
-- `FND-8` A tool MUST advertise the specification major version, and the highest minor within it, that it implements.
-- `FND-9` Within a single major, the specification is additive and forward-compatible: a tool MUST evaluate an artifact whose declared minor is less than or equal to the tool's implemented minor under that artifact's declared version.
-- `FND-10` If an artifact declares a minor greater than the tool's implemented minor within a major the tool implements, the tool MUST evaluate it on a best-effort basis under the highest minor it implements, MUST NOT reject it solely because the minor is newer, and SHOULD report constructs it does not recognize as warnings rather than errors.
-- `FND-11` A construct introduced by a newer minor that a tool does not recognize MUST be reported under `unknown_field` or as an unrecognized construct; it MUST NOT be silently accepted as structure the tool understands.
-- `FND-12` If an artifact declares a major the tool does not implement, the tool MUST NOT assert conformance for that artifact and MUST report `unsupported_specification_version`, as defined in [Collection Model](collection-model.md).
-- `FND-13` The specification MAY mark a feature deprecated in a minor release and MAY remove it only in a subsequent major release.
-- `FND-14` A major release of the specification MUST document the breaking changes it introduces, so that migration tools can transform artifacts from the previous major to the new one.
+- `FND-8` A tool MUST advertise each specification compatibility line it implements together with the highest specification version it implements within that line.
+- `FND-9` Within an implemented compatibility line, a tool MUST evaluate an artifact whose declared version is less than or equal to its highest implemented version under that artifact's declared version.
+- `FND-10` If an artifact declares a newer version within a compatibility line the tool implements, the tool MUST evaluate it on a best-effort basis under its highest implemented version in that line.
+- `FND-90` A tool MUST NOT classify an artifact as invalid solely because its version is newer within an implemented compatibility line.
+- `FND-91` During best-effort evaluation of a newer version in an implemented compatibility line, a tool SHOULD report constructs it does not recognize as warnings rather than errors.
+- `FND-11` A construct introduced by a newer version that a tool does not recognize MUST be reported under `unknown_field` or as an unrecognized construct; it MUST NOT be silently accepted as structure the tool understands.
+- `FND-12` If an artifact declares a compatibility line the tool does not implement, the tool MUST NOT assert conformance for that artifact.
+- `FND-92` A tool MUST report an artifact in an unimplemented compatibility line as `unsupported_specification_version`, as defined in [Collection Model](collection-model.md).
+- `FND-13` A deprecated feature MUST NOT be removed until a subsequent compatibility line.
+- `FND-14` A release that starts a new compatibility line MUST document the breaking changes it introduces, so that migration tools can transform artifacts from the previous line to the new one.
 - `FND-15` Migrating a system's own schemas across its releases uses `history.md` and the migration flow defined in [Systems, Composition, and Evolution](systems-composition-evolution.md); that mechanism is independent of `specification_version`.
 
 
-## Purpose
-
-TypedMark defines:
-
-- how a collection is configured
-- which note types exist and how each type is configured
-- which reusable property sets exist
-- which collection-wide rules apply
-- where notes of each type live and how their note names are formed
-- which frontmatter fields, relationships, headings, and templates each type declares
-- how portable queries filter, project, order, group, and limit managed notes
-- how datasets make query results reusable and how saved views present those results as a table, list, cards, or board
-- how systems package, version, compose, scaffold, and evolve collections, and how a collection records its composition provenance
-- how conformance is evaluated
-
-TypedMark is the structural contract for a note collection. Artifact-specific rules are authoritative only where this specification says they are.
-
 ## Authoring Profiles and Canonical Expansion
 
-TypedMark separates the authoring surface from the values tools evaluate. Authors can start with the Core Profile and omit deterministic boilerplate; tools expand omitted defaults before computing conformance. Larger collections add reuse, publishing, composition, and migration without replacing the core model.
+Authors can omit defined defaults; tools expand them before conformance.
+Optional contracts extend rather than replace Core.
 
-Here, *canonical expansion* means filling deterministic defaults in governed artifacts. It is distinct from the marker-delimited *content expansion* defined in [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md#content-expansion), which materializes derived Markdown inside note and template bodies.
+Here, *canonical expansion* means filling deterministic defaults in governed artifacts. It is distinct from the marker-delimited *content expansion* defined in [Relationships, Headings, Templates, and Content Expansion](content-expansion.md#content-expansion), which materializes derived Markdown inside note and template bodies.
 
-| Profile | Purpose | Requires | Defers |
-| --- | --- | --- | --- |
-| Core Profile | A minimal conforming typed collection | `typedmark.md`, one concrete schema, one template for each concrete schema, and managed notes that resolve to those schemas | automation rules, property sets, vocabularies, advanced mappings, systems, composition, history, and migration |
-| Reuse Profile | Shared structure across multiple note types | Core Profile plus property sets, abstract schemas, vocabularies, or conditional constraints as needed | publishing, catalogs, composition, and migration |
-| System Profile | Shareable, versioned, composable systems | Reuse Profile plus the system fields, scaffold, composition, and optional history | none; this is the advanced publishing layer |
+Core is the minimal instantiated-collection profile. Reuse and Systems add
+only the capabilities explicitly used; they do not form a compulsory ladder.
 
 Rules:
 
 - `FND-74` The Core Profile is the minimal authoring profile for a conforming instantiated collection.
 - `FND-75` A Core Profile collection MUST declare `typedmark.md`.
 - `FND-76` A Core Profile collection MUST declare at least one concrete note-type schema.
-- `FND-77` A Core Profile collection MUST provide every template referenced or defaulted by its concrete schemas.
-- `FND-78` A Core Profile collection MAY omit automation rules, datasets, saved views, property sets, `folder_scopes`, vocabularies, explicit note-type mappings, system fields, composition provenance, and `history.md`.
+- `FND-77` A collection MUST satisfy the explicit-reference and derived-template obligations in [Templates](relationships-headings-and-templates.md#templates).
+- `FND-95` Core conformance MUST be evaluated against the positive Core concern set above.
 - `FND-79` Authoring shorthand is a governed artifact shape that omits a value only when the authoritative rule for that key defines one deterministic effective default.
 - `FND-80` A conforming tool MUST expand omitted shorthand defaults before computing effective note-type schemas, storage paths, template paths, validation severities, relationship constraints, heading constraints, or conformance results.
-- `FND-81` Canonical expansion MUST NOT invent domain content, note types, fields, relationships, headings, templates, scaffold notes, or migration history.
+- `FND-81` Canonical expansion MUST NOT invent domain content or undeclared structure; explicitly specified deterministic derivation, including template starter state, remains permitted.
 - `FND-82` When a shorthand key is physically present, its stored value overrides the default defined for that key.
 - `FND-83` Canonical serialization of governed artifacts MAY write expanded defaults physically, but handwritten artifacts are not required to store defaulted keys unless an artifact-specific rule says the key is physically required.
 
 ## Design Principles
 
-- The authoritative contract lives in `typedmark.md` and the metadata directory named by `typedmark.md`.
-- One schema file defines one note type.
-- TypedMark is strongly typed.
-- Collection structure is understandable from `typedmark.md` and the configured metadata directory alone.
-- Managed notes remain directly readable and editable in any Markdown editor without transformation.
-- Managed note metadata lives in YAML frontmatter and uses property types supported by this specification.
-- The core specification defines reusable structure, not domain content.
-- Concrete note sets, starter content, and house conventions belong to systems layered on top of the core specification.
-- A collection composed from several systems is materialized self-contained, so it remains understandable from `typedmark.md` and the metadata directory alone, without re-resolving its sources.
-- Composition of the same systems at the same versions is reproducible.
-- Examples in this specification are illustrative and non-normative unless a rule explicitly says otherwise.
+Files remain readable and app-independent. The root configuration and metadata
+directory carry the structural contract; concrete domain content belongs to
+systems, not Core. Composition is reproducible and materialized collections
+remain self-contained. Examples are illustrative unless explicitly stated
+otherwise.
 
 ### Spec-Defined Names and Namespaces
 
-TypedMark defines names in several namespaces rather than in one global pool of keys.
+TypedMark defines names in several namespaces rather than in one global pool of
+keys. A spec-defined name has structural meaning in a particular artifact
+position; the same spelling can have a different role in another position.
 
 Rules:
 
-- `FND-16` A name is spec-defined when this specification assigns it structural meaning in a specific artifact position or metadata namespace.
-- `FND-17` Spec-defined names are scoped to the namespace where they are defined. The same spelling MAY be spec-defined in more than one namespace with different roles.
-- `FND-18` When this specification defines a name in a namespace, it MUST also define that name's role, where it may appear, and the validation or conformance semantics that follow from its use in that namespace.
-- `FND-19` `label`, `description`, and `icon` are already spec-defined in the `typedmark.md` top-level namespace, the note-type schema top-level namespace, and the field-definition metadata namespace.
-- `FND-20` `keywords` in `typedmark.md` and a managed-note frontmatter field named `tags` are different namespaces and MUST NOT be conflated.
-- `FND-21` `name` in the `typedmark.md` top-level namespace is the collection identity, while `name` under `publisher` is the publisher's name; they are different namespaces and MUST NOT be conflated.
-- `FND-22` A managed-note frontmatter field named `description`, a field-definition metadata key named `description`, the note-type schema top-level `description`, and the collection-level `description` in `typedmark.md` are different namespaces and MUST NOT be conflated.
 - `FND-23` Extensions, systems, collection models, property sets, and note-type schemas MUST NOT assign incompatible meanings to a spec-defined name in the namespace where the core specification defines it.
-- `FND-24` Mentioning a candidate or example name in prose does not by itself define that name normatively.
+
+For example, collection `name` and `publisher.name` have different roles, as do
+collection `description` and a note's `description`. A spelling in an example
+does not create another structural name.
 
 ## Parsing and Matching Baselines
 
@@ -202,9 +181,11 @@ Conforming tools must parse and match the same inputs the same way. This section
 Rules:
 
 - `FND-25` Governed artifact frontmatter and managed-note frontmatter are parsed as YAML 1.2 using the core schema.
-- `FND-26` YAML 1.1 boolean spellings such as `yes`, `no`, `on`, and `off` are strings under this baseline, not booleans.
 - `FND-27` A duplicate key within one YAML mapping makes the containing document invalid.
 - `FND-28` Governed artifacts and managed notes MUST be encoded as UTF-8; a leading byte-order mark, when present, MUST be ignored.
+
+For example, `yes`, `no`, `on`, and `off` are strings under this baseline, not
+the boolean values some YAML 1.1 parsers assign to them.
 
 ### Regular Expression Dialect
 
@@ -213,6 +194,24 @@ Rules:
 - `FND-29` Every regular expression on a governed surface — the `regex` field constraint, `when.path.regex`, and `when.frontmatter` `regex` predicates — uses the ECMAScript (ECMA-262) regular expression dialect.
 - `FND-30` Whether a pattern is matched against the entire value or searched within it is defined by each declaring rule.
 - `FND-31` A pattern that is not a valid ECMA-262 regular expression makes its declaring artifact invalid.
+- `FND-93` A governed regular expression MUST use Unicode mode (`u`) without the `i`, `m`, `s`, `g`, `y`, or `v` flags.
+
+For example, an unescaped `.` matches one Unicode code point but not a line
+terminator; matching does not become case-insensitive because the host filesystem
+is case-insensitive.
+
+### Markdown Baseline
+
+Markdown block structure is shared by heading detection and extraction of
+governed body surfaces. Wikilinks and marker contracts add only their expressly
+defined syntax; they do not replace the block parser.
+
+Rules:
+
+- `FND-94` Markdown block parsing MUST follow [CommonMark 0.31.2](https://spec.commonmark.org/0.31.2/).
+
+For example, heading-like text inside a fenced code block is code, not a heading
+or an active marker declaration.
 
 ### Frontmatter Block Grammar
 
@@ -225,40 +224,41 @@ Rules:
 - `FND-34` If no closing line exists, the file has no frontmatter.
 - `FND-35` A file has at most one frontmatter block; any later delimiter lines are ordinary body content.
 - `FND-36` The frontmatter block content MUST parse as a YAML mapping under the YAML baseline above; an empty block is an empty mapping.
-- `FND-37` If the block content parses as a non-mapping YAML document, the file has no valid frontmatter.
+
+A non-mapping YAML document is not valid frontmatter; an empty block represents
+an empty mapping rather than an explicitly stored null.
 
 ### Unicode Normalization and String Comparison
 
 Rules:
 
 - `FND-38` Every exact string comparison defined by this specification compares Unicode code points after normalizing both operands to Normalization Form C (NFC).
-- `FND-39` This applies wherever this specification compares stored strings, including `unique` equality, `allowed_values` and `const_value` equality, frontmatter mapping `equals` predicates on strings, note-link target, `id`, file-name, and alias comparison, and heading-text comparison.
 - `FND-40` String comparisons are case-sensitive; this specification defines no case folding.
 - `FND-41` Code-point counts, such as `min` and `max` on text values, count the code points of the NFC-normalized value.
-- `FND-42` Spec-defined identifier grammars, such as collection names, slugs, and field names, restrict their values to ASCII, so normalization does not alter them.
 - `FND-43` Regular-expression matching operates on the NFC-normalized value.
 
 ## Governed Artifact Format
 
-Every governed TypedMark artifact — `typedmark.md`, the note-type schemas, property sets, automation rules, datasets, saved views, templates, and `history.md` — is a Markdown file with YAML frontmatter.
+Governed artifact definitions use Markdown with YAML frontmatter. Templates are
+the exception: they are starter Markdown whose optional frontmatter overrides
+derived starter values under their dedicated contract.
 
 Rules:
 
 - `FND-44` A governed artifact's frontmatter is its governed content. When this specification says an artifact contains, declares, or defines a key, it refers to that artifact's frontmatter.
-- `FND-45` A governed artifact MUST have a frontmatter block under the Frontmatter Block Grammar defined above; an artifact without valid frontmatter is invalid.
+- `FND-45` A governed artifact other than a template MUST have valid frontmatter under the Frontmatter Block Grammar.
 - `FND-46` Except for the governed template-body contract under `FND-50`, tools MUST ignore artifact bodies for structural reasoning.
 - `FND-88` A tool that rewrites governed artifact frontmatter MUST preserve the artifact body.
-- `FND-47` Except for template starter content, template-region declarations, and content-expansion declarations under `FND-50`, an artifact body MUST NOT be required to understand or evaluate collection structure.
 - `FND-48` Governed artifact files are not collection notes: they are not evaluated for note-type mapping, are not candidates for note-link resolution, and are not validated as managed notes.
 - `FND-49` `typedmark.md` at the collection root is reserved for the collection configuration; a managed note MUST NOT resolve its storage path to `typedmark.md`.
-- `FND-50` Templates under `<metadata_directory>/templates/` are governed artifacts with their own contract: their frontmatter is starter note frontmatter and their body is governed starter note content, including template-region and content-expansion declarations, as defined in [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md).
-- `FND-51` Examples of governed artifacts in this specification show frontmatter content unless frontmatter delimiters are shown.
+- `FND-50` Templates under `<metadata_directory>/templates/` follow the starter-content contract in [Templates](relationships-headings-and-templates.md#templates), including explicitly declared extension-governed surfaces.
 
 A complete minimal `typedmark.md`, showing the governed frontmatter together with a free-form body:
 
+<!-- typedmark-example: artifact=typedmark -->
 ```markdown
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 name: example-knowledge-base
 description: Personal knowledge base.
 metadata_directory: .typedmark
@@ -301,27 +301,31 @@ In path notation below, `<metadata_directory>` is the directory name declared by
 
 The authoritative contract for each governed element and cross-tool runtime surface lives in exactly one place, except that `typedmark.md` is documented by concern: its structural fields are authoritative on [Collection Model](collection-model.md) and its optional system fields are authoritative on [Systems, Composition, and Evolution](systems-composition-evolution.md).
 
-- `typedmark.md` structural fields: [Collection Model](collection-model.md)
-- `typedmark.md` system fields, including release version, publishing metadata, and scaffold: [Systems, Composition, and Evolution](systems-composition-evolution.md)
-- `<metadata_directory>/history.md`: [Systems, Composition, and Evolution](systems-composition-evolution.md)
-- `<metadata_directory>/automations/<automation>.md`: [Collection Model](collection-model.md)
-- `<metadata_directory>/datasets/<dataset>.md`: [Collection Model](collection-model.md)
-- `<metadata_directory>/property-sets/<property_set>.md`: [Collection Model](collection-model.md)
-- `<metadata_directory>/schemas/<note_type>.md`: [Note Type Schemas](note-type-schemas.md)
-- `<metadata_directory>/templates/<note_type_template>.md`: [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
-- `<metadata_directory>/views/<view>.md`: [Collection Model](collection-model.md)
-- managed note contract, field names, core-defined fields, and field materialization: [Managed Notes and Properties](managed-notes-and-properties.md)
-- frontmatter property types, field-definition properties, and field compatibility and conversion: [Field Definition Reference](field-definition-reference.md)
-- note-link syntax, resolution, and body extraction: [Note Links](note-links.md)
-- managed-note effects of migration operations: [Migration Effects](migration-effects.md)
-- relationship semantics, heading constraints, and template obligations: [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md)
-- template-region marker, receipt, digest, drift-state, reconciliation, and detachment semantics: [Template Drift Tracking](relationships-headings-and-templates.md#template-drift-tracking)
-- content-expansion marker, source, rendering, synchronization, and ejection semantics: [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md#content-expansion)
-- portable query descriptor and evaluation semantics: [Collection Model](collection-model.md#portable-queries)
-- reusable dataset artifact, row identity, mapped columns, and dataset evaluation: [Collection Model](collection-model.md#datasets)
-- saved-view artifact, presentation, and Obsidian Bases interoperability: [Collection Model](collection-model.md#saved-views)
-- portable validation-report and automation-interchange formats: [Conformance and Roadmap](conformance-and-roadmap.md)
-- conformance modes and required artifact sets: [Conformance and Roadmap](conformance-and-roadmap.md)
+| Artifact or concern | Authoritative owner |
+| --- | --- |
+| `typedmark.md` structural fields | [Collection Model](collection-model.md) |
+| Extension declarations and vendor metadata | [Extensions](extensions.md) |
+| System fields and `history.md` | [Systems](systems-composition-evolution.md) |
+| `schemas/<type>.md` | [Note Type Schemas](note-type-schemas.md) |
+| `templates/<file>.md` | [Templates](relationships-headings-and-templates.md#templates) |
+| `property-sets/<id>.md` | [Property Sets](property-sets.md) |
+| `automations/<id>.md` | [Automation Artifacts](automation-artifacts.md) |
+| `datasets/<id>.md`, `views/<id>.md` | [Datasets and Views](datasets-and-views.md) |
+| Note values and core fields | [Managed Notes](managed-notes-and-properties.md) |
+| Field definitions | [Field Reference](field-definition-reference.md) |
+| Field conversion | [Conversions](field-conversions.md) |
+| Links | [Note Links](note-links.md) |
+| Relationships and headings | [Body Contracts](relationships-headings-and-templates.md) |
+| Tracking and expansion | [Tracking](template-tracking.md), [Expansion](content-expansion.md) |
+| Expressions and extended authoring | [Expressions](expressions.md), [Authoring](authoring.md) |
+| Queries | [Queries](queries.md) |
+| Validation reports and conformance | [Conformance](conformance-and-roadmap.md) |
+| Automation execution and reports | [Runtime](automation-runtime.md), [Reports](automation-reports.md) |
+| Catalog | [Marketplace Catalog](marketplace-catalog.md) |
+| Migration effects | [Migration](migration-effects.md) |
+
+Artifact subpaths in this table are relative to `metadata_directory`.
+
 
 `typedmark.md` lives at the root of the managed collection, as required by [Collection Model](collection-model.md).
 
@@ -333,49 +337,20 @@ Rules:
 
 ## Authority and Precedence
 
-The following order resolves structural conflicts between artifacts or surfaces:
-
-1. `typedmark.md`
-2. `<metadata_directory>/schemas/<note_type>.md`
-3. `<metadata_directory>/property-sets/<property_set>.md`
-4. `<metadata_directory>/templates/<note_type_template>.md`
-5. note contents
+Artifact authority is concern-specific, not a universal override hierarchy.
+For example, a local field can override a reused field only where the merge
+contract allows it; a template does not override a field constraint merely
+because it contains a different starter value.
 
 Rules:
 
-- `FND-87` Structural conflicts MUST be resolved using the precedence order above.
-- `FND-52` Agents MUST rely on `typedmark.md` and the configured metadata directory for structural understanding.
-- `FND-53` Agents MUST NOT infer note types or structural rules from prose guidance when authoritative artifacts exist.
-- `FND-54` Human-facing generated reference pages MAY restate the specification for convenience, but they are never authoritative.
-- `FND-55` The system fields of `typedmark.md` govern system identity, packaging, publishing, composition, and import semantics; they do not override the note-structure rules defined by the structural fields of `typedmark.md` and note-type schemas.
-- `FND-56` `<metadata_directory>/history.md` governs the system's change history and the migration of collections to newer versions; it does not override the live note-structure rules defined by `typedmark.md` and note-type schemas.
-- `FND-57` A collection's composition provenance in `typedmark.md` records how the collection was built but does not override any governed artifact physically present under the metadata directory.
+- `FND-87` Structural conflicts MUST be resolved by the authoritative contract for the affected concern, rather than an artifact-wide precedence ranking.
+
+Generated references help people and agents navigate the contract, but the
+artifact map identifies its authoritative sources. System metadata and history
+do not replace the live note-type contract; their roles are defined in
+[Systems, Composition, and Evolution](systems-composition-evolution.md).
 
 ## Shared Expression Language
 
-Several governed surfaces need to derive values from structured data. Rather than defining separate mini-languages for each feature, TypedMark defines one shared expression language and lets each consumer define its own input scope, required result type, and evaluation timing.
-
-Example:
-
-```yaml
-computed: '${capitalize(note_type)}: ${title}'
-```
-
-Rules:
-
-- `FND-58` TypedMark defines one shared expression language. A governed surface uses it only when another rule explicitly says so.
-- `FND-59` This specification version defines exactly one shared expression context: the text-template context.
-- `FND-60` A text-template expression is a string composed of literal text plus zero or more placeholders.
-- `FND-61` A placeholder has the form `${name}` or `${transform(name)}`.
-- `FND-62` `name` and `transform` in the shared expression language MUST each match the field-name grammar `^[a-z][a-z0-9_]*$`.
-- `FND-63` The shared expression parser operates on the decoded string value after parsing its containing YAML or JSON syntax. Within that string, `\\` represents a literal backslash and `\${` represents a literal `${`; any other backslash escape is invalid.
-- `FND-64` Shared-expression evaluation MUST be deterministic and side-effect free.
-- `FND-65` Shared expressions MUST NOT read the current time, random sources, the filesystem, the network, or any state outside the consumer-defined input scope.
-- `FND-66` The shared transform library in this specification version contains exactly `uppercase`, `lowercase`, and `capitalize`.
-- `FND-67` `uppercase(name)` and `lowercase(name)` each take exactly one reference-name argument and return the referenced string converted to uppercase or lowercase respectively, using locale-independent Unicode case mapping.
-- `FND-68` `capitalize(name)` takes exactly one reference-name argument and returns the referenced string with its first Unicode code point converted to uppercase and its remaining code points converted to lowercase; the empty string remains empty.
-- `FND-69` This specification version defines no other placeholder forms, no nested transform calls, and no transform arguments other than one reference name.
-- `FND-70` This specification version defines no dot access, bracket access, arithmetic, comparisons, boolean operators, conditionals, list indexing, link traversal, regex operators, or date arithmetic in the shared expression language.
-- `FND-71` Every consumer of the shared expression language MUST define the expression's available reference names, required result type, evaluation timing, and how absent or null input values are handled.
-- `FND-72` A consumer MAY narrow the shared language's available reference names or result types, but it MUST NOT redefine the shared syntax or transform semantics.
-- `FND-73` A syntactically invalid shared expression or an unknown transform name makes the declaring artifact invalid.
+The optional [expression contract](expressions.md#shared-expression-language) is authoritative on its own page.

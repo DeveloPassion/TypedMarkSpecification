@@ -11,557 +11,220 @@ Audience: collection authors.
 
 Authoritative for:
 
-- note type registration, abstract note types, and inheritance through `extends`
-- the schema file contract, the effective note-type schema, and the evaluation pipeline
-- note-type-level mandatory tags and their inheritance
-- conditional field constraints, schema kinds, note counts, and storage rules
+- local note-type schema shape and effective-schema construction
+- note-type metadata, counts, storage, and template references
 
 See also:
 
-- [Field Definition Reference](field-definition-reference.md): field-definition semantics
-- [Managed Notes and Properties](managed-notes-and-properties.md): note-type association and the managed note contract
-- [Relationships, Headings, and Templates](relationships-headings-and-templates.md): relationship, heading, and template semantics
-- [Collection Model](collection-model.md): property-set definitions and composition
+- [Collection Model](collection-model.md): association, boundaries, and mandatory-tag policy
+- [Managed Notes and Properties](managed-notes-and-properties.md): effective values and Core fields
+- [Field Definition Reference](field-definition-reference.md): field declarations
+- [Schema Reuse](schema-reuse.md) and [Property Sets](property-sets.md): optional reusable layers
+- [Relationships, Headings, and Templates](relationships-headings-and-templates.md): body and template contracts
 
 ## Note Type Registry
 
-The note type registry is implicit.
+Schemas live directly under `<metadata_directory>/schemas/`; their basenames
+identify their types. For example, `meeting.md` defines `meeting` without a
+separate registry file or a duplicate managed-note `note_type` field definition.
 
 Rules:
 
-- `NTS-1` Every Markdown file directly under `<metadata_directory>/schemas/` defines one note type; its frontmatter is the note-type schema, per the governed artifact format in [Foundations](foundations.md).
-- `NTS-2` No separate registry file is maintained for note types.
+- `NTS-1` Every Markdown file directly under `<metadata_directory>/schemas/` defines one note type.
 - `NTS-3` A note type MUST NOT be defined in more than one schema file.
-- `NTS-4` The schema file name without the `.md` extension MUST equal the schema's `note_type` value.
-- `NTS-5` A schema file MAY omit `abstract`; omitted `abstract` has the effective value `false`.
-- `NTS-6` If `abstract: true`, the schema defines an abstract note type.
-- `NTS-7` If `abstract` is omitted or `abstract: false`, the schema defines a concrete note type.
-- `NTS-8` A managed note MUST conform to exactly one concrete note type.
-- `NTS-9` The conformance requirements that determine when schema files MUST exist are defined in [Conformance and Roadmap](conformance-and-roadmap.md).
+- `NTS-4` A schema's effective `note_type` MUST equal its file basename without `.md`.
+- `NTS-6` `abstract: true` defines an abstract type under [Schema Reuse](schema-reuse.md).
+- `NTS-7` An omitted or false `abstract` defines a concrete type.
 
 ## Effective Note-Type Schema
 
-A managed note is evaluated against one effective note-type schema.
+A Core-only schema uses local definitions and deterministic defaults. Reuse
+adds explicitly governed layers; it does not make a second effective-schema
+file authoritative.
 
-The effective note-type schema is not a separate stored artifact. It is the normative result of taking one concrete note-type schema file, its abstract ancestor chain, the managed note's matching folder scopes, and the property-set composition and block-merge rules defined by this specification before evaluating note conformance.
+| Evaluation stage | Core | With Reuse |
+| --- | --- | --- |
+| Association | Select one concrete type | Same |
+| Reusable layers | None | Resolve ancestors and property-set composition |
+| Local definitions | Apply the local schema | Apply it after reusable contributions |
+| Defaults | Fill defined omissions | Same, after composition |
+| Validation | Validate the resulting contract | Same |
 
-A note type's own `frontmatter`, `relationships`, and `headings` blocks are not a separate kind of definition. They are the note type's inline, note-type-scoped property set, and they participate in the same composition as named property sets, applied last as its highest-precedence layer. Reusable fields belong in named property sets; one-off fields belong inline.
-
-Effective-schema and policy layers:
-
-| Order | Layer | Carries | Merge behavior |
-| --- | --- | --- | --- |
-| 1 | collection defaults | default property sets, mandatory tags, and defaulted collection fields | establishes the collection-wide base |
-| 2 | default property sets | `frontmatter`, `relationships`, `headings` | applied in `default_property_sets` order |
-| 3 | matching folder scopes | path-selected reusable blocks and mandatory tags | applied in `folder_scopes` order |
-| 4 | abstract ancestors | reusable schema structure and note-type mandatory tags | applied from farthest ancestor to nearest ancestor |
-| 5 | `frontmatter_remove` | inherited field subtraction | removes selected inherited fields |
-| 6 | opt-in property sets | additional reusable blocks | applied in `property_sets` order |
-| 7 | local concrete schema | note-type-specific blocks, mandatory tags, and top-level values | applied last and wins conflicts |
-| 8 | effective defaults | omitted `template.file`, empty relationship/headings defaults, and defaulted storage archive policy | fills deterministic omissions |
+For example, a local `status` field with `default_value: draft` has that
+definition directly in Core. With Reuse, a local definition can override a
+contributed field only under the reusable merge contract.
 
 ### Normative Evaluation Pipeline
 
 Rules:
 
-1. `NTS-10` A tool or validator MUST resolve the note's note type using the note-type association rules defined in [Managed Notes and Properties](managed-notes-and-properties.md) and MUST select exactly one concrete note-type schema file from `<metadata_directory>/schemas/` using that resolved identifier.
-2. `NTS-11` If the selected concrete note type declares `extends`, the tool or validator MUST load the full abstract ancestor chain, starting with the farthest abstract ancestor and ending with the selected concrete note type.
-3. `NTS-12` The selected concrete note-type schema file provides the direct or defaulted top-level values for `specification_version`, `note_type`, `abstract`, `label`, `icon`, and `description`.
-4. `NTS-13` For `kind`, `storage`, `template`, `mandatory_tags`, `guidance`, `unknown_field`, `conditions`, and `count`, note-type inheritance uses whole-key replacement along the abstract ancestor chain. The last schema in that chain order that physically defines one of those keys determines the effective value of that key.
-5. `NTS-14` The tool or validator MUST determine which property sets apply to the managed note by evaluating `default_property_sets`, its matching `folder_scopes`, the selected concrete note type's `exclude_property_sets`, and that concrete note type's `property_sets` under the composition rules in [Collection Model](collection-model.md).
-6. `NTS-15` The `frontmatter`, `relationships`, and `headings` blocks contributed by the applied default property sets MUST be applied first, in `default_property_sets` order.
-7. `NTS-167` The `frontmatter`, `relationships`, and `headings` blocks contributed by matching folder-scope property sets MUST be applied next in their effective order from [Collection Model](collection-model.md).
-8. `NTS-16` Local `frontmatter`, `relationships`, and `headings` blocks declared by abstract ancestors, if any, MUST be applied next in abstract-ancestor order using the merge rules defined in [Collection Model](collection-model.md).
-9. `NTS-17` If `frontmatter_remove` is present on the selected concrete note type, it MUST be applied next to the accumulated inherited frontmatter.
-10. `NTS-18` The `frontmatter`, `relationships`, and `headings` blocks contributed by the opt-in property sets named in `property_sets`, if any, MUST be applied next in the selected concrete schema's declared `property_sets` order, as defined in [Collection Model](collection-model.md).
-11. `NTS-19` Local `frontmatter`, `relationships`, and `headings` definitions in the selected concrete note-type schema file MUST be applied last.
-12. `NTS-20` The resulting `frontmatter`, `relationships`, and `headings` blocks, together with the direct top-level values from the selected concrete schema file, the effective inherited values of `kind`, `storage`, `template`, `mandatory_tags`, `guidance`, `unknown_field`, `conditions`, and `count`, and the effective defaults defined on this page, are the effective note-type schema for that managed note.
-13. `NTS-21` Managed-note, mandatory-tag, relationship, heading, and storage conformance MUST be evaluated against that effective note-type schema using the rule pages linked from this page.
-14. `NTS-168` Template conformance MUST be evaluated against the path-independent effective frontmatter and mandatory-tag policy defined by `RHT-84` and `RHT-88` in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
-15. `NTS-22` This specification MUST NOT be interpreted as requiring a separate serialized effective-schema artifact on disk.
+- `NTS-10` A validator MUST select exactly one concrete schema using the association rules in [Collection Model](collection-model.md).
+- `NTS-174` A Core-only effective schema MUST be constructed from the selected local definitions and their specified defaults.
+- `NTS-175` A schema using reusable structure MUST apply [Schema Reuse](schema-reuse.md) and [Property Sets](property-sets.md) before final local definitions.
+- `NTS-19` Local concrete definitions MUST be applied after reusable contributions.
+- `NTS-20` The resulting structural blocks and effective top-level metadata form the effective note-type schema.
+- `NTS-21` Field, relationship, heading, and storage validation MUST use that effective schema.
+- `NTS-22` Conformance MUST NOT require a separately serialized effective-schema artifact.
 
 ### Schema File Contract
 
-Each `<metadata_directory>/schemas/<note_type>.md` defines one note type and follows this shape when it defines a concrete note type:
+The table defines local declarations. Reuse can supply inherited blocks;
+Core does not guess storage.
 
-| Key | Physical requirement | Effective default | Purpose |
-| --- | --- | --- | --- |
-| `specification_version` | Required | none | Selects the TypedMark specification version |
-| `note_type` | Required | none | Schema identifier and file basename |
-| `abstract` | Optional | `false` | Abstract or concrete classification |
-| `label` | Required | none | Display name |
-| `icon` | Required | none | Presentation token |
-| `description` | Required | none | Human-facing summary |
-| `kind` | Required effectively for concrete types | inherited if declared by an abstract ancestor | Broad note-type category |
-| `storage` | Required effectively for concrete types | inherited if declared by an abstract ancestor | Storage and archive paths |
-| `template` | Optional | `<note_type>.md` | Canonical template reference |
-| `mandatory_tags` | Optional | inherited or empty | Tags required by this note type |
-| `frontmatter` | Required effectively for concrete types | inherited or locally declared | Field definitions |
-| `relationships` | Optional | empty relationship defaults | Typed relationship constraints |
-| `headings` | Optional | empty heading defaults | H1/H2 heading constraints |
-| `guidance` | Optional | none | Human-facing usage guidance |
-| `property_sets`, `exclude_property_sets`, `frontmatter_remove` | Optional on concrete types | none | Reuse and subtraction controls |
+| Key | Requirement/default | Shape |
+| --- | --- | --- |
+| `specification_version` | Required | Core version under Foundations |
+| `description` | Required | Non-empty text |
+| `note_type` | Basename when omitted | Slug |
+| `abstract` | `false` | Boolean |
+| `label` | Effective `note_type` | Non-empty text |
+| `icon` | Omitted | Non-empty opaque text |
+| `frontmatter` | Empty local mapping | Field-definition mapping |
+| `storage` | Required effectively for concrete types | Storage block below |
+| `template` | Optional | Explicit relative `file` reference when supplied |
+| `relationships` | Empty relationship constraints | Relationship block |
+| `headings` | No heading constraints | Heading block |
+| `guidance` | Omitted | Optional non-empty `when_to_use` / `when_not_to_use` text |
+| `unknown_field` | Collection default | `error`, `warn`, `info`, or `off` |
+| `count` | Minimum zero, no maximum | Optional non-negative integer `min` / `max` |
+| `mandatory_tags` | Empty local policy | Non-empty list of unique tags when supplied |
 
+<!-- typedmark-example: artifact=note-type -->
 ```yaml
-specification_version: 0.0.1
-note_type: topic
-abstract: false
-label: Topic
-icon: note
-kind: entity
-description: Durable note about a specific topic.
-
-mandatory_tags:
-  - type/topic
-
-property_sets:
-  - workflow
-
-storage:
-  folder_pattern: "Topics"
-  note_name_pattern: "{title}"
-  archive:
-    policy: mirror_under_archives
-    folder_pattern: "Archives/Topics"
-    note_name_pattern: "{title}"
-
-template:
-  file: "topic.md"
-
+specification_version: 0.1.0
+note_type: meeting
+description: A dated meeting note.
 frontmatter:
-  note_type:
-    type: text
-    const_value: topic
-  tags:
-    type: tags
-    default_value:
-      - type/topic
-  title:
-    label: Title
-    description: Human-readable note title.
-    icon: text
-    type: text
-    not_blank: true
-    nullable: false
-  domain:
-    label: Domain
-    description: Domain note this topic belongs to.
-    icon: folder
-    type: link
-    format: note_link
-    nullable: false
-    default_value: ""
-    relationship_kind: belongs_to
-  sources:
-    label: Sources
-    description: Supporting source notes for this topic.
-    icon: book
-    type: list
-    items:
-      type: link
-      format: note_link
-    nullable: false
-    relationship_kind: related_to
+  meeting_date:
+    type: date
   status:
-    label: Status
-    description: Lifecycle state of the note.
-    icon: badge
     type: text
-    allowed_values: [draft, active, archived]
-    nullable: true
-    default_value: null
-  description:
-    label: Description
-    description: Human-readable note description used in previews and references.
-    icon: paragraph
-    type: text
-    optional: true
-    nullable: true
-    default_value: ""
-  summary:
-    label: Summary
-    description: Short overview used in generated references and previews.
-    icon: paragraph
-    type: text
-    generated: true
-    optional: true
-    nullable: true
-    default_value: ""
-  display_title:
-    label: Display Title
-    description: Derived label used in references and previews.
-    icon: text
-    type: text
-    computed: '${capitalize(note_type)}: ${title}'
-    nullable: false
-
-relationships:
-  belongs_to:
-    allowed_note_types:
-      domain:
-        min: 1
-        max: 1
-  related_to:
-    allowed_note_types:
-      source:
-        min: 1
-      concept:
-        min: 0
-      topic:
-        min: 0
-
+    default_value: draft
+    allowed_values: [draft, final]
+storage:
+  folder_pattern: Meetings
+  note_name_pattern: "{meeting_date} - {title}"
 headings:
-  required_h2:
-    - Summary
-    - Key Ideas
-    - Sources
-    - Related
-    - References
-  optional_h2:
-    - Context
-    - Notes
-  allow_other_h2: true
-  require_order: false
-
-guidance:
-  when_to_use: "Use for a durable note about a specific topic."
-  when_not_to_use: "Do not use for broad groupings, source material, or dated logs."
+  required_h2: [Agenda, Notes]
 ```
 
-Required top-level keys in every schema:
-
-- `specification_version`
-- `note_type`
-- `label`
-- `icon`
-- `description`
-
-Required effective keys for concrete note types:
-
-- `kind`
-- `storage`
-- `template`
-- `frontmatter`
-
-`relationships`, `headings`, and `guidance` can be absent from a concrete note type's effective schema; an absent block takes the empty defaults defined below.
+Store the intended Core `title` for composite names; its basename fallback
+would otherwise include the date prefix.
 
 Rules:
 
-- `NTS-23` Every top-level key listed for every schema MUST be physically present in each note-type schema.
-- `NTS-24` If physically present, `abstract` MUST be a boolean.
-- `NTS-25` The effective note-type schema MUST be computed using the normative evaluation pipeline defined above.
-- `NTS-26` The semantics of `specification_version` are defined in [Foundations](foundations.md).
-- `NTS-27` In schema files, `note_type` is the identifier of the note type being defined.
-- `NTS-28` In managed notes, `note_type`, when stored, is the core-defined frontmatter field that records the concrete note type resolved for that note and may participate in explicit mapping rules.
-- `NTS-29` `label` is the human-facing name of the note type. MUST be a non-empty string.
-- `NTS-30` `description` is concise human-facing explanatory metadata for generated references and applications. MUST be a non-empty string.
-- `NTS-31` `icon` MUST be a non-empty string.
-- `NTS-32` `label`, `description`, and `icon` are flat human-facing metadata keys on the note-type schema; this specification does not define a separate display block for them.
-- `NTS-33` `icon` is human-facing note-type metadata for generated references and applications.
-- `NTS-34` The core specification treats `icon` as an opaque presentation token and does not standardize icon libraries or rendering behavior.
-- `NTS-35` `extends` MAY be omitted.
-- `NTS-36` If present, `extends` MUST be a non-empty slug and MUST resolve to exactly one abstract note type under `<metadata_directory>/schemas/`.
-- `NTS-37` A note type MUST NOT extend itself directly or transitively.
-- `NTS-38` Because `extends` is singular, a note type MUST inherit from at most one parent.
-- `NTS-39` Abstract note types MAY declare `kind`, `storage`, `template`, `mandatory_tags`, `frontmatter`, `relationships`, `headings`, `guidance`, `unknown_field`, `conditions`, and `count` to contribute reusable structure, but they are not required to declare them.
-- `NTS-40` If an abstract note type declares the core-defined `note_type` field in `frontmatter`, it MUST use `value_from_schema: note_type`.
-- `NTS-41` Concrete note types MAY inherit `kind`, `storage`, `template`, `mandatory_tags`, `guidance`, `unknown_field`, `conditions`, `count`, `frontmatter`, `relationships`, and `headings` from abstract ancestors and therefore MAY omit those keys locally.
-- `NTS-42` A concrete note type's effective schema MUST contain every top-level key listed above as required for concrete note types.
-- `NTS-43` All templates live under `<metadata_directory>/templates/`; `template.file` is resolved from within that folder.
-- `NTS-44` If a schema physically declares `template`, `template.file` MUST be a relative path resolved against `<metadata_directory>/templates/`; the referenced template file is located at `<metadata_directory>/templates/` plus the `template.file` value.
-- `NTS-45` `template.file` MUST NOT restate the metadata directory or the `templates/` folder, MUST NOT be an absolute path, and MUST NOT contain `..` segments.
-- `NTS-46` `template.file` MAY include subfolders and MUST use forward slashes when it does.
-- `NTS-47` If a schema physically declares `template`, `template.file` MUST end in `.md`.
-- `NTS-48` The effective `template.file` of a concrete note type defines the canonical template for that note type.
-- `NTS-49` The `frontmatter` block semantics are defined in [Field Definition Reference](field-definition-reference.md).
-- `NTS-50` If a schema physically declares `frontmatter`, it MUST be a field-definition mapping, even when it is empty.
-- `NTS-51` Field definitions inside `frontmatter` MAY declare flat human-facing keys such as `label`, `description`, and `icon`, as defined in [Field Definition Reference](field-definition-reference.md).
-- `NTS-52` A note-type schema MAY declare `id` when that note type uses stable note-level identifiers.
-- `NTS-53` Frontmatter field names declared in a note-type schema MUST follow the core-defined managed-note field-name rules defined in [Managed Notes and Properties](managed-notes-and-properties.md).
-- `NTS-54` The `relationships` block shape and semantics are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
-- `NTS-55` An effective schema without `relationships` is equivalent to one declaring empty `belongs_to.allowed_note_types` and `related_to.allowed_note_types`: no documented relationships and no relationship constraints.
-- `NTS-56` The `headings` block semantics are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
-- `NTS-57` If a schema physically declares `headings`, it MUST follow the heading shape required by [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
-- `NTS-58` An effective schema without `headings` is equivalent to one declaring `required_h2: []`, `optional_h2: []`, `allow_other_h2: true`, `require_order: false`, and `require_h1_title: false`: no heading constraints.
-- `NTS-59` An effective schema without `guidance` simply provides no usage guidance; this has no structural effect.
-- `NTS-60` `guidance` is human-facing explanatory content and MUST NOT override structural rules.
-- `NTS-61` If a schema physically declares `guidance`, it MUST be a mapping that physically contains `when_to_use` and `when_not_to_use`.
-- `NTS-62` `guidance.when_to_use` and `guidance.when_not_to_use` MUST be non-empty strings.
-- `NTS-63` This specification version defines no other `guidance` keys; an undeclared key inside `guidance` is evaluated under `unknown_field`.
-- `NTS-64` `unknown_field` MAY be declared on a note-type schema to override the collection's `validation_defaults.unknown_field` severity for managed notes of that type.
-- `NTS-65` If present, `unknown_field` MUST be one of the validation severities `error`, `warn`, `info`, or `off`.
-- `NTS-66` The effective `unknown_field` severity for a managed note is its note type's effective `unknown_field` value when declared, and the collection's `validation_defaults.unknown_field` value otherwise.
-- `NTS-67` A note-type `unknown_field` declaration applies to managed-note frontmatter only; it does not change how unknown fields are evaluated in governed artifacts.
-- `NTS-68` `count` MAY be declared on a note-type schema to constrain how many managed notes of that type the collection may contain.
-- `NTS-69` If present, `count` MAY declare `min` and `max`; each MUST be a non-negative integer, and `max` MUST be greater than or equal to `min` when both are present.
-- `NTS-70` If `count.min` is omitted, it defaults to `0`; if `count.max` is omitted, the count is unbounded.
-- `NTS-71` A collection whose managed-note count for a note type violates that type's effective `count` is reported as `invalid_note_count`, as defined in [Collection Model](collection-model.md).
-- `NTS-72` `property_sets`, `exclude_property_sets`, and `frontmatter_remove` MAY each be omitted.
-- `NTS-73` Only concrete note types MAY declare `property_sets`, `exclude_property_sets`, or `frontmatter_remove`.
-- `NTS-74` If present, `property_sets` MUST be a non-empty list of unique property set identifiers.
-- `NTS-75` `property_sets` is the note-type opt-in part of the single property-set composition mechanism; property sets supplied by `default_property_sets` or matching `folder_scopes` apply without being restated here.
-- `NTS-76` Property sets MAY contribute `frontmatter`, `relationships`, and `headings`; the effective `frontmatter` block remains mandatory.
-- `NTS-77` `exclude_property_sets` opts the concrete note type out of specific default or folder-scoped property sets; each named identifier MUST appear in `typedmark.md` `default_property_sets` or in at least one `folder_scopes.property_sets` list.
-- `NTS-78` `frontmatter_remove` subtracts individual frontmatter fields contributed by applied default property sets or abstract ancestors, before opt-in property sets and local concrete schema definitions are applied.
-- `NTS-79` Property-set definitions, default property sets, composition, and merge rules are defined in [Collection Model](collection-model.md).
-- `NTS-80` Note-type inheritance is defined only by `extends`; `property_sets`, `exclude_property_sets`, and `frontmatter_remove` do not affect the abstract ancestor chain.
-- `NTS-81` A concrete note type MAY omit individual inherited field definitions, relationship target definitions, or heading settings that remain unchanged.
+- `NTS-23` A note-type schema MUST satisfy the Schema File Contract table.
+- `NTS-176` A concrete schema without `extends` MUST physically declare `storage`.
+- `NTS-55` Omitted relationships are equivalent to empty `belongs_to.allowed_note_types` and `related_to.allowed_note_types`.
+- `NTS-58` Omitted headings default to empty required/optional H2 lists, allowed other H2s, no ordering requirement, and no H1/title coupling.
+- `NTS-60` Human-facing guidance MUST NOT override structural rules.
+- `NTS-66` A note type's effective `unknown_field` overrides the collection default only for its managed-note frontmatter.
+- `NTS-67` That override MUST NOT change unknown structural-key severity for governed artifacts.
+- `NTS-69` A supplied count range MUST have non-negative integer bounds with `min <= max` when both are present.
+- `NTS-71` A note-count violation MUST be reported as `invalid_note_count`.
 
 ### Mandatory Tags
 
-A note type can require tags beyond the collection-wide and path-selected policies. The declaration is a top-level note-type policy rather than a field definition; the effective `tags` field remains explicit in `frontmatter`.
+A note type can add mandatory tags without declaring a second `tags` field.
+Collection-level policy and the effective note-type policy are combined by
+Collection Model.
 
+<!-- typedmark-example: fragment: Note-type mandatory-tag policy. -->
 ```yaml
-mandatory_tags:
-  - type/project
-  - actionable
-frontmatter:
-  tags:
-    type: tags
-    default_value:
-      - type/project
-      - actionable
+mandatory_tags: [type/project, actionable]
 ```
 
 Rules:
 
-- `NTS-169` `mandatory_tags` MAY be omitted from an abstract or concrete note-type schema.
-- `NTS-170` If present, `mandatory_tags` MUST be a non-empty ordered list of unique tag strings that satisfy the stored tags-entry grammar in [Field Definition Reference](field-definition-reference.md).
-- `NTS-171` The effective note-type-level mandatory tags are the value from the last schema in abstract-ancestor-to-concrete order that physically declares `mandatory_tags`, or an empty list when none declares it.
-- `NTS-172` Effective note-type-level mandatory tags contribute the final scope of the effective mandatory-tag sequence defined in [Collection Model](collection-model.md).
-- `NTS-173` The effect of a note-type-level `mandatory_tags` declaration on `frontmatter` is defined by `CM-239` in [Collection Model](collection-model.md).
+- `NTS-170` A supplied `mandatory_tags` MUST be a non-empty ordered list of unique valid tags.
+- `NTS-172` The type-level policy contributes the final stage of [Collection Model](collection-model.md)'s mandatory-tag sequence.
 
 ### Abstract Inheritance Example
 
-```yaml
-# <metadata_directory>/schemas/person.md
-specification_version: 0.0.1
-note_type: person
-abstract: true
-label: Person
-icon: user
-description: Shared structure for person-like notes.
-
-kind: entity
-
-template:
-  file: "person.md"
-
-frontmatter:
-  note_type:
-    type: text
-    value_from_schema: note_type
-  title:
-    type: text
-    not_blank: true
-    nullable: false
-  email:
-    type: text
-    optional: true
-    nullable: true
-    default_value: null
-
-headings:
-  required_h2: []
-  optional_h2:
-    - Notes
-  allow_other_h2: true
-  require_order: false
-
-guidance:
-  when_to_use: "Use as a reusable base for person-like note types."
-  when_not_to_use: "Do not map notes directly to this abstract type."
-```
-
-```yaml
-# <metadata_directory>/schemas/customer.md
-specification_version: 0.0.1
-note_type: customer
-abstract: false
-extends: person
-label: Customer
-icon: badge
-description: Customer-specific person record.
-
-storage:
-  folder_pattern: "Customers"
-  note_name_pattern: "{title}"
-  archive:
-    policy: in_place_historical
-
-frontmatter:
-  customer_tier:
-    type: text
-    nullable: false
-```
-
-In that example, `customer` inherits `kind`, `template`, `guidance`, `note_type`, `title`, `email`, and `headings` from `person`, while adding its own concrete storage rule and local `customer_tier` field. Because no schema in the chain declares `relationships`, the effective relationships take the empty defaults.
+See [Schema Reuse](schema-reuse.md#abstract-inheritance-example).
 
 ## Conditional Field Constraints
 
-A note-type schema can declare `conditions` to express cross-field requirements that unconditional field definitions cannot: a field that needs a value only when another field has a given value, or a field that stays empty in certain states.
-
-Example:
-
-```yaml
-conditions:
-  - description: Archived topics need a reason.
-    when:
-      status:
-        equals: archived
-    then:
-      require:
-        - archived_reason
-  - description: Draft topics have no publication date.
-    when:
-      status:
-        equals: draft
-    then:
-      require_null:
-        - published_on
-```
-
-Rules:
-
-- `NTS-82` `conditions` MAY be omitted.
-- `NTS-83` If present, `conditions` MUST be a non-empty ordered list of condition rules.
-- `NTS-84` Each condition rule MUST physically contain `when` and `then`, and MAY contain `description`, a non-empty string used for reporting.
-- `NTS-85` `when` is a frontmatter predicate mapping with the same shape and semantics as `when.frontmatter` in `note_type_mappings`, defined in [Collection Model](collection-model.md), evaluated against the managed note's stored frontmatter.
-- `NTS-86` `then` MUST contain at least one of `require` or `require_null`; each, when present, MUST be a non-empty list of unique top-level effective frontmatter field names.
-- `NTS-87` Each field named in `require` or `require_null`, and each field named in `when`, MUST resolve to a field declared in the effective frontmatter; a condition naming an unresolved field makes the schema invalid.
-- `NTS-88` A field named in `require` MUST NOT be declared `optional: true` in the effective schema and SHOULD be nullable, so it can remain `null` while no condition requires it.
-- `NTS-89` When a condition's `when` predicate matches a managed note, every field named in `require` MUST hold a concrete non-null stored value, and every field named in `require_null` MUST be stored as `null`.
-- `NTS-90` A `require` violation is reported as `missing_required_field`; a `require_null` violation is reported as `invalid_field_value`.
-- `NTS-91` Condition rules are evaluated independently; every matching rule applies, and a note MUST satisfy all of them.
-- `NTS-92` A field MUST NOT be named in `require` by one matching rule and in `require_null` by another matching rule for the same note; condition sets that allow this are invalid for that note and MUST be reported.
-- `NTS-93` `conditions` participates in note-type inheritance through whole-key replacement, like `guidance`; property sets MUST NOT declare `conditions` in this specification version.
+Conditional constraints belong to [Schema Reuse](schema-reuse.md#conditional-field-constraints).
 
 ## Allowed Schema Kinds
 
-Each concrete note type's effective schema declares one of these `kind` values:
+The former `kind` field is not part of the `0.1.0` schema. Counts express
+cardinality directly; fixed storage patterns express fixed paths.
 
-- `singleton`
-- `entity`
-- `dated_record`
-- `rule_set`
-
-Definitions:
-
-- `singleton`: one canonical fixed-path note
-- `entity`: durable note for a long-lived thing
-- `dated_record`: time-based note whose path includes a date
-- `rule_set`: conventions, rules, style, or governance note
-
-Rules:
-
-- `NTS-94` If an abstract note type physically declares `kind`, it MUST use one of the values listed above.
-- `NTS-95` A `singleton` note type has an implicit effective `count` of `max: 1`; it MAY declare `count` with `min: 1` to require the note to exist.
-- `NTS-96` A `singleton` note type's storage patterns MUST NOT contain placeholders, so its note resolves to one fixed path.
-- `NTS-162` A concrete note type's effective `kind` MUST use one of the values listed above.
-- `NTS-163` Fixed-path notes SHOULD be modeled as `singleton` note types.
-- `NTS-164` A fixed-path singleton MAY omit `title` if the title is implied by the schema.
-- `NTS-165` A fixed-path singleton MAY use `frontmatter_remove: [title]` when it inherits `title` but does not use that field.
-- `NTS-166` A fixed-path singleton MAY omit stored `note_type` when the collection's mapping rules and effective schema do not require it.
-
-Examples include `Home.md`, `Guide.md`, and `Glossary.md`.
+<!-- typedmark-example: fragment: One required fixed-path note. -->
+```yaml
+count: {min: 1, max: 1}
+storage:
+  folder_pattern: ""
+  note_name_pattern: Home
+```
 
 ## Storage Rules
 
-Every concrete note type has storage rules in its effective schema.
+Storage patterns are a separate, deliberately small grammar, not the optional
+`${...}` expression language. They consist of literal text and references to
+effective scalar fields. There is no current-clock placeholder and no recursive
+evaluation of substituted text.
 
-Abstract note types can declare a `storage` block to contribute reusable storage defaults, but they are not required to.
+| Pattern position | Shape |
+| --- | --- |
+| `folder_pattern` | Relative folder, optionally empty for the root; `/` separators; no backslash, leading/trailing slash, or `.` / `..` segment |
+| `note_name_pattern` | Non-empty basename pattern without slash, backslash, or a `.md` extension |
+| `note_name_prefix`, `note_name_suffix` | Optional mapping with a non-empty `pattern`; every supplied affix applies |
+| `archive` | Optional block with alternate `folder_pattern` and `note_name_pattern`, and optional affixes |
 
-Required effective storage fields for concrete note types:
-
-- `folder_pattern`
-- `note_name_pattern`
-- `archive.policy`, defaulting to `in_place_historical` when the archive block is omitted
-
-Allowed archive policies:
-
-- `mirror_under_archives`
-- `in_place_historical`
-- `fixed`
+For example, `{meeting_date:YYYY}/{meeting_date:MM}` names a folder from a
+declared date. The word `now` has no special status: `{now:YYYY}` works only if
+there is an actual effective date/datetime field named `now`.
 
 Rules:
 
-- `NTS-97` If a schema physically declares `storage`, it MUST physically contain `folder_pattern` and `note_name_pattern`.
-- `NTS-98` Note-type inheritance uses whole-block replacement for `storage`. A descendant schema that physically defines `storage` replaces any inherited `storage` block completely.
-- `NTS-99` `folder_pattern` is the collection-relative folder rule for active notes of that type.
-- `NTS-100` `note_name_pattern` is the file-name rule for active notes of that type, without the `.md` extension.
-- `NTS-101` `folder_pattern`, `note_name_pattern`, and any archive storage patterns are authoritative for both storage conformance and note creation.
-- `NTS-102` `folder_pattern` MAY be the empty string to represent the collection root.
-- `NTS-103` `folder_pattern` MUST use forward slashes when it contains subfolders.
-- `NTS-104` `folder_pattern` MUST NOT start or end with `/`.
-- `NTS-105` `folder_pattern` and `archive.folder_pattern` MUST NOT contain `.` or `..` path segments.
-- `NTS-106` `note_name_pattern` MUST be a non-empty string.
-- `NTS-107` `note_name_pattern` MUST NOT contain `/` or `\`.
-- `NTS-108` `note_name_pattern` MUST NOT include the `.md` extension.
-- `NTS-109` `note_name_prefix` and `note_name_suffix` MAY each be declared to govern an affix around the resolved `note_name_pattern`.
-- `NTS-110` If present, `note_name_prefix` and `note_name_suffix` MUST each be a mapping that physically contains `pattern`.
-- `NTS-111` An affix `pattern` MUST be a non-empty string and follows the same syntax, placeholder, and resolution rules as `note_name_pattern`, including the prohibition of `/` and `\` and of the `.md` extension.
-- `NTS-112` An affix mapping MAY declare `required`; if present, `required` MUST be a boolean, and if omitted, `required` defaults to `true`.
-- `NTS-113` The conforming active note name is the resolved `note_name_pattern`, preceded by the resolved `note_name_prefix` when that affix is applied, and followed by the resolved `note_name_suffix` when that affix is applied.
-- `NTS-114` A required affix MUST be applied: the active note name MUST include the resolved affix in its position.
-- `NTS-115` An optional affix, declared with `required: false`, MAY be applied: the active note name conforms both with and without the resolved affix.
-- `NTS-116` Storage patterns are template strings composed of literal text plus zero or more placeholders.
-- `NTS-117` A placeholder has the form `{field_name}`, `{field_name:format}`, or the current-time form `{now:format}`.
-- `NTS-118` `now` is a reserved placeholder name for the current time; a frontmatter field named `now` MUST NOT be referenced in storage patterns.
-- `NTS-119` `{now:format}` is valid in every storage pattern, and its `format` MUST be one of `YYYY`, `MM`, `DD`, `YYYY-MM`, `YYYY-MM-DD`, `Q`, `WW`, or `GGGG`.
+- `NTS-97` A supplied storage block MUST contain `folder_pattern` and `note_name_pattern`.
+- `NTS-177` Storage declarations MUST satisfy the Storage Rules shape table.
+- `NTS-101` Storage patterns govern both path validation and note creation.
+- `NTS-113` A resolved name consists of the resolved prefix, name pattern, and suffix in that order.
+- `NTS-117` A placeholder MUST have the form `{field_name}` or `{field_name:format}`.
+- `NTS-124` A placeholder MUST reference a top-level effective field or Core field.
+- `NTS-125` Storage placeholders MUST NOT traverse nested fields.
+- `NTS-127` A formatted placeholder MUST reference a `date` or `datetime` and use `YYYY`, `MM`, `DD`, `YYYY-MM`, `YYYY-MM-DD`, `Q`, `WW`, or `GGGG`.
 - `NTS-120` `Q` is the quarter number `1` through `4`, `WW` is the zero-padded ISO 8601 week number `01` through `53`, and `GGGG` is the four-digit ISO 8601 week-numbering year; week-based patterns SHOULD pair `WW` with `GGGG` rather than `YYYY`.
-- `NTS-121` A tool that creates a managed note MUST resolve each `{now:format}` placeholder from the current instant in the collection timezone defined in [Collection Model](collection-model.md).
-- `NTS-122` For storage conformance, a `{now:format}` placeholder matches any text that is a syntactically valid value of its format; the concrete value was fixed when the note was created and is not re-resolved.
-- `NTS-123` Because `{now:format}` conformance is shape-only, note types SHOULD use it for coarse grouping such as year, quarter, or week folders, and SHOULD keep exact dates in stored fields, consistent with the `dated_record` guidance on this page.
-- `NTS-124` `field_name` in a storage placeholder MUST refer to a top-level effective frontmatter field name.
-- `NTS-125` Nested field references are not supported in storage patterns in this specification version.
-- `NTS-126` `{field_name}` inserts the concrete stored scalar value of that field.
-- `NTS-127` `{field_name:format}` is valid only when the stored value is a `date` or `datetime` field and `format` is one of `YYYY`, `MM`, `DD`, `YYYY-MM`, or `YYYY-MM-DD`.
-- `NTS-128` When a `{field_name:format}` placeholder references a `datetime` field, the date components are taken from the stored instant expressed in the collection timezone defined in [Collection Model](collection-model.md); for `date` fields, they are taken from the stored value as written.
-- `NTS-129` Storage placeholders MUST resolve from physically stored frontmatter values, not from note body content, inferred values, or template prose.
-- `NTS-130` A field used in a storage pattern MUST resolve to a concrete non-null scalar value when the managed note path is evaluated.
-- `NTS-131` A field referenced by any storage pattern, including archive patterns and affixes, MUST NOT declare `optional: true`, and SHOULD be non-nullable or declare a non-null `default_value`, so that storage paths are resolvable at note creation.
-- `NTS-132` List, tags, object, and `any` values MUST NOT be used in storage patterns.
-- `NTS-133` A resolved placeholder value MUST NOT contain `/`, `\`, or control characters, and MUST NOT equal `.` or `..`; folder structure comes from the pattern, never from resolved values.
-- `NTS-134` A resolved active or archived note name MUST NOT begin with `.`.
-- `NTS-135` A managed note whose resolved storage path violates these value-safety rules is a `path` failure, and a tool MUST NOT create a managed note whose resolved path would violate them; it MUST obtain conforming values instead.
-- `NTS-136` Fields referenced by storage patterns SHOULD declare value constraints, such as `regex`, that prevent path-hostile values.
-- `NTS-137` The active managed-note path is the resolved `folder_pattern` plus `/` plus the conforming active note name plus `.md`, unless `folder_pattern` is empty, in which case the active managed-note path is the conforming active note name plus `.md`.
-- `NTS-138` A managed note is active or archived according to its stored `archived` value, the core-defined field contract defined in [Managed Notes and Properties](managed-notes-and-properties.md).
-- `NTS-139` Validators MUST ensure an active managed note's path matches the resolved active storage path for its note type.
-- `NTS-140` If `archive.policy` is `mirror_under_archives` or `fixed`, the schema MUST also define `archive.folder_pattern` and `archive.note_name_pattern`.
-- `NTS-141` `archive.folder_pattern` and `archive.note_name_pattern` follow the same syntax and resolution rules as the active storage patterns.
-- `NTS-142` The `archive` block MAY declare `archive.note_name_prefix` and `archive.note_name_suffix`, which follow the same affix rules as `note_name_prefix` and `note_name_suffix` and govern the archived note name.
-- `NTS-143` If `archive.policy` is `in_place_historical`, `archive.folder_pattern` and `archive.note_name_pattern` MUST be omitted.
-- `NTS-144` If a note is archived under `mirror_under_archives` or `fixed`, its archived path is resolved using `archive.folder_pattern` and `archive.note_name_pattern`, and validators MUST ensure the archived note's path matches that resolved archived path.
-- `NTS-145` If a note is archived under `in_place_historical`, it remains at its resolved active storage path, and validators MUST ensure its path still matches that active path.
-- `NTS-146` A managed note whose path does not match the storage path required by its archived state violates the `path` rule defined in [Collection Model](collection-model.md).
-- `NTS-147` Archiving a note means setting `archived: true` and, under `mirror_under_archives` or `fixed`, moving the note to its resolved archived path.
-- `NTS-148` Tools that create managed notes MUST derive the initial note folder and note name from `storage.folder_pattern` and `storage.note_name_pattern` using the stored frontmatter values they are writing.
-- `NTS-149` A tool that creates a managed note MUST apply every required affix to the created note name and MAY apply each optional affix, for example based on user choice.
-- `NTS-150` A tool that creates a managed note MUST obtain every concrete value needed to resolve the storage patterns before writing the note.
-- `NTS-151` If required storage-pattern values are not yet known, a tool MUST ask for them or otherwise obtain them before claiming the created note conforms.
-- `NTS-152` A tool MUST NOT create or move a managed note onto a path already occupied by another note or governed artifact; an occupied resolved path MUST be reported rather than overwritten.
-- `NTS-153` Authors SHOULD design storage patterns so that no two managed notes can resolve to the same path.
-- `NTS-154` Tools SHOULD report two managed notes whose resolved paths differ only by letter case, because case-insensitive filesystems cannot store both.
-- `NTS-155` Tools SHOULD report resolved path segments that are reserved on common filesystems, such as the Windows device names `CON`, `PRN`, `AUX`, `NUL`, `COM1` through `COM9`, and `LPT1` through `LPT9`, and segments ending with a dot or a space.
-- `NTS-156` If a note is archived, its `note_type` MUST remain unchanged.
-- `NTS-157` If a note declares `id`, its `id` MUST remain unchanged when the note is archived.
-- `NTS-158` `dated_record` note types SHOULD encode the date in both storage patterns and metadata when practical.
-- `NTS-159` If no schema in the concrete note type's inheritance chain physically declares `template`, the effective `template.file` defaults to `<note_type>.md`, using the selected concrete note type identifier.
-- `NTS-160` If a physically declared `storage` block omits `archive`, the effective archive block is `policy: in_place_historical`.
-- `NTS-161` The effective defaults for `abstract`, `template.file`, and `storage.archive.policy` participate in conformance exactly as if their default values had been physically written in the selected schema.
+- `NTS-128` Datetime components MUST be taken from the effective instant in the collection timezone; date components use the calendar date as written.
+- `NTS-129` Substitution MUST use effective scalar field values.
+- `NTS-130` Every referenced value MUST be concrete and non-null when the path is evaluated.
+- `NTS-132` List, tags, object, and `any` fields MUST NOT be used in storage placeholders.
+- `NTS-133` A substituted value MUST NOT contain slash, backslash, or control characters, or equal `.` or `..`.
+- `NTS-134` A resolved note basename MUST be a non-empty string not beginning with `.`.
+- `NTS-180` A resolved path MUST be free of control characters and `.` or `..` path segments, regardless of whether they came from literal text or substituted values.
+- `NTS-178` Substituted text MUST NOT be reparsed as storage-pattern syntax.
+- `NTS-135` An unsafe resolved path MUST be reported as a `path` failure rather than created.
+- `NTS-137` The resolved note path is the resolved folder plus basename and `.md`, with no leading separator for an empty folder.
+- `NTS-138` Effective `archived` selects the active or archived storage contract.
+- `NTS-144` An archived note with an archive block MUST use its alternate patterns.
+- `NTS-145` Without an archive block, an archived note MUST continue to satisfy the active storage patterns.
+- `NTS-146` A path mismatch MUST be reported under `path`.
+- `NTS-148` A writer creating a note MUST derive its initial path from the effective storage patterns and values it will write.
+- `NTS-150` A writer MUST obtain every necessary concrete value before creating a note at a conforming path.
+- `NTS-152` A writer MUST NOT create or move a note onto an occupied note or artifact path.
+- `NTS-154` Tools SHOULD report resolved paths differing only by letter case.
+- `NTS-155` Tools SHOULD report names reserved on common filesystems, including Windows device names and path components ending in a dot or space.
+- `NTS-156` Archiving MUST preserve the note's type.
+- `NTS-157` Archiving MUST preserve its effective non-null identifier.
 
-Example creation-oriented storage rules:
+## Template References
 
+Explicit templates name files; otherwise `<note_type>.md` supplies overrides
+when present, or starter state is derived.
+
+<!-- typedmark-example: fragment: Explicit starter-template reference. -->
 ```yaml
-storage:
-  folder_pattern: "Meetings/{meeting_date:YYYY}/{meeting_date:MM}"
-  note_name_pattern: "{meeting_date:YYYY-MM-DD} - {title}"
-  note_name_suffix:
-    pattern: " (Meeting)"
-    required: false
-  archive:
-    policy: in_place_historical
+template:
+  file: meetings/standard.md
 ```
 
-Using that storage block, a tool creating a `meeting` note with `meeting_date: 2026-06-08` and `title: foo` creates it at `Meetings/2026/06/2026-06-08 - foo.md` or, because the suffix is optional, at `Meetings/2026/06/2026-06-08 - foo (Meeting).md`; both paths conform.
+Rules:
+
+- `NTS-44` A supplied `template.file` MUST be relative to `<metadata_directory>/templates/`.
+- `NTS-45` That path MUST NOT be absolute, contain `..` segments, or restate the metadata/templates prefix.
+- `NTS-47` A supplied template file path MUST end in `.md`.
+- `NTS-159` When no effective explicit template reference exists, the conventional template filename is `<note_type>.md`.

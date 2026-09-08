@@ -1,5 +1,5 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 name: excessive-propagation-policy
 description: Collection with an excessive propagation wave limit.
 automation_defaults:

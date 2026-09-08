@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://developassion.github.io/TypedMarkSpecification/schema/automation-event.schema.json",
   "title": "TypedMark automation event",
-  "description": "Immutable input envelope consumed by automation execution. Authoritative semantics: managed-notes-and-properties.md.",
+  "description": "Immutable input envelope consumed by automation execution. Authoritative semantics: automation-runtime.md.",
   "type": "object",
   "required": [
     "specification_version",

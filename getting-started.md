@@ -15,15 +15,17 @@ See also:
 - [Collection Model](collection-model.md): the authoritative `typedmark.md` contract
 - [Note Type Schemas](note-type-schemas.md): the authoritative schema contract
 
-This page is a non-normative tutorial. It shows how little is needed to turn a folder of Markdown notes into a Core Profile typed collection: one configuration file, one note type, one template, one note. Every step links to the section that governs it.
+This non-normative tutorial builds a Core collection from one configuration,
+one concrete schema, and one note. A template is optional.
 
 ## 1. Create `typedmark.md`
 
 At the root of your notes folder, create `typedmark.md`. The frontmatter is the configuration; the body is yours to use for explanations ([governed artifact format](foundations.md#governed-artifact-format)).
 
+<!-- typedmark-example: artifact=typedmark -->
 ```markdown
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 name: my-notes
 description: My personal notes.
 ---
@@ -33,27 +35,25 @@ description: My personal notes.
 Meeting notes live in Meetings/ and are typed as `meeting`.
 ```
 
-Those three frontmatter keys are enough for the Core Profile ([Collection Model](collection-model.md)). The omitted collection defaults expand to `metadata_directory: .typedmark`, `exclude_paths: [.git/**]`, and `validation_defaults: {}`.
+Those keys suffice for the configuration. Defaults include `.typedmark`, Git
+exclusion, UTC, validation severities, and stored `note_type` association.
 
 ## 2. Define a note type
 
 Create `.typedmark/schemas/meeting.md`. The file name (without `.md`) must equal the `note_type` ([Note Type Schemas](note-type-schemas.md)).
 
+<!-- typedmark-example: artifact=note-type -->
 ```markdown
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 note_type: meeting
 label: Meeting
 icon: calendar
-kind: dated_record
 description: Notes for one meeting.
 storage:
   folder_pattern: "Meetings"
   note_name_pattern: "{meeting_date} - {title}"
 frontmatter:
-  note_type:
-    type: text
-    const_value: meeting
   title:
     type: text
     not_blank: true
@@ -61,7 +61,6 @@ frontmatter:
   meeting_date:
     type: date
     generated: now
-    immutable: true
     nullable: false
 ---
 
@@ -70,12 +69,15 @@ A meeting note records one meeting: who, what, decisions.
 
 This declares where meeting notes live and how they are named ([storage rules](note-type-schemas.md#storage-rules)), and which frontmatter fields they carry ([Field Definition Reference](field-definition-reference.md)). `relationships`, `headings`, and `guidance` are optional and default to "no constraints".
 
-The omitted schema defaults expand to `abstract: false`, `template.file: "meeting.md"`, and `storage.archive.policy: in_place_historical`.
+`note_type` can be omitted from the schema because its basename supplies it.
+Label and icon are optional. Without archive patterns, active storage applies.
 
-## 3. Create the template
+## 3. Optionally add starter content
 
-Create `.typedmark/templates/meeting.md` with valid starter frontmatter ([Templates](relationships-headings-and-templates.md#templates)):
+Without a template file, starter state is derived. To add prose, create
+`.typedmark/templates/meeting.md`; its frontmatter can be partial or absent.
 
+<!-- typedmark-example: body: Managed-note template, not a governed frontmatter artifact. -->
 ```markdown
 ---
 note_type: meeting
@@ -94,6 +96,7 @@ The empty `title` and `null` `meeting_date` are template placeholders. A tool in
 
 Create `Meetings/2026-06-10 - Kickoff.md`:
 
+<!-- typedmark-example: body: Managed note validated against its effective note type, not an artifact schema. -->
 ```markdown
 ---
 note_type: meeting
@@ -115,6 +118,7 @@ That note is a conforming managed note: its `note_type` maps it to the `meeting`
 ## Where to go next
 
 - Link notes together and document relationships between types: [Note Links](note-links.md) and [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
-- Reuse shared fields across note types: [property sets](collection-model.md#property-set-definitions)
+- Look up everyday tasks: [Quick Reference](quick-reference.md#how-do-i)
+- Reuse shared fields across note types: [property sets](property-sets.md#property-set-definitions)
 - Share your setup as a versioned system: [Systems, Composition, and Evolution](systems-composition-evolution.md)
 - Shape-valid examples of every artifact live in [`schema/fixtures/valid/`](https://github.com/DeveloPassion/TypedMarkSpecification/tree/main/schema/fixtures/valid). Complete collection trees with expected portable validation reports live in [`schema/fixtures/golden/`](https://github.com/DeveloPassion/TypedMarkSpecification/tree/main/schema/fixtures/golden). Both are checked in CI on every change.

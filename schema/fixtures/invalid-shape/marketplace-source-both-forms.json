@@ -1,6 +1,6 @@
 {
   "_comment": "INVALID SHAPE: a source must take exactly one form; path and repository are mutually exclusive (and _comment is an unknown key).",
-  "specification_version": "0.0.1",
+  "specification_version": "0.1.0",
   "systems": [
     {
       "name": "broken-system",

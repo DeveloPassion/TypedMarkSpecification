@@ -1,11 +1,11 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 dataset: actions
 label: Actions
 description: Projects and tasks exposed through one stable row contract.
 row_identity: path
 query:
-  specification_version: 0.0.1
+  specification_version: 0.1.0
   note_types: [project, task]
   select:
     - {kind: path, as: path}

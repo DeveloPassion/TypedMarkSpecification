@@ -1,5 +1,4 @@
 {
-  "specification_version": "0.0.1",
   "id": "moving-date",
   "mode": "auto",
   "state": "materialized",

@@ -1,0 +1,15 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [{
+    "code": "invalid_field_value",
+    "severity": "error",
+    "path": "notes/review.md",
+    "rule_id": "ZZZ-1",
+    "message": "The identifier is well-formed but names no built-in rule under CR-106."
+  }]
+}

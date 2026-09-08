@@ -1,5 +1,5 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 note_type: journal-entry
 abstract: false
 label: Journal Entry
@@ -9,8 +9,6 @@ description: Dated journal entry.
 storage:
   folder_pattern: "Journal"
   note_name_pattern: "{title}"
-  archive:
-    policy: in_place_historical
 template:
   file: "journal-entry.md"
 frontmatter: {}

@@ -1,9 +1,9 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 view: project-board
 description: Board layout without its required board configuration.
 query:
-  specification_version: 0.0.1
+  specification_version: 0.1.0
   select:
     - kind: field
       field: title

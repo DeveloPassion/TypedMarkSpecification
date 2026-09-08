@@ -1,5 +1,5 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 name: golden-core-valid
 description: Canonical valid Core Profile collection vector.
 ---

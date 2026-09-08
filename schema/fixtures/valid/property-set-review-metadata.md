@@ -1,13 +1,10 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 property_set: review-metadata
 label: Review Metadata
 icon: badge
 description: Reusable review and publication fields.
 frontmatter:
-  note_type:
-    type: text
-    value_from_schema: note_type
   deleted:
     type: checkbox
     default_value: false
@@ -19,7 +16,7 @@ frontmatter:
     description: Editorial lifecycle state.
     icon: badge
     type: text
-    allowed_values: [draft, in_review, published]
+    allowed_values: [ draft, in_review, published ]
     not_blank: true
     nullable: true
     default_value: null
@@ -27,7 +24,6 @@ frontmatter:
     type: integer
     min: 1
     max: 5
-    optional: true
     nullable: true
     default_value: null
   published_on:
@@ -35,7 +31,6 @@ frontmatter:
     description: Publication date when known.
     icon: calendar
     type: date
-    optional: true
     nullable: true
     default_value: null
   published_time:
@@ -44,7 +39,6 @@ frontmatter:
     icon: clock
     type: time
     format: hh:mm
-    optional: true
     nullable: true
     default_value: null
   canonical_url:
@@ -54,7 +48,6 @@ frontmatter:
     type: link
     format: uri
     not_blank: true
-    optional: true
     nullable: true
     default_value: null
   review_code:
@@ -63,7 +56,6 @@ frontmatter:
     icon: hash
     type: text
     regex: "^[A-Z]{2}-\\d{4}$"
-    optional: true
     nullable: true
     default_value: null
 relationships:

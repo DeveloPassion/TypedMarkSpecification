@@ -1,10 +1,9 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 note_type: topic
 abstract: false
 label: Topic
 icon: note
-kind: entity
 unknown_field: warn
 description: Durable note about a specific topic.
 
@@ -14,11 +13,7 @@ property_sets:
 storage:
   folder_pattern: "Topics"
   note_name_pattern: "{title}"
-  note_name_suffix:
-    pattern: " (Topic)"
-    required: false
   archive:
-    policy: mirror_under_archives
     folder_pattern: "Archives/Topics"
     note_name_pattern: "{title}"
 
@@ -26,9 +21,6 @@ template:
   file: "topic.md"
 
 frontmatter:
-  note_type:
-    type: text
-    const_value: topic
   title:
     label: Title
     description: Human-readable note title.
@@ -52,7 +44,7 @@ frontmatter:
     icon: folder
     type: link
     format: note_link
-    targets: [domain]
+    targets: [ domain ]
     nullable: false
     default_value: ""
     relationship_kind: belongs_to
@@ -72,7 +64,7 @@ frontmatter:
     description: Lifecycle state of the note.
     icon: badge
     type: text
-    allowed_values: [draft, active, archived]
+    allowed_values: [ draft, active, archived ]
     nullable: true
     default_value: null
   tags:
@@ -114,8 +106,6 @@ frontmatter:
     description: Short overview used in generated references and previews.
     icon: paragraph
     type: text
-    generated: true
-    optional: true
     nullable: true
     default_value: ""
   display_title:
@@ -130,13 +120,11 @@ frontmatter:
     description: Nested structured metadata.
     icon: package
     type: object
-    optional: true
     nullable: true
     default_value: null
     fields:
       reviewed_on:
         type: date
-        optional: true
         nullable: true
 
 relationships:

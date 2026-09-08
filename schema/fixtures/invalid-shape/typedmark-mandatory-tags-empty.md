@@ -1,5 +1,5 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 name: invalid-empty-mandatory-tags
 description: Invalid empty mandatory-tag policy.
 mandatory_tags: []

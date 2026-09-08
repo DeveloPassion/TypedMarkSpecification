@@ -1,16 +1,13 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 note_type: topic
 abstract: false
 label: Topic
 icon: note
-kind: entity
 description: Durable note about a specific topic.
 storage:
   folder_pattern: "Topics"
   note_name_pattern: "{title}"
-  archive:
-    policy: in_place_historical
 template:
   file: "topic.md"
 frontmatter: {}

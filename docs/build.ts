@@ -13,6 +13,8 @@
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { isAbsolute, join, relative, resolve } from "node:path";
 import { marked } from "marked";
+import { renderMovedRuleLinks, rewritePageLinks } from "./links";
+import ruleRegistry from "../scripts/rule-registry.json";
 
 const ROOT = join(import.meta.dir, "..");
 const DIST = join(ROOT, "dist");
@@ -29,17 +31,33 @@ const PAGES: Page[] = [
   { file: "manifesto.md", out: "manifesto.html", nav: "Manifesto", section: "Specification" },
   { file: "getting-started.md", out: "getting-started.html", nav: "Getting Started", section: "Specification" },
   { file: "foundations.md", out: "foundations.html", nav: "Foundations", section: "Specification" },
+  { file: "extensions.md", out: "extensions.html", nav: "Extensions and Capabilities", section: "Specification" },
   { file: "collection-model.md", out: "collection-model.html", nav: "Collection Model", section: "Specification" },
   { file: "note-type-schemas.md", out: "note-type-schemas.html", nav: "Note Type Schemas", section: "Specification" },
   { file: "field-definition-reference.md", out: "field-definition-reference.html", nav: "Field Definition Reference", section: "Specification" },
+  { file: "field-conversions.md", out: "field-conversions.html", nav: "Field Conversions", section: "Shared Contracts" },
   { file: "managed-notes-and-properties.md", out: "managed-notes-and-properties.html", nav: "Managed Notes and Properties", section: "Specification" },
   { file: "note-links.md", out: "note-links.html", nav: "Note Links", section: "Specification" },
   { file: "relationships-headings-and-templates.md", out: "relationships-headings-and-templates.html", nav: "Relationships, Headings, Templates, and Content Expansion", section: "Specification" },
-  { file: "systems-composition-evolution.md", out: "systems-composition-evolution.html", nav: "Systems, Composition, and Evolution", section: "Specification" },
-  { file: "migration-effects.md", out: "migration-effects.html", nav: "Migration Effects", section: "Specification" },
+  { file: "schema-reuse.md", out: "schema-reuse.html", nav: "Schema Reuse", section: "Reuse" },
+  { file: "property-sets.md", out: "property-sets.html", nav: "Property Sets", section: "Reuse" },
+  { file: "queries.md", out: "queries.html", nav: "Portable Queries", section: "Optional Contracts" },
+  { file: "datasets-and-views.md", out: "datasets-and-views.html", nav: "Datasets and Views", section: "Optional Contracts" },
+  { file: "expressions.md", out: "expressions.html", nav: "Expressions", section: "Optional Contracts" },
+  { file: "authoring.md", out: "authoring.html", nav: "Authoring", section: "Optional Contracts" },
+  { file: "template-tracking.md", out: "template-tracking.html", nav: "Template Tracking", section: "Optional Contracts" },
+  { file: "content-expansion.md", out: "content-expansion.html", nav: "Content Expansion", section: "Optional Contracts" },
+  { file: "automation-artifacts.md", out: "automation-artifacts.html", nav: "Automation Artifacts", section: "Optional Contracts" },
+  { file: "automation-runtime.md", out: "automation-runtime.html", nav: "Automation Runtime", section: "Optional Contracts" },
+  { file: "automation-reports.md", out: "automation-reports.html", nav: "Automation Interchange", section: "Optional Contracts" },
+  { file: "systems-composition-evolution.md", out: "systems-composition-evolution.html", nav: "Systems and Composition", section: "Optional Contracts" },
+  { file: "migration-effects.md", out: "migration-effects.html", nav: "Migration Effects", section: "Optional Contracts" },
+  { file: "marketplace-catalog.md", out: "marketplace-catalog.html", nav: "Marketplace Catalog", section: "Companion Contracts" },
   { file: "conformance-and-roadmap.md", out: "conformance-and-roadmap.html", nav: "Conformance and Roadmap", section: "Specification" },
   { file: "quick-reference.md", out: "quick-reference.html", nav: "Quick Reference", section: "Specification" },
   { file: "schema/docs/schema-boundary.md", out: "schema-boundary.html", nav: "Schema Boundary", section: "Resources" },
+  { file: "schema/docs/conformance-runner.md", out: "conformance-runner.html", nav: "Semantic Runner", section: "Resources" },
+  { file: "schema/docs/migration-0.1.md", out: "migration-0.1.html", nav: "0.1 Migration", section: "Resources" },
 ];
 
 const REPO_URL = "https://github.com/DeveloPassion/TypedMarkSpecification";
@@ -77,16 +95,11 @@ interface TocEntry {
   id: string;
 }
 
-function renderPage(markdown: string): { html: string; toc: TocEntry[] } {
+function renderPage(markdown: string, sourceFile: string): { html: string; toc: TocEntry[] } {
   let html = marked.parse(markdown, { async: false }) as string;
 
   // Rewrite internal links between spec pages: foo.md(#anchor) -> foo.html(#anchor)
-  const known = new Map(PAGES.map((p) => [p.file.split("/").pop()!, p.out]));
-  html = html.replace(/href="([a-z][a-z0-9./-]*\.md)(#[^"]*)?"/g, (m, target: string, anchor?: string) => {
-    const base = target.split("/").pop()!;
-    const out = known.get(base);
-    return out ? `href="${out}${anchor ?? ""}"` : m;
-  });
+  html = rewritePageLinks(html, sourceFile, PAGES);
 
   // Add ids to h2/h3 headings and collect the table of contents.
   const toc: TocEntry[] = [];
@@ -105,6 +118,7 @@ function renderPage(markdown: string): { html: string; toc: TocEntry[] } {
   html = html.replace(/<li><code>([A-Z]{2,3}-\d+)<\/code>/g,
     '<li id="$1"><a class="rule-id" href="#$1">$1</a>');
 
+  html += renderMovedRuleLinks(sourceFile, PAGES, ruleRegistry);
   return { html, toc };
 }
 
@@ -150,7 +164,7 @@ function validateInternalLinks(): void {
       if (/^[a-z][a-z0-9+.-]*:/i.test(href)) continue;
 
       const [targetPart, fragment] = href.split("#", 2);
-      const target = targetPart || page.out;
+      const target = (targetPart || page.out).split("?", 1)[0]!;
       const targetPath = resolve(DIST, target);
       const relativeTarget = relative(DIST, targetPath);
       if (relativeTarget.startsWith("..") || isAbsolute(relativeTarget)) {
@@ -219,7 +233,7 @@ const searchIndex: Array<{ page: string; heading: string | null; url: string }> 
 for (const page of PAGES) {
   const raw = readFileSync(join(ROOT, page.file), "utf8");
   const { body, title, audience } = stripFrontmatter(raw);
-  const { html, toc } = renderPage(body);
+  const { html, toc } = renderPage(body, page.file);
   const pageTitle = title ?? page.nav;
   writeFileSync(join(DIST, page.out), shell(page, pageTitle, html, toc, audience));
   searchIndex.push({ page: pageTitle, heading: null, url: page.out });

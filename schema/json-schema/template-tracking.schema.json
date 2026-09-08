@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://developassion.github.io/TypedMarkSpecification/schema/template-tracking.schema.json",
   "title": "TypedMark template-region tracking receipts",
-  "description": "Shape of the core-defined template_regions managed-note frontmatter value. Authoritative semantics: managed-notes-and-properties.md and relationships-headings-and-templates.md (Template Drift Tracking).",
+  "description": "Shape of the core-defined template_regions managed-note frontmatter value. Authoritative semantics: template-tracking.md and template-tracking.md (Template Drift Tracking).",
   "type": "object",
   "propertyNames": {
     "$ref": "defs.schema.json#/$defs/slug"

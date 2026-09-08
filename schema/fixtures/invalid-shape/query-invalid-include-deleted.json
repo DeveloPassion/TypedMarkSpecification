@@ -1,0 +1,5 @@
+{
+  "specification_version": "0.1.0",
+  "include_deleted": "yes",
+  "select": [{"kind": "path", "as": "path"}]
+}

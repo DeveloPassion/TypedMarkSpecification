@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://developassion.github.io/TypedMarkSpecification/schema/automation-run-report.schema.json",
   "title": "TypedMark automation run report",
-  "description": "Portable one-hop or propagation execution result. Authoritative semantics: conformance-and-roadmap.md.",
+  "description": "Portable one-hop or propagation execution result. Authoritative semantics: automation-reports.md.",
   "type": "object",
   "required": [
     "specification_version",

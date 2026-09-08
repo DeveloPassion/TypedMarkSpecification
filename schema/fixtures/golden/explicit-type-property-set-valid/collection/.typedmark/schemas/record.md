@@ -1,0 +1,21 @@
+---
+specification_version: 0.1.0
+note_type: record
+label: Record
+icon: file-text
+description: A record stored in its category folder.
+storage:
+  folder_pattern: "{category}"
+  note_name_pattern: "{title}"
+frontmatter:
+  title:
+    type: text
+    nullable: false
+    not_blank: true
+  category:
+    type: text
+    nullable: false
+    not_blank: true
+---
+
+The path-dependent `location` field is intentionally absent from this schema.

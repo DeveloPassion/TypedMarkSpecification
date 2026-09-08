@@ -1,5 +1,5 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 property_set: tracked-template
 description: Property set that wrongly declares template-region receipts.
 frontmatter:

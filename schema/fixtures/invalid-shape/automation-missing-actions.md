@@ -1,5 +1,5 @@
 ---
-specification_version: 0.0.1
+specification_version: 0.1.0
 automation: missing-actions
 description: Invalid automation without any actions.
 trigger:

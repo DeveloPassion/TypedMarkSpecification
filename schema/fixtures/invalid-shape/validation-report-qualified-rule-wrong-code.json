@@ -1,0 +1,16 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {"example:review": "1.2.0"},
+  "evaluated_extensions": {"example:review": "1.2.0"},
+  "valid": false,
+  "results": [{
+    "code": "invalid_field_value",
+    "severity": "error",
+    "path": "notes/review.md",
+    "rule_id": "example:review/REV-1",
+    "extension": "example:review",
+    "message": "A qualified rule uses extension_violation under CR-108."
+  }]
+}
