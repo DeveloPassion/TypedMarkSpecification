@@ -116,11 +116,11 @@ from recorded implementation effort, not inferred from the fixture count.
 ## Reference evidence
 
 The first executable adapter slice is available in the
-[TypedMark tooling repository](https://github.com/DeveloPassion/TypedMark/tree/244d1bf).
-Its [0.1.0 evidence record](https://github.com/DeveloPassion/TypedMark/tree/244d1bf/evidence/0.1.0)
+[TypedMark tooling repository](https://github.com/DeveloPassion/TypedMark).
+Its [0.1.0 evidence record](https://github.com/DeveloPassion/TypedMark/tree/main/evidence/0.1.0)
 identifies the exact specification and adapter revisions, actual reports, and
 read-only snapshot results. The companion
-[system exercise](https://github.com/DeveloPassion/TypedMarkExample/blob/d8eca6d/evidence/0.1.0.md)
+[system exercise](https://github.com/DeveloPassion/TypedMarkExample/blob/main/evidence/0.1.0.md)
 records self-contained instantiation, offline validation, and missing-history
 behavior.
 
