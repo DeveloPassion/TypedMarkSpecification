@@ -9,8 +9,6 @@ description: Customer-specific person record.
 storage:
   folder_pattern: "Customers"
   note_name_pattern: "{title}"
-  archive:
-    policy: in_place_historical
 frontmatter:
   customer_tier:
     type: text

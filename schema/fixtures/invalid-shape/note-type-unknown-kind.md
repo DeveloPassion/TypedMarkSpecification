@@ -9,8 +9,6 @@ description: Dated journal entry.
 storage:
   folder_pattern: "Journal"
   note_name_pattern: "{title}"
-  archive:
-    policy: in_place_historical
 template:
   file: "journal-entry.md"
 frontmatter: {}

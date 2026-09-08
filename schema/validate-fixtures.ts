@@ -28,7 +28,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { basename, extname, join } from "node:path";
 import { Ajv2020, type ValidateFunction } from "ajv/dist/2020";
 import { Lexer, type Token } from "marked";
-import { parse as parseYaml } from "yaml";
+import { isMap, parse as parseYaml, parseDocument } from "yaml";
 import ruleRegistry from "../scripts/rule-registry.json";
 import type { RuleRegistry } from "../scripts/lint-rule-ids";
 
@@ -95,16 +95,24 @@ function validatorFor(
   throw new Error(`cannot map fixture ${fixture} to an artifact schema`);
 }
 
-function extractFrontmatter(text: string): unknown {
+function extractFrontmatter(text: string, required = true): unknown {
   const lines = text.split(/\r?\n/);
   if (lines[0]?.replace(/^﻿/, "") !== "---") {
+    if (!required) return {};
     throw new Error("fixture has no frontmatter block");
   }
   const end = lines.findIndex(
     (line, index) => index > 0 && (line === "---" || line === "..."),
   );
-  if (end === -1) throw new Error("fixture frontmatter block is not closed");
-  return parseYaml(lines.slice(1, end).join("\n"));
+  if (end === -1) {
+    if (!required) return {};
+    throw new Error("fixture frontmatter block is not closed");
+  }
+  const document = parseDocument(lines.slice(1, end).join("\n"));
+  if (document.errors.length) throw document.errors[0];
+  if (document.contents === null) return {};
+  if (!isMap(document.contents)) throw new Error("frontmatter must be a mapping");
+  return document.toJS();
 }
 
 export function validateExamples(
@@ -392,10 +400,6 @@ export function validateGoldenVectors(
       failures.push(`golden/${vector}: missing ${metadataDirectory}/schemas/`);
       continue;
     }
-    if (!existsSync(templateRoot)) {
-      failures.push(`golden/${vector}: missing ${metadataDirectory}/templates/`);
-      continue;
-    }
 
     const schemaPaths = collectFiles(schemaRoot).filter((path) => extname(path) === ".md");
     if (schemaPaths.length === 0) {
@@ -406,16 +410,16 @@ export function validateGoldenVectors(
         const schema = extractFrontmatter(readFileSync(schemaPath, "utf8"));
         validateShape(validators["note-type"]!, schema, `golden/${vector}/${basename(schemaPath)}`, failures);
         const schemaObject = objectValue(schema);
-        const noteType = schemaObject?.note_type;
+        const noteType = schemaObject && !Object.hasOwn(schemaObject, "note_type")
+          ? basename(schemaPath, ".md") : schemaObject?.note_type;
         if (typeof noteType === "string" && basename(schemaPath, ".md") !== noteType) {
           failures.push(`golden/${vector}: schema basename does not match note_type ${noteType}`);
         }
         if (schemaObject?.abstract !== true && typeof noteType === "string") {
           const templateObject = objectValue(schemaObject.template);
-          const templateFile = typeof templateObject?.file === "string"
-            ? templateObject.file
-            : `${noteType}.md`;
-          if (!existsSync(join(templateRoot, ...templateFile.split("/")))) {
+          const templateFile = templateObject?.file;
+          if (typeof templateFile === "string"
+            && !existsSync(join(templateRoot, ...templateFile.split("/")))) {
             failures.push(`golden/${vector}: missing template ${templateFile}`);
           }
         }
@@ -498,7 +502,7 @@ export function validateGoldenVectors(
 
     for (const markdownPath of collectFiles(collectionRoot).filter((path) => extname(path) === ".md")) {
       try {
-        extractFrontmatter(readFileSync(markdownPath, "utf8"));
+        extractFrontmatter(readFileSync(markdownPath, "utf8"), false);
       } catch (error) {
         failures.push(`golden/${vector}/${basename(markdownPath)}: ${error instanceof Error ? error.message : String(error)}`);
       }

@@ -51,7 +51,7 @@ Rules:
 - `FDR-221` `computed` is the single schema-defined mechanism for deriving a field value from sibling fields of the same managed note.
 - `FDR-222` `generated` and `computed` are distinct: `generated` covers value origination without sibling-field inputs; `computed` covers sibling-field derivation.
 - `FDR-223` A field declaring `computed` MUST declare `type: text`.
-- `FDR-224` A field declaring `computed` MUST NOT declare `generated`, `default_value`, `const_value`, or `value_from_schema`; the computed expression is the field's materialization behavior.
+- `FDR-224` A field declaring `computed` MUST NOT declare `generated`, `default_value`, or `const_value`.
 - `FDR-225` A field declaring `computed` MUST NOT declare `immutable: true`, because its stored value is recomputed from its dependencies.
 - `FDR-226` `computed` does not make a field virtual. Computed fields still follow the same type validation, optionality, stored-frontmatter, and canonical materialization rules as other declared fields.
 - `FDR-227` For `computed`, the shared expression-language scope is the managed note's sibling top-level fields in the effective `frontmatter`.

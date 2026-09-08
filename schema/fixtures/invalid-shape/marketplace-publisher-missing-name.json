@@ -1,0 +1,9 @@
+{
+  "specification_version": "0.1.0",
+  "systems": [{
+    "name": "example",
+    "version": "1.0.0",
+    "source": {"path": "systems/example"},
+    "publisher": {}
+  }]
+}

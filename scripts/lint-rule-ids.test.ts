@@ -101,6 +101,14 @@ describe("historical rule identities", () => {
 });
 
 describe("rule references and existing lint rules", () => {
+  test("mixed LF and CRLF fences do not hide subsequent rules", () => {
+    const docs = documents();
+    docs["collection.md"] = page("- `CM-1` One rule MUST hold.\n- `CM-2` Another rule MUST hold.");
+    docs["collection.md"] = docs["collection.md"].replace(
+      "Rules:", "```yaml\nexample: true\r\n```\r\n\nRules:",
+    );
+    expect(lintSpecification(docs, registry)).toEqual([]);
+  });
   test("rejects dangling references outside rule lists", () => {
     const docs = { ...documents(), "guide.md": "See `CM-99` and [the rule](collection.md#CM-98)." };
     const failures = lintSpecification(docs, registry).join("\n");

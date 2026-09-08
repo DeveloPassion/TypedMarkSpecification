@@ -5,13 +5,9 @@
   "description": "Portable JSON descriptor carried by a typedmark:template-region start marker. Authoritative semantics: template-tracking.md (Template Drift Tracking).",
   "type": "object",
   "required": [
-    "specification_version",
     "id"
   ],
   "properties": {
-    "specification_version": {
-      "$ref": "defs.schema.json#/$defs/specification_version"
-    },
     "id": {
       "$ref": "defs.schema.json#/$defs/slug"
     }

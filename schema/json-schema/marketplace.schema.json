@@ -30,6 +30,7 @@
             "items": { "$ref": "defs.schema.json#/$defs/non_empty_string" }
           },
           "publisher": {
+            "required": ["name"],
             "type": "object",
             "properties": {
               "name": { "$ref": "defs.schema.json#/$defs/non_empty_string" }

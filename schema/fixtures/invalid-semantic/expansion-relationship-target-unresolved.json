@@ -1,5 +1,4 @@
 {
-  "specification_version": "0.1.0",
   "id": "ghost-links",
   "mode": "manual",
   "state": "materialized",

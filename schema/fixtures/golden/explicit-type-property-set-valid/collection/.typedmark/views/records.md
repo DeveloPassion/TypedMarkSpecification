@@ -4,7 +4,7 @@ view: records
 description: Records ordered by category and title.
 query:
   specification_version: 0.1.0
-  note_types: [record]
+  note_types: [record, meeting-record]
   select:
     - kind: field
       field: title

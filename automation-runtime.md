@@ -124,7 +124,7 @@ Rules:
 - `MN-161` Two staged actions in one wave that assign unequal parsed values to the same field of the same note are a `conflicting_write` failure.
 - `MN-162` Two staged actions that request the same semantic change MAY be coalesced into one change.
 - `MN-163` `set_field` MUST target a top-level field declared in the target note's effective `frontmatter`.
-- `MN-164` `set_field` MUST NOT target a field declaring `computed`, `immutable: true`, `const_value`, or `value_from_schema`.
+- `MN-164` `set_field` MUST NOT target a field declaring `computed`, `immutable: true`, or `const_value`.
 - `MN-165` A `set_field` value MUST satisfy the target field's effective type, nullability, and value constraints.
 - `MN-166` `add_tag` MUST append its tag when absent.
 - `MN-167` `remove_tag` MUST remove only the exact stored tag named by the action.

@@ -1,17 +1,10 @@
 ---
 specification_version: 0.1.0
 name: mandatory-tag-fixture
-description: Collection with collection-wide and folder-scoped mandatory tags.
+description: Collection with collection-wide mandatory tags.
 mandatory_tags:
   - managed
   - knowledge/base
-folder_scopes:
-  - path:
-      under: Projects/
-    mandatory_tags:
-      - project
-      - managed
 ---
 
-Valid because mandatory tag policies use valid tag strings and a folder scope
-may contribute mandatory tags without contributing a property set.
+Mandatory-tag declarations use valid tag strings.

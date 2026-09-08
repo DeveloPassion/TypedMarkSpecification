@@ -9,6 +9,10 @@
     "select"
   ],
   "properties": {
+    "include_deleted": {
+      "type": "boolean",
+      "default": false
+    },
     "specification_version": {
       "$ref": "defs.schema.json#/$defs/specification_version"
     },

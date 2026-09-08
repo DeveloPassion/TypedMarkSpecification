@@ -65,6 +65,34 @@ version negotiation.
 
 ## Contract Ownership and Dependencies
 
+### Standard Contracts
+
+The following standard contracts use version `0.1.0` and support the Core `0.1`
+compatibility line. Shared field-conversion rules are incorporated by their
+consumers rather than creating a query dependency for systems.
+
+| Identifier | Declared when used | Unconditional dependencies | Authoritative pages |
+| --- | --- | --- | --- |
+| `typedmark:reuse` | abstract schemas, `extends`, property-set artifacts/references, or conditions | none | [Schema Reuse](schema-reuse.md), [Property Sets](property-sets.md) |
+| `typedmark:queries` | a query is embedded in a governed artifact or body surface | none | [Queries](queries.md) |
+| `typedmark:views` | dataset or saved-view artifacts | `typedmark:queries` at `0.1.0` | [Datasets and Views](datasets-and-views.md) |
+| `typedmark:expressions` | `computed` field definitions or expression-based rendering | none | [Expressions](expressions.md) |
+| `typedmark:authoring` | `immutable: true`, `ulid`, `random`, or `sequence` generation | none | [Authoring](authoring.md) |
+| `typedmark:template-tracking` | template-region markers or `template_regions` receipts | none | [Template Tracking](template-tracking.md) |
+| `typedmark:expansion` | content-expansion markers | `typedmark:expressions` at `0.1.0` | [Content Expansion](content-expansion.md) |
+| `typedmark:automation` | automation artifacts or an explicit `automation_defaults` block | none | [Artifacts](automation-artifacts.md), [Runtime](automation-runtime.md), [Reports](automation-reports.md) |
+| `typedmark:systems` | system fields, composition provenance, or history | none | [Systems](systems-composition-evolution.md), [Migration](migration-effects.md) |
+
+Rules:
+
+- `EXT-29` Standard-contract identity, version, compatibility, activation, and unconditional dependencies MUST follow the table.
+- `EXT-30` An expansion using a query, dataset, or view source MUST additionally declare that source's required contract and dependencies.
+
+Standalone query or automation interchange does not modify a collection's
+declaration merely by being received. The operation supplies its exact contract
+version as evaluation context. Stored uses follow the activation table.
+The marketplace catalog remains a separate companion contract.
+
 An extension describes its own structural additions and prerequisites. Those
 additions remain distinct from inert vendor data and cannot redefine names
 owned by Core under the namespace rules in Foundations.

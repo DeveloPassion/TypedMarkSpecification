@@ -60,7 +60,9 @@ This query selects active projects in one area and names each projected column e
 Rules:
 
 - `CM-300` A portable query descriptor MUST be a JSON object containing `specification_version` and `select`.
-- `CM-385` A portable query descriptor MAY additionally contain `note_types`, `where`, `order_by`, `group_by`, and `limit`.
+- `CM-385` A portable query descriptor MAY additionally contain `note_types`, `where`, `order_by`, `group_by`, `limit`, and `include_deleted`.
+- `QRY-1` A supplied `include_deleted` MUST be a boolean, defaulting to false.
+- `QRY-2` Standalone query evaluation MUST receive an explicit exact query-contract version in its operation context rather than changing the target collection's declaration.
 - `CM-301` A query descriptor MUST satisfy `schema/json-schema/query.schema.json` before semantic evaluation.
 - `CM-302` `specification_version` MUST identify the TypedMark specification version whose query semantics the descriptor uses.
 - `CM-405` Query evaluators MUST apply the version-recognition and forward-compatibility behavior of `FND-8` through `FND-14` to query descriptors.
@@ -68,9 +70,9 @@ Rules:
 - `CM-304` A standalone portable query descriptor is runtime interchange data and MUST NOT become authoritative collection input merely by being stored or transmitted.
 - `CM-473` A portable query embedded in a core-governed dataset, saved view, or content expansion MUST be evaluated as part of that governed surface.
 - `CM-305` Query evaluation MUST observe one immutable collection snapshot.
-- `CM-306` The initial candidate set MUST contain every managed note in that snapshot.
+- `CM-306` The initial candidate set MUST contain the non-deleted managed notes in the snapshot, plus deleted notes when `include_deleted` is true.
 - `CM-386` The initial candidate set MUST exclude governed artifacts, excluded paths, assets, and untyped notes.
-- `CM-307` Before evaluating a candidate, a query evaluator MUST resolve its concrete note type, effective schema, current canonical field values, and concrete relationships.
+- `CM-307` Before evaluating a candidate, a query evaluator MUST resolve its concrete type, effective schema and field values, and concrete relationships.
 - `CM-308` Query evaluation MUST fail when a note admitted by the top-level `note_types` filter cannot provide the effective model required by `CM-307`.
 - `CM-309` An omitted top-level `note_types` MUST admit every candidate note type.
 - `CM-310` A present top-level `note_types` MUST be a non-empty list of unique concrete or abstract note-type identifiers.
@@ -124,9 +126,9 @@ Rules:
 - `CM-329` The field operators in this specification version are exactly `exists`, `equals`, `regex`, `contains_any`, `contains_all`, `less_than`, `less_than_or_equal`, `greater_than`, and `greater_than_or_equal`.
 - `CM-330` An `exists` predicate's `value` MUST be a boolean.
 - `CM-388` An `exists` predicate's `value` MUST equal whether the complete field path is physically present in the candidate's current parsed frontmatter value.
-- `CM-331` A field predicate other than `exists` MUST evaluate to false when its field path is undeclared or absent on the candidate.
+- `CM-331` A value predicate MUST evaluate to false when its field has no declared or Core effective contract or no effective value.
 - `CM-332` An `equals` predicate on a present field MUST compare its `value` under the field definition and equality rules `FDR-239` through `FDR-244`.
-- `CM-333` An `equals` predicate with `value: null` MUST match only a physically present null field value whose field definition permits null.
+- `CM-333` An `equals` predicate with `value: null` MUST match an effective null value only when its field contract permits null.
 - `CM-334` The four ordering operators MUST be used only with `text`, `link`, `integer`, `number`, `checkbox`, `date`, `time`, or `datetime` fields.
 - `CM-401` An ordering predicate's comparison value MUST be non-null and valid for the field definition.
 - `CM-335` Ordered `text` and `link` comparisons MUST compare NFC-normalized Unicode code points with case preserved.
@@ -233,7 +235,7 @@ Rules:
 - `CM-486` A mapped field with no source matching the candidate's concrete note type MUST produce null only when `definition` permits null.
 - `CM-487` An absent matching source field MUST produce null only when `definition` permits null.
 - `CM-488` A missing, null, or non-null source value that is incompatible with `definition` MUST make query evaluation fail rather than being coerced, dropped, or replaced.
-- `CM-489` A mapped-field `definition` MUST NOT declare `validate_exists`, `generated`, `computed`, `unique`, `deprecated`, `immutable`, `optional`, `default_value`, `const_value`, `value_from_schema`, or `relationship_kind` because it describes a result value rather than stored field materialization.
+- `CM-489` A mapped-field `definition` MUST NOT declare `validate_exists`, `generated`, `computed`, `unique`, `deprecated`, `immutable`, `default_value`, `const_value`, or `relationship_kind` because it describes a result value rather than stored field materialization.
 - `CM-490` A projection result is source-backed for one row only when it comes from exactly one physical field and any conversion has a defined reverse conversion that round-trips the presented value under `FDR-270` through `FDR-276`.
 - `CM-491` `path`, `note_type`, absent-source, and non-round-trippable projection results are read-only.
 - `CM-533` An aggregate, derived, or ambiguously sourced value produced outside the portable projected column contract MUST be read-only.

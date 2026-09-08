@@ -2,13 +2,10 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://developassion.github.io/TypedMarkSpecification/schema/note-type.schema.json",
   "title": "TypedMark note-type schema (<metadata_directory>/schemas/<note_type>.md frontmatter)",
-  "description": "Frontmatter document shape; the artifact is a Markdown file whose YAML frontmatter is the governed content and whose body is non-normative. Authoritative semantics: note-type-schemas.md. Semantic-layer checks include: file basename equals note_type, abstract defaulting, template.file defaulting, extends resolves to one abstract note type without cycles, mandatory_tags inheritance and compatibility with the effective tags field, property-set references resolve, exclude_property_sets members appear in default_property_sets or folder_scopes, frontmatter_remove targets inherited fields, the effective schema contains every required effective key for concrete note types, and template existence and validity.",
+  "description": "Local schema shape. Basename/default expansion, Reuse resolution, effective values, and template validity are semantic checks.",
   "type": "object",
   "required": [
     "specification_version",
-    "note_type",
-    "label",
-    "icon",
     "description"
   ],
   "properties": {
@@ -34,16 +31,12 @@
     "description": {
       "$ref": "defs.schema.json#/$defs/non_empty_string"
     },
-    "kind": {
-      "$ref": "defs.schema.json#/$defs/schema_kind"
-    },
     "unknown_field": {
       "$ref": "defs.schema.json#/$defs/validation_severity"
     },
     "count": {
       "$comment": "min <= max is a semantic check.",
       "type": "object",
-      "minProperties": 1,
       "properties": {
         "min": {
           "type": "integer",
@@ -91,29 +84,13 @@
       }
     },
     "frontmatter": {
+      "default": {},
       "allOf": [
         {
           "$ref": "defs.schema.json#/$defs/frontmatter_block"
         },
         {
-          "properties": {
-            "note_type": {
-              "$ref": "defs.schema.json#/$defs/note_type_field_contract"
-            },
-            "id": {
-              "$ref": "defs.schema.json#/$defs/id_field_contract"
-            },
-            "deleted": {
-              "$ref": "defs.schema.json#/$defs/state_flag_field_contract"
-            },
-            "archived": {
-              "$ref": "defs.schema.json#/$defs/state_flag_field_contract"
-            },
-            "aliases": {
-              "$ref": "defs.schema.json#/$defs/aliases_field_contract"
-            },
-            "template_regions": false
-          }
+          "$ref": "defs.schema.json#/$defs/core_frontmatter_contract"
         }
       ]
     },
@@ -157,6 +134,34 @@
           "exclude_property_sets": false,
           "frontmatter_remove": false
         }
+      }
+    },
+    {
+      "if": {
+        "not": {
+          "anyOf": [
+            {
+              "properties": {
+                "abstract": {
+                  "const": true
+                }
+              },
+              "required": [
+                "abstract"
+              ]
+            },
+            {
+              "required": [
+                "extends"
+              ]
+            }
+          ]
+        }
+      },
+      "then": {
+        "required": [
+          "storage"
+        ]
       }
     }
   ]

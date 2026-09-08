@@ -31,7 +31,7 @@ For example, a canonical template marks its owned guidance like this:
 
 <!-- typedmark-example: body: Template-owned region markers and Markdown content. -->
 ```markdown
-<!-- typedmark:template-region {"specification_version":"0.1.0","id":"review-guidance"} -->
+<!-- typedmark:template-region {"id":"review-guidance"} -->
 Follow the current review checklist.
 <!-- /typedmark:template-region -->
 ```
@@ -49,7 +49,7 @@ template_regions:
 
 # Quarterly Review
 
-<!-- typedmark:template-region {"specification_version":"0.1.0","id":"review-guidance"} -->
+<!-- typedmark:template-region {"id":"review-guidance"} -->
 Follow the current review checklist.
 <!-- /typedmark:template-region -->
 
@@ -70,9 +70,9 @@ Rules:
 - `RHT-181` A template-region start-marker line MUST contain zero to three leading ASCII spaces, `<!-- typedmark:template-region `, one JSON object on that same line, ` -->`, and no other content.
 - `RHT-182` A template-region closing-marker line MUST contain zero to three leading ASCII spaces, `<!-- /typedmark:template-region -->`, and no other content.
 - `RHT-183` Marker-shaped text inside CommonMark fenced or indented code MUST NOT be parsed as a template-region marker.
-- `RHT-184` The JSON object in a template-region start marker MUST satisfy `schema/json-schema/template-region.schema.json`.
+- `RHT-184` A template-region descriptor MUST contain exactly one `id` whose value is a slug.
 - `RHT-185` The serialized JSON object in a template-region start marker MUST NOT contain the two-character sequence `--`.
-- `RHT-186` A template-region descriptor's `specification_version` MUST follow the specification-version rules in [Foundations](foundations.md).
+- `RHT-186` A template-region descriptor MUST inherit the core specification version of its enclosing managed-note or referenced-template contract.
 - `RHT-187` Every parsed template-region start marker MUST pair with exactly one subsequent unmatched template-region closing marker.
 - `RHT-188` Every parsed template-region closing marker MUST pair with exactly one preceding unmatched template-region start marker.
 - `RHT-189` Template-region descriptor `id` values MUST be unique within their Markdown file.
@@ -102,15 +102,14 @@ template_regions:
 
 Rules:
 
-- `MN-284` `template_regions` is an optional core-defined managed-note field name in this specification version.
-- `MN-285` `template_regions` MAY appear in stored frontmatter even when it is not declared in the effective schema, because it is core-defined rather than user-defined.
+- `MN-284` `template_regions` is an optional field defined by the template-tracking contract, not Core.
+- `MN-285` `template_regions` MAY appear without a schema field declaration when the template-tracking contract is declared.
 - `MN-286` A property set or a note-type schema MUST NOT declare `template_regions`.
 - `MN-287` If stored, `template_regions` MUST be a YAML mapping.
 - `MN-288` Every key in `template_regions` MUST be a slug identifying one template region.
 - `MN-289` Every `template_regions` value MUST be a mapping containing exactly either `baseline` or `detached`.
 - `MN-290` A `baseline` value MUST match `^sha256:[0-9a-f]{64}$`.
 - `MN-291` A `detached` value MUST be the YAML boolean `true`.
-- `MN-292` `template_regions` receipts MUST satisfy `schema/json-schema/template-tracking.schema.json`.
 - `MN-293` Template frontmatter MUST NOT store `template_regions`.
 - `MN-294` The `template_regions` mapping records whole-note enrollment and per-identifier receipt state for [Template Drift Tracking](template-tracking.md#template-drift-tracking).
 
@@ -203,3 +202,20 @@ Rules:
 - `RHT-235` A manual resolution of `both_changed` MUST set its baseline to `T`; its resulting state is `current` when `N` equals `T` and `note_changed` when `N` differs from `T`.
 - `RHT-236` An explicit whole-note unenrollment MUST remove every template-region marker while preserving each region's content and then remove `template_regions`.
 - `RHT-237` A reconciliation write MUST leave the managed note conforming under every applicable frontmatter, heading, relationship, storage, and content-expansion rule.
+
+## Collection Conformance
+
+These checks apply when the collection uses this optional contract.
+
+Rules:
+
+- `CR-88` Every template-region marker or `template_regions` receipt in a collection note belongs to an enrolled managed note and satisfies the receipt, marker-correspondence, and drift-classification rules in [Template Drift Tracking](template-tracking.md#template-drift-tracking).
+
+## Diagnostic Categories
+
+These categories use the collection severity policy.
+
+Rules:
+
+- `CM-65` `template_drift` applies when an enrolled managed note has a template-region state of `template_added`, `template_changed`, `note_changed`, `both_changed`, `region_missing`, `template_removed`, or `template_removed_note_changed` under [Template Drift Tracking](template-tracking.md#template-drift-tracking).
+- `CM-299` `invalid_template_region` applies when a template-region marker, descriptor, receipt, marker pairing, nesting boundary, or marker-to-receipt correspondence violates [Template Drift Tracking](template-tracking.md#template-drift-tracking).

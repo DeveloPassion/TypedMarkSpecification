@@ -30,13 +30,17 @@ being the type of a managed note itself.
 
 Rules:
 
+- `NTS-11` If the selected concrete type declares `extends`, the tool MUST load its abstract ancestor chain from farthest ancestor to the selected type.
+- `NTS-13` Inheritance of `storage`, `template`, `mandatory_tags`, `guidance`, `unknown_field`, `conditions`, and `count` uses whole-key replacement; the last declaration in ancestor-to-concrete order wins.
+- `NTS-14` Property-set selection MUST use collection defaults, concrete exclusions, and concrete opt-in property sets under [Property Sets](property-sets.md).
+- `NTS-98` A descendant's explicit storage block replaces its inherited storage block completely.
+- `NTS-171` The last schema in ancestor-to-concrete order declaring `mandatory_tags` supplies the type-level policy, or an empty list applies when none declares it.
 - `NTS-35` `extends` MAY be omitted.
 - `NTS-36` If present, `extends` MUST be a non-empty slug and MUST resolve to exactly one abstract note type under `<metadata_directory>/schemas/`.
 - `NTS-37` A note type MUST NOT extend itself directly or transitively.
 - `NTS-38` Because `extends` is singular, a note type MUST inherit from at most one parent.
-- `NTS-39` Abstract note types MAY declare `kind`, `storage`, `template`, `mandatory_tags`, `frontmatter`, `relationships`, `headings`, `guidance`, `unknown_field`, `conditions`, and `count` to contribute reusable structure, but they are not required to declare them.
-- `NTS-40` If an abstract note type declares the core-defined `note_type` field in `frontmatter`, it MUST use `value_from_schema: note_type`.
-- `NTS-41` Concrete note types MAY inherit `kind`, `storage`, `template`, `mandatory_tags`, `guidance`, `unknown_field`, `conditions`, `count`, `frontmatter`, `relationships`, and `headings` from abstract ancestors and therefore MAY omit those keys locally.
+- `NTS-39` Abstract note types MAY contribute storage, templates, mandatory tags, fields, relationships, headings, guidance, unknown-field policy, conditions, and counts.
+- `NTS-41` Concrete types MAY omit locally any reusable definitions they inherit under this contract.
 
 ## Abstract Inheritance Example
 
@@ -50,22 +54,16 @@ label: Person
 icon: user
 description: Shared structure for person-like notes.
 
-kind: entity
-
 template:
   file: "person.md"
 
 frontmatter:
-  note_type:
-    type: text
-    value_from_schema: note_type
   title:
     type: text
     not_blank: true
     nullable: false
   email:
     type: text
-    optional: true
     nullable: true
     default_value: null
 
@@ -95,8 +93,6 @@ description: Customer-specific person record.
 storage:
   folder_pattern: "Customers"
   note_name_pattern: "{title}"
-  archive:
-    policy: in_place_historical
 
 frontmatter:
   customer_tier:
@@ -136,12 +132,23 @@ Rules:
 - `NTS-82` `conditions` MAY be omitted.
 - `NTS-83` If present, `conditions` MUST be a non-empty ordered list of condition rules.
 - `NTS-84` Each condition rule MUST physically contain `when` and `then`, and MAY contain `description`, a non-empty string used for reporting.
-- `NTS-85` `when` is a frontmatter predicate mapping with the same shape and semantics as `when.frontmatter` in `note_type_mappings`, defined in [Collection Model](collection-model.md), evaluated against the managed note's stored frontmatter.
+- `NTS-85` `when` uses the frontmatter predicate grammar in [Collection Model](collection-model.md), with value comparisons against the effective record and existence tests against stored presence.
 - `NTS-86` `then` MUST contain at least one of `require` or `require_null`; each, when present, MUST be a non-empty list of unique top-level effective frontmatter field names.
-- `NTS-87` Each field named in `require` or `require_null`, and each field named in `when`, MUST resolve to a field declared in the effective frontmatter; a condition naming an unresolved field makes the schema invalid.
-- `NTS-88` A field named in `require` MUST NOT be declared `optional: true` in the effective schema and SHOULD be nullable, so it can remain `null` while no condition requires it.
-- `NTS-89` When a condition's `when` predicate matches a managed note, every field named in `require` MUST hold a concrete non-null stored value, and every field named in `require_null` MUST be stored as `null`.
+- `NTS-87` A field used by a condition MUST resolve to a declared effective field or Core field.
+- `NTS-88` A conditionally required field SHOULD be nullable when no matching condition requires a concrete value.
+- `NTS-89` A matching condition MUST enforce concrete non-null effective values for `require` and null effective values for `require_null`.
 - `NTS-90` A `require` violation is reported as `missing_required_field`; a `require_null` violation is reported as `invalid_field_value`.
 - `NTS-91` Condition rules are evaluated independently; every matching rule applies, and a note MUST satisfy all of them.
 - `NTS-92` A field MUST NOT be named in `require` by one matching rule and in `require_null` by another matching rule for the same note; condition sets that allow this are invalid for that note and MUST be reported.
 - `NTS-93` `conditions` participates in note-type inheritance through whole-key replacement, like `guidance`; property sets MUST NOT declare `conditions` in this specification version.
+
+## Abstract Relationship Targets
+
+Abstract relationship targets reuse the resolved ancestor chain.
+
+Rules:
+
+- `RHT-16` An abstract declared target means any concrete note type that extends it directly or transitively; a resolved target satisfies an abstract declared target when its concrete note type is such a descendant.
+- `RHT-17` A target note type is declared when it appears directly in `allowed_note_types` or is a concrete descendant of a declared abstract target.
+- `RHT-18` Cardinality for an abstract declared target counts the union of resolved targets across all of its concrete descendants.
+- `RHT-19` When a resolved target's concrete note type matches more than one declared target within the same relationship kind, the instance counts toward the most specific declared target only: the concrete type itself when declared, and otherwise the nearest declared abstract ancestor.

@@ -4,13 +4,10 @@ note_type: reading-list
 abstract: false
 label: Reading List
 icon: book
-kind: entity
 description: Curated reading list.
 storage:
   folder_pattern: "Lists"
   note_name_pattern: "{title}"
-  archive:
-    policy: in_place_historical
 template:
   file: "reading-list.md"
 frontmatter:

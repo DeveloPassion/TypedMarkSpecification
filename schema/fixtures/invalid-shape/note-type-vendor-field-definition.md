@@ -4,7 +4,6 @@ note_type: topic
 label: Topic
 icon: file
 description: Metadata is not allowed inside field definitions.
-kind: entity
 storage:
   folder_pattern: Topics
   note_name_pattern: "{title}"

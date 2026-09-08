@@ -57,6 +57,7 @@ const PAGES: Page[] = [
   { file: "quick-reference.md", out: "quick-reference.html", nav: "Quick Reference", section: "Specification" },
   { file: "schema/docs/schema-boundary.md", out: "schema-boundary.html", nav: "Schema Boundary", section: "Resources" },
   { file: "schema/docs/conformance-runner.md", out: "conformance-runner.html", nav: "Semantic Runner", section: "Resources" },
+  { file: "schema/docs/migration-0.1.md", out: "migration-0.1.html", nav: "0.1 Migration", section: "Resources" },
 ];
 
 const REPO_URL = "https://github.com/DeveloPassion/TypedMarkSpecification";

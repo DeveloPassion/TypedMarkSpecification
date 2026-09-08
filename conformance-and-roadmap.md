@@ -27,17 +27,11 @@ See also:
 
 ## Non-Goals
 
-This specification defines the structural contract for typed Markdown note collections. It deliberately does not define:
-
-- **A specific schema for note types.** TypedMark describes how to define and document note types; concrete note sets, starter content, and house conventions belong to systems layered on top of the core, as stated in [Foundations](foundations.md).
-- **Visual rendering and field widgets.** Saved views standardize their layout family, visible field order, labels, grouping, and board partition. Styling, dimensions, interaction controls, value widgets, note rendering, and opaque `icon` tokens remain tool-defined.
-- **Editor user experience.** Forms, pickers, autocomplete behavior, and authoring workflows are application concerns.
-- **Sync, storage backends, and version control.** TypedMark governs files at rest; how they move between machines — Git, sync services, backups — is out of scope.
-- **Body prose.** Markdown content outside the governed surfaces — frontmatter, H2 headings, internal note links — is free; TypedMark does not constrain writing style or block-level structure.
-- **Value coercion.** TypedMark is strictly typed: a stored value either satisfies its declared property type or it does not. Reading the string `"5"` as the integer `5` is coercion.
-- **Query and index engine internals.** Execution strategy, caching internals, and performance characteristics are implementation concerns; the portable query contract governs results, not how they are produced, and index formats remain outside this version.
-- **AI behavior.** Agents consume the structural contract; prompts, models, and agent workflows are outside the specification.
-- **Identity, authentication, and permissions.** Multi-user access control is out of scope; visibility metadata is tracked separately as a possible future addition.
+Core governs files at rest, not a particular app or domain schema. It does not
+define editor widgets, rendering style, synchronization, storage backends,
+version control, permissions, AI prompts, query-engine internals, or prose
+outside governed surfaces. Optional contracts define portable behavior without
+standardizing their implementations.
 
 Rules:
 
@@ -49,26 +43,18 @@ Conformance evaluates a collection root, represented on disk as a directory tree
 
 Conformance modes:
 
-| Mode | Audience | Minimum artifact set | Advanced features required |
+| Target/profile | Audience | Minimum artifact set | Advanced features required |
 | --- | --- | --- | --- |
-| Core Profile instantiated collection | collection authors | `typedmark.md`, at least one concrete schema, referenced or defaulted templates, and managed notes | none |
+| Core Profile instantiated collection | collection authors | `typedmark.md`, at least one concrete schema, and managed notes; explicit template references when supplied | none |
 | Valid instantiated collection | collection authors and tools | all artifacts used by the collection, including optional reuse and composition metadata when present | only the features physically used |
 | Valid system definition | system publishers | collection model plus system fields, scaffold, schemas, templates, and optional history | publishing, composition, and migration support |
 
 ### Validation Reports
 
-Validators can serialize their findings as one portable JSON report for editors, CI pipelines, and other tools. The report states what was evaluated and whether any configured error remains; individual results identify both a stable diagnostic category and the exact normative rule that produced it.
-
-`evaluation` distinguishes an interpreted contract that has validation errors
-from a contract the tool could not fully interpret. `valid: false` therefore
-means conformance has not been established; with `evaluation: incomplete`, it
-does not by itself prove that the collection is invalid. Extension declarations
-and their map shape are authoritative in [Extensions and Capabilities](extensions.md).
-
-This is a report-shape change from the `0.0` line. Producers populate the new
-fields from actual evaluation; adding `evaluation: complete` to an old report
-without establishing its coverage is not a migration. Consumers distinguish
-incomplete evaluation from a complete report containing validation errors.
+Reports identify evaluated contracts, completeness, and findings. Incomplete
+evaluation cannot establish conformance, even with no errors. Producers populate
+coverage from actual evaluation, not by blindly relabeling an old report.
+Extension maps follow [Extensions and Capabilities](extensions.md).
 
 <!-- typedmark-example: artifact=validation-report -->
 ```json
@@ -189,21 +175,7 @@ The authoritative contract is now in [Automation Run Reports](automation-reports
 
 ### Valid System Definition
 
-A collection root conforms as a valid system definition when:
-
-1. `CR-1` `typedmark.md` is present at the root and valid under [Collection Model](collection-model.md).
-2. `CR-2` `typedmark.md` declares the system fields `version` and `scaffold`, valid under [Systems, Composition, and Evolution](systems-composition-evolution.md).
-3. `CR-3` `<metadata_directory>/history.md`, if present, is valid under [Systems, Composition, and Evolution](systems-composition-evolution.md) and reconstructs the current schema state when replayed.
-4. `CR-4` Every property set file under `<metadata_directory>/property-sets/`, if present, is valid under [Collection Model](collection-model.md), and every property set reference from `typedmark.md` or a note-type schema resolves.
-5. `CR-5` Every schema file under `<metadata_directory>/schemas/`, if present, is valid under [Note Type Schemas](note-type-schemas.md).
-6. `CR-6` Every template referenced by a schema file exists and satisfies the template-frontmatter contract in [Relationships, Headings, and Templates](relationships-headings-and-templates.md) for its note type's effective schema.
-7. `CR-59` Every automation file under `<metadata_directory>/automations/`, if present, is valid under [Collection Model](collection-model.md).
-8. `CR-93` Every dataset file under `<metadata_directory>/datasets/`, if present, is valid under [Collection Model](collection-model.md).
-9. `CR-89` Every saved-view file under `<metadata_directory>/views/`, if present, is valid under [Collection Model](collection-model.md), and every dataset reference from a saved view resolves.
-10. `CR-91` Every saved-view reference from a template resolves.
-11. `CR-94` Every dataset reference from a template resolves.
-12. `CR-84` Every content expansion in a referenced template satisfies the template expansion contract in [Relationships, Headings, Templates, and Content Expansion](content-expansion.md#content-expansion).
-13. `CR-87` Every template region in a referenced template satisfies the marker, descriptor, pairing, nesting, and identifier rules in [Template Drift Tracking](template-tracking.md#template-drift-tracking).
+The required artifact set belongs to [Systems](systems-composition-evolution.md#valid-system-definition).
 
 ### Valid Instantiated Collection
 
@@ -211,19 +183,11 @@ A collection root conforms as a valid instantiated collection when:
 
 1. `CR-7` `typedmark.md` is present at the collection root and valid under [Collection Model](collection-model.md).
 2. `CR-8` If `typedmark.md` declares `composition`, it is valid under [Collection Model](collection-model.md), and the collection is self-contained so that conformance does not require re-resolving its sources.
-3. `CR-9` Every property set file under `<metadata_directory>/property-sets/`, if present, is valid under [Collection Model](collection-model.md), and every property set reference from `typedmark.md` or a note type used by managed notes resolves.
 4. `CR-10` Every schema file under `<metadata_directory>/schemas/`, if present, is valid under [Note Type Schemas](note-type-schemas.md), and every concrete note type used by managed notes resolves to exactly one such schema file.
-5. `CR-21` Every template referenced or defaulted by a concrete schema exists and satisfies the template-frontmatter contract in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
+5. `CR-21` Each concrete schema's explicit or derived starter template satisfies [Templates](relationships-headings-and-templates.md#templates).
 6. `CR-11` Managed notes resolve to valid concrete note types under the configured note-type mapping rules and satisfy the managed note contract under [Managed Notes and Properties](managed-notes-and-properties.md).
 7. `CR-12` Managed notes satisfy their schema storage rules under [Note Type Schemas](note-type-schemas.md).
 8. `CR-13` Managed notes satisfy their schema relationship and heading rules under [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
-9. `CR-60` Every automation file under `<metadata_directory>/automations/`, if present, is valid under [Collection Model](collection-model.md).
-10. `CR-95` Every dataset file under `<metadata_directory>/datasets/`, if present, is valid under [Collection Model](collection-model.md).
-11. `CR-90` Every saved-view file under `<metadata_directory>/views/`, if present, is valid under [Collection Model](collection-model.md), and every dataset reference from a saved view resolves.
-12. `CR-92` Every saved-view reference from a collection note resolves.
-13. `CR-96` Every dataset reference from a collection note resolves.
-14. `CR-85` Every content expansion in a collection note satisfies the applicable marker, descriptor, source, rendering, synchronization, and persisted-state rules in [Relationships, Headings, Templates, and Content Expansion](content-expansion.md#content-expansion).
-15. `CR-88` Every template-region marker or `template_regions` receipt in a collection note belongs to an enrolled managed note and satisfies the receipt, marker-correspondence, and drift-classification rules in [Template Drift Tracking](template-tracking.md#template-drift-tracking).
 
 Additional rules:
 
@@ -232,7 +196,7 @@ Additional rules:
 - `CR-16` A single collection root MAY conform simultaneously as both a valid system definition and a valid instantiated collection.
 - `CR-17` Untyped notes MAY exist in an instantiated collection and do not by themselves make the collection non-conforming.
 - `CR-18` Structural precedence across artifacts remains defined in [Foundations](foundations.md).
-- `CR-19` A Core Profile instantiated collection is a valid instantiated collection that omits system fields, composition provenance, `history.md`, automation rules, datasets, saved views, property sets, `folder_scopes`, vocabularies, and non-default note-type mappings.
+- `CR-19` A Core Profile instantiated collection satisfies the positive Core concern set in [Foundations](foundations.md#purpose) without requiring an optional contract.
 - `CR-20` Validators MUST apply the defaulted shorthand values defined in [Collection Model](collection-model.md) and [Note Type Schemas](note-type-schemas.md) before evaluating any conformance mode.
 - `CR-22` Validators MUST evaluate every winning note-type mapping candidate under `CM-114`, including candidates that do not resolve to a concrete schema.
 
@@ -243,18 +207,8 @@ describes the non-normative adapter boundary, capability-based vector selection,
 and report comparison used to collect implementation evidence. It does not
 replace the rules on this page.
 
-Recommended implementation order:
-
-1. create a Core Profile `typedmark.md` using the defaults in [Collection Model](collection-model.md)
-2. create the initial concrete note type schemas and let [Note Type Schemas](note-type-schemas.md) compute each effective schema
-3. create canonical templates using the defaulted or explicit `template.file` paths in [Relationships, Headings, and Templates](relationships-headings-and-templates.md)
-4. implement managed note parsing, field materialization, field compatibility and conversion, shared-expression evaluation, and note-link resolution using [Managed Notes and Properties](managed-notes-and-properties.md), [Field Definition Reference](field-definition-reference.md), [Foundations](foundations.md), and [Note Links](note-links.md)
-5. add reusable property sets, abstract schemas, vocabularies, advanced mappings, heading rules, and relationship rules only when the collection needs them
-6. add a validator and importer that evaluate the conformance modes defined on this page
-7. populate the system fields in `typedmark.md`, and add a `<metadata_directory>/history.md` change log, if you are packaging a reusable, versioned system, using [Systems, Composition, and Evolution](systems-composition-evolution.md)
-8. implement deterministic system composition that materializes a self-contained collection and records its lineage in `typedmark.md` `composition`, using [Systems, Composition, and Evolution](systems-composition-evolution.md)
-9. implement the migration and update flow that recomposes a collection at newer source versions and applies the resulting change operations to managed notes
-10. implement one-hop automation events, declarative actions, and portable run reports
-11. add dependency-graph propagation, fixed-point termination, recovery, and destructive previews
-12. implement portable query evaluation and query-backed content expansion against the same effective collection model
-13. generate the human-facing reference pages from the authoritative artifacts
+Start with collection discovery and local schema validation, then effective
+values, storage, links, and headings. Run the Core vectors through an actual
+semantic adapter before claiming conformance. Add optional contracts only with
+their declared capabilities and dependencies; their owning pages describe the
+additional behavior.

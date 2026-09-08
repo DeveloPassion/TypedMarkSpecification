@@ -229,3 +229,23 @@ Rules:
 - `CM-462` A Bases exporter MUST emit diagnostics for every TypedMark construct it cannot represent.
 - `CM-475` A lossy Bases export MUST NOT be described as lossless.
 - `CM-463` Tool-specific Bases keys or saved-view state MUST NOT affect TypedMark conformance unless a future core rule or a recognized extension explicitly assigns them semantics.
+
+## Collection Conformance
+
+These checks apply when the collection uses this optional contract.
+
+Rules:
+
+- `CR-95` Every dataset file under `<metadata_directory>/datasets/`, if present, is valid under [Collection Model](collection-model.md).
+- `CR-90` Every saved-view file under `<metadata_directory>/views/`, if present, is valid under [Collection Model](collection-model.md), and every dataset reference from a saved view resolves.
+- `CR-92` Every saved-view reference from a collection note resolves.
+- `CR-96` Every dataset reference from a collection note resolves.
+
+## Diagnostic Categories
+
+These categories use the collection severity policy.
+
+Rules:
+
+- `CM-476` `invalid_dataset` applies when a dataset artifact violates the shape, reference-resolution, query, row-identity, mapped-column, or evaluation rules in [Datasets and Views](datasets-and-views.md).
+- `CM-407` `invalid_view` applies when a saved-view artifact violates the shape, reference-resolution, query, presentation, or layout rules in [Datasets and Views](datasets-and-views.md).

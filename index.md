@@ -21,6 +21,7 @@ TypedMark is an open specification for typed Markdown note systems.
 **Current edition: 0.1.0 draft.** This edition is under development and is not
 yet released. The refocusing work is tracked in
 [#123](https://github.com/DeveloPassion/TypedMarkSpecification/issues/123).
+See the [0.1.0 migration checklist](schema/docs/migration-0.1.md) for intentional compatibility changes.
 
 ### Changes in this draft
 

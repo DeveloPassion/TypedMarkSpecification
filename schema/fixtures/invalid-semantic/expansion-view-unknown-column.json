@@ -1,5 +1,4 @@
 {
-  "specification_version": "0.1.0",
   "id": "active-projects",
   "mode": "auto",
   "state": "materialized",

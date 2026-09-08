@@ -4,7 +4,6 @@ note_type: topic
 label: Topic
 icon: file
 description: A topic with an inert editing preference.
-kind: entity
 storage:
   folder_pattern: Topics
   note_name_pattern: "{title}"

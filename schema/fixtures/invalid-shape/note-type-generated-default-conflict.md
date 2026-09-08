@@ -4,13 +4,10 @@ note_type: ticket
 abstract: false
 label: Ticket
 icon: hash
-kind: entity
 description: Ticket with a conflicting generated field.
 storage:
   folder_pattern: "Tickets"
   note_name_pattern: "{title}"
-  archive:
-    policy: in_place_historical
 template:
   file: "ticket.md"
 frontmatter:

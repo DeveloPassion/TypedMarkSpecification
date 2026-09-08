@@ -53,12 +53,11 @@ descriptors are covered by their descriptor schemas, and the core-defined
   remain unchanged; extension identifiers and metadata keys use explicit
   end-of-input assertions so line terminators cannot trail a valid name
 - local conditional rules: `type: list` requires `items`, `type: link`/`time`
-  require a matching `format`, `const_value`/`value_from_schema` exclusivity,
+  require a matching `format`, generation/constant/default exclusivity,
   per-type constraint applicability (`not_blank`, `regex`, `min`/`max`,
   `allowed_values`, `unique`, `computed`), abstract types not declaring
   composition references, archive-policy-dependent required keys, `version`
   requiring `scaffold`, mandatory-tag declaration grammar and uniqueness,
-  folder scopes declaring exactly one path matcher and at least one action,
   field operations declaring exactly one of `note_type`/`property_set`,
   automation trigger and action variants, event snapshot and body-change
   combinations, causal producer variants, and automation run-report
@@ -73,8 +72,8 @@ descriptors are covered by their descriptor schemas, and the core-defined
   layout families, and board-layout configuration
 - template-region descriptor keys and identifier grammar, plus baseline and
   detached receipt variants in a managed note's `template_regions` value
-- the core-defined field contracts for `note_type`, `id`, `deleted`,
-  `archived`, and `aliases` where schemas or property sets declare them;
+- Core field types and compatible declaration constraints, including the ban
+  on a redundant `note_type` field definition;
   `template_regions` is runtime tracking state and cannot be schema-declared
 - validation-report codes, severities, required extension context for
   `unsupported_extension`, and required `evaluation`, `required_extensions`,
@@ -85,30 +84,29 @@ descriptors are covered by their descriptor schemas, and the core-defined
 
 These rules are normative but cannot (or should not) be expressed in JSON Schema:
 
-- filesystem checks: file basename equals `note_type`/`property_set`/`automation`/`dataset`/`view`, template
-  files exist under `<metadata_directory>/templates/`, artifact locations derive
+- filesystem checks: effective identifiers match basenames, explicitly named
+  templates exist, implicit templates can be derived, and artifact locations derive
   from `metadata_directory`
 - cross-file resolution: `extends` chains and cycle detection, property-set
-  references, `exclude_property_sets` membership in `default_property_sets` or
-  `folder_scopes`,
+  references, `exclude_property_sets` membership in `default_property_sets`,
   `frontmatter_remove` targeting inherited fields, relationship and field `targets` resolving
   to note types, composition source resolution
-- effective-schema computation: folder-scope matching, the evaluation pipeline,
+- effective-schema computation: the local or enabled-Reuse evaluation pipeline,
   block merge rules, and the required effective keys for concrete note types
-- mandatory-tag semantics: collection/folder/note-type merge order, exact
+- mandatory-tag semantics: collection/note-type merge order, exact
   duplicate removal, compatibility with the effective `tags` field, template
   obligations, managed-note membership, and append-only materialization
 - canonical expansion: applying effective defaults for omitted
   `metadata_directory`, `exclude_paths`, `validation_defaults`,
-  `automation_defaults`, `abstract`, `template.file`, and
-  `storage.archive.policy`
+  `abstract`, labels, field values, and conventional/derived templates;
+  absent archive blocks use active storage
 - value semantics: `default_value`/`const_value`/`allowed_values` conformance to
   the declared type, `min <= max`, regex dialect, storage placeholder resolution,
   generation-strategy value production, shared expression-language syntax,
   consumer-specific reference resolution, transform validity, null handling, and
   stored-value agreement (all tool / validator-time behaviors)
-- managed-note conformance: note-type association, canonical field
-  materialization, note-link syntax and resolution, allowed unresolved
+- managed-note conformance: note-type association, sparse effective values,
+  explicit normalization, note-link syntax and resolution, unresolved
   placeholder links, relationship instance counting and cardinality, heading
   rules, storage-path conformance including archived state
 - field compatibility and conversion: directional type-pair classification,

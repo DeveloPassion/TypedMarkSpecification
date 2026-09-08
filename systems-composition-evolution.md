@@ -105,7 +105,8 @@ Rules:
 - `SCE-12` `scaffold` MUST be a mapping.
 - `SCE-13` `scaffold.folders` lists folders an importer SHOULD create when instantiating a collection from the system.
 - `SCE-14` `scaffold.notes` lists note files an importer SHOULD create when instantiating a collection from the system.
-- `SCE-15` Each scaffold note entry MUST define `path`, `note_type`, and `from_template`.
+- `SCE-15` Each scaffold note entry MUST define `path` and `note_type`.
+- `SCE-157` Omitted `from_template` MUST select the note type's effective explicit or derived starter template.
 - `SCE-16` `scaffold.notes[].from_template` follows the same resolution rule as a schema's `template.file` defined in [Note Type Schemas](note-type-schemas.md): it is a relative path resolved against `<metadata_directory>/templates/`, MUST NOT restate the metadata directory or the `templates/` folder, and MUST end in `.md`.
 - `SCE-17` `scaffold.notes[].note_type` MUST resolve to exactly one concrete note type.
 - `SCE-18` `scaffold.notes[].values` MAY provide initial frontmatter values that are merged into the instantiated template.
@@ -152,7 +153,9 @@ Instantiating a system creates a working collection from it. The collection reco
 Rules:
 
 - `SCE-42` An importer MUST validate `typedmark.md` and every governed artifact under `metadata_directory` before creating a collection from the system.
-- `SCE-43` An importer MUST preserve `typedmark.md` and the configured metadata directory structure and file contents unless the user explicitly requests a transformation.
+- `SCE-43` An importer MUST preserve the metadata directory's artifacts except for explicitly requested transformations.
+- `SCE-151` Instantiation of a working collection MUST author a new collection name and omit the source's publishing `version` and `scaffold`.
+- `SCE-152` Instantiation MUST preserve applicable licensing and attribution material.
 - `SCE-44` An importer SHOULD support a full scaffolded import mode that creates the declared folders and notes.
 - `SCE-45` An importer MAY additionally support a metadata-only import mode that installs `typedmark.md` and the configured metadata directory without materializing scaffold notes.
 - `SCE-46` When instantiating a note from a template, the importer MUST emit frontmatter that conforms to [Managed Notes and Properties](managed-notes-and-properties.md).
@@ -193,8 +196,6 @@ Rules:
 - `SCE-63` A composing tool MUST report each scoping exclusion it materializes, identifying the note type, the excluded property set, and the sources involved.
 - `SCE-64` Relationship target note types referenced by a source's property sets and note-type schemas are resolved against the composed result, not against the source in isolation.
 - `SCE-65` `typedmark.md` `note_type_mappings` merge by concatenation in merge order; because mapping rules are evaluated in order, earlier sources' rules are evaluated before later sources' rules unless the target overrides them.
-- `SCE-141` `typedmark.md` `folder_scopes` merge by concatenation in source merge order followed by the target collection's entries.
-- `SCE-142` A source system's folder scope applies to every matching managed note in the composed collection, regardless of which source contributed that note's winning schema.
 - `SCE-143` `typedmark.md` `mandatory_tags` merge by concatenation in source merge order followed by the target collection's entries, with duplicates removed under `CM-232` in [Collection Model](collection-model.md) and the first occurrence retained.
 - `SCE-144` A source system's collection-level mandatory tags apply to every managed note in the composed collection, regardless of which source contributed that note's winning schema.
 - `SCE-145` A source system's winning automation rules evaluate against every matching managed note in the composed collection, regardless of which source contributed that note's winning schema.
@@ -202,6 +203,8 @@ Rules:
 - `SCE-66` `typedmark.md` `validation_defaults`, `automation_defaults`, `exclude_paths`, and `vocabularies` merge by key, with later inputs overriding earlier inputs per key, and the target overriding all.
 - `SCE-67` The composing collection's own `name`, `version`, and other system fields are authored on the result; they are never inherited from a source.
 - `SCE-68` A composing tool MUST report every collision it resolves, identifying the artifact, the contributing sources, and the winner.
+- `SCE-153` Composition MUST combine required extension maps without replacing an exact version by a different version.
+- `SCE-154` Conflicting required extension versions MUST make composition fail for explicit resolution.
 - `SCE-149` Dataset references from composed saved views and content expansions MUST resolve against the composed dataset inventory after keyed replacement.
 - `SCE-150` A keyed dataset replacement that leaves any composed dependent unresolved or incompatible MUST make composition fail.
 - `SCE-69` `history.md` from each source MAY be retained for update reasoning, as defined under Migration and Updates; composition itself does not require merging source histories into a single log.
@@ -236,7 +239,7 @@ Key and element order:
 
 - `SCE-79` Order-significant mappings preserve their defined order; every other mapping serializes its keys sorted ascending by Unicode code point.
 - `SCE-80` The `frontmatter` mapping and every `object.fields` mapping are order-significant and MUST preserve the effective field order defined by the merge rules.
-- `SCE-81` `property_sets`, `default_property_sets`, `mandatory_tags`, `folder_scopes`, each folder scope's `property_sets` and `mandatory_tags`, `composition.sources`, note-type-level `mandatory_tags`, automation `actions`, dataset and embedded saved-view query `select`, `order_by`, and `group_by` lists, mapped-field `sources`, saved-view `presentation.fields`, saved-view `presentation.board.columns`, `history`, and every `changes` list are sequences and MUST preserve their defined order.
+- `SCE-81` `property_sets`, `default_property_sets`, `mandatory_tags`, `composition.sources`, note-type-level `mandatory_tags`, automation `actions`, dataset and embedded saved-view query `select`, `order_by`, and `group_by` lists, mapped-field `sources`, saved-view `presentation.fields`, saved-view `presentation.board.columns`, `history`, and every `changes` list are sequences and MUST preserve their defined order.
 - `SCE-82` Every other mapping, including a field definition's property keys and the `storage`, `relationships`, `headings`, and `typedmark.md` top-level mappings, MUST serialize its keys in ascending Unicode code-point order.
 
 Scalars:
@@ -312,7 +315,7 @@ Defined change operations:
 - `change_headings` with `note_type`, for changes to the effective `headings` block
 - `change_relationships` with `note_type`, for changes to the effective `relationships` block
 - `change_note_type` with `note_type`, for note-type-level changes that no more specific operation covers, such as changes to `kind`, `extends`, `mandatory_tags`, `property_sets`, `exclude_property_sets`, `frontmatter_remove`, or `guidance`
-- `change_collection`, for changes to the structural fields of `typedmark.md`, such as `note_type_mappings`, `mandatory_tags`, `default_property_sets`, `folder_scopes`, `exclude_paths`, `validation_defaults`, or `automation_defaults`
+- `change_collection`, for changes to the structural fields of `typedmark.md`, such as `note_type_mappings`, `mandatory_tags`, `default_property_sets`, `exclude_paths`, `validation_defaults`, or `automation_defaults`
 - `add_property_set` with `property_set`
 - `remove_property_set` with `property_set`
 - `rename_property_set` with `from` and `to`
@@ -340,10 +343,11 @@ Rules:
 - `SCE-103` A `field` operand MAY be a dotted path to address a nested field inside an `object.fields` mapping.
 - `SCE-104` A `change_*` operation records that the named block or artifact changed; it does not restate the new value, which lives in the governed artifacts themselves.
 - `SCE-105` Every structural difference between two consecutive releases MUST be recorded by at least one change operation; a structural change that no operation records is a divergence between `history.md` and the current schemas.
-- `SCE-106` Replaying `history` from the first entry to the last, applying each `changes` list in order, MUST reconstruct the system's current inventory of note types, property sets, automations, datasets, saved views, and fields.
-- `SCE-147` Replaying `history` MUST account for every structural change between consecutive releases.
+- `SCE-106` A performed history replay MUST reconstruct the physically declared artifact and field inventory from its baseline and subsequent operations.
+- `SCE-147` A replay check MUST NOT confuse inherited effective fields with physically declared fields.
 - `SCE-148` The governed artifacts remain authoritative for the concrete content of each replayed block.
 - `SCE-107` A validator MAY check this reconstruction invariant and report a divergence between `history.md` and the current schemas.
+- `SCE-155` A history adopted after earlier releases MAY begin with a baseline entry enumerating its current physical inventory through the existing add operations.
 - `SCE-108` When cutting a new release, a tool SHOULD generate candidate `changes` by comparing the previous version's state to the current state, and the author MUST confirm or correct any change that a structural comparison cannot classify unambiguously, in particular distinguishing a `rename_field` from a paired `remove_field` and `add_field`.
 
 ## Migration and Updates
@@ -358,14 +362,15 @@ The update flow:
 2. `SCE-110` Resolve the new target version for each source system being updated.
 3. `SCE-111` Recompose the collection deterministically at the new versions to obtain the new effective governed artifacts.
 4. `SCE-112` Compute the structural impact on the specific target by comparing the collection's current effective governed artifacts to the recomposed artifacts.
-5. `SCE-113` Reconcile that impact with the `changes` recorded in each updated source's `history.md` between the collection's current source version and the target source version, so that renames and retypes are classified correctly rather than treated as drops and adds.
+5. `SCE-113` Reconcile the impact with available source history or explicitly reviewed migration classifications, so renames and retypes are not guessed from drops and additions.
 6. `SCE-114` Produce an ordered migration plan of governed-reference and collection-content operations from the reconciled change set.
 7. `SCE-115` Apply the migration plan to the affected governed references and collection content, then update `composition.sources` to the new versions.
 
 Rules:
 
 - `SCE-116` A tool MUST recompute migration impact against the actual target collection, because local overrides recorded on top of the lineage MAY change which source changes are relevant.
-- `SCE-117` A tool MUST classify field renames and retypes using the source `history.md` change operations rather than inferring them from a structural comparison.
+- `SCE-117` A tool MUST classify renames and retypes from explicit history operations or an explicitly reviewed migration classification, rather than guessing from a structural diff.
+- `SCE-156` Missing or incomplete history MUST prevent automatic application of an unreviewed migration classification.
 - `SCE-118` The collection-content effect of each change operation is defined in [Migration Effects](migration-effects.md).
 - `SCE-119` After a migration completes, the collection MUST conform to the recomposed effective schemas, and `typedmark.md` `composition.sources` MUST record the new resolved versions.
 - `SCE-120` A tool MUST NOT silently discard managed-note data; a migration step that cannot preserve data, such as an unclassifiable `retype_field`, MUST be reported for explicit resolution rather than applied destructively.
@@ -399,6 +404,35 @@ Rules:
 - `CM-129` A source `version` MUST be a Semantic Versioning 2.0.0 string.
 - `CM-130` A `name` MUST appear at most once in `composition.sources`.
 - `CM-131` A source `name` MUST NOT equal the composing collection's own `name`.
-- `CM-132` Each source MUST resolve to exactly one system whose `name` and `version` match; a source that does not resolve is an `invalid_composition` failure.
+- `CM-132` During composition or update, each source MUST resolve to one system with the declared name and version; validation of an already materialized collection does not re-resolve sources.
 - `CM-133` A composed collection MUST remain self-contained: its materialized schemas, property sets, automation rules, datasets, saved views, and templates MUST be physically present under `metadata_directory`, and conformance MUST NOT require re-resolving `composition.sources`.
 - `CM-134` `composition` records provenance only; it does not relocate, replace, or override any governed artifact physically present under `metadata_directory`.
+
+### Valid System Definition
+
+A collection root conforms as a valid system definition when:
+
+1. `CR-1` `typedmark.md` is present at the root and valid under [Collection Model](collection-model.md).
+2. `CR-2` `typedmark.md` declares the system fields `version` and `scaffold`, valid under [Systems, Composition, and Evolution](systems-composition-evolution.md).
+3. `CR-3` Present history satisfies its artifact/version contract; optional replay follows `SCE-106` and `SCE-107`.
+4. `CR-4` Every property set file under `<metadata_directory>/property-sets/`, if present, is valid under [Collection Model](collection-model.md), and every property set reference from `typedmark.md` or a note-type schema resolves.
+5. `CR-5` Every schema file under `<metadata_directory>/schemas/`, if present, is valid under [Note Type Schemas](note-type-schemas.md).
+6. `CR-6` Explicit and derived templates satisfy [Templates](relationships-headings-and-templates.md#templates).
+7. `CR-59` Every automation file under `<metadata_directory>/automations/`, if present, is valid under [Collection Model](collection-model.md).
+8. `CR-93` Every dataset file under `<metadata_directory>/datasets/`, if present, is valid under [Collection Model](collection-model.md).
+9. `CR-89` Every saved-view file under `<metadata_directory>/views/`, if present, is valid under [Collection Model](collection-model.md), and every dataset reference from a saved view resolves.
+10. `CR-91` Every saved-view reference from a template resolves.
+11. `CR-94` Every dataset reference from a template resolves.
+12. `CR-84` Every content expansion in a referenced template satisfies the template expansion contract in [Relationships, Headings, Templates, and Content Expansion](content-expansion.md#content-expansion).
+13. `CR-87` Every template region in a referenced template satisfies the marker, descriptor, pairing, nesting, and identifier rules in [Template Drift Tracking](template-tracking.md#template-drift-tracking).
+
+## Diagnostic Categories
+
+These categories use the collection severity policy.
+
+Rules:
+
+- `CM-12` `name` SHOULD be unique to the system family it identifies.
+- `CM-59` `invalid_composition` applies when composition provenance or a composition operation violates its applicable contract in this page, [Systems, Composition, and Evolution](systems-composition-evolution.md), or the vendor-metadata preservation rules in [Extensions and Capabilities](extensions.md).
+- `CM-540` `invalid_system` applies when system fields or a system-definition requirement violate [Systems, Composition, and Evolution](systems-composition-evolution.md).
+- `CM-541` `invalid_history` applies when `history.md` violates its history contract, including an inventory inconsistency found by a replay check.

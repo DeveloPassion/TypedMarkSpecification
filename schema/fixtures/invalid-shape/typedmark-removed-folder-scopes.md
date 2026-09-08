@@ -13,4 +13,4 @@ folder_scopes:
       - archive-metadata
 ---
 
-Shape-valid folder-scope declarations.
+Invalid in 0.1.0: folder_scopes is a removed structural key.

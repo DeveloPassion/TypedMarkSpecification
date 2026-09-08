@@ -127,3 +127,19 @@ Rules:
 - `CM-289` The effective `max_propagation_waves` is `100` when it is omitted.
 - `CM-290` `max_propagation_waves` MUST be a positive integer.
 - `CM-291` `max_propagation_waves` MUST NOT exceed `10000`.
+
+## Collection Conformance
+
+These checks apply when the collection uses this optional contract.
+
+Rules:
+
+- `CR-60` Every automation file under `<metadata_directory>/automations/`, if present, is valid under [Collection Model](collection-model.md).
+
+## Diagnostic Categories
+
+These categories use the collection severity policy.
+
+Rules:
+
+- `CM-543` `invalid_automation` applies when an automation artifact violates [Automation Artifacts](automation-artifacts.md).

@@ -7,272 +7,235 @@ audience: essentials
 
 # Managed Notes and Properties
 
-Audience: collection authors.
+Audience: collection authors and implementers of read-only validation or note writers.
 
 Authoritative for:
 
-- the managed note contract and note-type association
-- field names and the core-defined fields: `note_type`, `id`, `deleted`, `archived`, and `aliases`
-- mandatory-tag conformance and materialization
-- canonical field materialization and field optionality
+- the managed-note contract and core-defined note fields
+- stored presence, effective values, and sparse authoring
+- field names and managed-note materialization
 
 See also:
 
-- [Field Definition Reference](field-definition-reference.md): property types and field-definition properties
-- [Note Links](note-links.md): note-link syntax, resolution, and body extraction
-- [Migration Effects](migration-effects.md): what migration operations do to managed notes
-- [Relationships, Headings, and Templates](relationships-headings-and-templates.md): relationship cardinality, headings, and core template obligations
-- [Template Tracking](template-tracking.md): the `template_regions` field and template drift
-- [Content Expansion](content-expansion.md): synchronized derived Markdown regions
-- [Automation Runtime](automation-runtime.md): automation events, action effects, and propagation consistency
+- [Collection Model](collection-model.md): discovery, association, and mandatory-tag policy
+- [Note Type Schemas](note-type-schemas.md): effective field definitions and storage
+- [Field Definition Reference](field-definition-reference.md): types, constraints, and defaults
+- [Note Links](note-links.md): resolution and aliases
+- [Relationships, Headings, and Templates](relationships-headings-and-templates.md): relationship counts, headings, and starter state
 
 ## Notes in a Collection
 
-TypedMark distinguishes between collection notes in general and managed notes specifically.
+A managed note is a collection note associated with one concrete schema by the
+mapping rules in Collection Model. Untyped notes remain ordinary Markdown;
+mapping errors are not a license to guess a type from prose or a filename.
 
 Rules:
 
-- `MN-1` A collection note is a Markdown note that belongs to the collection as content rather than as a TypedMark artifact.
-- `MN-2` A managed note is a collection note that is associated with exactly one known note type under this specification version's note-type association rules.
-- `MN-3` The ordered note-type mapping rules are defined in [Collection Model](collection-model.md).
-- `MN-4` The first matching note-type mapping rule determines the note's candidate note type.
-- `MN-5` A collection note is managed only when the candidate note type from the winning mapping rule resolves to exactly one known concrete schema.
-- `MN-6` A collection note is untyped when no mapping rule matches or when the winning mapping rule does not resolve to exactly one known concrete schema; the latter case is an `invalid_note_type_mapping` diagnostic under [Collection Model](collection-model.md).
-- `MN-7` Untyped notes MAY exist in a collection.
-- `MN-8` Untyped notes are outside the managed-note contract on this page and are not validated against note-type storage, relationship, heading, or frontmatter field-definition rules.
-- `MN-9` Rules on this page apply only to managed notes unless a rule explicitly says otherwise.
+- `MN-2` A managed note is a collection note associated with exactly one known concrete note type.
+- `MN-8` Untyped notes are outside the Core managed-note contract; a declared extension can govern other surfaces only when its own contract explicitly does so.
+- `MN-120` A managed note MUST resolve to exactly one known concrete note type under the configured note-type mappings.
+- `MN-121` A managed note MUST satisfy its effective note-type schema.
+- `MN-123` A managed note MUST satisfy the applicable storage, relationship, and heading contracts.
+- `MN-18` A managed note MUST remain usable as ordinary Markdown without preprocessing, transpilation, or note-local sidecars.
 
-## Managed Note Contract
+Path-based association can manage a body-only note; effective values determine
+whether it conforms.
 
-The managed-note contract combines file format, note-type resolution, effective-schema conformance, and the governed note surfaces.
+## Stored and Effective Values
 
-Rules:
+Effective records add deterministic defaults without rewriting stored notes.
+For example, omitted `status` can default to `draft`, while explicit null stays
+null and is checked against nullability.
 
-- `MN-117` A managed note MUST be a Markdown file.
-- `MN-118` A managed note MUST contain valid YAML frontmatter.
-- `MN-119` A managed note MUST use YAML frontmatter as its metadata surface.
-- `MN-120` A managed note MUST resolve to exactly one known concrete note type under the configured note-type mapping rules.
-- `MN-121` A managed note MUST satisfy exactly one effective note-type schema as defined in [Note Type Schemas](note-type-schemas.md).
-- `MN-122` A managed note MUST satisfy the field and materialization rules defined on this page.
-- `MN-123` A managed note MUST satisfy the storage, relationship, and heading rules linked from its resolved note type.
-- `MN-124` Each conformance evaluation MUST use the managed note's current normalized collection-relative path when resolving `folder_scopes`.
-
-Common frontmatter shape:
-
-<!-- typedmark-example: fragment: Managed-note frontmatter requires its effective note-type schema. -->
-```yaml
-note_type: topic
-tags:
-  - managed
-  - type/topic
-title: Note Taking
-description: ""
-domain: ""
-sources:
-  - "[Introduction to Note Taking](Sources/Introduction%20to%20Note%20Taking.md)"
-summary: ""
-status: active
-```
-
-This remains a common stored shape, especially when a collection uses explicit frontmatter mapping or chooses to materialize the resolved note type in frontmatter.
+| Stored state | Effective value |
+| --- | --- |
+| Concrete value | That value, without coercion |
+| Explicit null | Null, without substituting a default |
+| Absent with an explicit `default_value` | The declared default |
+| Absent core-defined field | Its applicable core fallback |
+| Absent ordinary nullable field, no default | Null |
+| Absent ordinary non-nullable field, no default | No conforming value |
 
 Rules:
 
-- `MN-10` `note_type`, when stored, defines the explicit note type value of the note.
-- `MN-11` If stored, `note_type` MUST equal the schema identifier defined by the matching concrete schema file.
-- `MN-12` `note_type` MAY be omitted when the configured note-type mapping rules resolve the note type from another surface.
-- `MN-13` `id` MAY be omitted.
-- `MN-14` A managed note MAY declare `id` when its schema includes an `id` field definition.
-- `MN-15` If a managed note declares `id`, its `id` MUST be stable across renames and moves.
-- `MN-16` `title` is human-facing and MAY change unless its field definition declares `immutable: true`.
-- `MN-17` Display-oriented fields such as `title` and `description` are human-facing note metadata and MAY differ from the note's file name and storage path unless a schema rule explicitly couples them.
-- `MN-18` A conforming managed note MUST remain usable as a normal Markdown note without preprocessing, transpilation, or note-local sidecar metadata.
-- `MN-19` Managed-note conformance uses the effective note-type schema after default property sets, matching folder-scoped property sets, abstract-ancestor application, opt-in property sets, and local concrete schema definitions have been applied.
-- `MN-20` The meanings of `relationship_kind`, `belongs_to`, and `related_to` are defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
-- `MN-21` Managed note frontmatter MUST follow the canonical field materialization rules defined on this page.
+- `MN-118` A recognized frontmatter block used by a managed note MUST be a valid mapping under the grammar in [Foundations](foundations.md).
+- `MN-91` A tool MUST derive effective field values using the Stored and Effective Values table.
+- `MN-295` Validation and value-based constraints MUST use effective values unless their owning rule explicitly tests stored presence.
+- `MN-296` Stored-presence tests MUST distinguish absence from an explicitly stored null.
+- `MN-297` A read-only evaluation MUST NOT generate clock-dependent, random, or sequence values.
+- `MN-298` Effective-value construction MUST NOT change a collection file.
+- `MN-94` Declared fields inside a concrete object mapping MUST receive the same effective-value treatment recursively.
+- `MN-299` An absent or null object MUST NOT be replaced with a mapping merely to apply defaults to its children.
+- `MN-98` An absent declared field with no effective value satisfying its non-null requirement MUST be reported as `missing_declared_field`.
+- `MN-99` A present null that violates a non-null requirement MUST be reported as `missing_required_field`.
+- `MN-300` A tool MUST NOT infer a default from `allowed_values`, `const_value`, note body prose, or a generation strategy during read-only evaluation.
+
+Empty text, empty lists, and empty mappings are concrete values, not absence.
+Their constraints apply normally. The implicit fallbacks for optional core
+fields do not force those fields to be serialized.
 
 ### Frontmatter Block Grammar
 
-Rules:
-
-- `MN-22` A note's frontmatter block is recognized under the Frontmatter Block Grammar defined in [Foundations](foundations.md).
-- `MN-23` A note whose frontmatter block content parses as a non-mapping YAML document has no valid frontmatter and cannot satisfy the managed note contract.
+The authoritative grammar is in [Foundations](foundations.md#frontmatter-block-grammar).
+No block is required solely for decoration: a mapping can provide association,
+and defaults can provide effective values, without stored frontmatter.
 
 ### Field Names
 
-A managed-note frontmatter field name is the YAML key under which a field definition stores its value. The same field-name rules apply wherever this specification declares field definitions: the `frontmatter` block of a note-type schema, the `frontmatter` block of a property set, and any nested `object.fields` mapping.
+Field declarations name top-level note properties or children of an `object`.
+For example, `reviewed_at` is a valid declaration name, while `reviewed-at` is
+not. Unknown stored properties follow the unknown-field policy rather than
+being silently renamed.
 
 Rules:
 
-- `MN-24` A field name MUST be a non-empty string.
-- `MN-25` A field name MUST match the regular expression `^[a-z][a-z0-9_]*$`.
-- `MN-26` A field name MUST start with a lowercase ASCII letter and MAY continue with lowercase ASCII letters, digits, and underscores.
-- `MN-27` A field name MUST NOT contain uppercase letters, whitespace, dots, slashes, or any other character outside that grammar.
-- `MN-28` Field names are case-sensitive; two names that differ only in case are different names.
-- `MN-29` A field name MUST be unique within the `frontmatter` mapping or `object.fields` mapping that declares it.
-- `MN-30` A note-type schema or property set that declares a field name violating these rules is invalid under its artifact contract.
-- `MN-31` The core-defined managed-note field names defined below conform to this grammar and additionally carry the contracts defined in Core-Defined Frontmatter Field Names.
-- `MN-32` Storage-pattern placeholders of the form `{field_name}` reference top-level field names that follow these rules, as defined in [Note Type Schemas](note-type-schemas.md).
-- `MN-33` When two field definitions contributed through property-set composition or note-type inheritance share a field name, they are the same field and merge by name under the rules in [Collection Model](collection-model.md); this is not a uniqueness violation.
+- `MN-25` A declared field name MUST match `^[a-z][a-z0-9_]*$` as a complete string.
+- `MN-29` A field name MUST be unique within the `frontmatter` or `object.fields` mapping declaring it.
+- `MN-33` Repeated declarations of the same field name through supported reuse mechanisms merge under the [Property Sets](property-sets.md) rules rather than creating distinct fields.
 
-### Core-Defined Frontmatter Field Names
+## Core-Defined Frontmatter Field Names
 
-Managed-note frontmatter includes both generic schema-defined fields and core-defined field names whose meaning is assigned by this specification.
+Core fields are recognized at note top level and optional in storage unless
+compatible constraints require values. The table gives base contracts and
+fallbacks; state defaults and timestamp strategies remain fixed.
+
+| Field | Base value contract | Absence fallback | Schema customization |
+| --- | --- | --- | --- |
+| `note_type` | Non-empty text equal to the associated concrete type | Associated concrete type | No field declaration |
+| `id` | Non-null text in `slug` format | No identifier | Compatible constraints/default or `uuid` generation |
+| `deleted` | Non-null checkbox | `false` | Compatible constraints; fixed `false` default |
+| `archived` | Non-null checkbox | `false` | Compatible constraints; fixed `false` default |
+| `aliases` | List of unique non-empty text values | `[]` | Compatible item/value constraints and defaults |
+| `tags` | Non-null `tags` value | `[]` | Compatible constraints and defaults |
+| `title` | Text or null | Note basename without `.md` | Compatible constraints and defaults |
+| `description` | Text or null | Null | Compatible constraints and defaults |
+| `created_at` | Datetime or null | Null on read | Compatible constraints; fixed `generated: now` when materialized |
+| `updated_at` | Datetime or null | Null on read | Compatible constraints; fixed `generated: now_on_write` when materialized |
 
 Rules:
 
-- `MN-34` A managed-note frontmatter field name is core-defined only when this specification gives that field a normative contract.
-- `MN-35` The normative contract for a core-defined managed-note field MUST define its meaning, whether it is required or optional or conditional, whether schemas may declare it explicitly, the constraints on its stored values, and any note-type association or conformance behavior that follows from its use.
-- `MN-36` `note_type` is a core-defined managed-note field name in this specification version.
-- `MN-37` `note_type` MAY appear in stored frontmatter even when it is not declared in the effective schema, because it is core-defined rather than user-defined.
-- `MN-38` `note_type` MAY be omitted from stored frontmatter when the configured note-type mapping rules resolve the note type from another surface.
-- `MN-39` If stored, `note_type` MUST be a non-empty string.
-- `MN-40` If stored, `note_type` MUST equal the resolved note type for that note.
-- `MN-41` If a property set or a note-type schema declares `note_type`, it MUST declare `type: text`.
-- `MN-42` If a property set or a note-type schema declares `note_type`, it MUST declare either `value_from_schema: note_type` or `const_value` equal to the schema's top-level `note_type`. In a property set, only `value_from_schema: note_type` is permitted, because a property set has no top-level `note_type`.
-- `MN-43` If a property set or a note-type schema declares `note_type`, it MUST NOT declare `optional: true` or `nullable: true`.
-- `MN-44` `id` is an optional core-defined managed-note field name in this specification version.
-- `MN-45` Schemas MAY declare `id` when they require stable note-level identifiers.
-- `MN-46` If a schema declares `id`, it MUST declare `type: text` and `format: slug`.
-- `MN-47` If a schema declares `id`, it MUST NOT declare `optional: true` or `nullable: true`.
-- `MN-48` Stored `id` values MUST be unique across all managed notes in the collection, regardless of note type; a repeated `id` value is a `duplicate_unique_value` failure.
-- `MN-49` `deleted` is an optional core-defined managed-note field name in this specification version.
-- `MN-50` `deleted` MAY appear in stored frontmatter even when it is not declared in the effective schema, because it is core-defined rather than user-defined.
-- `MN-51` If stored, `deleted` MUST be a YAML boolean.
-- `MN-52` If omitted or stored as `false`, the note is not logically deleted.
-- `MN-53` If stored as `true`, the note is logically deleted.
-- `MN-54` Logical deletion is distinct from archiving. Setting `deleted: true` does not by itself move the note or apply archive storage rules.
-- `MN-55` A logically deleted note remains a managed note and continues to use its resolved concrete note type in this specification version.
-- `MN-56` A logically deleted note MUST still satisfy its effective note-type schema, including field, storage, relationship, and heading rules; logical deletion marks state, it does not relax conformance.
-- `MN-57` A resolved internal note link to a logically deleted note still resolves; the effect on relationship counting is defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
-- `MN-58` Logical deletion is reversible: setting `deleted` back to `false` restores the note's non-deleted state without any other change.
-- `MN-59` Hard deletion is the removal of the note file itself and is outside managed-note state; this specification version defines no tombstone artifact for hard-deleted notes.
-- `MN-60` After hard deletion, internal note links to the removed note resolve to zero notes, and as unresolved placeholders they no longer satisfy minimum-cardinality requirements at their source notes.
-- `MN-61` A tool that hard-deletes a managed note SHOULD report the inbound internal note links that will stop resolving before it deletes the note.
-- `MN-62` A property set or a note-type schema MAY declare `deleted` when they want canonical materialization of deletion state.
-- `MN-63` If a property set or a note-type schema declares `deleted`, it MUST declare `type: checkbox`.
-- `MN-64` If a property set or a note-type schema declares `deleted`, it MUST declare `default_value: false`.
-- `MN-65` If a property set or a note-type schema declares `deleted`, it MUST NOT declare `optional: true` or `nullable: true`.
-- `MN-66` `archived` is an optional core-defined managed-note field name in this specification version.
-- `MN-67` `archived` MAY appear in stored frontmatter even when it is not declared in the effective schema, because it is core-defined rather than user-defined.
-- `MN-68` If stored, `archived` MUST be a YAML boolean.
-- `MN-69` If omitted or stored as `false`, the note is active.
-- `MN-70` If stored as `true`, the note is archived.
-- `MN-71` `archived` is the single marker of archived state; the storage rules in [Note Type Schemas](note-type-schemas.md) define where an archived note lives.
-- `MN-72` Archived state changes which storage patterns govern the note's path, as defined in [Note Type Schemas](note-type-schemas.md); it does not by itself change relationship, heading, or field-conformance evaluation in this specification version.
-- `MN-73` An archived note remains a managed note and continues to use its resolved concrete note type in this specification version.
-- `MN-74` Archiving is distinct from logical deletion; `archived` and `deleted` are independent states and MAY both be `true` on the same note.
-- `MN-75` A property set or a note-type schema MAY declare `archived` when they want canonical materialization of archived state.
-- `MN-76` If a property set or a note-type schema declares `archived`, it MUST declare `type: checkbox`.
-- `MN-77` If a property set or a note-type schema declares `archived`, it MUST declare `default_value: false`.
-- `MN-78` If a property set or a note-type schema declares `archived`, it MUST NOT declare `optional: true` or `nullable: true`.
-- `MN-79` `aliases` is an optional core-defined managed-note field name in this specification version.
-- `MN-80` `aliases` MAY appear in stored frontmatter even when it is not declared in the effective schema, because it is core-defined rather than user-defined.
-- `MN-81` If stored, `aliases` MUST be a YAML sequence of unique non-empty strings.
-- `MN-82` An alias MUST NOT contain `/`, `\`, `#`, `^`, `|`, or line breaks, because those characters cannot appear in a simple wikilink target.
-- `MN-83` Aliases are alternative names for the note and participate in note-link resolution through the alias pass defined in [Note Links](note-links.md).
-- `MN-84` Two managed notes SHOULD NOT share an alias; a link using a shared alias is ambiguous and cannot resolve, and tools SHOULD report shared aliases.
-- `MN-85` A property set or a note-type schema MAY declare `aliases` when they want canonical materialization of aliases.
-- `MN-86` If a property set or a note-type schema declares `aliases`, it MUST declare `type: list` and `items` with `type: text`.
-- `MN-87` A core-defined managed-note field name MUST NOT be repurposed as an ordinary user-defined field in a property set or a note-type schema unless the core field contract explicitly permits schema-level declaration of that field.
-- `MN-88` Field names such as `title`, `description`, `tags`, `created_at`, and `updated_at` are ordinary schema-defined managed-note field names in this specification version unless a rule explicitly defines them otherwise.
-- `MN-89` The `tags` property type defined below remains a first-class supported property type.
-- `MN-90` The generic property-type and field-definition rules in this page apply to ordinary schema-defined fields unless a dedicated core field rule says otherwise.
+- `MN-35` A stored core-defined field MUST satisfy its base value contract in the table.
+- `MN-87` A schema-level declaration of a core field MUST preserve its core type and meaning while narrowing only compatible constraints.
+- `MN-301` A note-type schema or property set MUST NOT declare `note_type` as a field.
+- `MN-40` A stored `note_type` MUST equal the note's associated concrete type.
+- `MN-48` Non-null effective `id` values MUST be unique across all managed notes in the collection.
+- `MN-15` A writer renaming or moving a note MUST preserve its effective non-null `id`.
+- `MN-82` An alias MUST NOT contain `/`, `\`, `#`, `^`, `|`, or a line break.
+- `MN-83` Aliases participate in note-link resolution through the alias pass defined in [Note Links](note-links.md).
+- `MN-84` Two managed notes SHOULD NOT share an alias.
+- `MN-309` A tool SHOULD report aliases shared by multiple managed notes.
+- `MN-302` A writer MUST NOT replace an existing concrete `created_at` value.
+- `MN-303` A writer making a semantic change MUST refresh an existing concrete `updated_at` according to `now_on_write`.
+- `MN-304` A no-op write MUST NOT refresh `updated_at`.
 
-The `template_regions` field is defined in [Template Region Frontmatter](template-tracking.md#template-region-frontmatter).
+For example, `Kickoff.md` defaults its title to `Kickoff`; explicit null remains
+null. A schema can constrain the title, not change its type.
 
-### Mandatory Tags
+`template_regions` belongs to [Template Tracking](template-tracking.md), not to
+the Core field set. Extension-owned fields are recognized only under their
+applicable declared contracts.
 
-Mandatory tags are value requirements on the ordinary top-level `tags` field. They do not turn `tags` into a core-defined field, and they do not authorize tools to overwrite author-added tags. A conforming note contains the effective policy values alongside any other tags allowed by its field definition.
+### Logical Deletion and Archiving
 
-<!-- typedmark-example: fragment: Managed-note tags after mandatory-tag materialization. -->
+Deletion and archiving are independent flags. For example, an archived note can
+also be logically deleted without losing its identity or being removed from disk.
+
+Rules:
+
+- `MN-52` A note is not logically deleted when its effective `deleted` is `false`.
+- `MN-53` A note is logically deleted when its effective `deleted` is `true`.
+- `MN-54` Setting `deleted: true` MUST NOT itself move the note or apply archive storage rules.
+- `MN-56` A logically deleted note MUST still satisfy its effective field, storage, relationship, and heading contracts.
+- `MN-57` An internal link to a logically deleted note remains resolvable.
+- `MN-71` Effective `archived: true` selects the note type's archive storage contract.
+- `MN-72` Archiving MUST NOT otherwise change field, relationship, or heading conformance.
+- `MN-74` `deleted` and `archived` are independent states.
+- `MN-59` Hard deletion removes the note file and defines no tombstone artifact.
+- `MN-61` A tool hard-deleting a note SHOULD report inbound links that will stop resolving before deleting it.
+
+Relationship-count effects are defined in
+[Relationships, Headings, and Templates](relationships-headings-and-templates.md).
+Default query candidate selection is defined in [Portable Queries](queries.md).
+Neither dependency requires a Core validator to implement a query engine.
+
+## Mandatory Tags
+
+Mandatory tags constrain the effective Core `tags` value; they do not require a
+duplicate field declaration. An absent tag value defaults to an empty list, not
+to an invented set of policy tags. Writers can append missing required tags;
+validators report their absence without editing the note.
+
+<!-- typedmark-example: fragment: Effective tags combine required policy entries with author-provided tags. -->
 ```yaml
 tags:
   - personal
   - managed
-  - context/meeting
   - type/meeting
 ```
 
-In this example, `personal` is author-added and the remaining entries are mandatory at collection, folder, and note-type scope. Their stored order need not mirror policy order when some were already present; membership is the conformance requirement.
+Rules:
+
+- `MN-125` Effective mandatory tags MUST be computed under [Collection Model](collection-model.md).
+- `MN-126` A conforming note MUST contain each mandatory tag as an exact entry in its effective `tags`.
+- `MN-128` Each missing mandatory tag MUST be reported as an `invalid_field_value` finding on `tags`.
+- `MN-129` A writer producing a conforming note MUST supply any mandatory tags still missing from its effective value.
+- `MN-130` Added mandatory tags MUST follow existing stored tags in effective mandatory-tag order.
+- `MN-131` Materialization MUST preserve the values and relative order of existing stored tags.
+- `MN-132` Tag materialization MUST NOT introduce a duplicate under the string comparison baseline.
+- `MN-133` A writer MUST NOT remove a stored tag merely because it is no longer mandatory.
+
+## Canonical Field Materialization
+
+Normalization writes declared fields and policy-required values, not every
+optional Core name. For example, an ordinary edit leaves a defaulted `status`
+absent; explicit normalization can write `status: draft`.
 
 Rules:
 
-- `MN-125` A managed note's effective mandatory tags MUST be computed under the ordered merge rules in [Collection Model](collection-model.md).
-- `MN-126` A conforming managed note MUST store every effective mandatory tag as an exact entry in its top-level `tags` sequence.
-- `MN-127` Stored tags that are not mandatory remain valid when they satisfy the effective `tags` field definition.
-- `MN-128` A validator MUST report each absent effective mandatory tag as an `invalid_field_value` failure on `tags`, as defined in [Collection Model](collection-model.md).
-- `MN-129` A tool that creates, imports, scaffolds, normalizes, or modifies managed-note frontmatter MUST append every missing effective mandatory tag before saving.
-- `MN-130` Missing mandatory tags MUST be appended after the existing stored tags and in effective mandatory-tag order.
-- `MN-131` Mandatory-tag materialization MUST preserve the values and relative order of all existing stored tags.
-- `MN-132` Mandatory-tag materialization MUST NOT introduce a duplicate tag under the string comparison rules in [Foundations](foundations.md).
-- `MN-133` A tool MUST NOT remove a stored tag solely because the tag is not mandatory or is no longer mandatory.
-- `MN-134` Mandatory-tag materialization MUST still satisfy every constraint of the effective `tags` field definition.
-
-### Canonical Field Materialization
-
-The canonical stored form of a managed note uses fully materialized frontmatter.
-
-Rules:
-
-- `MN-91` Every field declared in `frontmatter` MUST be physically present in stored note frontmatter.
-- `MN-92` Declared fields MUST NOT be omitted merely because they currently have no concrete value.
-- `MN-93` When no concrete value is known for a nullable field, the canonical stored value is `null`, unless an explicit non-null `default_value` is defined.
-- `MN-94` When a field with `type: object` has a concrete mapping value, every field declared in that object's `fields` MUST be physically present in the stored mapping.
-- `MN-95` Fields with `optional: false` and `optional: true` do not differ in physical materialization, but they do differ in value requirements.
-- `MN-96` A field with `optional: false` MAY require a concrete non-null value, depending on `nullable` and `default_value`.
-- `MN-97` A field with `optional: true` never requires a concrete non-null value; it remains valid when materialized as `null`.
-- `MN-98` A missing field declared anywhere under `frontmatter` is a `missing_declared_field` validation failure.
-- `MN-99` A missing nested field declared within an object field is also a `missing_declared_field` validation failure.
-- `MN-100` Tools that create notes MUST write back frontmatter that satisfies these canonical field materialization rules.
-- `MN-101` Tools that import or scaffold notes MUST write back frontmatter that satisfies these canonical field materialization rules.
-- `MN-102` Tools that normalize notes or modify managed note frontmatter MUST rewrite frontmatter so it satisfies these canonical field materialization rules before saving.
+- `MN-100` A create or scaffold operation claiming conformance MUST produce a note whose effective record satisfies its applicable contracts.
+- `MN-101` An ordinary edit MUST preserve an omitted field when its effective value already satisfies the applicable requirements and the edit does not assign that field.
+- `MN-102` Explicit normalization MUST materialize the declared field set using its conforming effective values and applicable write-time generation rules.
+- `MN-305` A normalization operation MUST preserve an explicitly stored null unless the user explicitly requests its replacement.
+- `MN-306` A writer MUST obtain a conforming value instead of inventing one when a required value remains unknown.
+- `MN-307` A writer MUST NOT discard unknown stored properties merely because they are undeclared.
+- `MN-308` A frontmatter-only write MUST preserve the note body.
 
 ## Field Optionality
 
-Field optionality is evaluated within the effective `frontmatter` block required by [Note Type Schemas](note-type-schemas.md).
+`nullable` controls whether null is valid. Stored omission is governed by
+effective-value construction, not a second `optional` switch. Existence
+predicates can still distinguish omitted fields from explicit null values.
 
 Rules:
 
-- `MN-103` `optional` defines value requirements, not sparse-storage behavior; canonical storage requirements are defined in Canonical Field Materialization.
-- `MN-104` A field with `optional: false` MAY be nullable.
-- `MN-105` A field with `optional: false` is part of the note's semantically expected metadata, even when `nullable: true` temporarily allows `null`.
-- `MN-106` Fields with `optional: true` are semantically OPTIONAL, not sparse.
-- `MN-107` Fields with `optional: true` MUST be nullable in the effective schema and MAY remain `null` indefinitely.
-- `MN-108` Fields with `optional: true` MUST NOT be used for metadata that is REQUIRED to hold a concrete non-null value for conformance.
-- `MN-109` If a field is intended to become invalid when no concrete value is present, it MUST declare `optional: false` and `nullable: false`.
-- `MN-110` The same optionality distinction applies recursively within object field definitions.
-- `MN-111` Unknown fields are evaluated using the `unknown_field` rule defined in [Collection Model](collection-model.md), at the effective severity for the note's resolved note type as defined in [Note Type Schemas](note-type-schemas.md).
-- `MN-112` Unknown nested fields inside object values are also evaluated using the `unknown_field` rule defined in [Collection Model](collection-model.md).
-- `MN-113` A field is unknown when it is absent from the note's effective note-type schema; the core-defined managed-note field names `note_type`, `deleted`, `archived`, `aliases`, and `template_regions` are never unknown fields, whether or not the effective schema declares them.
-- `MN-114` If the effective `frontmatter` block declares `note_type`, `note_type` MUST be physically present in stored frontmatter.
-- `MN-115` If the effective `frontmatter` block declares `note_type`, `note_type` MUST NOT declare `optional: true`.
-- `MN-116` If `frontmatter` declares `id`, `id` MUST NOT declare `optional: true`.
+- `MN-111` An undeclared top-level property is evaluated under `unknown_field`, except for Core fields and fields permitted by an applicable extension contract.
+- `MN-112` Undeclared children of a typed object are evaluated under the same unknown-field policy recursively.
+- `MN-113` Optional Core-field storage does not exempt a stored value from its fixed Core value contract or compatible schema constraints.
 
 ## Automation Events and One-Hop Execution
 
-See [Automation Events and One-Hop Execution](automation-runtime.md#automation-events-and-one-hop-execution) for the authoritative contract.
+See [Automation Runtime](automation-runtime.md#automation-events-and-one-hop-execution).
 
 ### Execution Capabilities and Targets
 
-See [Execution Capabilities and Targets](automation-runtime.md#execution-capabilities-and-targets) for the authoritative contract.
+See [Automation Runtime](automation-runtime.md#execution-capabilities-and-targets).
 
 ### Action Effects and Atomicity
 
-See [Action Effects and Atomicity](automation-runtime.md#action-effects-and-atomicity) for the authoritative contract.
+See [Automation Runtime](automation-runtime.md#action-effects-and-atomicity).
 
 ## Dependency Propagation and Consistency
 
-See [Dependency Propagation and Consistency](automation-runtime.md#dependency-propagation-and-consistency) for the authoritative contract.
+See [Automation Runtime](automation-runtime.md#dependency-propagation-and-consistency).
 
 ### Propagation Inputs and Dependency Graph
 
-See [Propagation Inputs and Dependency Graph](automation-runtime.md#propagation-inputs-and-dependency-graph) for the authoritative contract.
+See [Automation Runtime](automation-runtime.md#propagation-inputs-and-dependency-graph).
 
 ### Waves, Fixed Points, and Cycles
 
-See [Waves, Fixed Points, and Cycles](automation-runtime.md#waves-fixed-points-and-cycles) for the authoritative contract.
+See [Automation Runtime](automation-runtime.md#waves-fixed-points-and-cycles).
 
 ### Atomic Commit, Recovery, and Approval
 
-See [Atomic Commit, Recovery, and Approval](automation-runtime.md#atomic-commit-recovery-and-approval) for the authoritative contract.
+See [Automation Runtime](automation-runtime.md#atomic-commit-recovery-and-approval).

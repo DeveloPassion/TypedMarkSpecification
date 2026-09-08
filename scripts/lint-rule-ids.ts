@@ -18,6 +18,12 @@ import { join } from "node:path";
 import registry from "./rule-registry.json";
 
 const ROOT = join(import.meta.dir, "..");
+const CORE_PAGES = [
+  "foundations.md", "collection-model.md", "note-type-schemas.md",
+  "field-definition-reference.md", "managed-notes-and-properties.md", "note-links.md",
+  "relationships-headings-and-templates.md", "extensions.md", "conformance-and-roadmap.md",
+];
+const REUSE_PAGES = ["schema-reuse.md", "property-sets.md"];
 
 export interface RuleRegistry {
   prefixes: Record<string, { page: string; last: number }>;
@@ -49,7 +55,7 @@ export function isTrigger(line: string): boolean {
 
 function proseLines(text: string): Array<string | null> {
   let fence: string | undefined;
-  return text.split("\n").map((line) => {
+  return text.split(/\r?\n/).map((line) => {
     const marker = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(line);
     if (fence) {
       if (marker && marker[1]![0] === fence[0]
@@ -206,6 +212,19 @@ function main(): number {
     documents[file] = readFileSync(join(ROOT, file), "utf8");
   }
   const failures = lintSpecification(documents, registry);
+  const countRules = (pages: string[]) =>
+    pages.reduce((total, page) => total + ruleLines(documents[page] ?? "").length, 0);
+  const coreCount = countRules(CORE_PAGES);
+  const reuseCount = countRules(REUSE_PAGES);
+  const readingWords = [...CORE_PAGES, "manifesto.md", "getting-started.md"]
+    .reduce((total, page) => total + (documents[page]?.trim().split(/\s+/u).length ?? 0), 0);
+  if (coreCount > 600) failures.push(`Core budget: ${coreCount} rules exceeds 600`);
+  if (reuseCount > 100) failures.push(`Reuse budget: ${reuseCount} rules exceeds 100`);
+  if (readingWords > 20000) failures.push(`Core reading-path budget: ${readingWords} words exceeds 20000`);
+  for (const page of CORE_PAGES) {
+    const count = ruleLines(documents[page] ?? "").length;
+    if (count > 150) failures.push(`${page}: ${count} Core rules exceeds 150`);
+  }
   for (const page of NON_AUTHORITATIVE_PREAMBLE_PAGES) {
     if (!(page in documents)) failures.push(`missing published page ${page}`);
   }
@@ -227,6 +246,7 @@ function main(): number {
   const count = Object.values(registry.prefixes).reduce((total, { last }) => total + last, 0)
     - Object.keys(registry.retired).length;
   console.log(`all ${count} rule identifiers are present, unique, and registered`);
+  console.log(`budgets: Core ${coreCount}/600 rules, Reuse ${reuseCount}/100, reading path ${readingWords}/20000 words`);
   return 0;
 }
 

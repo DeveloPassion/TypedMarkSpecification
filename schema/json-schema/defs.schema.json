@@ -6,7 +6,7 @@
   "$defs": {
     "specification_version": {
       "type": "string",
-      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?![\\s\\S])"
     },
     "semver": {
       "type": "string",
@@ -96,14 +96,6 @@
         "hh:mm:ss.sss"
       ]
     },
-    "schema_kind": {
-      "enum": [
-        "singleton",
-        "entity",
-        "dated_record",
-        "rule_set"
-      ]
-    },
     "relative_md_path": {
       "$comment": "Relative path resolved against <metadata_directory>/templates/: no leading slash, no backslashes, no .. segments, ends in .md. Must not restate the metadata directory or the templates/ folder (semantic check).",
       "type": "string",
@@ -187,7 +179,7 @@
         "generated": {
           "anyOf": [
             {
-              "type": "boolean"
+              "const": false
             },
             {
               "enum": [
@@ -255,9 +247,6 @@
         "immutable": {
           "type": "boolean"
         },
-        "optional": {
-          "type": "boolean"
-        },
         "nullable": {
           "type": "boolean"
         },
@@ -292,9 +281,6 @@
           "$ref": "#/$defs/slug"
         },
         "const_value": {},
-        "value_from_schema": {
-          "const": "note_type"
-        },
         "relationship_kind": {
           "enum": [
             "belongs_to",
@@ -471,16 +457,7 @@
           }
         },
         {
-          "$comment": "const_value and value_from_schema are mutually exclusive",
-          "not": {
-            "required": [
-              "const_value",
-              "value_from_schema"
-            ]
-          }
-        },
-        {
-          "$comment": "not_empty is valid only for text, link, list, tags, object",
+          "$comment": "not_empty applies only to object fields; other types use min.",
           "if": {
             "required": [
               "not_empty"
@@ -489,13 +466,7 @@
           "then": {
             "properties": {
               "type": {
-                "enum": [
-                  "text",
-                  "link",
-                  "list",
-                  "tags",
-                  "object"
-                ]
+                "const": "object"
               }
             }
           }
@@ -657,27 +628,6 @@
                   "link",
                   "list"
                 ]
-              }
-            }
-          }
-        },
-        {
-          "$comment": "optional: true must not be combined with nullable: false",
-          "if": {
-            "properties": {
-              "optional": {
-                "const": true
-              }
-            },
-            "required": [
-              "optional",
-              "nullable"
-            ]
-          },
-          "then": {
-            "properties": {
-              "nullable": {
-                "const": true
               }
             }
           }
@@ -881,18 +831,13 @@
                   "required": [
                     "const_value"
                   ]
-                },
-                {
-                  "required": [
-                    "value_from_schema"
-                  ]
                 }
               ]
             }
           }
         },
         {
-          "$comment": "a generation strategy excludes default_value, const_value and value_from_schema",
+          "$comment": "a generation strategy excludes default_value, const_value",
           "if": {
             "properties": {
               "generated": {
@@ -916,11 +861,6 @@
                 {
                   "required": [
                     "const_value"
-                  ]
-                },
-                {
-                  "required": [
-                    "value_from_schema"
                   ]
                 }
               ]
@@ -963,7 +903,7 @@
       }
     },
     "list_items_field_definition": {
-      "$comment": "Field definition for list.items: anonymous list elements are not materialized independently, so default_value, nullable, and immutable are forbidden, and unique/relationship_kind/computed are top-level-only. generated on items must remain a boolean.",
+      "$comment": "Anonymous list items cannot generate, default, or declare nullable/immutable values.",
       "allOf": [
         {
           "$ref": "#/$defs/field_definition"
@@ -977,7 +917,7 @@
         "nullable": false,
         "immutable": false,
         "generated": {
-          "type": "boolean"
+          "const": false
         }
       }
     },
@@ -990,39 +930,8 @@
         "$ref": "#/$defs/field_definition"
       }
     },
-    "note_type_field_contract": {
-      "$comment": "Core-defined note_type field: type text, const_value or value_from_schema, never optional or nullable. const_value equality with the schema's top-level note_type is a semantic check.",
-      "allOf": [
-        {
-          "$ref": "#/$defs/field_definition"
-        }
-      ],
-      "properties": {
-        "type": {
-          "const": "text"
-        },
-        "optional": {
-          "const": false
-        },
-        "nullable": {
-          "const": false
-        }
-      },
-      "anyOf": [
-        {
-          "required": [
-            "const_value"
-          ]
-        },
-        {
-          "required": [
-            "value_from_schema"
-          ]
-        }
-      ]
-    },
     "id_field_contract": {
-      "$comment": "Core-defined id field: type text, format slug, never optional or nullable.",
+      "$comment": "Core id declarations preserve text/slug and non-null values.",
       "allOf": [
         {
           "$ref": "#/$defs/field_definition"
@@ -1039,33 +948,26 @@
         "format": {
           "const": "slug"
         },
-        "optional": {
-          "const": false
-        },
         "nullable": {
           "const": false
         }
       }
     },
     "state_flag_field_contract": {
-      "$comment": "Core-defined deleted and archived fields: type checkbox, default_value false, never optional or nullable.",
+      "$comment": "Core state flags preserve checkbox type and the false absence default.",
       "allOf": [
         {
           "$ref": "#/$defs/field_definition"
         }
       ],
       "required": [
-        "type",
-        "default_value"
+        "type"
       ],
       "properties": {
         "type": {
           "const": "checkbox"
         },
         "default_value": {
-          "const": false
-        },
-        "optional": {
           "const": false
         },
         "nullable": {
@@ -1131,13 +1033,15 @@
           "type": "array",
           "items": {
             "$ref": "#/$defs/non_empty_string"
-          }
+          },
+          "uniqueItems": true
         },
         "optional_h2": {
           "type": "array",
           "items": {
             "$ref": "#/$defs/non_empty_string"
-          }
+          },
+          "uniqueItems": true
         },
         "allow_other_h2": {
           "type": "boolean"
@@ -1176,9 +1080,6 @@
       "properties": {
         "pattern": {
           "$ref": "#/$defs/storage_name_pattern"
-        },
-        "required": {
-          "type": "boolean"
         }
       },
       "additionalProperties": false
@@ -1186,17 +1087,10 @@
     "archive_block": {
       "type": "object",
       "required": [
-        "policy"
+        "folder_pattern",
+        "note_name_pattern"
       ],
       "properties": {
-        "policy": {
-          "default": "in_place_historical",
-          "enum": [
-            "mirror_under_archives",
-            "in_place_historical",
-            "fixed"
-          ]
-        },
         "folder_pattern": {
           "$ref": "#/$defs/storage_folder_pattern"
         },
@@ -1210,68 +1104,7 @@
           "$ref": "#/$defs/note_name_affix"
         }
       },
-      "additionalProperties": false,
-      "allOf": [
-        {
-          "if": {
-            "properties": {
-              "policy": {
-                "enum": [
-                  "mirror_under_archives",
-                  "fixed"
-                ]
-              }
-            },
-            "required": [
-              "policy"
-            ]
-          },
-          "then": {
-            "required": [
-              "folder_pattern",
-              "note_name_pattern"
-            ]
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "policy": {
-                "const": "in_place_historical"
-              }
-            },
-            "required": [
-              "policy"
-            ]
-          },
-          "then": {
-            "not": {
-              "anyOf": [
-                {
-                  "required": [
-                    "folder_pattern"
-                  ]
-                },
-                {
-                  "required": [
-                    "note_name_pattern"
-                  ]
-                },
-                {
-                  "required": [
-                    "note_name_prefix"
-                  ]
-                },
-                {
-                  "required": [
-                    "note_name_suffix"
-                  ]
-                }
-              ]
-            }
-          }
-        }
-      ]
+      "additionalProperties": false
     },
     "storage_block": {
       "type": "object",
@@ -1293,9 +1126,6 @@
           "$ref": "#/$defs/note_name_affix"
         },
         "archive": {
-          "default": {
-            "policy": "in_place_historical"
-          },
           "$ref": "#/$defs/archive_block"
         }
       },
@@ -1316,10 +1146,6 @@
     "guidance_block": {
       "$comment": "Closed shape; undeclared keys are evaluated under unknown_field.",
       "type": "object",
-      "required": [
-        "when_to_use",
-        "when_not_to_use"
-      ],
       "properties": {
         "when_to_use": {
           "$ref": "#/$defs/non_empty_string"
@@ -1351,6 +1177,9 @@
               "const": "text"
             }
           }
+        },
+        "nullable": {
+          "const": false
         }
       }
     },
@@ -1428,6 +1257,78 @@
         }
       },
       "additionalProperties": false
+    },
+    "core_frontmatter_contract": {
+      "type": "object",
+      "properties": {
+        "note_type": false,
+        "template_regions": false,
+        "id": {
+          "$ref": "#/$defs/id_field_contract"
+        },
+        "deleted": {
+          "$ref": "#/$defs/state_flag_field_contract"
+        },
+        "archived": {
+          "$ref": "#/$defs/state_flag_field_contract"
+        },
+        "aliases": {
+          "$ref": "#/$defs/aliases_field_contract"
+        },
+        "tags": {
+          "properties": {
+            "type": {
+              "const": "tags"
+            },
+            "nullable": {
+              "const": false
+            }
+          }
+        },
+        "title": {
+          "properties": {
+            "type": {
+              "const": "text"
+            }
+          }
+        },
+        "description": {
+          "properties": {
+            "type": {
+              "const": "text"
+            }
+          }
+        },
+        "created_at": {
+          "properties": {
+            "type": {
+              "const": "datetime"
+            },
+            "generated": {
+              "const": "now"
+            },
+            "default_value": false,
+            "const_value": false,
+            "computed": false
+          }
+        },
+        "updated_at": {
+          "properties": {
+            "type": {
+              "const": "datetime"
+            },
+            "generated": {
+              "const": "now_on_write"
+            },
+            "default_value": false,
+            "const_value": false,
+            "computed": false,
+            "immutable": {
+              "const": false
+            }
+          }
+        }
+      }
     }
   }
 }

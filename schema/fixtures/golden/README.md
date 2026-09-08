@@ -15,7 +15,7 @@ schema, automation, dataset, and view basenames, template references, report sha
 ordering. It does not replace a conformance runner or infer the expected
 semantic findings.
 
-`core-valid` includes a reusable dataset so the collection check exercises
-dataset frontmatter shape and basename agreement as well as automation shape.
-Dataset query evaluation and row-identity semantics remain conformance-runner
-responsibilities.
+`core-valid` contains only Core artifacts. `optional-artifacts-valid` exercises
+automation and dataset shapes with explicit capability declarations.
+`explicit-type-property-set-valid` replaces the old folder-scope example with
+explicitly selected types. Query evaluation remains a semantic-runner responsibility.

@@ -68,6 +68,7 @@ Rules:
 - `SCE-33` An entry's `name` follows the collection identity rules defined in [Collection Model](collection-model.md), and its `version` MUST be a Semantic Versioning 2.0.0 string.
 - `SCE-34` The pair of `name` and `version` MUST be unique within one catalog.
 - `SCE-35` An entry MAY restate the system's discovery metadata — `label`, `description`, `keywords`, `audiences`, `publisher`, and `license`; when present, these SHOULD equal the values in the system's `typedmark.md`, which remains authoritative.
+- `SCE-158` Restated discovery metadata MUST satisfy the corresponding system-field shapes, including a publisher's required name.
 - `SCE-36` `source` declares where the system lives and MUST take exactly one of two forms:
   - the path form: `path` names the folder containing the system's `typedmark.md`, relative to the catalog's own repository root
   - the repository form: `repository` is an absolute URL of the repository hosting the system, with an optional `path` to the system folder inside that repository, defaulting to the repository root, and an optional `ref` naming a tag, branch, or commit

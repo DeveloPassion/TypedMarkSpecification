@@ -44,7 +44,7 @@ Rules:
 - `FDR-98` `immutable: true` means that once the field holds a concrete non-null stored value, that value MUST NOT change.
 - `FDR-99` Immutability is an obligation on tools and operations that modify managed notes; because conformance evaluation is stateless, a validator MAY verify immutability only when it has access to historical state.
 - `FDR-100` A `rename_field` migration moves an immutable value unchanged; a `change_field` migration MAY change a field's `immutable` declaration.
-- `FDR-101` `const_value` and `value_from_schema` are stronger guarantees than `immutable`; a field declaring either need not also declare `immutable`.
+- `FDR-101` A `const_value` constraint is stronger than immutability and does not require a duplicate immutable declaration.
 - `FDR-102` The core-defined `id` field is immutable whether or not its definition declares it.
 - `FDR-103` `immutable` MAY be declared on top-level fields and on nested fields inside `object.fields`; it MUST NOT be declared on `items`.
 

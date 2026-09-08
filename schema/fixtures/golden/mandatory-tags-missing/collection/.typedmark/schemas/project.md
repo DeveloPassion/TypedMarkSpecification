@@ -4,17 +4,14 @@ note_type: project
 label: Project
 icon: folder-kanban
 description: A project tracked by the collection.
-kind: entity
 mandatory_tags:
+  - project
   - type/project
   - managed
 storage:
   folder_pattern: Projects
   note_name_pattern: "{title}"
 frontmatter:
-  note_type:
-    type: text
-    const_value: project
   title:
     type: text
     nullable: false
@@ -23,4 +20,4 @@ frontmatter:
     nullable: false
 ---
 
-Projects carry collection, folder, and note-type mandatory tags.
+Projects carry collection and note-type mandatory tags.
