@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developassion.github.io/TypedMarkSpecification/schema/conformance-query.schema.json",
+  "title": "Non-normative query conformance cases",
+  "description": "Harness data outside the collection. Adapters normalize conceptual query results to these test fields; this is not a query interchange contract.",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "required": ["name", "query_version", "query", "rules"],
+    "properties": {
+      "name": { "$ref": "defs.schema.json#/$defs/slug" },
+      "query_version": { "$ref": "defs.schema.json#/$defs/semver" },
+      "query": { "$ref": "query.schema.json" },
+      "rules": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "pattern": "^[A-Z]{2,3}-[1-9][0-9]*$" } },
+      "expected_error": { "type": "string", "pattern": "^[A-Z]{2,3}-[1-9][0-9]*$" },
+      "expected_result": { "$ref": "#/$defs/result" }
+    },
+    "additionalProperties": false,
+    "oneOf": [ { "required": ["expected_error"], "not": { "required": ["expected_result"] } }, { "required": ["expected_result"], "not": { "required": ["expected_error"] } } ]
+  },
+  "$defs": {
+    "rows": { "type": "array", "items": { "type": "object" } },
+    "result": {
+      "type": "object", "required": ["evaluation", "rows"],
+      "properties": {
+        "evaluation": { "enum": ["complete", "incomplete"] },
+        "rows": { "$ref": "#/$defs/rows" },
+        "groups": { "type": "array", "items": {
+          "type": "object", "required": ["key", "rows"],
+          "properties": { "key": { "type": "array" }, "rows": { "$ref": "#/$defs/rows" } }, "additionalProperties": false
+        } }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,299 @@
+[
+  {
+    "name": "effective-default-and-stored-presence",
+    "query_version": "0.1.0",
+    "rules": [
+      "CM-331",
+      "CM-365",
+      "CM-388",
+      "MN-91"
+    ],
+    "query": {
+      "specification_version": "0.1.0",
+      "note_types": [
+        "task"
+      ],
+      "select": [
+        {
+          "kind": "path",
+          "as": "path"
+        },
+        {
+          "kind": "field",
+          "field": "status",
+          "as": "status"
+        }
+      ],
+      "where": {
+        "kind": "all",
+        "predicates": [
+          {
+            "kind": "field",
+            "field": "status",
+            "operator": "equals",
+            "value": "draft"
+          },
+          {
+            "kind": "field",
+            "field": "status",
+            "operator": "exists",
+            "value": false
+          }
+        ]
+      }
+    },
+    "expected_result": {
+      "evaluation": "complete",
+      "rows": [
+        {
+          "path": "Tasks/Second.md",
+          "status": null
+        }
+      ]
+    }
+  },
+  {
+    "name": "relationship-and-priority-order",
+    "query_version": "0.1.0",
+    "rules": [
+      "CM-349",
+      "CM-352",
+      "CM-375"
+    ],
+    "query": {
+      "specification_version": "0.1.0",
+      "note_types": [
+        "task"
+      ],
+      "select": [
+        {
+          "kind": "path",
+          "as": "path"
+        },
+        {
+          "kind": "field",
+          "field": "priority",
+          "as": "priority"
+        }
+      ],
+      "where": {
+        "kind": "relationship",
+        "relationship": "belongs_to",
+        "note_types": [
+          "project"
+        ],
+        "where": {
+          "kind": "field",
+          "field": "status",
+          "operator": "equals",
+          "value": "active"
+        }
+      },
+      "order_by": [
+        {
+          "column": "priority",
+          "direction": "desc"
+        }
+      ]
+    },
+    "expected_result": {
+      "evaluation": "complete",
+      "rows": [
+        {
+          "path": "Tasks/Second.md",
+          "priority": 5
+        },
+        {
+          "path": "Tasks/First.md",
+          "priority": 2
+        }
+      ]
+    }
+  },
+  {
+    "name": "limit-before-grouping",
+    "query_version": "0.1.0",
+    "rules": [
+      "CM-315",
+      "CM-382",
+      "CM-397"
+    ],
+    "query": {
+      "specification_version": "0.1.0",
+      "note_types": [
+        "task"
+      ],
+      "select": [
+        {
+          "kind": "field",
+          "field": "status",
+          "as": "status"
+        },
+        {
+          "kind": "field",
+          "field": "priority",
+          "as": "priority"
+        }
+      ],
+      "order_by": [
+        {
+          "column": "priority",
+          "direction": "desc"
+        }
+      ],
+      "limit": 2,
+      "group_by": [
+        "status"
+      ]
+    },
+    "expected_result": {
+      "evaluation": "complete",
+      "rows": [
+        {
+          "status": null,
+          "priority": 5
+        },
+        {
+          "status": "active",
+          "priority": 2
+        }
+      ],
+      "groups": [
+        {
+          "key": [
+            null
+          ],
+          "rows": [
+            {
+              "status": null,
+              "priority": 5
+            }
+          ]
+        },
+        {
+          "key": [
+            "active"
+          ],
+          "rows": [
+            {
+              "status": "active",
+              "priority": 2
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "conditional-conversion-rejected",
+    "query_version": "0.1.0",
+    "rules": [
+      "CM-488",
+      "FDR-265"
+    ],
+    "query": {
+      "specification_version": "0.1.0",
+      "note_types": [
+        "task"
+      ],
+      "select": [
+        {
+          "kind": "mapped_field",
+          "as": "estimate",
+          "definition": {
+            "type": "integer",
+            "nullable": true
+          },
+          "sources": [
+            {
+              "note_types": [
+                "task"
+              ],
+              "field": "estimate",
+              "conversion": "conditional"
+            }
+          ]
+        }
+      ],
+      "where": {
+        "kind": "path",
+        "operator": "equals",
+        "value": "Tasks/Second.md"
+      }
+    },
+    "expected_error": "CM-488"
+  },
+  {
+    "name": "include-deleted",
+    "query_version": "0.1.0",
+    "rules": [
+      "QRY-1",
+      "CM-306",
+      "CM-376"
+    ],
+    "query": {
+      "specification_version": "0.1.0",
+      "note_types": [
+        "task"
+      ],
+      "select": [
+        {
+          "kind": "path",
+          "as": "path"
+        }
+      ],
+      "include_deleted": true
+    },
+    "expected_result": {
+      "evaluation": "complete",
+      "rows": [
+        {
+          "path": "Tasks/First.md"
+        },
+        {
+          "path": "Tasks/Removed.md"
+        },
+        {
+          "path": "Tasks/Second.md"
+        }
+      ]
+    }
+  },
+  {
+    "name": "invalid-boolean-child",
+    "query_version": "0.1.0",
+    "rules": [
+      "CM-345",
+      "CM-393"
+    ],
+    "query": {
+      "specification_version": "0.1.0",
+      "note_types": [
+        "task"
+      ],
+      "select": [
+        {
+          "kind": "path",
+          "as": "path"
+        }
+      ],
+      "where": {
+        "kind": "any",
+        "predicates": [
+          {
+            "kind": "path",
+            "operator": "under",
+            "value": "Tasks/"
+          },
+          {
+            "kind": "field",
+            "field": "priority",
+            "operator": "regex",
+            "value": "x"
+          }
+        ]
+      }
+    },
+    "expected_error": "CM-345"
+  }
+]
