@@ -1,0 +1,40 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {
+    "typedmark:queries": "0.1.0",
+    "typedmark:views": "0.1.0"
+  },
+  "evaluated_extensions": {
+    "typedmark:queries": "0.1.0",
+    "typedmark:views": "0.1.0"
+  },
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_dataset",
+      "severity": "error",
+      "path": ".typedmark/datasets/notes.md",
+      "rule_id": "CM-510",
+      "message": "Row identity is duplicated",
+      "dataset": "notes"
+    },
+    {
+      "code": "invalid_view",
+      "severity": "error",
+      "path": ".typedmark/views/columns.md",
+      "rule_id": "CM-425",
+      "message": "Unknown presented column missing",
+      "view": "columns"
+    },
+    {
+      "code": "invalid_view",
+      "severity": "error",
+      "path": ".typedmark/views/missing.md",
+      "rule_id": "CM-520",
+      "message": "Referenced dataset does not resolve",
+      "view": "missing"
+    }
+  ]
+}

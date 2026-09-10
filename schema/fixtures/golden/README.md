@@ -47,3 +47,14 @@ expected report; only an executable runner can check its capability precondition
 versus effective values, relationships, ordering, limiting and grouping,
 logical deletion, and semantic failures. The query descriptors remain outside
 the collection and are supplied as explicit runtime inputs.
+
+`views-valid` exercises governed dataset and saved-view query interpretation.
+`views-invalid` reports duplicate dataset identities, an unknown presentation
+column, and an unresolved dataset reference. Both require Queries and Views.
+Their validation reports are complete even when semantic findings make them
+invalid; missing interpretation is covered by separate negotiation cases.
+
+The reference adapter now supports Views, so the historical
+`missing-extension-dependency` and `conflicting-extension-dependency` negotiation
+preconditions no longer apply to it. The runner records them as not run instead
+of changing capabilities to match their expected reports.
