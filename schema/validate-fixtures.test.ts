@@ -194,3 +194,41 @@ describe("golden datasets", () => {
       .toContain("dataset basename does not match dataset meetings");
   });
 });
+
+describe("golden negotiation context", () => {
+  function checkContext(context: string): string[] {
+    const root = join(import.meta.dir, `.fixture-test-${crypto.randomUUID()}`);
+    try {
+      const vector = join(root, "negotiation");
+      cpSync(join(import.meta.dir, "fixtures", "golden", "unsupported-required-extension"), vector, { recursive: true });
+      writeFileSync(join(vector, "vector.json"), context);
+      const failures: string[] = [];
+      validateGoldenVectors(validators, failures, root);
+      return failures;
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  }
+
+  test("accepts an explicit unsupported-extension precondition", () => {
+    expect(checkContext('{"unsupported_extensions":["example:review"]}')).toEqual([]);
+  });
+
+  test.each([
+    '{',
+    '{"disabled_extensions":"example:review"}',
+    '{"unsupported_extensions":["example:review","example:review"]}',
+    '{"unexpected":true}',
+  ])("rejects malformed context: %s", (context) => {
+    expect(checkContext(context).join("\n")).toContain("vector.json");
+  });
+
+  test("rejects a precondition for an undeclared extension", () => {
+    expect(checkContext('{"unsupported_extensions":["typedmark:queries"]}').join("\n")).toContain("declared");
+  });
+
+  test("does not conflate unsupported and deliberately disabled contracts", () => {
+    expect(checkContext('{"unsupported_extensions":["example:review"],"disabled_extensions":["example:review"]}').join("\n"))
+      .toContain("both");
+  });
+});

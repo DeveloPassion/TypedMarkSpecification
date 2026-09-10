@@ -1,0 +1,20 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "incomplete",
+  "required_extensions": {
+    "typedmark:systems": "0.1.0"
+  },
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [
+    {
+      "code": "unsupported_extension",
+      "severity": "error",
+      "path": "typedmark.md",
+      "rule_id": "EXT-19",
+      "message": "typedmark:systems at 0.1.0 is required but unsupported",
+      "extension": "typedmark:systems"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_extension_declaration",
+      "severity": "error",
+      "path": ".typedmark/schemas/note.md",
+      "rule_id": "EXT-16",
+      "message": "This construct requires typedmark:reuse",
+      "extension": "typedmark:reuse"
+    }
+  ]
+}

@@ -56,6 +56,41 @@ incomplete evaluation. An adapter that implements the extension can also run a
 separate, explicitly limited-scope case without pretending the extension is
 unknown.
 
+### Explicit negotiation context
+
+An optional `vector.json` beside `collection/` records harness setup. It is
+non-normative test metadata, validated by `conformance-vector.schema.json`,
+not another governed collection artifact. Ordinary vectors omit it.
+
+| Key | Precondition and requested evaluation |
+| --- | --- |
+| `unsupported_extensions` | Each named extension is declared by the collection, and the adapter does not implement that exact declared version. No capability is disabled to arrange this condition. |
+| `disabled_extensions` | The adapter implements each named extension at its exact declared version, and the harness explicitly excludes it from this run's evaluation scope. |
+
+Both values are non-empty lists of unique extension identifiers when present.
+The lists are disjoint and refer only to the collection's declared requirements.
+Their names do not supply versions: the collection remains authoritative for
+the exact versions. Unknown metadata keys are rejected.
+
+For example, a deliberate Core-only evaluation of a collection requiring
+`typedmark:systems` uses:
+
+```json
+{"disabled_extensions": ["typedmark:systems"]}
+```
+
+A runner whose Systems capability is absent records this case as not run because
+its precondition is unmet. A runner implementing Systems executes it with that
+capability explicitly excluded and records the requested scope alongside the
+actual incomplete report. In either case the collection remains untouched.
+An unsupported-extension case likewise stops applying once that exact version
+is implemented; it is not counted as a pass.
+
+Selection reads requirements from the collection and setup from `vector.json`.
+The expected report supplies comparison data, not evidence of which capabilities
+the adapter supports or a reason to disable one. The fixture gate checks that
+expected reports do not claim a listed extension as evaluated.
+
 Vector names such as `core-valid` are historical labels, not capability
 declarations. Until a vector is classified against the new module boundaries,
 inspect its actual artifacts and required contracts rather than assuming the
@@ -128,3 +163,9 @@ That evidence covers every vector checked in at the recorded specification
 revision. It is not a claim that the current vector inventory exercises every
 normative rule; later conformance claims must continue to name their applicable
 edition, capabilities, and vector set.
+
+The negotiation matrix now includes exact support, deliberate exclusion, an
+unknown extension, an unsupported exact version, missing and conflicting
+standard dependencies, and undeclared Reuse. This extends issue #123's B1/E2
+evidence; the supported-query pilot and broader optional-contract interpretation
+remain separate work.

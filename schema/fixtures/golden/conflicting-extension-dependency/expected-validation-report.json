@@ -1,0 +1,37 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "incomplete",
+  "required_extensions": {
+    "typedmark:queries": "0.1.0+other",
+    "typedmark:views": "0.1.0"
+  },
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_extension_declaration",
+      "severity": "error",
+      "path": "typedmark.md",
+      "rule_id": "EXT-15",
+      "message": "typedmark:views at 0.1.0 requires typedmark:queries at 0.1.0",
+      "extension": "typedmark:views"
+    },
+    {
+      "code": "unsupported_extension",
+      "severity": "error",
+      "path": "typedmark.md",
+      "rule_id": "EXT-19",
+      "message": "typedmark:queries at 0.1.0+other is required but unsupported",
+      "extension": "typedmark:queries"
+    },
+    {
+      "code": "unsupported_extension",
+      "severity": "error",
+      "path": "typedmark.md",
+      "rule_id": "EXT-19",
+      "message": "typedmark:views at 0.1.0 is required but unsupported",
+      "extension": "typedmark:views"
+    }
+  ]
+}
