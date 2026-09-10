@@ -1,0 +1,28 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": { "typedmark:reuse": "0.1.0" },
+  "evaluated_extensions": { "typedmark:reuse": "0.1.0" },
+  "valid": false,
+  "results": [
+    {
+      "code": "missing_required_field",
+      "severity": "error",
+      "path": "Notes/A.md",
+      "rule_id": "NTS-90",
+      "message": "reason requires a non-null effective value",
+      "note_type": "note",
+      "field": "reason"
+    },
+    {
+      "code": "invalid_field_value",
+      "severity": "error",
+      "path": "Notes/A.md",
+      "rule_id": "NTS-92",
+      "message": "reason has conflicting matching conditions",
+      "note_type": "note",
+      "field": "reason"
+    }
+  ]
+}

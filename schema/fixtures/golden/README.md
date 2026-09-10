@@ -54,6 +54,13 @@ column, and an unresolved dataset reference. Both require Queries and Views.
 Their validation reports are complete even when semantic findings make them
 invalid; missing interpretation is covered by separate negotiation cases.
 
+`reuse-composition-valid` exercises collection defaults, abstract inheritance,
+field removal, opt-in property sets, and full local replacement, including an
+inherited condition and a dataset over concrete descendants.
+`reuse-conditions-invalid` distinguishes effective comparisons from stored
+presence and reports both a missing conditional value and conflicting matching
+requirements. Neither vector materializes effective defaults into note files.
+
 The reference adapter now supports Views, so the historical
 `missing-extension-dependency` and `conflicting-extension-dependency` negotiation
 preconditions no longer apply to it. The runner records them as not run instead
