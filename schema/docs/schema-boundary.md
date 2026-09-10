@@ -9,6 +9,14 @@ The prose specification is the single source of truth. The schemas complement it
 and never override it: where a schema and the specification disagree, the
 specification wins and the schema has a bug.
 
+`conformance-vector.schema.json` is a separate harness schema for the
+non-normative `vector.json` setup described in the
+[conformance runner guide](conformance-runner.md#explicit-negotiation-context).
+It does not define a governed collection artifact. Shape checks cover its
+extension lists; the fixture gate checks declared requirements, disjointness,
+and expected evaluated sets. Actual adapter capabilities and deliberate scope
+selection are checked by the executable runner.
+
 ## Artifact map
 
 | Contract surface | JSON Schema |

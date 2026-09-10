@@ -1,0 +1,6 @@
+{
+  "unsupported_extensions": [
+    "typedmark:queries",
+    "typedmark:views"
+  ]
+}

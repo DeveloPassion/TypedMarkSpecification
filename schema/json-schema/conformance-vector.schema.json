@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developassion.github.io/TypedMarkSpecification/schema/conformance-vector.schema.json",
+  "title": "Conformance harness negotiation context",
+  "description": "Non-normative vector.json harness metadata; not a governed collection artifact. See schema/docs/conformance-runner.md.",
+  "type": "object",
+  "properties": {
+    "disabled_extensions": { "$ref": "#/$defs/extension_list" },
+    "unsupported_extensions": { "$ref": "#/$defs/extension_list" }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "extension_list": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "defs.schema.json#/$defs/extension_id" }
+    }
+  }
+}

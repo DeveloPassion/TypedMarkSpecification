@@ -77,7 +77,7 @@ export function buildValidators(): Record<string, ValidateFunction> {
     idsByFile[file] = schema.$id;
   }
   const validators: Record<string, ValidateFunction> = {};
-  for (const [prefix, file] of Object.entries(ARTIFACT_SCHEMAS)) {
+  for (const [prefix, file] of Object.entries({ ...ARTIFACT_SCHEMAS, "conformance-vector": "conformance-vector.schema.json" })) {
     const validate = ajv.getSchema(idsByFile[file]!);
     if (!validate) throw new Error(`schema ${file} did not compile`);
     validators[prefix] = validate;
@@ -380,6 +380,31 @@ export function validateGoldenVectors(
       `golden/${vector}/collection/typedmark.md`, failures,
     );
     validateExpectedReportCoverage(report, typedmark, `golden/${vector}`, failures);
+
+    const contextPath = join(vectorRoot, "vector.json");
+    if (existsSync(contextPath)) {
+      const label = `golden/${vector}/vector.json`;
+      try {
+        const context = JSON.parse(readFileSync(contextPath, "utf8"));
+        const before = failures.length;
+        validateShape(validators["conformance-vector"]!, context, label, failures);
+        if (failures.length === before) {
+          const disabled: string[] = context.disabled_extensions ?? [];
+          const unsupported: string[] = context.unsupported_extensions ?? [];
+          const declared = objectValue(objectValue(typedmark)?.extensions) ?? {};
+          const evaluated = objectValue(objectValue(report)?.evaluated_extensions) ?? {};
+          for (const extension of [...disabled, ...unsupported]) {
+            if (!Object.hasOwn(declared, extension)) failures.push(`${label}: ${extension} is not declared by the collection`);
+            if (Object.hasOwn(evaluated, extension)) failures.push(`${label}: ${extension} cannot be expected as evaluated`);
+          }
+          if (disabled.some((extension) => unsupported.includes(extension))) {
+            failures.push(`${label}: an extension cannot be both disabled and unsupported`);
+          }
+        }
+      } catch (error) {
+        failures.push(`${label}: ${error instanceof Error ? error.message : String(error)}`);
+      }
+    }
 
     const reportObject = objectValue(report);
     const results = Array.isArray(reportObject?.results) ? reportObject.results : [];
