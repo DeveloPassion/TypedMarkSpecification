@@ -91,6 +91,38 @@ The expected report supplies comparison data, not evidence of which capabilities
 the adapter supports or a reason to disable one. The fixture gate checks that
 expected reports do not claim a listed extension as evaluated.
 
+### Standalone query cases
+
+A vector can include `query-cases.json` beside `collection/`. This is additional
+non-normative harness data, validated by `conformance-query.schema.json`, not a
+new collection artifact or query interchange format. Each case names its
+`query_version`, descriptor, cited `rules`, and exactly one expected outcome:
+`expected_result` or `expected_error` (a built-in rule identifier).
+
+The adapter receives only the collection snapshot, descriptor, and operation
+version. The harness compares the produced result afterward. It normalizes
+successful results to evaluation completeness, ordered projected rows, and
+optional groups with their keys and ordered rows. It also checks projection
+alias order. Adapters can retain additional provenance in actual evidence;
+that adapter-specific representation is not a new portable wire contract.
+
+The reference adapter advertises query execution separately under `operations`;
+its `extensions` map describes collection-validation support. Supporting a
+standalone query operation does not imply validation support for queries
+embedded in unsupported owning surfaces.
+
+The fixture gate checks descriptor and expected-result shape, case-name
+uniqueness, live rule references, and expected row columns. The executable
+runner checks actual rows and groups or the expected failure rule, records
+each outcome, and verifies unchanged collection paths and bytes across both
+validation and query execution. Unanticipated exceptions fail the case.
+
+`query-pilot-valid` exercises defaults versus stored presence, relationship
+predicates, ordering, limiting before grouping, logical-deletion selection,
+conditional conversion failure, and invalid boolean children. Its collection is
+Core-only; each standalone operation supplies its own exact query-contract
+version. Query execution does not add a collection extension declaration.
+
 Vector names such as `core-valid` are historical labels, not capability
 declarations. Until a vector is classified against the new module boundaries,
 inspect its actual artifacts and required contracts rather than assuming the
@@ -167,5 +199,5 @@ edition, capabilities, and vector set.
 The negotiation matrix now includes exact support, deliberate exclusion, an
 unknown extension, an unsupported exact version, missing and conflicting
 standard dependencies, and undeclared Reuse. This extends issue #123's B1/E2
-evidence; the supported-query pilot and broader optional-contract interpretation
-remain separate work.
+evidence. The standalone query pilot adds executable cases toward B4;
+embedded-query validation and broader optional-contract coverage remain open.

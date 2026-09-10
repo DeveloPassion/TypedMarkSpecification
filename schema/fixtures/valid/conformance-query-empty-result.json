@@ -1,0 +1,9 @@
+[
+  {
+    "name": "empty-result",
+    "query_version": "0.1.0",
+    "query": { "specification_version": "0.1.0", "select": [{"kind":"path","as":"path"}], "limit": 0 },
+    "rules": ["CM-378"],
+    "expected_result": {"evaluation":"complete","rows":[]}
+  }
+]

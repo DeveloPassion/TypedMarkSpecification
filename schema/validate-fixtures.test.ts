@@ -232,3 +232,33 @@ describe("golden negotiation context", () => {
       .toContain("both");
   });
 });
+
+describe("golden query cases", () => {
+  function checkQueryCases(cases: unknown): string[] {
+    const root = join(import.meta.dir, `.fixture-test-${crypto.randomUUID()}`);
+    try {
+      const vector = join(root, "query");
+      cpSync(join(import.meta.dir, "fixtures", "golden", "core-valid"), vector, { recursive: true });
+      writeFileSync(join(vector, "query-cases.json"), JSON.stringify(cases));
+      const failures: string[] = [];
+      validateGoldenVectors(validators, failures, root);
+      return failures;
+    } finally { rmSync(root, { recursive: true, force: true }); }
+  }
+  const queryCase = {
+    name: "paths", query_version: "0.1.0", rules: ["CM-362"],
+    query: { specification_version: "0.1.0", select: [{ kind: "path", as: "path" }] },
+    expected_result: { evaluation: "complete", rows: [{ path: "Example.md" }] },
+  };
+  test("validates the query and its normalized expected result", () => {
+    expect(checkQueryCases([queryCase])).toEqual([]);
+  });
+  test("rejects invalid descriptor shape and duplicate case names", () => {
+    expect(checkQueryCases([{ ...queryCase, query: {} }]).join("\n")).toContain("query-cases.json");
+    expect(checkQueryCases([queryCase, queryCase]).join("\n")).toContain("duplicate");
+  });
+  test("rejects stale rule references and mismatched projected columns", () => {
+    expect(checkQueryCases([{ ...queryCase, rules: ["CM-999999"] }]).join("\n")).toContain("rule");
+    expect(checkQueryCases([{ ...queryCase, expected_result: { evaluation: "complete", rows: [{ wrong: 1 }] } }]).join("\n")).toContain("columns");
+  });
+});

@@ -77,7 +77,7 @@ export function buildValidators(): Record<string, ValidateFunction> {
     idsByFile[file] = schema.$id;
   }
   const validators: Record<string, ValidateFunction> = {};
-  for (const [prefix, file] of Object.entries({ ...ARTIFACT_SCHEMAS, "conformance-vector": "conformance-vector.schema.json" })) {
+  for (const [prefix, file] of Object.entries({ ...ARTIFACT_SCHEMAS, "conformance-vector": "conformance-vector.schema.json", "conformance-query": "conformance-query.schema.json" })) {
     const validate = ajv.getSchema(idsByFile[file]!);
     if (!validate) throw new Error(`schema ${file} did not compile`);
     validators[prefix] = validate;
@@ -299,14 +299,7 @@ export function validateExpectedReportCoverage(
     const extension = result.extension;
     const rule = result.rule_id;
     if (typeof rule === "string" && !rule.includes("/")) {
-      const [prefix, number] = rule.split("-");
-      const prefixes: RuleRegistry["prefixes"] = ruleRegistry.prefixes;
-      const retired: RuleRegistry["retired"] = ruleRegistry.retired;
-      const allocation = prefix === undefined ? undefined : prefixes[prefix];
-      if (!allocation || Number(number) < 1 || Number(number) > allocation.last
-        || Object.hasOwn(retired, rule)) {
-        failures.push(`${label}: unknown or retired built-in rule ${rule}`);
-      }
+      validateRuleReference(rule, label, failures);
     }
     if (typeof rule === "string" && rule.includes("/")
       && rule.slice(0, rule.indexOf("/")) !== extension) {
@@ -322,6 +315,37 @@ export function validateExpectedReportCoverage(
       failures.push(`${label}: unsupported_extension must identify a required extension not claimed as evaluated`);
     }
   }
+}
+
+function validateRuleReference(rule: string, label: string, failures: string[]): void {
+  const [prefix, number] = rule.split("-");
+  const prefixes: RuleRegistry["prefixes"] = ruleRegistry.prefixes;
+  const allocation = prefix === undefined ? undefined : prefixes[prefix];
+  if (!allocation || Number(number) < 1 || Number(number) > allocation.last || Object.hasOwn(ruleRegistry.retired, rule)) {
+    failures.push(`${label}: unknown or retired built-in rule ${rule}`);
+  }
+}
+
+function validateQueryCases(path: string, validators: Record<string, ValidateFunction>, failures: string[]): void {
+  if (!existsSync(path)) return;
+  try {
+    const cases = JSON.parse(readFileSync(path, "utf8"));
+    const before = failures.length;
+    validateShape(validators["conformance-query"]!, cases, path, failures);
+    if (failures.length !== before) return;
+    const names = new Set<string>();
+    for (const entry of cases) {
+      const label = `${path}/${entry.name}`;
+      if (names.has(entry.name)) failures.push(`${path}: duplicate query case name ${entry.name}`);
+      names.add(entry.name);
+      for (const rule of [...entry.rules, ...(entry.expected_error ? [entry.expected_error] : [])]) validateRuleReference(rule, label, failures);
+      const aliases = entry.query.select.map((column: { as: string }) => column.as).sort();
+      const rows = [...(entry.expected_result?.rows ?? []), ...(entry.expected_result?.groups ?? []).flatMap((group: { rows: unknown[] }) => group.rows)];
+      for (const row of rows) {
+        if (JSON.stringify(Object.keys(row).sort()) !== JSON.stringify(aliases)) failures.push(`${label}: expected row columns differ from projection aliases`);
+      }
+    }
+  } catch (error) { failures.push(`${path}: ${error instanceof Error ? error.message : String(error)}`); }
 }
 
 export function validateGoldenVectors(
@@ -380,6 +404,7 @@ export function validateGoldenVectors(
       `golden/${vector}/collection/typedmark.md`, failures,
     );
     validateExpectedReportCoverage(report, typedmark, `golden/${vector}`, failures);
+    validateQueryCases(join(vectorRoot, "query-cases.json"), validators, failures);
 
     const contextPath = join(vectorRoot, "vector.json");
     if (existsSync(contextPath)) {

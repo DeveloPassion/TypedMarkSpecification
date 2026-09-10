@@ -9,13 +9,15 @@ The prose specification is the single source of truth. The schemas complement it
 and never override it: where a schema and the specification disagree, the
 specification wins and the schema has a bug.
 
-`conformance-vector.schema.json` is a separate harness schema for the
-non-normative `vector.json` setup described in the
+`conformance-vector.schema.json` and `conformance-query.schema.json` are separate
+harness schemas for the non-normative `vector.json` setup and `query-cases.json`
+cases described in the
 [conformance runner guide](conformance-runner.md#explicit-negotiation-context).
-It does not define a governed collection artifact. Shape checks cover its
-extension lists; the fixture gate checks declared requirements, disjointness,
-and expected evaluated sets. Actual adapter capabilities and deliberate scope
-selection are checked by the executable runner.
+They do not define governed collection artifacts. The fixture gate checks
+shape, declared requirements, disjointness, expected evaluated sets, query-case
+names, rule references, and projected columns. Actual adapter capabilities,
+scope selection, query results, and expected semantic failures are checked by
+the executable runner.
 
 ## Artifact map
 

@@ -7,6 +7,9 @@ Each directory is one self-contained validation vector:
   [Conformance and Roadmap](../../../conformance-and-roadmap.md#validation-reports).
 - Optional `vector.json` records explicit negotiation preconditions and disabled
   capabilities, under the non-normative [runner guide](../../docs/conformance-runner.md#explicit-negotiation-context).
+- Optional `query-cases.json` records standalone descriptors, exact operation
+  versions, rule references, and normalized expected query outcomes under the
+  [query runner guide](../../docs/conformance-runner.md#standalone-query-cases).
 
 Implementations should compare every machine-stable report field and the
 canonical result order. The `message` strings are illustrative; `CR-36` makes
@@ -39,3 +42,8 @@ The additional capability cases are:
 `vector.json` is outside the collection and is not a governed artifact. The
 fixture gate validates its shape and consistency with the collection and
 expected report; only an executable runner can check its capability preconditions.
+
+`query-pilot-valid` is the supported-query pilot: its six cases exercise stored
+versus effective values, relationships, ordering, limiting and grouping,
+logical deletion, and semantic failures. The query descriptors remain outside
+the collection and are supplied as explicit runtime inputs.
