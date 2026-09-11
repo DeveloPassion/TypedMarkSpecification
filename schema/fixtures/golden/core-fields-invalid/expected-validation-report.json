@@ -1,0 +1,46 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_field_value",
+      "severity": "error",
+      "path": "Bad.md",
+      "rule_id": "MN-128",
+      "message": "The mandatory managed tag is missing.",
+      "note_type": "note",
+      "field": "tags"
+    },
+    {
+      "code": "invalid_field_value",
+      "severity": "error",
+      "path": "Bad.md",
+      "rule_id": "MN-35",
+      "message": "Alias entries must be unique.",
+      "note_type": "note",
+      "field": "aliases"
+    },
+    {
+      "code": "missing_required_field",
+      "severity": "error",
+      "path": "Bad.md",
+      "rule_id": "MN-99",
+      "message": "A stored identifier cannot be null.",
+      "note_type": "note",
+      "field": "id"
+    },
+    {
+      "code": "invalid_field_value",
+      "severity": "error",
+      "path": "Unsafe.md",
+      "rule_id": "MN-82",
+      "message": "An alias cannot contain a path separator.",
+      "note_type": "note",
+      "field": "aliases"
+    }
+  ]
+}

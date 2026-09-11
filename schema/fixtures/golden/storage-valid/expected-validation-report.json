@@ -1,0 +1,13 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {
+    "typedmark:reuse": "0.1.0"
+  },
+  "evaluated_extensions": {
+    "typedmark:reuse": "0.1.0"
+  },
+  "valid": true,
+  "results": []
+}

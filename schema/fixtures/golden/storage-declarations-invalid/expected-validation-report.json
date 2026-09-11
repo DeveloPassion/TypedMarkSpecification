@@ -1,0 +1,24 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_note_type_schema",
+      "severity": "error",
+      "path": ".typedmark/schemas/note.md",
+      "rule_id": "NTS-124",
+      "message": "The active pattern references an undeclared field."
+    },
+    {
+      "code": "invalid_note_type_schema",
+      "severity": "error",
+      "path": ".typedmark/schemas/note.md",
+      "rule_id": "NTS-132",
+      "message": "The archive pattern references a non-scalar field."
+    }
+  ]
+}

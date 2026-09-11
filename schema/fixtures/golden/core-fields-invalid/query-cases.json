@@ -1,0 +1,21 @@
+[
+  {
+    "name": "invalid-core-fields-block-query-model",
+    "query_version": "0.1.0",
+    "rules": [
+      "CM-308",
+      "MN-35",
+      "MN-99"
+    ],
+    "query": {
+      "specification_version": "0.1.0",
+      "select": [
+        {
+          "kind": "path",
+          "as": "path"
+        }
+      ]
+    },
+    "expected_error": "CM-308"
+  }
+]

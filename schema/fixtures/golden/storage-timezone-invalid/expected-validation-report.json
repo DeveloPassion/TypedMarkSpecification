@@ -1,0 +1,17 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_collection_configuration",
+      "severity": "error",
+      "path": "typedmark.md",
+      "rule_id": "CM-551",
+      "message": "The timezone is not an IANA timezone identifier."
+    }
+  ]
+}

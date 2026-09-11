@@ -94,6 +94,9 @@ descriptors are covered by their descriptor schemas, and the core-defined
 
 These rules are normative but cannot (or should not) be expressed in JSON Schema:
 
+- Unicode-aware comparison and regex preprocessing under
+  [Foundations](../../foundations.md#unicode-normalization-and-string-comparison);
+  schema keywords do not themselves perform NFC normalization
 - filesystem checks: effective identifiers match basenames, explicitly named
   templates exist, implicit templates can be derived, and artifact locations derive
   from `metadata_directory`

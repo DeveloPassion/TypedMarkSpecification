@@ -83,6 +83,16 @@ and a stored type that disagrees with path association. Its query excludes the
 untyped winners. `core-mapping-declarations-invalid` checks declared targets and
 regular expressions even in an empty collection.
 
+`core-fields-valid` and `core-fields-invalid` exercise the identifier, alias,
+and mandatory-tag value contracts, including NFC tag matching without writes.
+The invalid-field query cannot construct a conforming effective model.
+`storage-valid` combines inherited storage, concrete/property-set fields,
+timezone-local ISO week formatting, sparse defaults, and archive replacement.
+`storage-invalid` distinguishes missing path values, unsafe substitutions, and
+invalid resolved basenames. `storage-declarations-invalid` checks active and
+archive placeholders without any notes, while `storage-timezone-invalid`
+reports an invalid named timezone at the collection configuration.
+
 The reference adapter now supports Views, so the historical
 `missing-extension-dependency` and `conflicting-extension-dependency` negotiation
 preconditions no longer apply to it. The runner records them as not run instead

@@ -1,0 +1,45 @@
+[
+  {
+    "name": "composed-path-fields-remain-sparse",
+    "query_version": "0.1.0",
+    "rules": [
+      "NTS-21",
+      "NTS-39",
+      "NTS-124",
+      "MN-91",
+      "CM-365"
+    ],
+    "query": {
+      "specification_version": "0.1.0",
+      "note_types": [
+        "base"
+      ],
+      "select": [
+        {
+          "kind": "path",
+          "as": "path"
+        },
+        {
+          "kind": "field",
+          "field": "code",
+          "as": "code"
+        }
+      ],
+      "where": {
+        "kind": "field",
+        "field": "code",
+        "operator": "equals",
+        "value": "item"
+      }
+    },
+    "expected_result": {
+      "evaluation": "complete",
+      "rows": [
+        {
+          "path": "2020/53/item-2021-01.md",
+          "code": null
+        }
+      ]
+    }
+  }
+]
