@@ -1,0 +1,44 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {
+    "typedmark:expressions": "0.1.0",
+    "typedmark:expansion": "0.1.0",
+    "typedmark:automation": "0.1.0"
+  },
+  "evaluated_extensions": {
+    "typedmark:expressions": "0.1.0",
+    "typedmark:expansion": "0.1.0",
+    "typedmark:automation": "0.1.0"
+  },
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_automation",
+      "severity": "error",
+      "path": ".typedmark/automations/overwrite-name.md",
+      "rule_id": "CM-278",
+      "message": "The computed field cannot be assigned directly",
+      "note_type": "person",
+      "field": "full"
+    },
+    {
+      "code": "invalid_field_value",
+      "severity": "error",
+      "path": "People/Ada.md",
+      "rule_id": "FDR-234",
+      "message": "Stored computed value differs from its expression",
+      "note_type": "person",
+      "field": "full"
+    },
+    {
+      "code": "expansion_drift",
+      "severity": "error",
+      "path": "People/Ada.md",
+      "rule_id": "RHT-164",
+      "message": "Stored expansion differs from current rendered source",
+      "expansion": "first"
+    }
+  ]
+}

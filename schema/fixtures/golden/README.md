@@ -61,6 +61,13 @@ inherited condition and a dataset over concrete descendants.
 presence and reports both a missing conditional value and conflicting matching
 requirements. Neither vector materializes effective defaults into note files.
 
+`derived-contracts-valid` combines stored computed names, note and template
+expansions, dataset-backed dashboard content, and a valid automation declaration.
+`derived-contracts-invalid` expects a protected-field automation assignment,
+a stale computed value, and expansion drift to be reported independently.
+These vectors exercise read-only validation, not automation execution,
+template instantiation, expansion refresh, or destructive-action approval.
+
 The reference adapter now supports Views, so the historical
 `missing-extension-dependency` and `conflicting-extension-dependency` negotiation
 preconditions no longer apply to it. The runner records them as not run instead
