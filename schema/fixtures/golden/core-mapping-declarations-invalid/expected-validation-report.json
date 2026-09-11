@@ -1,0 +1,24 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_note_type_mapping",
+      "severity": "error",
+      "path": "typedmark.md",
+      "rule_id": "CM-92",
+      "message": "The declared folder target is not a concrete type."
+    },
+    {
+      "code": "invalid_note_type_mapping",
+      "severity": "error",
+      "path": "typedmark.md",
+      "rule_id": "FND-31",
+      "message": "The declared mapping regex is invalid."
+    }
+  ]
+}

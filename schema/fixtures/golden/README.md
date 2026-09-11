@@ -74,6 +74,15 @@ an enrolled note whose static region matches its canonical template.
 structure, and independent template drift visible as separate findings. These
 vectors never generate values, reconcile regions, or update baseline receipts.
 
+`core-association-valid` exercises first-match association, stored predicates,
+Unicode value comparison, exclusions, and empty versus absent frontmatter. Its
+queries make managed-note membership and the winning concrete type observable;
+an unclosed opening delimiter remains ordinary body content.
+`core-association-invalid` reports invalid dynamic winners without falling back
+and a stored type that disagrees with path association. Its query excludes the
+untyped winners. `core-mapping-declarations-invalid` checks declared targets and
+regular expressions even in an empty collection.
+
 The reference adapter now supports Views, so the historical
 `missing-extension-dependency` and `conflicting-extension-dependency` negotiation
 preconditions no longer apply to it. The runner records them as not run instead

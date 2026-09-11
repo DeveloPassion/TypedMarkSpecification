@@ -1,0 +1,27 @@
+[
+  {
+    "name": "invalid-winners-remain-untyped",
+    "query_version": "0.1.0",
+    "rules": [
+      "CM-74",
+      "CM-114",
+      "CM-386"
+    ],
+    "query": {
+      "specification_version": "0.1.0",
+      "note_types": [
+        "note"
+      ],
+      "select": [
+        {
+          "kind": "path",
+          "as": "path"
+        }
+      ]
+    },
+    "expected_result": {
+      "evaluation": "complete",
+      "rows": []
+    }
+  }
+]

@@ -1,0 +1,33 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_field_value",
+      "severity": "error",
+      "path": "Mismatch.md",
+      "rule_id": "MN-40",
+      "message": "Stored note_type differs from the associated type.",
+      "note_type": "other",
+      "field": "note_type"
+    },
+    {
+      "code": "invalid_note_type_mapping",
+      "severity": "error",
+      "path": "Null.md",
+      "rule_id": "CM-114",
+      "message": "The winning candidate does not resolve to a concrete type."
+    },
+    {
+      "code": "invalid_note_type_mapping",
+      "severity": "error",
+      "path": "Unknown.md",
+      "rule_id": "CM-114",
+      "message": "The winning candidate does not resolve to a concrete type."
+    }
+  ]
+}

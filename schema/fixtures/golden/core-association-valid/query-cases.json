@@ -1,0 +1,73 @@
+[
+  {
+    "name": "managed-association-universe",
+    "query_version": "0.1.0",
+    "rules": [
+      "CM-26",
+      "CM-73",
+      "CM-105",
+      "CM-110",
+      "CM-113",
+      "CM-386",
+      "FND-34"
+    ],
+    "query": {
+      "specification_version": "0.1.0",
+      "select": [
+        {
+          "kind": "path",
+          "as": "path"
+        }
+      ]
+    },
+    "expected_result": {
+      "evaluation": "complete",
+      "rows": [
+        {
+          "path": "Default.md"
+        },
+        {
+          "path": "Empty.md"
+        },
+        {
+          "path": "Preferred.md"
+        },
+        {
+          "path": "Selected.md"
+        },
+        {
+          "path": "Tagged.md"
+        }
+      ]
+    }
+  },
+  {
+    "name": "first-winner-is-concrete-type",
+    "query_version": "0.1.0",
+    "rules": [
+      "CM-73",
+      "CM-74",
+      "CM-308"
+    ],
+    "query": {
+      "specification_version": "0.1.0",
+      "note_types": [
+        "other"
+      ],
+      "select": [
+        {
+          "kind": "path",
+          "as": "path"
+        }
+      ]
+    },
+    "expected_result": {
+      "evaluation": "complete",
+      "rows": [
+        {
+          "path": "Preferred.md"
+        }
+      ]
+    }
+  }
+]
