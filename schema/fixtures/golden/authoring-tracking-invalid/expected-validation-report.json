@@ -1,0 +1,34 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": { "typedmark:authoring": "0.1.0", "typedmark:template-tracking": "0.1.0", "typedmark:reuse": "0.1.0" },
+  "evaluated_extensions": { "typedmark:authoring": "0.1.0", "typedmark:template-tracking": "0.1.0", "typedmark:reuse": "0.1.0" },
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_property_set",
+      "severity": "error",
+      "path": ".typedmark/property-sets/impossible.md",
+      "rule_id": "FDR-65",
+      "message": "Generator output cannot satisfy the declared constraints"
+    },
+    {
+      "code": "invalid_template_region",
+      "severity": "error",
+      "path": "A.md",
+      "rule_id": "RHT-212",
+      "message": "A detached receipt cannot accompany a region marker",
+      "template_region": "guidance"
+    },
+    {
+      "code": "template_drift",
+      "severity": "warn",
+      "path": "A.md",
+      "rule_id": "RHT-217",
+      "message": "The canonical template region changed",
+      "template_region": "other",
+      "drift_kind": "template_changed"
+    }
+  ]
+}

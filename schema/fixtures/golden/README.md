@@ -68,6 +68,12 @@ a stale computed value, and expansion drift to be reported independently.
 These vectors exercise read-only validation, not automation execution,
 template instantiation, expansion refresh, or destructive-action approval.
 
+`authoring-tracking-valid` checks optional generator/immutable declarations and
+an enrolled note whose static region matches its canonical template.
+`authoring-tracking-invalid` keeps generator incompatibility, marker/receipt
+structure, and independent template drift visible as separate findings. These
+vectors never generate values, reconcile regions, or update baseline receipts.
+
 The reference adapter now supports Views, so the historical
 `missing-extension-dependency` and `conflicting-extension-dependency` negotiation
 preconditions no longer apply to it. The runner records them as not run instead
