@@ -1,0 +1,28 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {
+    "typedmark:systems": "0.1.0"
+  },
+  "evaluated_extensions": {
+    "typedmark:systems": "0.1.0"
+  },
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_composition",
+      "severity": "error",
+      "path": "typedmark.md",
+      "rule_id": "CM-130",
+      "message": "A source name occurs more than once."
+    },
+    {
+      "code": "invalid_composition",
+      "severity": "error",
+      "path": "typedmark.md",
+      "rule_id": "CM-131",
+      "message": "The composition includes its own identity."
+    }
+  ]
+}

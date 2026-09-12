@@ -93,6 +93,20 @@ invalid resolved basenames. `storage-declarations-invalid` checks active and
 archive placeholders without any notes, while `storage-timezone-invalid`
 reports an invalid named timezone at the collection configuration.
 
+`core-cardinality-valid` keeps property types and case-sensitive values distinct,
+including an unused type with a zero maximum. `core-cardinality-invalid` combines
+instant-equal datetime values with NFC-equal text under a collection-wide
+declaration whose type has no notes. `core-count-range-invalid` exercises the
+already-existing schema-level range check independently of note population.
+
+`history-valid`, `history-unsupported-version`, and `history-best-effort` distinguish
+history's own artifact version from the system release version. Unsupported
+history prevents complete Systems evaluation; a newer compatible patch is
+best-effort, not invalid solely because its version is newer.
+`composition-provenance-invalid` checks duplicate/self-referencing source names
+without trying to resolve external systems. These vectors do not claim history
+replay, complete release-order validation, or migration impact analysis.
+
 The reference adapter now supports Views, so the historical
 `missing-extension-dependency` and `conflicting-extension-dependency` negotiation
 preconditions no longer apply to it. The runner records them as not run instead

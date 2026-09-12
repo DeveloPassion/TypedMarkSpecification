@@ -1,0 +1,28 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [
+    {
+      "code": "duplicate_unique_value",
+      "severity": "error",
+      "path": "B.md",
+      "rule_id": "FDR-83",
+      "message": "when represents the same instant as A.md.",
+      "note_type": "note",
+      "field": "when"
+    },
+    {
+      "code": "duplicate_unique_value",
+      "severity": "error",
+      "path": "B.md",
+      "rule_id": "FDR-84",
+      "message": "key equals A.md after Unicode normalization.",
+      "note_type": "note",
+      "field": "key"
+    }
+  ]
+}
