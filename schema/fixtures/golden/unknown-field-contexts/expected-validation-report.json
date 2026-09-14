@@ -1,0 +1,44 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
+  "valid": true,
+  "results": [
+    {
+      "code": "unknown_field",
+      "severity": "warn",
+      "path": "Notes/Source.md",
+      "rule_id": "MN-111",
+      "message": "literal.dot is not declared",
+      "note_type": "note"
+    },
+    {
+      "code": "unknown_field",
+      "severity": "warn",
+      "path": "Notes/Source.md",
+      "rule_id": "MN-111",
+      "message": "extra_field is not declared",
+      "note_type": "note",
+      "field": "extra_field"
+    },
+    {
+      "code": "unknown_field",
+      "severity": "warn",
+      "path": "Notes/Source.md",
+      "rule_id": "MN-112",
+      "message": "sections.1.display name is not declared",
+      "note_type": "note"
+    },
+    {
+      "code": "unknown_field",
+      "severity": "warn",
+      "path": "Notes/Source.md",
+      "rule_id": "MN-112",
+      "message": "sections.0.extra is not declared",
+      "note_type": "note",
+      "field": "sections.extra"
+    }
+  ]
+}

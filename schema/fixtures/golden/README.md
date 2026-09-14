@@ -138,6 +138,10 @@ without adding relationship instances. `nested-links-invalid` reports missing
 targets, incompatible target types, root escapes, and asset targets using
 logical dotted field paths, including fields within list items.
 
+`unknown-field-contexts` retains warning policy while using portable logical
+paths for unknown list-item fields. Names with no field-path encoding remain
+in the message without an ambiguous optional field context.
+
 The reference adapter now supports Views, so the historical
 `missing-extension-dependency` and `conflicting-extension-dependency` negotiation
 preconditions no longer apply to it. The runner records them as not run instead
