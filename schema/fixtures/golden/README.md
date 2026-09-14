@@ -117,6 +117,11 @@ incomplete. `root-unsupported` records an unsupported root without claiming
 child contract evaluation, and its query reports the unavailable configuration.
 These are read-only version/report boundary checks under `CR-25` and `CR-102`.
 
+`scaffold-references-valid` resolves a starter note to an inherited concrete
+type. `scaffold-references-invalid` reports missing and abstract targets under
+`SCE-17`; `scaffold-references-unavailable` withholds Systems evaluation when
+the target's Core version cannot be interpreted. No scaffold is materialized.
+
 The reference adapter now supports Views, so the historical
 `missing-extension-dependency` and `conflicting-extension-dependency` negotiation
 preconditions no longer apply to it. The runner records them as not run instead

@@ -105,7 +105,7 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
 - cross-file resolution: `extends` chains and cycle detection, property-set
   references, `exclude_property_sets` membership in `default_property_sets`,
   `frontmatter_remove` targeting inherited fields, relationship and field `targets` resolving
-  to note types, composition source resolution
+  to note types, scaffold note-type references (`SCE-17`), composition source resolution
 - effective-schema computation: the local or enabled-Reuse evaluation pipeline,
   block merge rules, and the required effective keys for concrete note types
 - mandatory-tag semantics: collection/note-type merge order, exact

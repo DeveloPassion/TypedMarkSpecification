@@ -1,0 +1,32 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "system_definition",
+  "evaluation": "complete",
+  "required_extensions": {
+    "typedmark:reuse": "0.1.0",
+    "typedmark:systems": "0.1.0"
+  },
+  "evaluated_extensions": {
+    "typedmark:reuse": "0.1.0",
+    "typedmark:systems": "0.1.0"
+  },
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_system",
+      "severity": "error",
+      "path": "typedmark.md",
+      "rule_id": "SCE-17",
+      "note_type": "base",
+      "message": "Scaffold target base does not resolve to a concrete type."
+    },
+    {
+      "code": "invalid_system",
+      "severity": "error",
+      "path": "typedmark.md",
+      "rule_id": "SCE-17",
+      "note_type": "missing",
+      "message": "Scaffold target missing does not resolve to a concrete type."
+    }
+  ]
+}
