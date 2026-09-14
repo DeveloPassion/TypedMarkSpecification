@@ -1,7 +1,8 @@
 # Migrating to the 0.1.0 draft
 
 This non-normative checklist records intentional compatibility changes. The
-linked specification pages remain authoritative. The draft is not a released
+linked specification pages remain authoritative. The [prior 0.0.1 contract and schemas](https://github.com/DeveloPassion/TypedMarkSpecification/tree/f9955555928ab69573d5e8beb376e9e98c3813e2)
+remain available at their fixed baseline revision. The draft is not a released
 compatibility promise; migration of real collections needs review and a backup.
 
 | Earlier form | 0.1.0 action |

@@ -5,7 +5,8 @@ TypedMark is an open specification for typed Markdown note systems.
 **Current edition: 0.1.0 draft.** The specification is being refocused under
 [#123](https://github.com/DeveloPassion/TypedMarkSpecification/issues/123).
 It is not a released compatibility promise; breaking changes from the earlier
-0.0 line are being documented as they land.
+[0.0.1 contract](https://github.com/DeveloPassion/TypedMarkSpecification/tree/f9955555928ab69573d5e8beb376e9e98c3813e2)
+are being documented as they land.
 
 Read the specification at **<https://developassion.github.io/TypedMarkSpecification/>** — the website is built from the Markdown sources in this repository, which remain the single source of truth. Start with [index.md](index.md) to read it as plain files. Machine-readable JSON Schemas for the governed artifacts live under [schema/](schema/).
 

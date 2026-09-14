@@ -26,7 +26,7 @@ See the [0.1.0 migration checklist](schema/docs/migration-0.1.md) for intentiona
 ### Changes in this draft
 
 - Pre-1.0 minor lines are separate compatibility boundaries. Implementing
-  `0.1.x` does not imply support for `0.0.x`; patch changes remain compatible.
+  `0.1.x` does not imply support for [the prior `0.0.1` contract](https://github.com/DeveloPassion/TypedMarkSpecification/tree/f9955555928ab69573d5e8beb376e9e98c3813e2); patch changes remain compatible.
 - Templates take their specification version from their referencing concrete
   schema rather than storing it in starter note frontmatter.
 - Required extensions use an exact-version map; validation reports distinguish

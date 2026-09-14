@@ -69,7 +69,7 @@ const RELATED = [
 ];
 
 function stripFrontmatter(text: string): { body: string; title: string | null; audience: string | null } {
-  const lines = text.split("\n");
+  const lines = text.split(/\r\n?|\n/);
   if (lines[0] !== "---") return { body: text, title: null, audience: null };
   const end = lines.findIndex((l, i) => i > 0 && (l === "---" || l === "..."));
   if (end === -1) return { body: text, title: null, audience: null };
@@ -200,6 +200,7 @@ function shell(page: Page, title: string, content: string, toc: TocEntry[], audi
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${title} — TypedMark</title>
 <meta name="description" content="TypedMark is an open specification for typed Markdown note systems.">
+<link rel="icon" href="data:,">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
