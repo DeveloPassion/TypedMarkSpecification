@@ -147,6 +147,12 @@ relationship target deduplication, and exclusion of an entity-encoded external
 scheme despite an existing lookalike note. `note-link-entities-invalid` reports
 collection-root traversal after decoding entity-encoded path separators.
 
+`note-link-percent-valid` checks one-pass percent decoding and excluded malformed
+decoys. `note-link-percent-invalid` records malformed target/fragment findings
+for bodies and nested fields, with no invalid-link relationship contribution.
+`note-link-percent-suppressed` keeps its configured report empty while the
+standalone query still refuses the invalid link model.
+
 The reference adapter now supports Views, so the historical
 `missing-extension-dependency` and `conflicting-extension-dependency` negotiation
 preconditions no longer apply to it. The runner records them as not run instead
