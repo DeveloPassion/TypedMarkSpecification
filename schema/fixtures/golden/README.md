@@ -122,6 +122,12 @@ type. `scaffold-references-invalid` reports missing and abstract targets under
 `SCE-17`; `scaffold-references-unavailable` withholds Systems evaluation when
 the target's Core version cannot be interpreted. No scaffold is materialized.
 
+`template-placeholders-valid` distinguishes unresolved template placeholders from
+concrete nested defaults. `template-values-invalid` checks non-placeholder field
+values. `scaffold-template-override-invalid` prevents caller values from hiding an
+invalid override template. These vectors remain read-only; import materialization
+and source preservation are exercised separately in the tooling tests.
+
 The reference adapter now supports Views, so the historical
 `missing-extension-dependency` and `conflicting-extension-dependency` negotiation
 preconditions no longer apply to it. The runner records them as not run instead

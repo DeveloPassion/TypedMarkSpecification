@@ -1,0 +1,22 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "system_definition",
+  "evaluation": "complete",
+  "required_extensions": {
+    "typedmark:systems": "0.1.0"
+  },
+  "evaluated_extensions": {
+    "typedmark:systems": "0.1.0"
+  },
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_template",
+      "severity": "error",
+      "path": ".typedmark/templates/overrides/start.md",
+      "rule_id": "RHT-80",
+      "field": "status",
+      "message": "The non-placeholder template value violates its effective field contract."
+    }
+  ]
+}
