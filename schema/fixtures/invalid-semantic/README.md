@@ -15,6 +15,8 @@ full boundary.
 | `expansion-query-unknown-column.json` | A query expansion's `column` must resolve to exactly one projected alias; `missing` is not projected. |
 | `expansion-view-unknown-column.json` | A view expansion's `column` must resolve to a projected and presented column in the saved view; `missing` does not. |
 | `note-type-basename-mismatch.md` | The schema file basename must equal the file's `note_type` value (`topic` here). |
+| `note-type-allowed-values-type.md` | FDR-198: a scalar allowed value is incompatible with its declared integer type. |
+| `note-type-allowed-values-nfc.md` | FDR-197/FDR-240: distinct JSON strings are duplicates after NFC normalization. |
 | `note-type-computed-reference-unresolved.md` | Every `computed` field reference must resolve to a sibling field declared in the same effective `frontmatter`; `nickname` does not exist. |
 | `note-type-computed-unsupported-transform.md` | `computed` supports only the transforms defined by the specification version; `upper` is unknown. |
 | `note-type-extends-unresolved.md` | `extends` must resolve to exactly one abstract note type under `<metadata_directory>/schemas/`; no `person` schema exists. |

@@ -53,6 +53,10 @@ descriptors are covered by their descriptor schemas, and the core-defined
   `additionalProperties: false` wherever the specification closes the key set
 - scalar types, identifier grammars (`name`, slugs, field names), and enums
   (`kind`, property types, formats, severities, archive policies, history ops)
+- scalar-only `allowed_values` entries under
+  [Field Definition Reference](../../field-definition-reference.md#allowed_values),
+  with JSON-exact uniqueness; declared-type compatibility and normalized
+  field-value equality remain semantic checks
 - optional collection `extensions` declarations and report extension maps:
   namespaced identifier keys and exact complete SemVer string values, including
   prerelease and build suffixes; empty maps are accepted, ranges and whitespace
@@ -219,8 +223,10 @@ marketplace catalog, and validation reports are validated directly.
 
 Before applying JSON Schema, the checker projects parsed YAML into a temporary
 shape view. Native tagged sets, ordered maps, timestamps and binary values do not
-count as JSON objects. Unconstrained vendor metadata and literal positions still
-accept them; literal type conformance remains a semantic check. The iterative
+count as JSON objects. Unconstrained vendor metadata, default and constant positions
+still accept them; declared-type conformance remains a semantic check.
+`allowed_values` instead has a scalar-only item shape, so malformed object/sequence
+entries cannot reach AJV's recursive object equality. The iterative
 projection preserves aliases and own property names without modifying the parsed
 model, and does not recurse through the JavaScript call stack for deep opaque
 metadata. This is checker behavior, not a new YAML-tag restriction.

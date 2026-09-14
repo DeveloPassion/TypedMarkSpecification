@@ -77,17 +77,18 @@ describe("opaque YAML values", () => {
       .toEqual(Buffer.isBuffer(original) ? [...snapshot] : snapshot);
   });
 
-  // Literal type conformance belongs to the semantic layer, per schema-boundary.md.
+  // Default/constant type conformance stays semantic; allowed_values also has
+  // the scalar-only shape constraint from FDR-197.
   test.each([
-    ["default_value", "!!set {one: null}"],
-    ["const_value", "!!omap [{one: 1}]"],
-    ["allowed_values", "[!!set {one: null}]"],
-  ])("leaves %s literal values for semantic validation", (property, literal) => {
+    ["default_value", "!!set {one: null}", true],
+    ["const_value", "!!omap [{one: 1}]", true],
+    ["allowed_values", "[!!set {one: null}]", false],
+  ] as const)("preserves %s input while checking its shape", (property, literal, valid) => {
     const document = parseYaml(`${noteType}\nfrontmatter:\n  value:\n    type: text\n    ${property}: ${literal}`);
     const field = document.frontmatter.value;
     const original = field[property];
     const snapshot = structuredClone(original);
-    expect(validators["note-type"]!(document)).toBe(true);
+    expect(validators["note-type"]!(document)).toBe(valid);
     expect(document.frontmatter.value).toBe(field);
     expect(field[property]).toBe(original);
     expect(field[property]).toEqual(snapshot);
