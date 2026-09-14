@@ -1,0 +1,23 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {
+    "typedmark:systems": "0.1.0"
+  },
+  "evaluated_extensions": {
+    "typedmark:systems": "0.1.0"
+  },
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_field_value",
+      "severity": "error",
+      "path": "Notes/Draft.md",
+      "rule_id": "FDR-13",
+      "message": "due must use RFC 3339 full-date format YYYY-MM-DD",
+      "note_type": "note",
+      "field": "due"
+    }
+  ]
+}

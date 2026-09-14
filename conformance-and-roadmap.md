@@ -39,7 +39,7 @@ Rules:
 
 ## Conformance
 
-Conformance evaluates a collection root, represented on disk as a directory tree, against the authoritative artifact contracts defined in [Collection Model](collection-model.md), [Systems, Composition, and Evolution](systems-composition-evolution.md), [Note Type Schemas](note-type-schemas.md), [Managed Notes and Properties](managed-notes-and-properties.md), and [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
+Conformance checks a collection root against its authoritative contracts: [Collection Model](collection-model.md), [Systems, Composition, and Evolution](systems-composition-evolution.md), [Note Type Schemas](note-type-schemas.md), [Managed Notes and Properties](managed-notes-and-properties.md), and [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 
 Conformance modes:
 
@@ -193,14 +193,16 @@ A collection root conforms as a valid instantiated collection when:
 
 Additional rules:
 
-- `CR-14` Validators MUST evaluate conformance against an explicit target mode: system definition, instantiated collection, or both.
+- `CR-14` Validators MUST evaluate only the explicit target: published artifacts for `system_definition`, artifacts and collection notes for `instantiated_collection`, both targets for `both`.
 - `CR-15` A collection root is a system definition when `typedmark.md` declares the system fields, and an instantiated collection when `typedmark.md` governs managed notes; neither requires a separate system or instance manifest.
 - `CR-16` A single collection root MAY conform simultaneously as both a valid system definition and a valid instantiated collection.
 - `CR-17` Untyped notes MAY exist in an instantiated collection and do not by themselves make the collection non-conforming.
 - `CR-18` Structural precedence across artifacts remains defined in [Foundations](foundations.md).
 - `CR-19` A Core Profile instantiated collection satisfies the positive Core concern set in [Foundations](foundations.md#purpose) without requiring an optional contract.
 - `CR-20` Validators MUST apply the defaulted shorthand values defined in [Collection Model](collection-model.md) and [Note Type Schemas](note-type-schemas.md) before evaluating any conformance mode.
-- `CR-22` Validators MUST evaluate every winning note-type mapping candidate under `CM-114`, including candidates that do not resolve to a concrete schema.
+- `CR-22` Note validation MUST evaluate every winning mapping candidate under `CM-114`, including candidates not resolving to concrete schemas.
+
+For example, an invalid draft note does not fail `system_definition`, but fails `both` when the published artifacts are valid.
 
 ## Recommended Next Steps
 

@@ -1,0 +1,62 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "system_definition",
+  "evaluation": "complete",
+  "required_extensions": {
+    "typedmark:expansion": "0.1.0",
+    "typedmark:expressions": "0.1.0",
+    "typedmark:queries": "0.1.0",
+    "typedmark:systems": "0.1.0",
+    "typedmark:views": "0.1.0"
+  },
+  "evaluated_extensions": {
+    "typedmark:expansion": "0.1.0",
+    "typedmark:expressions": "0.1.0",
+    "typedmark:queries": "0.1.0",
+    "typedmark:systems": "0.1.0",
+    "typedmark:views": "0.1.0"
+  },
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_expansion",
+      "severity": "error",
+      "path": ".typedmark/templates/note.md",
+      "rule_id": "CM-369",
+      "message": "Ordered column missing is not a projected query alias.",
+      "expansion": "query-order"
+    },
+    {
+      "code": "invalid_expansion",
+      "severity": "error",
+      "path": ".typedmark/templates/note.md",
+      "rule_id": "RHT-259",
+      "message": "View missing does not resolve to a published artifact.",
+      "expansion": "missing-view"
+    },
+    {
+      "code": "invalid_expansion",
+      "severity": "error",
+      "path": ".typedmark/templates/note.md",
+      "rule_id": "RHT-263",
+      "message": "Projected column type is not presented by view notes.",
+      "expansion": "hidden-column"
+    },
+    {
+      "code": "invalid_expansion",
+      "severity": "error",
+      "path": ".typedmark/templates/note.md",
+      "rule_id": "RHT-274",
+      "message": "Dataset missing does not resolve to a published artifact.",
+      "expansion": "missing-dataset"
+    },
+    {
+      "code": "invalid_expansion",
+      "severity": "error",
+      "path": ".typedmark/templates/note.md",
+      "rule_id": "RHT-277",
+      "message": "Column missing is not a projected alias of dataset notes.",
+      "expansion": "missing-column"
+    }
+  ]
+}
