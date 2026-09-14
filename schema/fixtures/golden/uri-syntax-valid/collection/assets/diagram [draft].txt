@@ -1,0 +1,1 @@
+An asset reference never contributes a managed-note relationship.

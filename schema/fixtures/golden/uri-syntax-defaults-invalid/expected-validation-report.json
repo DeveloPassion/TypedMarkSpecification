@@ -1,0 +1,31 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_note_type_schema",
+      "severity": "error",
+      "path": ".typedmark/schemas/with-allowed.md",
+      "rule_id": "FDR-198",
+      "message": "The URI constraint value has malformed percent encoding."
+    },
+    {
+      "code": "invalid_note_type_schema",
+      "severity": "error",
+      "path": ".typedmark/schemas/with-constant.md",
+      "rule_id": "FDR-211",
+      "message": "The URI constraint value has malformed percent encoding."
+    },
+    {
+      "code": "invalid_note_type_schema",
+      "severity": "error",
+      "path": ".typedmark/schemas/with-default.md",
+      "rule_id": "FDR-4",
+      "message": "The URI constraint value has malformed percent encoding."
+    }
+  ]
+}

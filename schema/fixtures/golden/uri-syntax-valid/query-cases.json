@@ -1,0 +1,31 @@
+[
+  {
+    "name": "uri-projection-preserves-authored-spelling",
+    "query_version": "0.1.0",
+    "rules": [
+      "FDR-140",
+      "CM-365"
+    ],
+    "query": {
+      "specification_version": "0.1.0",
+      "note_types": [
+        "source"
+      ],
+      "select": [
+        {
+          "kind": "field",
+          "field": "homepage",
+          "as": "homepage"
+        }
+      ]
+    },
+    "expected_result": {
+      "evaluation": "complete",
+      "rows": [
+        {
+          "homepage": "X+V1://user@EXAMPLE.test:99999/a/../%7e?octet=%FF"
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,81 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_field_value",
+      "severity": "error",
+      "path": "Notes/Source.md",
+      "rule_id": "FDR-140",
+      "message": "The field requires a scheme-qualified URI with valid RFC 3986 syntax.",
+      "note_type": "source",
+      "field": "authority_uri"
+    },
+    {
+      "code": "invalid_field_value",
+      "severity": "error",
+      "path": "Notes/Source.md",
+      "rule_id": "FDR-140",
+      "message": "The field requires a scheme-qualified URI with valid RFC 3986 syntax.",
+      "note_type": "source",
+      "field": "homepage"
+    },
+    {
+      "code": "invalid_field_value",
+      "severity": "error",
+      "path": "Notes/Source.md",
+      "rule_id": "FDR-140",
+      "message": "The field requires a scheme-qualified URI with valid RFC 3986 syntax.",
+      "note_type": "source",
+      "field": "raw_uri"
+    },
+    {
+      "code": "invalid_field_value",
+      "severity": "error",
+      "path": "Notes/Source.md",
+      "rule_id": "FDR-140",
+      "message": "The field requires a scheme-qualified URI with valid RFC 3986 syntax.",
+      "note_type": "source",
+      "field": "relative_uri"
+    },
+    {
+      "code": "invalid_note_link",
+      "severity": "error",
+      "path": "Notes/Source.md",
+      "rule_id": "NL-6",
+      "message": "The Markdown target requires URI encoding.",
+      "note_type": "source"
+    },
+    {
+      "code": "invalid_note_link",
+      "severity": "error",
+      "path": "Notes/Source.md",
+      "rule_id": "NL-6",
+      "message": "The Markdown target requires URI encoding.",
+      "note_type": "source",
+      "field": "reference"
+    },
+    {
+      "code": "invalid_relationship_instance",
+      "severity": "error",
+      "path": "Notes/Source.md",
+      "rule_id": "RHT-31",
+      "message": "An unencoded target does not satisfy the related_to minimum.",
+      "note_type": "source",
+      "relationship": "related_to"
+    },
+    {
+      "code": "invalid_field_value",
+      "severity": "error",
+      "path": "Notes/URI.md",
+      "rule_id": "FDR-140",
+      "message": "The URI value contains a malformed percent escape.",
+      "note_type": "uri-source",
+      "field": "homepage"
+    }
+  ]
+}

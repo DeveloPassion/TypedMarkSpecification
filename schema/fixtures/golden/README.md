@@ -153,6 +153,14 @@ for bodies and nested fields, with no invalid-link relationship contribution.
 `note-link-percent-suppressed` keeps its configured report empty while the
 standalone query still refuses the invalid link model.
 
+`uri-syntax-valid` checks generic URI fields, encoded note/asset targets and
+unchanged URI projection values. `uri-syntax-invalid` distinguishes URI field
+failures from note-target encoding and relationship-count failures, including
+a query whose admitted note cannot provide valid URI field values.
+`uri-syntax-defaults-invalid` checks malformed URI defaults, constants and allowed
+values without notes. These vectors
+do not settle the pending URI-field fragment-policy question.
+
 The reference adapter now supports Views, so the historical
 `missing-extension-dependency` and `conflicting-extension-dependency` negotiation
 preconditions no longer apply to it. The runner records them as not run instead

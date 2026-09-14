@@ -1,0 +1,13 @@
+[
+  {
+    "name": "invalid-uri-value-blocks-admitted-note-model",
+    "query_version": "0.1.0",
+    "rules": ["FDR-140", "CM-308"],
+    "query": {
+      "specification_version": "0.1.0",
+      "note_types": ["uri-source"],
+      "select": [{"kind": "path", "as": "path"}]
+    },
+    "expected_error": "CM-308"
+  }
+]
