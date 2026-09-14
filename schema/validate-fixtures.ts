@@ -32,6 +32,7 @@ import { isMap, parse as parseYaml, parseDocument } from "yaml";
 import ruleRegistry from "../scripts/rule-registry.json";
 import definitions from "./json-schema/defs.schema.json";
 import type { RuleRegistry } from "../scripts/lint-rule-ids";
+import { shapeValue } from "./shape-value";
 
 const SCHEMA_DIR = join(import.meta.dir, "json-schema");
 const FIXTURE_DIR = join(import.meta.dir, "fixtures");
@@ -81,7 +82,13 @@ export function buildValidators(): Record<string, ValidateFunction> {
   for (const [prefix, file] of Object.entries({ ...ARTIFACT_SCHEMAS, "conformance-vector": "conformance-vector.schema.json", "conformance-query": "conformance-query.schema.json" })) {
     const validate = ajv.getSchema(idsByFile[file]!);
     if (!validate) throw new Error(`schema ${file} did not compile`);
-    validators[prefix] = validate;
+    // Preserve AJV's live errors/schema metadata while projecting call inputs.
+    // https://ajv.js.org/api.html
+    validators[prefix] = new Proxy(validate, {
+      apply(target, receiver, args) {
+        return Reflect.apply(target, receiver, [shapeValue(args[0]), ...args.slice(1)]);
+      },
+    });
   }
   return validators;
 }

@@ -217,6 +217,14 @@ Fixtures are mapped to artifact schemas by filename prefix (`typedmark-*`,
 frontmatter; `.json` fixtures such as marker descriptors, tracking receipts, the
 marketplace catalog, and validation reports are validated directly.
 
+Before applying JSON Schema, the checker projects parsed YAML into a temporary
+shape view. Native tagged sets, ordered maps, timestamps and binary values do not
+count as JSON objects. Unconstrained vendor metadata and literal positions still
+accept them; literal type conformance remains a semantic check. The iterative
+projection preserves aliases and own property names without modifying the parsed
+model, and does not recurse through the JavaScript call stack for deep opaque
+metadata. This is checker behavior, not a new YAML-tag restriction.
+
 The golden-vector check validates collection layout, governed-artifact shapes,
 schema, automation, dataset, and view basenames, referenced template existence,
 report shape, and canonical result ordering (including the final `extension`
