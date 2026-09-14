@@ -142,6 +142,11 @@ logical dotted field paths, including fields within list items.
 paths for unknown list-item fields. Names with no field-path encoding remain
 in the message without an ambiguous optional field context.
 
+`note-link-entities-valid` checks Markdown entity decoding in fields and bodies,
+relationship target deduplication, and exclusion of an entity-encoded external
+scheme despite an existing lookalike note. `note-link-entities-invalid` reports
+collection-root traversal after decoding entity-encoded path separators.
+
 The reference adapter now supports Views, so the historical
 `missing-extension-dependency` and `conflicting-extension-dependency` negotiation
 preconditions no longer apply to it. The runner records them as not run instead
