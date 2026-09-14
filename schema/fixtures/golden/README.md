@@ -161,6 +161,12 @@ a query whose admitted note cannot provide valid URI field values.
 values without notes. These vectors
 do not settle the pending URI-field fragment-policy question.
 
+`inline-lexer-unicode-valid` keeps code-contained links excluded beside escaped
+astral characters, including a backslash before a code span's closing delimiter
+and links inside HTML-contained prose. `inline-lexer-backticks-invalid` exposes a
+root-escaping wikilink after an unmatched backtick run while excluding its balanced
+code-span control. These are extraction checks, not rendering requirements.
+
 The reference adapter now supports Views, so the historical
 `missing-extension-dependency` and `conflicting-extension-dependency` negotiation
 preconditions no longer apply to it. The runner records them as not run instead
