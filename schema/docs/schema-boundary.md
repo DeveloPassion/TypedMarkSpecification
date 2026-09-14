@@ -144,7 +144,8 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
 - template-region semantics: marker parsing and pairing, nesting boundaries,
   marker-to-receipt correspondence, region extraction, digest calculation,
   enrollment, three-way drift classification, reconciliation, and detachment
-- system evolution: history version ordering and uniqueness, inventory replay
+- system evolution: history release ordering under `SCE-99` in
+  [Change History](../../systems-composition-evolution.md#change-history), inventory replay
   across note types, property sets, automations, fields, datasets, and saved views;
   migration impact computation; composition determinism; and canonical
   serialization

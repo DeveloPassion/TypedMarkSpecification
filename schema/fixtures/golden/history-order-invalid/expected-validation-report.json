@@ -1,0 +1,21 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "system_definition",
+  "evaluation": "complete",
+  "required_extensions": {
+    "typedmark:systems": "0.1.0"
+  },
+  "evaluated_extensions": {
+    "typedmark:systems": "0.1.0"
+  },
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_history",
+      "severity": "error",
+      "path": ".typedmark/history.md",
+      "rule_id": "SCE-99",
+      "message": "Release entries have equal SemVer precedence."
+    }
+  ]
+}

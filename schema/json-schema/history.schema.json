@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://developassion.github.io/TypedMarkSpecification/schema/history.schema.json",
   "title": "TypedMark change history (<metadata_directory>/history.md frontmatter)",
-  "description": "Frontmatter document shape; the artifact is a Markdown file whose YAML frontmatter is the governed content and whose body is non-normative. Authoritative semantics: systems-composition-evolution.md. Semantic-layer checks include: ascending unique versions, the last entry matching the collection's version, and the replay/reconstruction invariant.",
+  "description": "Frontmatter document shape; the artifact is a Markdown file whose YAML frontmatter is the governed content and whose body is non-normative. Authoritative semantics: systems-composition-evolution.md. Semantic-layer checks include: release ordering under SCE-99, the last entry matching the collection's version, and the replay/reconstruction invariant.",
   "type": "object",
   "required": [
     "specification_version",

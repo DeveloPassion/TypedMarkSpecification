@@ -26,6 +26,7 @@ compatibility promise; migration of real collections needs review and a backup.
 | Optional feature use without declaration | Declare the standard contract and exact dependency versions from Extensions and Capabilities. |
 | Old validation reports | Produce actual evaluation completeness and required/evaluated maps; never manufacture `complete` by adding fields to an old report. |
 | System instantiation retaining source identity | Author a new collection name, omit source publishing version/scaffold, and preserve licensing/attribution material. |
+| Histories with equal-precedence release entries, including build-only differences | Review against [Change History](../../systems-composition-evolution.md#change-history) (`SCE-99`). Resolve explicitly while preserving recorded changes; do not automatically discard entries or rewrite published versions. |
 
 Core field defaults do not license arbitrary invention: explicit null remains
 distinct from omission, and validation does not generate clock/random values.

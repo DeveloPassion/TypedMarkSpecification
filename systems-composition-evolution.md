@@ -336,7 +336,7 @@ Rules:
 - `SCE-96` `history` MUST be an ordered list of release entries.
 - `SCE-97` Each release entry MUST declare `version` and `changes`.
 - `SCE-98` Each release entry's `version` MUST be a Semantic Versioning 2.0.0 string.
-- `SCE-99` Release entries MUST appear in ascending version order, and each `version` MUST be unique within `history`.
+- `SCE-99` Release entries MUST appear in strictly increasing Semantic Versioning 2.0.0 precedence order, ignoring build metadata.
 - `SCE-100` The last release entry's `version` MUST equal the collection's `version` in `typedmark.md` when the collection declares one.
 - `SCE-101` Each entry in `changes` MUST declare `op` using one of the defined change operations.
 - `SCE-102` A field operation MUST declare exactly one of `note_type` or `property_set`, naming the artifact that physically defines the field: `note_type` when the field is defined in a note-type schema, `property_set` when it is defined in a property set.
@@ -349,6 +349,12 @@ Rules:
 - `SCE-107` A validator MAY check this reconstruction invariant and report a divergence between `history.md` and the current schemas.
 - `SCE-155` A history adopted after earlier releases MAY begin with a baseline entry enumerating its current physical inventory through the existing add operations.
 - `SCE-108` When cutting a new release, a tool SHOULD generate candidate `changes` by comparing the previous version's state to the current state, and the author MUST confirm or correct any change that a structural comparison cannot classify unambiguously, in particular distinguishing a `rename_field` from a paired `remove_field` and `add_field`.
+
+For example, `1.0.0-rc.2`, `1.0.0-rc.10`, and `1.0.0+linux` form a valid
+release sequence. Appending `1.0.0+macos` would violate `SCE-99`: its precedence
+equals that of `1.0.0+linux`. An exact duplicate version likewise fails this
+ordering rule. Build metadata remains part of the version string used by
+`SCE-100`; ignoring it for ordering does not change the final-version match.
 
 ## Migration and Updates
 

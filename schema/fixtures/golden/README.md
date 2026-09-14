@@ -105,7 +105,11 @@ history prevents complete Systems evaluation; a newer compatible patch is
 best-effort, not invalid solely because its version is newer.
 `composition-provenance-invalid` checks duplicate/self-referencing source names
 without trying to resolve external systems. These vectors do not claim history
-replay, complete release-order validation, or migration impact analysis.
+replay or migration impact analysis.
+
+`history-order-valid` checks numeric prerelease ordering through a stable release,
+with build metadata ignored for precedence. `history-order-invalid` reports
+`SCE-99` for distinct release strings with equal SemVer precedence.
 
 The reference adapter now supports Views, so the historical
 `missing-extension-dependency` and `conflicting-extension-dependency` negotiation
