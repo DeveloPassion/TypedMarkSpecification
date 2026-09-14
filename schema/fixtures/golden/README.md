@@ -133,6 +133,11 @@ matching fence lengths, literal trailing hashes, and NFC comparisons.
 `headings-constraints-invalid` distinguishes H1, required/optional H2 counts,
 undeclared headings, and list-order findings by their owning rules.
 
+`nested-links-valid` distinguishes stored nested links from effective defaults
+without adding relationship instances. `nested-links-invalid` reports missing
+targets, incompatible target types, root escapes, and asset targets using
+logical dotted field paths, including fields within list items.
+
 The reference adapter now supports Views, so the historical
 `missing-extension-dependency` and `conflicting-extension-dependency` negotiation
 preconditions no longer apply to it. The runner records them as not run instead

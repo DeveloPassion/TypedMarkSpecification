@@ -1,0 +1,46 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_note_link",
+      "severity": "error",
+      "path": "Notes/Source.md",
+      "rule_id": "FDR-153",
+      "message": "The stored nested link must resolve to an existing note.",
+      "note_type": "note",
+      "field": "details.reference"
+    },
+    {
+      "code": "invalid_field_value",
+      "severity": "error",
+      "path": "Notes/Source.md",
+      "rule_id": "FDR-160",
+      "message": "The stored nested link must target a project.",
+      "note_type": "note",
+      "field": "details.references"
+    },
+    {
+      "code": "invalid_note_link",
+      "severity": "error",
+      "path": "Notes/Source.md",
+      "rule_id": "NL-16",
+      "message": "The nested link cannot escape the collection.",
+      "note_type": "note",
+      "field": "sections.reference"
+    },
+    {
+      "code": "invalid_note_link",
+      "severity": "error",
+      "path": "Notes/Source.md",
+      "rule_id": "NL-33",
+      "message": "A nested note-link field cannot target an asset.",
+      "note_type": "note",
+      "field": "details.asset"
+    }
+  ]
+}
