@@ -1,0 +1,19 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "incomplete",
+  "required_extensions": {
+    "typedmark:reuse": "0.1.0"
+  },
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [
+    {
+      "code": "unsupported_specification_version",
+      "severity": "error",
+      "path": "typedmark.md",
+      "rule_id": "FND-92",
+      "message": "The root selects an unsupported Core line."
+    }
+  ]
+}

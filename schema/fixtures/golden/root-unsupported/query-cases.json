@@ -1,0 +1,20 @@
+[
+  {
+    "name": "unsupported-root-blocks-query",
+    "query_version": "0.1.0",
+    "rules": [
+      "FND-92",
+      "CM-308"
+    ],
+    "query": {
+      "specification_version": "0.1.0",
+      "select": [
+        {
+          "kind": "path",
+          "as": "path"
+        }
+      ]
+    },
+    "expected_error": "CM-308"
+  }
+]

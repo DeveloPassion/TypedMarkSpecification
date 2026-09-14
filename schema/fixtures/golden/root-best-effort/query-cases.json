@@ -1,0 +1,27 @@
+[
+  {
+    "name": "newer-root-retains-incomplete-query",
+    "query_version": "0.1.0",
+    "rules": [
+      "FND-10",
+      "CR-102"
+    ],
+    "query": {
+      "specification_version": "0.1.0",
+      "select": [
+        {
+          "kind": "path",
+          "as": "path"
+        }
+      ]
+    },
+    "expected_result": {
+      "evaluation": "incomplete",
+      "rows": [
+        {
+          "path": "Note.md"
+        }
+      ]
+    }
+  }
+]
