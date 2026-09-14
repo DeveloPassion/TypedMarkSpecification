@@ -128,6 +128,11 @@ values. `scaffold-template-override-invalid` prevents caller values from hiding 
 invalid override template. These vectors remain read-only; import materialization
 and source preservation are exercised separately in the tooling tests.
 
+`headings-commonmark-valid` combines nested headings, multiline setext text,
+matching fence lengths, literal trailing hashes, and NFC comparisons.
+`headings-constraints-invalid` distinguishes H1, required/optional H2 counts,
+undeclared headings, and list-order findings by their owning rules.
+
 The reference adapter now supports Views, so the historical
 `missing-extension-dependency` and `conflicting-extension-dependency` negotiation
 preconditions no longer apply to it. The runner records them as not run instead

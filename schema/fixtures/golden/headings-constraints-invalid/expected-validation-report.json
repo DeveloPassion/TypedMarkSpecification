@@ -1,0 +1,52 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_heading",
+      "severity": "error",
+      "path": "Note.md",
+      "rule_id": "RHT-53",
+      "note_type": "note",
+      "message": "The note violates its declared heading constraint."
+    },
+    {
+      "code": "invalid_heading",
+      "severity": "error",
+      "path": "Note.md",
+      "rule_id": "RHT-58",
+      "note_type": "note",
+      "heading": "Missing",
+      "message": "The note violates its declared heading constraint."
+    },
+    {
+      "code": "invalid_heading",
+      "severity": "error",
+      "path": "Note.md",
+      "rule_id": "RHT-59",
+      "note_type": "note",
+      "heading": "Notes",
+      "message": "The note violates its declared heading constraint."
+    },
+    {
+      "code": "invalid_heading",
+      "severity": "error",
+      "path": "Note.md",
+      "rule_id": "RHT-60",
+      "note_type": "note",
+      "message": "The note violates its declared heading constraint."
+    },
+    {
+      "code": "invalid_heading",
+      "severity": "error",
+      "path": "Note.md",
+      "rule_id": "RHT-62",
+      "note_type": "note",
+      "message": "The note violates its declared heading constraint."
+    }
+  ]
+}
