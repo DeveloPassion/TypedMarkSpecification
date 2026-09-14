@@ -89,6 +89,8 @@ descriptors are covered by their descriptor schemas, and the core-defined
   `unsupported_extension`, and required `evaluation`, `required_extensions`,
   and `evaluated_extensions` fields; `valid` is true exactly when evaluation is
   complete and there are no emitted `error` results
+- reports carrying an `EXT-2`, `EXT-4`, or `EXT-6` declaration diagnostic have
+  incomplete evaluation under `CR-102`
 
 ## What stays in the semantic layer
 
@@ -165,7 +167,8 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
   and reporting conflicts when composing different values at the same key;
   neither managed-note frontmatter nor template starter frontmatter receives
   a general `x_*` exemption from effective-schema validation
-- report coverage: required-map agreement with the collection, exact evaluated
+- report coverage: the `CR-99` well-formed-entry projection from the collection,
+  `CR-102` incompleteness for malformed declarations even without visible findings, exact evaluated
   subset membership (including prerelease/build suffixes), complete coverage
   of required extensions, and truthful claims about which core and extension
   contracts were actually interpreted; standard JSON Schema cannot compare
@@ -218,7 +221,8 @@ The golden-vector check validates collection layout, governed-artifact shapes,
 schema, automation, dataset, and view basenames, referenced template existence,
 report shape, and canonical result ordering (including the final `extension`
 component). It also checks the expected report's required map against the
-collection's declaration, exact evaluated-map subset membership, and coverage
+collection's well-formed declared requirements, malformed-declaration incompleteness,
+exact evaluated-map subset membership, and coverage
 of every required extension for complete reports. These are fixture-integrity
 checks, not evidence of actual contract interpretation. Incomplete reports may
 have no missing extension entries because core interpretation can also be
@@ -234,6 +238,13 @@ extension-aware conformance runner exists.
 The non-normative
 [Conformance Runner Guide](https://developassion.github.io/TypedMarkSpecification/conformance-runner.html)
 describes a proposed implementation architecture beyond these shape checks.
+
+The malformed-extension report examples assume a declaration containing the
+retained `typedmark:reuse` and `example:future` requirements, an invalid `bad`
+identifier, and a numeric `typedmark:queries` version. The suppressed example
+uses the same declaration with its diagnostic category disabled. Source-aware
+coverage tests check that suppression does not make this declaration complete;
+the report schema alone cannot recover a suppressed source error.
 
 ### Specification example annotations
 

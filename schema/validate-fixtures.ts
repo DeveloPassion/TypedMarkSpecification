@@ -30,6 +30,7 @@ import { Ajv2020, type ValidateFunction } from "ajv/dist/2020";
 import { Lexer, type Token } from "marked";
 import { isMap, parse as parseYaml, parseDocument } from "yaml";
 import ruleRegistry from "../scripts/rule-registry.json";
+import definitions from "./json-schema/defs.schema.json";
 import type { RuleRegistry } from "../scripts/lint-rule-ids";
 
 const SCHEMA_DIR = join(import.meta.dir, "json-schema");
@@ -268,6 +269,20 @@ function validateShape(
   }
 }
 
+let requirementValidator: ValidateFunction | undefined;
+
+function wellFormedRequirement(id: string, version: unknown): boolean {
+  if (!requirementValidator) {
+    // Resolve the locally loaded grammar by reference; no schema download.
+    // https://ajv.js.org/api.html (getSchema)
+    const ajv = new Ajv2020({ strict: false });
+    ajv.addSchema(definitions);
+    requirementValidator = ajv.getSchema(`${definitions.$id}#/$defs/extension_requirements`);
+    if (!requirementValidator) throw new Error("extension requirement schema did not compile");
+  }
+  return !!requirementValidator({ [id]: version });
+}
+
 export function validateExpectedReportCoverage(
   report: unknown,
   collection: unknown,
@@ -278,14 +293,24 @@ export function validateExpectedReportCoverage(
   const collectionObject = objectValue(collection);
   const required = objectValue(reportObject?.required_extensions);
   const evaluated = objectValue(reportObject?.evaluated_extensions);
-  const declared = objectValue(collectionObject?.extensions ?? {});
-  if (!required || !evaluated || !declared) return;
+  if (!required || !evaluated || !collectionObject) return;
+  const declarationPresent = Object.hasOwn(collectionObject, "extensions");
+  const declarationObject = objectValue(collectionObject.extensions);
+  // Explicit YAML tags may produce Map/Set values, not ordinary mappings.
+  const rawDeclared = declarationObject && [null, Object.prototype].includes(Object.getPrototypeOf(declarationObject))
+    ? declarationObject : null;
+  const entries = Object.entries(rawDeclared ?? {});
+  const declared = Object.fromEntries(entries.filter(([id, version]) => wellFormedRequirement(id, version)));
+  const malformed = declarationPresent && (!rawDeclared || Object.keys(declared).length !== entries.length);
+  if (malformed && reportObject?.evaluation !== "incomplete") {
+    failures.push(`${label}: malformed extensions require incomplete evaluation`);
+  }
 
   const exactSubset = (subset: Record<string, unknown>, superset: Record<string, unknown>) =>
     Object.entries(subset).every(([id, version]) => Object.hasOwn(superset, id) && superset[id] === version);
 
   if (!exactSubset(required, declared) || !exactSubset(declared, required)) {
-    failures.push(`${label}: required_extensions must match the collection's declared extensions`);
+    failures.push(`${label}: required_extensions must match the collection's well-formed declared extensions`);
   }
   if (!exactSubset(evaluated, required)) {
     failures.push(`${label}: evaluated_extensions must be an exact subset of required_extensions`);

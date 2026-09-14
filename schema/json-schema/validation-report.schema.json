@@ -31,6 +31,7 @@
       ]
     },
     "required_extensions": {
+      "$comment": "CR-99 retains only well-formed declared requirements; malformed declarations still require incomplete evaluation under CR-102.",
       "$ref": "defs.schema.json#/$defs/extension_requirements"
     },
     "evaluated_extensions": {
@@ -47,6 +48,24 @@
     }
   },
   "allOf": [
+    {
+      "if": {
+        "properties": {
+          "results": {
+            "contains": {
+              "type": "object",
+              "properties": {
+                "code": { "const": "invalid_extension_declaration" },
+                "rule_id": { "enum": ["EXT-2", "EXT-4", "EXT-6"] }
+              },
+              "required": ["code", "rule_id"]
+            }
+          }
+        },
+        "required": ["results"]
+      },
+      "then": { "properties": { "evaluation": { "const": "incomplete" } } }
+    },
     {
       "if": {
         "properties": {

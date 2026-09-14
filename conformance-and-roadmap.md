@@ -101,10 +101,10 @@ Rules:
 - `CR-86` Every `template_drift` result MUST contain `template_region` and `drift_kind`.
 - `CR-97` `evaluation` MUST be either `complete` or `incomplete`.
 - `CR-98` `required_extensions` and `evaluated_extensions` MUST each have the extension-identifier-to-exact-version map shape defined in [Extensions and Capabilities](extensions.md#required-extensions).
-- `CR-99` `required_extensions` MUST record the collection's declared required extension map, using `{}` when the declaration is absent.
+- `CR-99` `required_extensions` MUST contain exactly the entries satisfying `EXT-4` and `EXT-6` from a mapping-valued `extensions` declaration, or `{}` if absent or not a mapping.
 - `CR-100` Every entry in `evaluated_extensions` MUST occur with the same exact version in `required_extensions`.
 - `CR-101` An extension MUST appear in `evaluated_extensions` exactly when its required contract was interpreted for the target, whether or not that evaluation found violations.
-- `CR-102` `evaluation` MUST be `incomplete` if any applicable core version or required extension contract was not interpreted, including deliberately limited evaluation or best-effort evaluation under an older core version.
+- `CR-102` `evaluation` MUST be `incomplete` if any applicable core version or required extension contract was not interpreted, including deliberately limited evaluation or best-effort evaluation under an older core version, or if `extensions` violates `EXT-2`, `EXT-4`, or `EXT-6`.
 - `CR-103` `evaluation` MUST be `complete` otherwise, including when interpretation establishes that the target violates its contracts.
 - `CR-104` Changing or suppressing a diagnostic's configured severity MUST NOT change evaluation completeness.
 - `CR-105` Every `unsupported_extension` result MUST contain an `extension` identifying the required extension.
@@ -168,6 +168,8 @@ Suppressing that diagnostic can make `results` empty, but leaves
 extension-using collection is similarly incomplete, rather than a claim about
 the entire collection. Invalid field values under fully interpreted contracts,
 on the other hand, yield a complete report with errors.
+
+Malformed declarations retain well-formed requirements while reporting malformed entries separately; see this [projected report](schema/fixtures/valid/validation-report-malformed-extensions.json).
 
 ### Automation Run Reports
 

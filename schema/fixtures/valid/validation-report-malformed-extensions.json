@@ -1,0 +1,28 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "incomplete",
+  "required_extensions": {
+    "example:future": "9.0.0-rc.1+build",
+    "typedmark:reuse": "0.1.0"
+  },
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_extension_declaration",
+      "severity": "error",
+      "path": "typedmark.md",
+      "rule_id": "EXT-4",
+      "message": "Invalid extension identifier: bad."
+    },
+    {
+      "code": "invalid_extension_declaration",
+      "severity": "error",
+      "path": "typedmark.md",
+      "rule_id": "EXT-6",
+      "extension": "typedmark:queries",
+      "message": "typedmark:queries requires a complete exact version string."
+    }
+  ]
+}
