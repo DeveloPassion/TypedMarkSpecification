@@ -23,7 +23,7 @@ See also:
 
 ## Note-Link Syntax and Resolution
 
-Internal note links connect collection notes. This section defines the supported link forms, the parsed link components, and the deterministic target-resolution algorithm so conforming tools produce the same result for the same link and collection.
+Internal note links connect notes through shared parsing and deterministic resolution.
 
 ### Link Forms
 
@@ -54,9 +54,12 @@ Rules:
 
 - `NL-9` An internal note link MUST parse into these components: the raw source string, the form (`wikilink` or `markdown`), the target, an optional anchor, an optional display text, and an embed flag.
 - `NL-10` In wikilinks, the segment after `|` is the display text and the segment after the first `#` is the anchor.
-- `NL-11` In Markdown links, the bracketed segment is the display text and the destination segment after the first `#` is the anchor; the destination before it is the target, URL decoded before resolution.
+- `NL-11` In Markdown links, the bracketed segment is the display text; the destination segments before and after its first `#` are the target and anchor, each percent-decoded once as UTF-8 before resolution or interpretation.
 - `NL-12` An anchor beginning with `^` is a block identifier; any other anchor is heading text.
 - `NL-13` Display text and the embed flag never affect target resolution.
+
+For example, `Note.md#%5Epart` identifies block `part`; `Note.md#%255Epart`
+has heading text `%5Epart` after one decoding pass.
 
 ### Target Resolution
 

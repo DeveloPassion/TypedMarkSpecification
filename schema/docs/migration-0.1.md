@@ -29,6 +29,9 @@ compatibility promise; migration of real collections needs review and a backup.
 | Reports for malformed extension declarations | Regenerate against the [validation report contract](../../conformance-and-roadmap.md#validation-reports) (`CR-99`, `CR-102`); repairing the source declaration is a separate, explicit action. |
 | System instantiation retaining source identity | Author a new collection name, omit source publishing version/scaffold, and preserve licensing/attribution material. |
 | Histories with equal-precedence release entries, including build-only differences | Review against [Change History](../../systems-composition-evolution.md#change-history) (`SCE-99`). Resolve explicitly while preserving recorded changes; do not automatically discard entries or rewrite published versions. |
+| Internal Markdown links with non-UTF-8 percent octets | Resolve the intended Unicode note target or anchor manually and encode it as UTF-8; do not replace undecodable bytes or silently drop the link. See [Note Links](../../note-links.md#link-parsing). |
+| Percent-encoded Markdown anchors | Interpret after one decoding pass: `%5Epart` is a block identifier, while `%255Epart` retains the heading text `%5Epart`. Authored source remains available; no file rewrite is implied. |
+| URI fields containing fragments | No migration is needed: fragments remain accepted under the clarified [URI-field grammar](../../field-definition-reference.md#format) (`FDR-140`). |
 
 Core field defaults do not license arbitrary invention: explicit null remains
 distinct from omission, and validation does not generate clock/random values.

@@ -249,6 +249,8 @@ Rules:
 
 ### `format`
 
+For example, `https://example.com/page#section` is a scheme-qualified URI with a fragment.
+
 Rules:
 
 - `FDR-132` Supported `format` values are `slug`, `note_link`, `uri`, `hh:mm`, `hh:mm:ss`, and `hh:mm:ss.sss`.
@@ -259,7 +261,7 @@ Rules:
 - `FDR-137` `format: uri` is valid only for `type: link` or `list.items.type: link`.
 - `FDR-138` `format: hh:mm`, `format: hh:mm:ss`, and `format: hh:mm:ss.sss` are valid only for `type: time` or `list.items.type: time`.
 - `FDR-139` Values with `format: slug` MUST match `^[a-z0-9]+(?:-[a-z0-9]+)*$`.
-- `FDR-140` Values with `format: uri` MUST be absolute URIs with a non-empty scheme and valid syntax according to RFC 3986. Relative references MUST NOT be used.
+- `FDR-140` Values with `format: uri` MUST follow RFC 3986's `URI` grammar, with a non-empty scheme and an optional fragment.
 - `FDR-142` Non-null values with `format: note_link` MUST be non-empty strings using the syntax and resolution contract in [Note Links](note-links.md).
 - `FDR-144` Values with `format: hh:mm` on `type: time` or `list.items.type: time` MUST use a 24-hour clock and match `^(?:[01]\d|2[0-3]):[0-5]\d$`.
 - `FDR-145` Values with `format: hh:mm:ss` on `type: time` or `list.items.type: time` MUST use a 24-hour clock and match `^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d$`.

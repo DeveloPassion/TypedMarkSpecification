@@ -164,8 +164,15 @@ unchanged URI projection values. `uri-syntax-invalid` distinguishes URI field
 failures from note-target encoding and relationship-count failures, including
 a query whose admitted note cannot provide valid URI field values.
 `uri-syntax-defaults-invalid` checks malformed URI defaults, constants and allowed
-values without notes. These vectors
-do not settle the pending URI-field fragment-policy question.
+values without notes.
+
+`note-link-unicode-valid` accepts encoded anchors and URI fields with fragments
+and arbitrary well-formed encoded octets. `note-link-unicode-invalid` reports
+non-UTF-8 target/anchor bytes under `NL-11` without creating relationship instances.
+`note-link-unicode-suppressed` keeps the configured report empty while a standalone
+query still rejects that invalid link model. Anchor heading/block interpretation
+has separate library regressions; matching an existing anchor is not a conformance
+requirement.
 
 `inline-lexer-unicode-valid` keeps code-contained links excluded beside escaped
 astral characters, including a backslash before a code span's closing delimiter

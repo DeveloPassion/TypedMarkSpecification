@@ -1,0 +1,24 @@
+[
+  {
+    "name": "suppressed-non-utf8-links-block-query-model",
+    "query_version": "0.1.0",
+    "rules": [
+      "CM-54",
+      "NL-11",
+      "CM-307"
+    ],
+    "query": {
+      "specification_version": "0.1.0",
+      "note_types": [
+        "source"
+      ],
+      "select": [
+        {
+          "kind": "path",
+          "as": "path"
+        }
+      ]
+    },
+    "expected_error": "CM-307"
+  }
+]

@@ -128,6 +128,10 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
   explicit normalization, note-link syntax and resolution, unresolved
   placeholder links, relationship instance counting and cardinality, heading
   rules, storage-path conformance including archived state
+- link-value interpretation: [Note Links](../../note-links.md#link-parsing)
+  owns internal-link UTF-8 percent decoding and anchors;
+  [Field Definition Reference](../../field-definition-reference.md#format)
+  owns the separate URI-field grammar, including fragments
 - field compatibility and conversion: directional type-pair classification,
   conditional-value qualification, target-constraint evaluation, finite-set
   compatibility, and safe write-back eligibility
