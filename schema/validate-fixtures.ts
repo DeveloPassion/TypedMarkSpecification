@@ -39,6 +39,13 @@ const FIXTURE_DIR = join(import.meta.dir, "fixtures");
 const GOLDEN_DIR = join(FIXTURE_DIR, "golden");
 const ROOT = join(import.meta.dir, "..");
 
+// FND-25 fixes resolution even when a directive overrides the default version.
+// Keep explicit known tags; only implicit merge behavior stays disabled.
+// https://eemeli.org/yaml/#schema-options
+const YAML_CORE_OPTIONS = {
+  version: "1.2", schema: "core", resolveKnownTags: true, merge: false, uniqueKeys: true,
+} as const;
+
 const SPEC_PAGES = [
   "index.md", "manifesto.md", "getting-started.md", "foundations.md", "extensions.md",
   "collection-model.md", "note-type-schemas.md", "field-definition-reference.md", "field-conversions.md",
@@ -129,7 +136,7 @@ function extractFrontmatter(text: string, required = true): unknown {
     if (!required) return {};
     throw new Error("fixture frontmatter block is not closed");
   }
-  const document = parseDocument(lines.slice(1, end).join("\n"));
+  const document = parseDocument(lines.slice(1, end).join("\n"), YAML_CORE_OPTIONS);
   if (document.errors.length) throw document.errors[0];
   if (document.contents === null) return {};
   if (!isMap(document.contents)) throw new Error("frontmatter must be a mapping");
@@ -200,7 +207,7 @@ export function validateExamples(
         }
         try {
           const document = lang === "json" ? JSON.parse(token.text)
-            : markdown ? extractFrontmatter(token.text) : parseYaml(token.text);
+            : markdown ? extractFrontmatter(token.text) : parseYaml(token.text, YAML_CORE_OPTIONS);
           if (annotation.kind === "artifact") {
             checked += 1;
             validateShape(validators[annotation.schema!]!, document, `${label} (${annotation.schema})`, failures);

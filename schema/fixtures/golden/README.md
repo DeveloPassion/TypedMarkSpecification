@@ -22,6 +22,9 @@ semantic findings.
 
 `core-valid` contains only Core artifacts. `optional-artifacts-valid` exercises
 automation and dataset shapes with explicit capability declarations.
+`yaml-core-valid` fixes scalar meaning across collection, schema and note version
+directives. `yaml-core-invalid` rejects a legacy boolean word in a checkbox field;
+the directive cannot switch the note to YAML 1.1 scalar resolution.
 `explicit-type-property-set-valid` replaces the old folder-scope example with
 explicitly selected types. Query evaluation remains a semantic-runner responsibility.
 `unsupported-required-extension` exercises capability negotiation: a Core-capable

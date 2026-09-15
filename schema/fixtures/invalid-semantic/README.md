@@ -17,6 +17,7 @@ full boundary.
 | `note-type-basename-mismatch.md` | The schema file basename must equal the file's `note_type` value (`topic` here). |
 | `note-type-allowed-values-type.md` | FDR-198: a scalar allowed value is incompatible with its declared integer type. |
 | `note-type-allowed-values-nfc.md` | FDR-197/FDR-240: distinct JSON strings are duplicates after NFC normalization. |
+| `note-type-yaml-core-default.md` | FDR-4/FND-25: Core resolves 012 as decimal twelve, outside the allowed set containing ten. |
 | `note-type-computed-reference-unresolved.md` | Every `computed` field reference must resolve to a sibling field declared in the same effective `frontmatter`; `nickname` does not exist. |
 | `note-type-computed-unsupported-transform.md` | `computed` supports only the transforms defined by the specification version; `upper` is unknown. |
 | `note-type-extends-unresolved.md` | `extends` must resolve to exactly one abstract note type under `<metadata_directory>/schemas/`; no `person` schema exists. |

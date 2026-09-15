@@ -230,6 +230,13 @@ callers retain their existing BOM parsing behavior. Parsed frontmatter is checke
 as a mapping after YAML materialization, so a top-level tagged set is not an empty
 mapping; nested opaque tagged values remain intact. Source bytes are never rewritten.
 
+YAML parsing uses the fixed Core resolution profile from
+[Foundations](../../foundations.md#yaml-baseline), including when a document contains
+a version directive. Legacy boolean words remain strings, leading-zero numbers use
+Core decimal resolution, and bare merge-looking keys stay ordinary mapping keys.
+Explicit known tags retain the existing Core-reader behavior. Duplicate-key checks
+use the resulting Core values; a directive does not switch their equality domain.
+
 Before applying JSON Schema, the checker projects parsed YAML into a temporary
 shape view. Native tagged sets, ordered maps, timestamps and binary values do not
 count as JSON objects. Unconstrained vendor metadata, default and constant positions
