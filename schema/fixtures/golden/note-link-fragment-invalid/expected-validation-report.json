@@ -1,0 +1,53 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_note_link",
+      "severity": "error",
+      "path": "Notes/Source.md",
+      "rule_id": "NL-6",
+      "message": "The Markdown anchor requires percent encoding.",
+      "note_type": "source"
+    },
+    {
+      "code": "invalid_note_link",
+      "severity": "error",
+      "path": "Notes/Source.md",
+      "rule_id": "NL-6",
+      "message": "The Markdown anchor requires percent encoding.",
+      "note_type": "source"
+    },
+    {
+      "code": "invalid_note_link",
+      "severity": "error",
+      "path": "Notes/Source.md",
+      "rule_id": "NL-6",
+      "message": "The Markdown anchor requires percent encoding.",
+      "note_type": "source",
+      "field": "references"
+    },
+    {
+      "code": "invalid_note_link",
+      "severity": "error",
+      "path": "Notes/Source.md",
+      "rule_id": "NL-6",
+      "message": "The Markdown anchor requires percent encoding.",
+      "note_type": "source",
+      "field": "references"
+    },
+    {
+      "code": "invalid_relationship_instance",
+      "severity": "error",
+      "path": "Notes/Source.md",
+      "rule_id": "RHT-31",
+      "message": "Invalid anchor links cannot satisfy the target minimum.",
+      "note_type": "source",
+      "relationship": "related_to"
+    }
+  ]
+}

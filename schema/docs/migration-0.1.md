@@ -31,6 +31,7 @@ compatibility promise; migration of real collections needs review and a backup.
 | Histories with equal-precedence release entries, including build-only differences | Review against [Change History](../../systems-composition-evolution.md#change-history) (`SCE-99`). Resolve explicitly while preserving recorded changes; do not automatically discard entries or rewrite published versions. |
 | Internal Markdown links with non-UTF-8 percent octets | Resolve the intended Unicode note target or anchor manually and encode it as UTF-8; do not replace undecodable bytes or silently drop the link. See [Note Links](../../note-links.md#link-parsing). |
 | Percent-encoded Markdown anchors | Interpret after one decoding pass: `%5Epart` is a block identifier, while `%255Epart` retains the heading text `%5Epart`. Authored source remains available; no file rewrite is implied. |
+| Raw Markdown anchors with Unicode, spaces, or forbidden punctuation | Percent-encode those characters as UTF-8 under [NL-6](../../note-links.md#link-forms); preserve valid percent triplets rather than double-encoding them. One leading `^` remains the block marker. |
 | URI fields containing fragments | No migration is needed: fragments remain accepted under the clarified [URI-field grammar](../../field-definition-reference.md#format) (`FDR-140`). |
 
 Core field defaults do not license arbitrary invention: explicit null remains
