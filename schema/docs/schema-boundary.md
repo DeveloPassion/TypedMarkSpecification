@@ -221,6 +221,15 @@ Fixtures are mapped to artifact schemas by filename prefix (`typedmark-*`,
 frontmatter; `.json` fixtures such as marker descriptors, tracking receipts, the
 marketplace catalog, and validation reports are validated directly.
 
+The checker decodes inspected text files as UTF-8 without replacement, including
+artifact bodies even though those bodies do not determine artifact shape. This
+applies to the existing schema, fixture, specification-example and golden-input
+read sites; it does not expand file discovery or decode binary assets. Markdown
+frontmatter recognizes LF, CRLF and CR lines and consumes one leading BOM. JSON
+callers retain their existing BOM parsing behavior. Parsed frontmatter is checked
+as a mapping after YAML materialization, so a top-level tagged set is not an empty
+mapping; nested opaque tagged values remain intact. Source bytes are never rewritten.
+
 Before applying JSON Schema, the checker projects parsed YAML into a temporary
 shape view. Native tagged sets, ordered maps, timestamps and binary values do not
 count as JSON objects. Unconstrained vendor metadata, default and constant positions

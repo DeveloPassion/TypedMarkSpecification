@@ -69,12 +69,25 @@ const ARTIFACT_SCHEMAS: Record<string, string> = {
   "validation-report": "validation-report.schema.json",
 };
 
+function readUtf8File(path: string): string {
+  const bytes = readFileSync(path);
+  try {
+    // Preserve the BOM for caller-specific handling: Markdown consumes it once,
+    // while JSON keeps its existing parse behavior. Never replace invalid bytes.
+    // https://nodejs.org/api/util.html#new-textdecoderencoding-options
+    return new TextDecoder("utf-8", { fatal: true, ignoreBOM: true }).decode(bytes);
+  } catch (error) {
+    if (error instanceof TypeError) throw new Error(`${path}: input is not valid UTF-8`);
+    throw error;
+  }
+}
+
 export function buildValidators(): Record<string, ValidateFunction> {
   const ajv = new Ajv2020({ allErrors: true, strict: false });
   const idsByFile: Record<string, string> = {};
   for (const file of readdirSync(SCHEMA_DIR)) {
     if (!file.endsWith(".schema.json")) continue;
-    const schema = JSON.parse(readFileSync(join(SCHEMA_DIR, file), "utf8"));
+    const schema = JSON.parse(readUtf8File(join(SCHEMA_DIR, file)));
     ajv.addSchema(schema);
     idsByFile[file] = schema.$id;
   }
@@ -104,7 +117,7 @@ function validatorFor(
 }
 
 function extractFrontmatter(text: string, required = true): unknown {
-  const lines = text.split(/\r?\n/);
+  const lines = text.split(/\r\n?|\n/);
   if (lines[0]?.replace(/^﻿/, "") !== "---") {
     if (!required) return {};
     throw new Error("fixture has no frontmatter block");
@@ -120,7 +133,13 @@ function extractFrontmatter(text: string, required = true): unknown {
   if (document.errors.length) throw document.errors[0];
   if (document.contents === null) return {};
   if (!isMap(document.contents)) throw new Error("frontmatter must be a mapping");
-  return document.toJS();
+  const value = document.toJS();
+  // A YAML mapping-shaped tag can materialize a Set rather than a mapping.
+  if (value === null || typeof value !== "object" || Array.isArray(value)
+    || ![null, Object.prototype].includes(Object.getPrototypeOf(value))) {
+    throw new Error("frontmatter must be a mapping");
+  }
+  return value;
 }
 
 export function validateExamples(
@@ -215,7 +234,7 @@ function validateSpecExamples(
 ): number {
   return SPEC_PAGES.reduce((checked, pageName) => {
     const failureCount = failures.length;
-    const count = validateExamples(readFileSync(join(ROOT, pageName), "utf8"), pageName, validators, failures);
+    const count = validateExamples(readUtf8File(join(ROOT, pageName)), pageName, validators, failures);
     if (failureCount === failures.length) console.log(`ok spec-examples ${pageName} (${count} artifact shapes)`);
     return checked + count;
   }, 0);
@@ -361,7 +380,7 @@ function validateRuleReference(rule: string, label: string, failures: string[]):
 function validateQueryCases(path: string, validators: Record<string, ValidateFunction>, failures: string[]): void {
   if (!existsSync(path)) return;
   try {
-    const cases = JSON.parse(readFileSync(path, "utf8"));
+    const cases = JSON.parse(readUtf8File(path));
     const before = failures.length;
     validateShape(validators["conformance-query"]!, cases, path, failures);
     if (failures.length !== before) return;
@@ -420,8 +439,8 @@ export function validateGoldenVectors(
     let report: unknown;
     let typedmark: unknown;
     try {
-      report = JSON.parse(readFileSync(reportPath, "utf8"));
-      typedmark = extractFrontmatter(readFileSync(typedmarkPath, "utf8"));
+      report = JSON.parse(readUtf8File(reportPath));
+      typedmark = extractFrontmatter(readUtf8File(typedmarkPath));
     } catch (error) {
       failures.push(`golden/${vector}: ${error instanceof Error ? error.message : String(error)}`);
       continue;
@@ -442,7 +461,7 @@ export function validateGoldenVectors(
     if (existsSync(contextPath)) {
       const label = `golden/${vector}/vector.json`;
       try {
-        const context = JSON.parse(readFileSync(contextPath, "utf8"));
+        const context = JSON.parse(readUtf8File(contextPath));
         const before = failures.length;
         validateShape(validators["conformance-vector"]!, context, label, failures);
         if (failures.length === before) {
@@ -489,7 +508,7 @@ export function validateGoldenVectors(
     }
     for (const schemaPath of schemaPaths) {
       try {
-        const schema = extractFrontmatter(readFileSync(schemaPath, "utf8"));
+        const schema = extractFrontmatter(readUtf8File(schemaPath));
         validateShape(validators["note-type"]!, schema, `golden/${vector}/${basename(schemaPath)}`, failures);
         const schemaObject = objectValue(schema);
         const noteType = schemaObject && !Object.hasOwn(schemaObject, "note_type")
@@ -514,7 +533,7 @@ export function validateGoldenVectors(
     if (existsSync(propertySetRoot)) {
       for (const propertySetPath of collectFiles(propertySetRoot).filter((path) => extname(path) === ".md")) {
         try {
-          const propertySet = extractFrontmatter(readFileSync(propertySetPath, "utf8"));
+          const propertySet = extractFrontmatter(readUtf8File(propertySetPath));
           validateShape(validators["property-set"]!, propertySet, `golden/${vector}/${basename(propertySetPath)}`, failures);
         } catch (error) {
           failures.push(`golden/${vector}/${basename(propertySetPath)}: ${error instanceof Error ? error.message : String(error)}`);
@@ -526,7 +545,7 @@ export function validateGoldenVectors(
     if (existsSync(automationRoot)) {
       for (const automationPath of collectFiles(automationRoot).filter((path) => extname(path) === ".md")) {
         try {
-          const automation = extractFrontmatter(readFileSync(automationPath, "utf8"));
+          const automation = extractFrontmatter(readUtf8File(automationPath));
           validateShape(validators.automation!, automation, `golden/${vector}/${basename(automationPath)}`, failures);
           const automationObject = objectValue(automation);
           const automationId = automationObject?.automation;
@@ -543,7 +562,7 @@ export function validateGoldenVectors(
     if (existsSync(viewRoot)) {
       for (const viewPath of collectFiles(viewRoot).filter((path) => extname(path) === ".md")) {
         try {
-          const view = extractFrontmatter(readFileSync(viewPath, "utf8"));
+          const view = extractFrontmatter(readUtf8File(viewPath));
           validateShape(validators.view!, view, `golden/${vector}/${basename(viewPath)}`, failures);
           const viewObject = objectValue(view);
           const viewId = viewObject?.view;
@@ -560,7 +579,7 @@ export function validateGoldenVectors(
     if (existsSync(datasetRoot)) {
       for (const datasetPath of collectFiles(datasetRoot).filter((path) => extname(path) === ".md")) {
         try {
-          const dataset = extractFrontmatter(readFileSync(datasetPath, "utf8"));
+          const dataset = extractFrontmatter(readUtf8File(datasetPath));
           validateShape(validators.dataset!, dataset, `golden/${vector}/${basename(datasetPath)}`, failures);
           const datasetId = objectValue(dataset)?.dataset;
           if (typeof datasetId === "string" && basename(datasetPath, ".md") !== datasetId) {
@@ -575,7 +594,7 @@ export function validateGoldenVectors(
     const historyPath = join(metadataRoot, "history.md");
     if (existsSync(historyPath)) {
       try {
-        const history = extractFrontmatter(readFileSync(historyPath, "utf8"));
+        const history = extractFrontmatter(readUtf8File(historyPath));
         validateShape(validators.history!, history, `golden/${vector}/history.md`, failures);
       } catch (error) {
         failures.push(`golden/${vector}/history.md: ${error instanceof Error ? error.message : String(error)}`);
@@ -584,7 +603,7 @@ export function validateGoldenVectors(
 
     for (const markdownPath of collectFiles(collectionRoot).filter((path) => extname(path) === ".md")) {
       try {
-        extractFrontmatter(readFileSync(markdownPath, "utf8"), false);
+        extractFrontmatter(readUtf8File(markdownPath), false);
       } catch (error) {
         failures.push(`golden/${vector}/${basename(markdownPath)}: ${error instanceof Error ? error.message : String(error)}`);
       }
@@ -612,7 +631,7 @@ function main(): number {
       const isJson = fixture.endsWith(".json");
       if ((!fixture.endsWith(".md") && !isJson) || fixture === "README.md") continue;
       checked += 1;
-      const text = readFileSync(join(dir, fixture), "utf8");
+      const text = readUtf8File(join(dir, fixture));
       const document = isJson ? JSON.parse(text) : extractFrontmatter(text);
       const validate = validatorFor(validators, fixture);
       const passed = validate(document);
