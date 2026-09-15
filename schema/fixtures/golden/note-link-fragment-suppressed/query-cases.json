@@ -1,0 +1,24 @@
+[
+  {
+    "name": "suppressed-unencoded-fragments-block-query-model",
+    "query_version": "0.1.0",
+    "rules": [
+      "NL-6",
+      "CM-54",
+      "CM-307"
+    ],
+    "query": {
+      "specification_version": "0.1.0",
+      "note_types": [
+        "source"
+      ],
+      "select": [
+        {
+          "kind": "path",
+          "as": "path"
+        }
+      ]
+    },
+    "expected_error": "CM-307"
+  }
+]

@@ -174,6 +174,11 @@ query still rejects that invalid link model. Anchor heading/block interpretation
 has separate library regressions; matching an existing anchor is not a conformance
 requirement.
 
+`note-link-fragment-valid` checks encoded heading text and the leading block
+marker. `note-link-fragment-invalid` rejects raw Unicode, spaces and punctuation
+under NL-6; those links do not create relationship instances.
+`note-link-fragment-suppressed` retains query blocking with displayed findings off.
+
 `inline-lexer-unicode-valid` keeps code-contained links excluded beside escaped
 astral characters, including a backslash before a code span's closing delimiter
 and links inside HTML-contained prose. `inline-lexer-backticks-invalid` exposes a

@@ -44,7 +44,7 @@ Rules:
   - `[Display text](Target.md#^block-id)`
 - `NL-4` An embed is any supported form prefixed with `!`, such as `![[Target]]` or `![Alt text](Target.md)`.
 - `NL-5` A Markdown link destination that contains an RFC 3986 URI scheme, such as `https:` or `mailto:`, is an external link, not an internal note link.
-- `NL-6` Markdown link destinations MUST be URL encoded where RFC 3986 requires it; notes linking to managed notes SHOULD prefer wikilinks.
+- `NL-6` Markdown link destinations MUST satisfy RFC 3986 encoding before percent decoding, except for an anchor's leading `^`; notes linking to managed notes SHOULD prefer wikilinks.
 - `NL-7` Managed note frontmatter fields with `type: link` and `format: note_link` store exactly one non-embed internal note-link string in either supported form.
 - `NL-8` Link parsing and target resolution are the same wherever an internal note link appears, in frontmatter or in the note body.
 
@@ -58,8 +58,8 @@ Rules:
 - `NL-12` An anchor beginning with `^` is a block identifier; any other anchor is heading text.
 - `NL-13` Display text and the embed flag never affect target resolution.
 
-For example, `Note.md#%5Epart` identifies block `part`; `Note.md#%255Epart`
-has heading text `%5Epart` after one decoding pass.
+Examples: `Note.md#%5Epart` identifies block `part`; `Note.md#%255Epart`
+identifies heading `%5Epart`. Write `#Caf%C3%A9`, not `#Café`.
 
 ### Target Resolution
 
