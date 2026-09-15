@@ -136,7 +136,10 @@ function extractFrontmatter(text: string, required = true): unknown {
     if (!required) return {};
     throw new Error("fixture frontmatter block is not closed");
   }
-  const document = parseDocument(lines.slice(1, end).join("\n"), YAML_CORE_OPTIONS);
+  // Preserve the YAML content newline before the exact closing delimiter,
+  // including the blank lines retained by a final keep-chomp scalar.
+  const yaml = lines.slice(1, end).join("\n") + (end > 1 ? "\n" : "");
+  const document = parseDocument(yaml, YAML_CORE_OPTIONS);
   if (document.errors.length) throw document.errors[0];
   if (document.contents === null) return {};
   if (!isMap(document.contents)) throw new Error("frontmatter must be a mapping");
@@ -206,8 +209,11 @@ export function validateExamples(
           continue;
         }
         try {
+          // Marked's fence capture omits the content's final line break.
+          // Restore it before YAML interpretation, not after scalar resolution.
+          // https://github.com/markedjs/marked/blob/v18.0.5/src/rules.ts
           const document = lang === "json" ? JSON.parse(token.text)
-            : markdown ? extractFrontmatter(token.text) : parseYaml(token.text, YAML_CORE_OPTIONS);
+            : markdown ? extractFrontmatter(token.text) : parseYaml(token.text + "\n", YAML_CORE_OPTIONS);
           if (annotation.kind === "artifact") {
             checked += 1;
             validateShape(validators[annotation.schema!]!, document, `${label} (${annotation.schema})`, failures);

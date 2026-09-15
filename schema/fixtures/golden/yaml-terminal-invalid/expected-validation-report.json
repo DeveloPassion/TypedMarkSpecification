@@ -1,0 +1,19 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_field_value",
+      "severity": "error",
+      "path": "Notes/Example.md",
+      "rule_id": "FDR-213",
+      "message": "text does not equal const_value",
+      "note_type": "note",
+      "field": "text"
+    }
+  ]
+}

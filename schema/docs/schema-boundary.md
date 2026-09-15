@@ -230,6 +230,13 @@ callers retain their existing BOM parsing behavior. Parsed frontmatter is checke
 as a mapping after YAML materialization, so a top-level tagged set is not an empty
 mapping; nested opaque tagged values remain intact. Source bytes are never rewritten.
 
+Frontmatter extraction retains the final YAML content line break before the
+closing delimiter, so keep-chomp scalars retain their trailing blank lines.
+Classified YAML/YML fences likewise restore the content newline omitted from the
+Markdown parser's token text. Clipping and stripping remain YAML operations;
+neither extraction path trims scalar content. The governing grammar is in
+[Foundations](../../foundations.md#frontmatter-block-grammar).
+
 YAML parsing uses the fixed Core resolution profile from
 [Foundations](../../foundations.md#yaml-baseline), including when a document contains
 a version directive. Legacy boolean words remain strings, leading-zero numbers use
