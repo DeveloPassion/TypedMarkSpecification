@@ -115,11 +115,27 @@ Rules:
 - `RHT-64` H3 and deeper headings are unconstrained by this version of the specification.
 - `RHT-285` Each required/optional H2 list MUST contain unique non-empty text entries.
 - `RHT-286` The required and optional H2 lists MUST be disjoint under the string comparison baseline.
+- `RHT-301` A heading list entry is its text or a mapping with `text` and an optional `description`; only `text` participates in matching.
+- `RHT-302` A `headings` block MAY declare `capture_h2`, which MUST equal the text of one declared required or optional H2 entry.
+- `RHT-303` Tools appending captured content to a managed note SHOULD place it under the effective `capture_h2` heading.
 
 For example, required `[Context, Decision]` and optional `[Notes, References]`
 allow `Context, Notes, Decision, References` when ordering is enabled. `## Context ##`
 and a setext H2 named `Context` both match `Context`; `## *Context*` matches
 the literal entry `*Context*`, not `Context`.
+
+Entries can explain themselves, and name where quick captures go:
+
+<!-- typedmark-example: fragment: Described headings with a capture heading. -->
+```yaml
+headings:
+  required_h2:
+    - text: Context
+      description: Why this decision was needed.
+    - Decision
+  optional_h2: [Notes]
+  capture_h2: Notes
+```
 
 ## Templates
 

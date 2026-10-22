@@ -79,6 +79,7 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | replace old folder-scoped structure | explicitly authored concrete types and mappings | [Collection Model](collection-model.md#folder-scopes) |
 | tolerate unknown fields on one type only | per-type `unknown_field` severity | [Note Type Schemas](note-type-schemas.md#schema-file-contract) |
 | require exactly one Home note | `count: {min: 1, max: 1}` and fixed storage | [Counts](note-type-schemas.md#allowed-schema-kinds) |
+| explain sections and route quick captures | heading entries `{text, description}` and `headings.capture_h2` | [Heading rules](relationships-headings-and-templates.md#heading-rules) |
 | enforce the H1 matches the title | `headings.require_h1_title: true` | [Heading rules](relationships-headings-and-templates.md#heading-rules) |
 | soft-delete or archive a note | core fields `deleted` / `archived` | [Core-defined fields](managed-notes-and-properties.md#core-defined-frontmatter-field-names) |
 | give a note alternative link names | core field `aliases` | [Core-defined fields](managed-notes-and-properties.md#core-defined-frontmatter-field-names) |

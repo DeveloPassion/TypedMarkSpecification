@@ -1069,6 +1069,29 @@
       },
       "additionalProperties": false
     },
+    "heading_entry": {
+      "$comment": "Text uniqueness across string and mapping forms is a semantic check (RHT-285).",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        {
+          "type": "object",
+          "required": [
+            "text"
+          ],
+          "properties": {
+            "text": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "description": {
+              "$ref": "#/$defs/non_empty_string"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
     "headings_block": {
       "$comment": "All keys are individually optional because partial blocks participate in the merge stack with replace semantics.",
       "type": "object",
@@ -1076,16 +1099,20 @@
         "required_h2": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/non_empty_string"
+            "$ref": "#/$defs/heading_entry"
           },
           "uniqueItems": true
         },
         "optional_h2": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/non_empty_string"
+            "$ref": "#/$defs/heading_entry"
           },
           "uniqueItems": true
+        },
+        "capture_h2": {
+          "$comment": "Must equal a declared required or optional entry text; a semantic check.",
+          "$ref": "#/$defs/non_empty_string"
         },
         "allow_other_h2": {
           "type": "boolean"
