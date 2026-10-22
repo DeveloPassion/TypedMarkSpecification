@@ -98,6 +98,9 @@ timezone-local ISO week formatting, sparse defaults, and archive replacement.
 invalid resolved basenames. `storage-declarations-invalid` checks active and
 archive placeholders without any notes, while `storage-timezone-invalid`
 reports an invalid named timezone at the collection configuration.
+`system-plain-yaml-invalid` rejects a system definition whose vendor metadata
+uses an explicit `!!set` tag (`SCE-159`); importers refuse such systems.
+
 `field-states-invalid` rejects a lifecycle state naming a value outside the
 field's `allowed_values`, while vocabulary-backed states on another type stay
 valid.

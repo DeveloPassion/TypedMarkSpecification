@@ -129,7 +129,8 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
   explicit normalization, note-link syntax and resolution, unresolved
   placeholder links, relationship instance counting and cardinality, field
   target agreement with relationship blocks and one field per kind and target,
-  inverse-field pairing and back-links, `depends_on` acyclicity, `capture_h2`
+  inverse-field pairing and back-links, `depends_on` acyclicity, plain-data
+  system YAML (`SCE-159`), `capture_h2`
   naming a declared heading, heading
   rules, storage-path conformance including archived state
 - link-value interpretation: [Note Links](../../note-links.md#link-parsing)

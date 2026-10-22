@@ -121,6 +121,8 @@ Rules:
 - `SCE-126` If present, `scaffold.notes` MUST be a list of scaffold note entries.
 - `SCE-127` Every `scaffold.notes[].path` MUST end in `.md`.
 - `SCE-128` If present, `scaffold.notes[].values` MUST be a mapping from managed-note frontmatter field name to starter value.
+- `SCE-159` YAML an importer rewrites or materializes, namely a system's `typedmark.md` frontmatter and the frontmatter of templates selected for scaffold notes, MUST be plain data: no anchors, aliases, or explicit tags, and only string mapping keys.
+- `SCE-160` An importer MUST reject a system whose starter values violate `SCE-159` rather than alter them.
 - `SCE-129` `audiences` MAY be omitted.
 - `SCE-130` If present, `audiences` MUST be a list of unique non-empty strings.
 - `SCE-131` `publisher` MAY be omitted.
