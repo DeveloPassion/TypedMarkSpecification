@@ -67,8 +67,8 @@ A rule can react to work becoming done, whatever its status value:
 <!-- typedmark-example: artifact=automation -->
 ```yaml
 specification_version: 0.1.0
-automation: flag-completion-review
-description: Ask for a review when a project first becomes done.
+automation: stamp-completion
+description: Record the date a project first becomes done.
 trigger:
   kind: event
   event: note.updated
@@ -80,8 +80,9 @@ scope:
     - project
 actions:
   - kind: set_field
-    field: review_needed
-    value: true
+    field: completed_on
+    value_from: trigger_date
+    only_if_empty: true
   - kind: add_tag
     tag: state/done
 ```
@@ -153,7 +154,9 @@ Rules:
 - `CM-267` A schedule executor MUST emit at most one `schedule.tick` event for each automation and scheduled instant.
 - `CM-268` `actions` MUST be a non-empty ordered list.
 - `CM-269` Supported action kinds are `set_field`, `add_tag`, `remove_tag`, `add_list_item`, `remove_list_item`, `move_note`, `archive_note`, `create_note`, `logical_delete_note`, and `hard_delete_note`.
-- `CM-270` `set_field` MUST declare a top-level `field` name and a parsed YAML `value`.
+- `CM-270` `set_field` MUST declare a top-level `field` name and exactly one of a parsed YAML `value` or a `value_from`.
+- `CM-563` `value_from` MUST be `trigger_date`, valid only for a `date` field, or `trigger_datetime`, valid only for a `datetime` field.
+- `CM-564` `trigger_date` resolves to the trigger instant's calendar date in the collection timezone, and `trigger_datetime` to the trigger instant with the collection timezone's offset.
 - `CM-554` `set_field` MAY declare a boolean `only_if_empty`, and when omitted its effective value is `false`.
 - `CM-555` `add_list_item` and `remove_list_item` MUST declare a top-level `field` name and one parsed YAML item `value`.
 - `CM-271` `add_tag` and `remove_tag` MUST declare one tag satisfying the stored tag-entry grammar in [Field Definition Reference](field-definition-reference.md).

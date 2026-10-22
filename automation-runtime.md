@@ -125,7 +125,7 @@ Rules:
 - `MN-162` Two staged actions that request the same semantic change MAY be coalesced into one change.
 - `MN-163` `set_field` MUST target a top-level field declared in the target note's effective `frontmatter`.
 - `MN-164` `set_field` MUST NOT target a field declaring `computed`, `immutable: true`, or `const_value`.
-- `MN-165` A `set_field` value MUST satisfy the target field's effective type, nullability, and value constraints.
+- `MN-165` A `set_field` value, including a resolved `value_from`, MUST satisfy the target field's effective type, nullability, and value constraints.
 - `MN-310` `set_field` with effective `only_if_empty: true` MUST have no effect unless the target's effective value is absent, null, an empty string, or an empty list.
 - `MN-166` `add_tag` MUST append its tag when absent.
 - `MN-167` `remove_tag` MUST remove only the exact stored tag named by the action.

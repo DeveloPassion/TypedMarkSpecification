@@ -464,8 +464,7 @@
           "type": "object",
           "required": [
             "kind",
-            "field",
-            "value"
+            "field"
           ],
           "properties": {
             "kind": {
@@ -477,9 +476,28 @@
             "value": {},
             "only_if_empty": {
               "type": "boolean"
+            },
+            "value_from": {
+              "$comment": "trigger_date needs a date field and trigger_datetime a datetime field (semantic, CM-563).",
+              "enum": [
+                "trigger_date",
+                "trigger_datetime"
+              ]
             }
           },
-          "additionalProperties": false
+          "additionalProperties": false,
+          "oneOf": [
+            {
+              "required": [
+                "value"
+              ]
+            },
+            {
+              "required": [
+                "value_from"
+              ]
+            }
+          ]
         },
         {
           "type": "object",
