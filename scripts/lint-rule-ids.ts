@@ -24,6 +24,10 @@ const CORE_PAGES = [
   "relationships-headings-and-templates.md", "extensions.md", "conformance-and-roadmap.md",
 ];
 const REUSE_PAGES = ["schema-reuse.md", "property-sets.md"];
+// Core budgets keep the essentials readable. Raised from 600 rules / 20,000
+// words (set by the #123 refocus) to make room for typed relationships (#137).
+const CORE_RULE_BUDGET = 650;
+const READING_WORD_BUDGET = 21500;
 
 export interface RuleRegistry {
   prefixes: Record<string, { page: string; last: number }>;
@@ -218,9 +222,9 @@ function main(): number {
   const reuseCount = countRules(REUSE_PAGES);
   const readingWords = [...CORE_PAGES, "manifesto.md", "getting-started.md"]
     .reduce((total, page) => total + (documents[page]?.trim().split(/\s+/u).length ?? 0), 0);
-  if (coreCount > 600) failures.push(`Core budget: ${coreCount} rules exceeds 600`);
+  if (coreCount > CORE_RULE_BUDGET) failures.push(`Core budget: ${coreCount} rules exceeds ${CORE_RULE_BUDGET}`);
   if (reuseCount > 100) failures.push(`Reuse budget: ${reuseCount} rules exceeds 100`);
-  if (readingWords > 20000) failures.push(`Core reading-path budget: ${readingWords} words exceeds 20000`);
+  if (readingWords > READING_WORD_BUDGET) failures.push(`Core reading-path budget: ${readingWords} words exceeds ${READING_WORD_BUDGET}`);
   for (const page of CORE_PAGES) {
     const count = ruleLines(documents[page] ?? "").length;
     if (count > 150) failures.push(`${page}: ${count} Core rules exceeds 150`);
@@ -246,7 +250,7 @@ function main(): number {
   const count = Object.values(registry.prefixes).reduce((total, { last }) => total + last, 0)
     - Object.keys(registry.retired).length;
   console.log(`all ${count} rule identifiers are present, unique, and registered`);
-  console.log(`budgets: Core ${coreCount}/600 rules, Reuse ${reuseCount}/100, reading path ${readingWords}/20000 words`);
+  console.log(`budgets: Core ${coreCount}/${CORE_RULE_BUDGET} rules, Reuse ${reuseCount}/100, reading path ${readingWords}/${READING_WORD_BUDGET} words`);
   return 0;
 }
 
