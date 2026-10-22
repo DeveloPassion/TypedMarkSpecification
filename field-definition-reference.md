@@ -47,6 +47,7 @@ Property applicability at a glance:
 | `default_value` | declared fields except anonymous `items` | unavailable with generation strategies or `computed` |
 | `relationship_kind` | top-level note-link fields | absent |
 | `inverse` | relationship-bearing fields | absent; see [Relationship Model](relationships-headings-and-templates.md#relationship-model) |
+| `states` | top-level `text` fields with `allowed_values` or `allowed_values_from` | absent |
 | `format` | `text`, `link`, and `time` where supported | required for `link` and `time` |
 | `validate_exists`, `targets` | note-link definitions | `false` / absent |
 | `not_empty` | object | `false` |
@@ -64,6 +65,7 @@ Property representation:
 | `unique` | Boolean or `collection` |
 | `relationship_kind` | `belongs_to`, `related_to`, `contains`, or `depends_on` |
 | `inverse` | Field name |
+| `states` | Mapping from allowed values to state annotations |
 | `generated` | `false` or a supported strategy; `now_on_write` excludes `immutable: true` |
 | `targets` | Non-empty list of unique note-type slugs |
 | `min`, `max` | Scalar bound or count as defined below |
@@ -356,6 +358,32 @@ Rules:
 - `FDR-207` `allowed_values_from` is valid wherever `allowed_values` is valid, and additionally on `type: tags`.
 - `FDR-208` For every type except `tags`, `allowed_values_from` has the same semantics as declaring `allowed_values` with the referenced vocabulary's values.
 - `FDR-209` For `type: tags`, every stored entry MUST equal a vocabulary value or be a descendant of one under the tag hierarchy rules; an entry outside the vocabulary is an `invalid_field_value` failure.
+
+### `states`
+
+`states` gives lifecycle meaning to some allowed values, so tools and
+automations can ask whether a note is done instead of listing status values:
+
+<!-- typedmark-example: fragment: Lifecycle states on a status field. -->
+```yaml
+status:
+  type: text
+  allowed_values: [backlog, active, waiting, completed, cancelled]
+  states:
+    backlog: {role: backlog}
+    active: {role: active}
+    waiting: {role: waiting}
+    completed: {done: true, outcome: success}
+    cancelled: {done: true, outcome: failure}
+```
+
+Rules:
+
+- `FDR-288` `states` is valid only on top-level `text` fields declaring `allowed_values` or `allowed_values_from`, and each key MUST be one of the field's allowed values.
+- `FDR-289` A state annotation MAY declare a boolean `done`, an `outcome` of `success` or `failure`, and a `role` of `backlog`, `scheduled`, `active`, or `waiting`.
+- `FDR-290` `outcome` MUST appear only with `done: true`, and `role` MUST NOT appear with `done: true`.
+- `FDR-291` A value without a state annotation, and an annotation omitting `done`, has `done: false`.
+- `FDR-292` State annotations never change which values are valid.
 
 ### `const_value`
 

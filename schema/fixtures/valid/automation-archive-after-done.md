@@ -12,7 +12,7 @@ scope:
     - task
 when:
   status:
-    equals: done
+    state: {done: true}
   completed_on:
     older_than: P30D
 actions:

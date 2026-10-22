@@ -25,8 +25,8 @@ actions:
     field: watchers
     value: "[[Review Board]]"
   - kind: set_field
-    field: completed_on
-    value: 2026-10-22
+    field: closed_reason
+    value: completed
     only_if_empty: true
   - kind: archive_note
 failure: abort

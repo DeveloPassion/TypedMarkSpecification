@@ -66,7 +66,9 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | let authors choose note names, optionally by shape | omit `note_name_pattern`; add `note_name_regex`, e.g. `"^[a-z0-9]+(?:[.-][a-z0-9]+)*$"` for `net.proto.bgp` | [Storage rules](note-type-schemas.md#storage-rules) |
 | map notes to types by tag or folder | `note_type_mappings` with `kind: tag` or `kind: folder` | [Note-type mappings](collection-model.md#note-type-mappings) |
 | require tags collection-wide or by note type | `mandatory_tags` in the collection or schema | [Mandatory tags](collection-model.md#mandatory-tags) |
-| archive notes some time after they finish | a daily schedule with `when: {status: {equals: done}, completed_on: {older_than: P30D}}` and `archive_note` | [Automation rules](automation-artifacts.md#automation-rules) |
+| say which status values mean done | `states` on the status field, e.g. `completed: {done: true, outcome: success}` | [Field Definition Reference](field-definition-reference.md#states) |
+| react when work becomes done | `trigger.changed.status.to_state: {done: true}` or `when: {status: {state: {done: true}}}` | [Automation rules](automation-artifacts.md#automation-rules) |
+| archive notes some time after they finish | a daily schedule with `when: {status: {state: {done: true}}, completed_on: {older_than: P30D}}` and `archive_note` | [Automation rules](automation-artifacts.md#automation-rules) |
 | react to note changes or a schedule | an automation artifact under `<metadata_directory>/automations/` | [Automation rules](automation-artifacts.md#automation-rules) |
 | let automation changes trigger further rules safely | propagation mode with `automation_defaults.max_propagation_waves` | [Dependency propagation](automation-runtime.md#dependency-propagation-and-consistency) |
 | select, filter, sort, group, or limit managed notes portably | a portable query descriptor with `where`, `select`, `order_by`, `group_by`, and `limit` | [Portable Queries](queries.md#portable-queries) |

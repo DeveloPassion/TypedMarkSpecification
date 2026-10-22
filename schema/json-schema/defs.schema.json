@@ -299,6 +299,14 @@
         "allowed_values_from": {
           "$ref": "#/$defs/slug"
         },
+        "states": {
+          "$comment": "Keys must be allowed values of the field; a semantic check (FDR-288).",
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "$ref": "#/$defs/state_annotation"
+          }
+        },
         "const_value": {},
         "relationship_kind": {
           "enum": [
@@ -327,6 +335,33 @@
       },
       "additionalProperties": false,
       "allOf": [
+        {
+          "$comment": "states is valid only on text fields with allowed values",
+          "if": {
+            "required": [
+              "states"
+            ]
+          },
+          "then": {
+            "properties": {
+              "type": {
+                "const": "text"
+              }
+            },
+            "anyOf": [
+              {
+                "required": [
+                  "allowed_values"
+                ]
+              },
+              {
+                "required": [
+                  "allowed_values_from"
+                ]
+              }
+            ]
+          }
+        },
         {
           "$comment": "type: link must declare a link format",
           "if": {
@@ -1068,6 +1103,69 @@
         }
       },
       "additionalProperties": false
+    },
+    "state_annotation": {
+      "type": "object",
+      "properties": {
+        "done": {
+          "type": "boolean"
+        },
+        "outcome": {
+          "enum": [
+            "success",
+            "failure"
+          ]
+        },
+        "role": {
+          "enum": [
+            "backlog",
+            "scheduled",
+            "active",
+            "waiting"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "$comment": "outcome only for done states (FDR-290)",
+          "if": {
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "required": [
+              "done"
+            ],
+            "properties": {
+              "done": {
+                "const": true
+              }
+            }
+          }
+        },
+        {
+          "$comment": "role only for states that are not done (FDR-290)",
+          "if": {
+            "required": [
+              "done"
+            ],
+            "properties": {
+              "done": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "required": [
+                "role"
+              ]
+            }
+          }
+        }
+      ]
     },
     "heading_entry": {
       "$comment": "Text uniqueness across string and mapping forms is a semantic check (RHT-285).",

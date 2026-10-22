@@ -165,6 +165,9 @@
             "$comment": "One non-zero ISO 8601 component in years, months, weeks or days; the field must be a top-level date or datetime (semantic).",
             "type": "string",
             "pattern": "^P[1-9][0-9]*[YMWD]$"
+          },
+          "state": {
+            "$ref": "#/$defs/state_predicate"
           }
         },
         "additionalProperties": false
@@ -175,7 +178,13 @@
       "minProperties": 1,
       "properties": {
         "from": {},
-        "to": {}
+        "to": {},
+        "from_state": {
+          "$ref": "#/$defs/state_predicate"
+        },
+        "to_state": {
+          "$ref": "#/$defs/state_predicate"
+        }
       },
       "additionalProperties": false,
       "anyOf": [
@@ -187,6 +196,16 @@
         {
           "required": [
             "to"
+          ]
+        },
+        {
+          "required": [
+            "from_state"
+          ]
+        },
+        {
+          "required": [
+            "to_state"
           ]
         }
       ]
@@ -603,6 +622,31 @@
           "additionalProperties": false
         }
       ]
+    },
+    "state_predicate": {
+      "$comment": "Matches the effective value's state annotation (CM-561); the field must declare states (semantic).",
+      "type": "object",
+      "minProperties": 1,
+      "properties": {
+        "done": {
+          "type": "boolean"
+        },
+        "outcome": {
+          "enum": [
+            "success",
+            "failure"
+          ]
+        },
+        "role": {
+          "enum": [
+            "backlog",
+            "scheduled",
+            "active",
+            "waiting"
+          ]
+        }
+      },
+      "additionalProperties": false
     }
   }
 }

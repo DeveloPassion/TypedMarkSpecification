@@ -120,7 +120,7 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
   `abstract`, labels, field values, and conventional/derived templates;
   absent archive blocks use active storage
 - value semantics: `default_value`/`const_value`/`allowed_values` conformance to
-  the declared type, `min <= max`, regex dialect (including `note_name_regex`),
+  the declared type, `min <= max`, `states` keys being allowed values, regex dialect (including `note_name_regex`),
   storage placeholder resolution, free-name extraction between resolved affixes,
   generation-strategy value production, shared expression-language syntax,
   consumer-specific reference resolution, transform validity, null handling, and

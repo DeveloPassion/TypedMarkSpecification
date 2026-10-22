@@ -55,11 +55,35 @@ actions:
     field: watchers
     value: "[[Review Board]]"
   - kind: set_field
-    field: completed_on
-    value: 2026-10-22
+    field: closed_reason
+    value: completed
     only_if_empty: true
   - kind: archive_note
 failure: abort
+```
+
+A rule can react to work becoming done, whatever its status value:
+
+<!-- typedmark-example: artifact=automation -->
+```yaml
+specification_version: 0.1.0
+automation: flag-completion-review
+description: Ask for a review when a project first becomes done.
+trigger:
+  kind: event
+  event: note.updated
+  changed:
+    status:
+      to_state: {done: true}
+scope:
+  note_types:
+    - project
+actions:
+  - kind: set_field
+    field: review_needed
+    value: true
+  - kind: add_tag
+    tag: state/done
 ```
 
 A daily schedule can archive work some time after it finishes:
@@ -79,7 +103,7 @@ scope:
     - task
 when:
   status:
-    equals: done
+    state: {done: true}
   completed_on:
     older_than: P30D
 actions:
@@ -99,7 +123,7 @@ Rules:
 - `CM-248` `trigger.kind` MUST be `event` or `schedule`.
 - `CM-249` An event trigger MUST declare `event` as one of `note.created`, `note.updated`, `note.moved`, `note.archived`, or `note.deleted`.
 - `CM-250` `trigger.changed` MAY appear only on a `note.updated` event trigger.
-- `CM-280` `trigger.changed` MUST map one or more top-level field names to a predicate containing `from`, `to`, or both.
+- `CM-280` `trigger.changed` MUST map one or more top-level field names to a predicate containing at least one of `from`, `to`, `from_state`, or `to_state`.
 - `CM-251` A `from` or `to` change predicate compares the corresponding parsed value in the event's `changes` entry by exact field-value equality under [Field Definition Reference](field-definition-reference.md).
 - `CM-252` `scope` MAY declare `note_types`, `path`, or both.
 - `CM-281` A target matches `scope` only when every declared scope constraint matches.
@@ -109,6 +133,9 @@ Rules:
 - `CM-255` `when`, when present, MUST use the frontmatter predicate shape and semantics defined for `note_type_mappings` in [Collection Model](collection-model.md#note-type-mappings), plus `older_than`.
 - `CM-557` An `older_than` predicate MUST target a top-level `date` or `datetime` field and declare an ISO 8601 duration with one non-zero year, month, week, or day component, such as `P30D`.
 - `CM-558` `older_than` matches when the field's effective value plus the duration, computed in the collection timezone with a date taken as the start of its day, is at or before the trigger instant.
+- `CM-560` A `when` predicate MAY declare `state`, a mapping of `done`, `outcome`, and `role` values, only on a field declaring `states` for every target type.
+- `CM-561` A `state` predicate matches when the field's effective value is non-null and its state annotation, with the defaults of `FDR-291`, equals every declared key.
+- `CM-562` A `trigger.changed` predicate MAY declare `from_state` and `to_state`, which apply `state` predicate semantics to the change's before and after values.
 - `CM-559` The trigger instant is the scheduled instant for a schedule trigger and the event's `occurred_at` otherwise; an absent or null value does not match `older_than`.
 - `CM-256` `trigger.scope_transition` MAY be omitted, and when omitted its effective value is `matches_after`.
 - `CM-257` `trigger.scope_transition` MUST be `matches_after`, `enters`, or `leaves`.

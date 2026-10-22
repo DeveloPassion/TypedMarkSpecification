@@ -1,0 +1,17 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_note_type_schema",
+      "severity": "error",
+      "path": ".typedmark/schemas/project.md",
+      "rule_id": "FDR-288",
+      "message": "The state done is not an allowed value of status."
+    }
+  ]
+}
