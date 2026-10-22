@@ -61,6 +61,7 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | say "every meeting belongs to a project" | `relationship_kind: belongs_to` field + relationship cardinality | [Relationships](relationships-headings-and-templates.md#relationship-constraints) |
 | file notes by date, quarter, or week | `{field:format}` over a stored/effective date field | [Storage rules](note-type-schemas.md#storage-rules) |
 | add a required name suffix | `note_name_suffix.pattern` | [Storage rules](note-type-schemas.md#storage-rules) |
+| let authors choose note names, optionally by shape | omit `note_name_pattern`; add `note_name_regex`, e.g. `"^[a-z0-9]+(?:[.-][a-z0-9]+)*$"` for `net.proto.bgp` | [Storage rules](note-type-schemas.md#storage-rules) |
 | map notes to types by tag or folder | `note_type_mappings` with `kind: tag` or `kind: folder` | [Note-type mappings](collection-model.md#note-type-mappings) |
 | require tags collection-wide or by note type | `mandatory_tags` in the collection or schema | [Mandatory tags](collection-model.md#mandatory-tags) |
 | react to note changes or a schedule | an automation artifact under `<metadata_directory>/automations/` | [Automation rules](automation-artifacts.md#automation-rules) |

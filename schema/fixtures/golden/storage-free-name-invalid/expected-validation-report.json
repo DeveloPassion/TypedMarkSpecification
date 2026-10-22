@@ -1,0 +1,42 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [
+    {
+      "code": "path",
+      "severity": "error",
+      "path": "elsewhere/growth-mindset.md",
+      "rule_id": "NTS-146",
+      "message": "The free-named note is outside its resolved folder.",
+      "note_type": "concept"
+    },
+    {
+      "code": "path",
+      "severity": "error",
+      "path": "journal/2026-10-21 Standup.md",
+      "rule_id": "NTS-146",
+      "message": "The basename does not start with the resolved prefix.",
+      "note_type": "entry"
+    },
+    {
+      "code": "path",
+      "severity": "error",
+      "path": "journal/2026-10-22 .md",
+      "rule_id": "NTS-181",
+      "message": "The free name between the resolved affixes is empty.",
+      "note_type": "entry"
+    },
+    {
+      "code": "path",
+      "severity": "error",
+      "path": "notes/Border Gateway Protocol.md",
+      "rule_id": "NTS-182",
+      "message": "The free name does not match note_name_regex.",
+      "note_type": "concept"
+    }
+  ]
+}

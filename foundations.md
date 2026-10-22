@@ -191,7 +191,7 @@ the boolean values some YAML 1.1 parsers assign to them.
 
 Rules:
 
-- `FND-29` Every regular expression on a governed surface — the `regex` field constraint, `when.path.regex`, and `when.frontmatter` `regex` predicates — uses the ECMAScript (ECMA-262) regular expression dialect.
+- `FND-29` Every regular expression on a governed surface — the `regex` field constraint, `note_name_regex`, `when.path.regex`, and `when.frontmatter` `regex` predicates — uses the ECMAScript (ECMA-262) regular expression dialect.
 - `FND-30` Whether a pattern is matched against the entire value or searched within it is defined by each declaring rule.
 - `FND-31` A pattern that is not a valid ECMA-262 regular expression makes its declaring artifact invalid.
 - `FND-93` A governed regular expression MUST use Unicode mode (`u`) without the `i`, `m`, `s`, `g`, `y`, or `v` flags.

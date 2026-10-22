@@ -1106,15 +1106,25 @@
     "archive_block": {
       "type": "object",
       "required": [
-        "folder_pattern",
-        "note_name_pattern"
+        "folder_pattern"
       ],
+      "not": {
+        "$comment": "A free name (no note_name_pattern) is the only context for note_name_regex.",
+        "required": [
+          "note_name_pattern",
+          "note_name_regex"
+        ]
+      },
       "properties": {
         "folder_pattern": {
           "$ref": "#/$defs/storage_folder_pattern"
         },
         "note_name_pattern": {
           "$ref": "#/$defs/storage_name_pattern"
+        },
+        "note_name_regex": {
+          "$comment": "ECMA-262 pattern fully matched against the free name; regex validity is a semantic check (FND-31).",
+          "$ref": "#/$defs/non_empty_string"
         },
         "note_name_prefix": {
           "$ref": "#/$defs/note_name_affix"
@@ -1128,15 +1138,25 @@
     "storage_block": {
       "type": "object",
       "required": [
-        "folder_pattern",
-        "note_name_pattern"
+        "folder_pattern"
       ],
+      "not": {
+        "$comment": "A free name (no note_name_pattern) is the only context for note_name_regex.",
+        "required": [
+          "note_name_pattern",
+          "note_name_regex"
+        ]
+      },
       "properties": {
         "folder_pattern": {
           "$ref": "#/$defs/storage_folder_pattern"
         },
         "note_name_pattern": {
           "$ref": "#/$defs/storage_name_pattern"
+        },
+        "note_name_regex": {
+          "$comment": "ECMA-262 pattern fully matched against the free name; regex validity is a semantic check (FND-31).",
+          "$ref": "#/$defs/non_empty_string"
         },
         "note_name_prefix": {
           "$ref": "#/$defs/note_name_affix"

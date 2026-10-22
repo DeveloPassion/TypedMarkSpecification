@@ -98,6 +98,10 @@ timezone-local ISO week formatting, sparse defaults, and archive replacement.
 invalid resolved basenames. `storage-declarations-invalid` checks active and
 archive placeholders without any notes, while `storage-timezone-invalid`
 reports an invalid named timezone at the collection configuration.
+`storage-free-name-valid` keeps author-chosen names independent of `title`,
+with a field-derived prefix and an archive folder that keeps the free name.
+`storage-free-name-invalid` separates folder and affix mismatches, an empty free
+name, and a free name failing `note_name_regex`.
 
 `core-cardinality-valid` keeps property types and case-sensitive values distinct,
 including an unused type with a zero maximum. `core-cardinality-invalid` combines

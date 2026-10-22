@@ -50,10 +50,6 @@ file authoritative.
 | Defaults | Fill defined omissions | Same, after composition |
 | Validation | Validate the resulting contract | Same |
 
-For example, a local `status` field with `default_value: draft` has that
-definition directly in Core. With Reuse, a local definition can override a
-contributed field only under the reusable merge contract.
-
 ### Normative Evaluation Pipeline
 
 Rules:
@@ -149,8 +145,7 @@ Conditional constraints belong to [Schema Reuse](schema-reuse.md#conditional-fie
 
 ## Allowed Schema Kinds
 
-The former `kind` field is not part of the `0.1.0` schema. Counts express
-cardinality directly; fixed storage patterns express fixed paths.
+Counts express cardinality directly; fixed storage patterns express fixed paths.
 
 <!-- typedmark-example: fragment: One required fixed-path note. -->
 ```yaml
@@ -170,20 +165,25 @@ evaluation of substituted text.
 | Pattern position | Shape |
 | --- | --- |
 | `folder_pattern` | Relative folder, optionally empty for the root; `/` separators; no backslash, leading/trailing slash, or `.` / `..` segment |
-| `note_name_pattern` | Non-empty basename pattern without slash, backslash, or a `.md` extension |
+| `note_name_pattern` | Optional non-empty basename pattern without slash, backslash, or a `.md` extension |
+| `note_name_regex` | Optional ECMA-262 free-name constraint; excludes `note_name_pattern` |
 | `note_name_prefix`, `note_name_suffix` | Optional mapping with a non-empty `pattern`; every supplied affix applies |
-| `archive` | Optional block with alternate `folder_pattern` and `note_name_pattern`, and optional affixes |
+| `archive` | Optional block with alternate `folder_pattern` and the same optional name keys |
 
 For example, `{meeting_date:YYYY}/{meeting_date:MM}` names a folder from a
-declared date. The word `now` has no special status: `{now:YYYY}` works only if
-there is an actual effective date/datetime field named `now`.
+declared date; `{now:YYYY}` needs an actual field named `now`.
+
+Free names are author-chosen, not stored. Without a stored `title`, `{title}`
+alone is effectively free.
 
 Rules:
 
-- `NTS-97` A supplied storage block MUST contain `folder_pattern` and `note_name_pattern`.
+- `NTS-97` A supplied storage block MUST contain `folder_pattern`.
 - `NTS-177` Storage declarations MUST satisfy the Storage Rules shape table.
 - `NTS-101` Storage patterns govern both path validation and note creation.
-- `NTS-113` A resolved name consists of the resolved prefix, name pattern, and suffix in that order.
+- `NTS-113` A resolved name consists of the resolved prefix, name pattern or free name, and suffix in that order.
+- `NTS-181` Without `note_name_pattern`, the free name is the non-empty basename text between resolved affixes.
+- `NTS-182` A free name MUST fully match any `note_name_regex`.
 - `NTS-117` A placeholder MUST have the form `{field_name}` or `{field_name:format}`.
 - `NTS-124` A placeholder MUST reference a top-level effective field or Core field.
 - `NTS-125` Storage placeholders MUST NOT traverse nested fields.
@@ -197,19 +197,17 @@ Rules:
 - `NTS-134` A resolved note basename MUST be a non-empty string not beginning with `.`.
 - `NTS-180` A resolved path MUST be free of control characters and `.` or `..` path segments, regardless of whether they came from literal text or substituted values.
 - `NTS-178` Substituted text MUST NOT be reparsed as storage-pattern syntax.
-- `NTS-135` An unsafe resolved path MUST be reported as a `path` failure rather than created.
 - `NTS-137` The resolved note path is the resolved folder plus basename and `.md`, with no leading separator for an empty folder.
 - `NTS-138` Effective `archived` selects the active or archived storage contract.
 - `NTS-144` An archived note with an archive block MUST use its alternate patterns.
 - `NTS-145` Without an archive block, an archived note MUST continue to satisfy the active storage patterns.
-- `NTS-146` A path mismatch MUST be reported under `path`.
+- `NTS-146` A path mismatch or unsafe path MUST be reported under `path`; an unsafe path MUST NOT be created.
 - `NTS-148` A writer creating a note MUST derive its initial path from the effective storage patterns and values it will write.
-- `NTS-150` A writer MUST obtain every necessary concrete value before creating a note at a conforming path.
+- `NTS-150` A writer MUST obtain every necessary concrete value and free name before creating a note at a conforming path.
+- `NTS-183` A writer moving a note to a free-name contract MUST keep its name part unless given another.
 - `NTS-152` A writer MUST NOT create or move a note onto an occupied note or artifact path.
-- `NTS-154` Tools SHOULD report resolved paths differing only by letter case.
-- `NTS-155` Tools SHOULD report names reserved on common filesystems, including Windows device names and path components ending in a dot or space.
-- `NTS-156` Archiving MUST preserve the note's type.
-- `NTS-157` Archiving MUST preserve its effective non-null identifier.
+- `NTS-154` Tools SHOULD report resolved paths differing only by letter case and names reserved on common filesystems, including Windows device names and path components ending in a dot or space.
+- `NTS-156` Archiving MUST preserve the note's type and its effective non-null identifier.
 
 ## Template References
 

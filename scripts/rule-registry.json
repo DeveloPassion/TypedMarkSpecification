@@ -2,7 +2,7 @@
   "prefixes": {
     "FND": { "page": "foundations.md", "last": 95 },
     "CM": { "page": "collection-model.md", "last": 553 },
-    "NTS": { "page": "note-type-schemas.md", "last": 180 },
+    "NTS": { "page": "note-type-schemas.md", "last": 183 },
     "FDR": { "page": "field-definition-reference.md", "last": 287 },
     "MN": { "page": "managed-notes-and-properties.md", "last": 309 },
     "NL": { "page": "note-links.md", "last": 42 },
@@ -1328,6 +1328,9 @@
     "RHT-23": "Consolidated into the owning 0.1.0 shape/default table or an existing equivalent rule; no identifier reuse.",
     "RHT-24": "Consolidated into the owning 0.1.0 shape/default table or an existing equivalent rule; no identifier reuse.",
     "SCE-141": "Consolidated into the owning 0.1.0 table or an equivalent active contract; never reused.",
-    "SCE-142": "Consolidated into the owning 0.1.0 table or an equivalent active contract; never reused."
+    "SCE-142": "Consolidated into the owning 0.1.0 table or an equivalent active contract; never reused.",
+    "NTS-135": "Merged into NTS-146; never reused.",
+    "NTS-155": "Merged into NTS-154; never reused.",
+    "NTS-157": "Merged into NTS-156; never reused."
   }
 }
