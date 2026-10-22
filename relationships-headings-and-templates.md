@@ -26,7 +26,8 @@ See also:
 ## Relationship Model
 
 `belongs_to` models primary ownership or governing context; `related_to` models
-secondary association. Schema declarations constrain typed relationship
+secondary association; `contains` lists parts, such as a project's tasks; and
+`depends_on` lists what must happen first. Schema declarations constrain typed relationship
 instances, not the permission to write ordinary internal links. Instances come
 from resolved note links under the rules below.
 
@@ -36,16 +37,20 @@ Rules:
 - `RHT-6` Metadata properties contribute typed relationship instances only when their field definitions declare `relationship_kind`.
 - `RHT-7` Body internal note links participate only in the `related_to` relationship model, and contribute typed relationship instances only for target note types declared under `related_to`; every other body link is purely navigational.
 - `RHT-10` Inverse views MAY be derived by tooling and MUST NOT require duplicate schema declarations.
+- `RHT-293` `contains` and `depends_on` instances are the unique resolved targets of frontmatter fields declaring that kind.
+- `RHT-294` Resolved `depends_on` instances MUST NOT form a cycle; each note on a cycle is reported as `invalid_relationship_instance`.
 
 ## Relationship Constraints
 
 A relationship block contains `belongs_to.allowed_note_types` and
-`related_to.allowed_note_types`. Both default to empty. Each target has optional
+`related_to.allowed_note_types`, plus optional `contains` and `depends_on`
+blocks of the same shape. All default to empty. Each target has optional
 `min`/`max` bounds, defaulting to zero/unbounded.
 
 Rules:
 
 - `RHT-14` If a schema file physically declares `relationships`, it MUST define both `relationships.belongs_to.allowed_note_types` and `relationships.related_to.allowed_note_types`.
+- `RHT-295` `contains` and `depends_on` MAY be omitted from a declared relationship block.
 - `RHT-15` Every referenced target note type MUST be a note type defined in the same collection; it MAY be abstract.
 - `RHT-20` Within a single relationship kind, a target note type identifier MUST appear at most once.
 - `RHT-21` The target note type sets for `belongs_to` and `related_to` MUST be disjoint for a given source note type, after expanding abstract targets to their concrete descendants.

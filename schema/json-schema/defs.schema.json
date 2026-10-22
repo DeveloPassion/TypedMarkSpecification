@@ -303,7 +303,9 @@
         "relationship_kind": {
           "enum": [
             "belongs_to",
-            "related_to"
+            "related_to",
+            "contains",
+            "depends_on"
           ]
         },
         "items": {
@@ -1028,7 +1030,7 @@
       "additionalProperties": false
     },
     "relationships_block": {
-      "$comment": "Target note-type resolution and belongs_to/related_to disjointness are semantic checks.",
+      "$comment": "Target note-type resolution, belongs_to/related_to disjointness and depends_on acyclicity are semantic checks.",
       "type": "object",
       "required": [
         "belongs_to",
@@ -1039,6 +1041,12 @@
           "$ref": "#/$defs/relationship_kind_block"
         },
         "related_to": {
+          "$ref": "#/$defs/relationship_kind_block"
+        },
+        "contains": {
+          "$ref": "#/$defs/relationship_kind_block"
+        },
+        "depends_on": {
           "$ref": "#/$defs/relationship_kind_block"
         }
       },

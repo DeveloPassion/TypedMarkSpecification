@@ -71,7 +71,7 @@ required string `item` and optional string `separator` (default newline) and
 | --- | --- | --- |
 | `self_field` | `field`: field name | none |
 | `note_field` | `note`: non-empty link text; `field`: field name | none |
-| `relationship` | `relationship`: `belongs_to` or `related_to` | `direction`: inbound/outbound, default outbound; `field`: field name; `target_note_types`: slug list |
+| `relationship` | `relationship`: `belongs_to`, `related_to`, `contains`, or `depends_on` | `direction`: inbound/outbound, default outbound; `field`: field name; `target_note_types`: slug list |
 | `query` | `query`: portable descriptor; `column`: field-name-shaped alias | none |
 | `view` | `view`: slug; `column`: field-name-shaped alias | none |
 | `dataset` | `dataset`: slug; `column`: field-name-shaped alias | none |

@@ -98,6 +98,11 @@ timezone-local ISO week formatting, sparse defaults, and archive replacement.
 invalid resolved basenames. `storage-declarations-invalid` checks active and
 archive placeholders without any notes, while `storage-timezone-invalid`
 reports an invalid named timezone at the collection configuration.
+`relationship-kinds-valid` lists a project's tasks with `contains` and an
+acyclic `depends_on` diamond, with an inbound `contains` query.
+`relationship-kinds-invalid` exceeds a `contains` maximum and reports every
+note on a `depends_on` cycle, but not a note that only depends on the cycle.
+
 `relationship-fields-invalid` rejects a relationship field admitting a target
 not declared under its kind (FDR-164) and two fields of one kind admitting the
 same target type (RHT-292).

@@ -251,7 +251,7 @@ Effective note-type schema merge rules:
 - `CM-184` A field removed by `frontmatter_remove` does not appear in the effective schema unless an opt-in property set or the local note-type schema defines that field later.
 - `CM-185` Because replacement is complete, any property-set-provided or inherited field metadata such as `label`, `description`, or `icon` is replaced too unless the overriding definition restates it.
 - `CM-186` Local concrete note-type schema frontmatter is applied last.
-- `CM-187` `relationships.belongs_to.allowed_note_types` and `relationships.related_to.allowed_note_types` merge by target note type.
+- `CM-187` Each relationship kind's `allowed_note_types` merges by target note type.
 - `CM-188` Default property set relationships, in `default_property_sets` order and after applying `exclude_property_sets`, are applied first.
 - `CM-189` Relationship targets declared by abstract ancestors, if any, are applied next from the farthest abstract ancestor to the nearest abstract ancestor.
 - `CM-190` Relationship targets declared by opt-in property sets are applied next in declared `property_sets` order.

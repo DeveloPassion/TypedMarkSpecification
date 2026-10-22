@@ -173,7 +173,7 @@ A relationship predicate counts unique resolved notes, optionally narrowing them
 
 Rules:
 
-- `CM-347` A relationship predicate MUST declare `relationship` as `belongs_to` or `related_to`.
+- `CM-347` A relationship predicate MUST declare `relationship` as `belongs_to`, `related_to`, `contains`, or `depends_on`.
 - `CM-348` An omitted relationship-predicate `direction` MUST have the effective value `outbound`.
 - `CM-349` An outbound relationship predicate MUST begin with the candidate's unique concrete targets for the named relationship kind.
 - `CM-350` An inbound relationship predicate MUST begin with the unique managed notes having the named concrete relationship kind to the candidate.

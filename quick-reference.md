@@ -59,6 +59,7 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | stop a value from changing | `immutable: true` | [Field Definition Reference](field-definition-reference.md#immutable) |
 | keep a value unique | `unique: true` (per type) or `unique: collection` | [Field Definition Reference](field-definition-reference.md#unique) |
 | say "every meeting belongs to a project" | `relationship_kind: belongs_to` field + relationship cardinality | [Relationships](relationships-headings-and-templates.md#relationship-constraints) |
+| list a project's tasks or a task's prerequisites | `relationship_kind: contains` or `depends_on` (no cycles) | [Relationship Model](relationships-headings-and-templates.md#relationship-model) |
 | file notes by date, quarter, or week | `{field:format}` over a stored/effective date field | [Storage rules](note-type-schemas.md#storage-rules) |
 | add a required name suffix | `note_name_suffix.pattern` | [Storage rules](note-type-schemas.md#storage-rules) |
 | let authors choose note names, optionally by shape | omit `note_name_pattern`; add `note_name_regex`, e.g. `"^[a-z0-9]+(?:[.-][a-z0-9]+)*$"` for `net.proto.bgp` | [Storage rules](note-type-schemas.md#storage-rules) |

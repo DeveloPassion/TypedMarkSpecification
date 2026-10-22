@@ -45,7 +45,7 @@ Property applicability at a glance:
 | [`immutable`](authoring.md#immutable) | top-level and nested object fields | `false`; unavailable on anonymous `items` |
 | `nullable` | declared fields except anonymous `items` | `false`, subject to the dedicated Core-field contract |
 | `default_value` | declared fields except anonymous `items` | unavailable with generation strategies or `computed` |
-| `relationship_kind` | top-level note-link fields | `belongs_to` or `related_to` |
+| `relationship_kind` | top-level note-link fields | absent |
 | `format` | `text`, `link`, and `time` where supported | required for `link` and `time` |
 | `validate_exists`, `targets` | note-link definitions | `false` / absent |
 | `not_empty` | object | `false` |
@@ -61,7 +61,7 @@ Property representation:
 | `label`, `description`, `icon`, `regex` | Non-empty string |
 | `nullable`, `deprecated`, `validate_exists`, `not_empty`, `not_blank` | Boolean |
 | `unique` | Boolean or `collection` |
-| `relationship_kind` | `belongs_to` or `related_to` |
+| `relationship_kind` | `belongs_to`, `related_to`, `contains`, or `depends_on` |
 | `generated` | `false` or a supported strategy; `now_on_write` excludes `immutable: true` |
 | `targets` | Non-empty list of unique note-type slugs |
 | `min`, `max` | Scalar bound or count as defined below |

@@ -1,0 +1,27 @@
+[
+  {
+    "name": "tasks-contained-by-launch",
+    "query_version": "0.1.0",
+    "rules": ["RHT-293", "CM-347", "CM-350"],
+    "query": {
+      "specification_version": "0.1.0",
+      "note_types": ["task"],
+      "select": [{"kind": "path", "as": "path"}],
+      "where": {
+        "kind": "relationship",
+        "relationship": "contains",
+        "direction": "inbound",
+        "note_types": ["project"]
+      },
+      "order_by": [{"column": "path", "direction": "asc"}]
+    },
+    "expected_result": {
+      "evaluation": "complete",
+      "rows": [
+        {"path": "tasks/Build.md"},
+        {"path": "tasks/Design.md"},
+        {"path": "tasks/Ship.md"}
+      ]
+    }
+  }
+]

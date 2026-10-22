@@ -1,0 +1,46 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_relationship_instance",
+      "severity": "error",
+      "path": "projects/Launch.md",
+      "rule_id": "RHT-31",
+      "message": "Four contains instances exceed the task maximum of three.",
+      "note_type": "project",
+      "relationship": "contains"
+    },
+    {
+      "code": "invalid_relationship_instance",
+      "severity": "error",
+      "path": "tasks/Build.md",
+      "rule_id": "RHT-294",
+      "message": "The note is on a depends_on cycle.",
+      "note_type": "task",
+      "relationship": "depends_on"
+    },
+    {
+      "code": "invalid_relationship_instance",
+      "severity": "error",
+      "path": "tasks/Design.md",
+      "rule_id": "RHT-294",
+      "message": "The note is on a depends_on cycle.",
+      "note_type": "task",
+      "relationship": "depends_on"
+    },
+    {
+      "code": "invalid_relationship_instance",
+      "severity": "error",
+      "path": "tasks/Ship.md",
+      "rule_id": "RHT-294",
+      "message": "The note is on a depends_on cycle.",
+      "note_type": "task",
+      "relationship": "depends_on"
+    }
+  ]
+}

@@ -524,7 +524,9 @@
         "relationship": {
           "enum": [
             "belongs_to",
-            "related_to"
+            "related_to",
+            "contains",
+            "depends_on"
           ]
         },
         "direction": {
