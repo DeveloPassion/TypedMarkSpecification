@@ -423,6 +423,45 @@
             "field": {
               "$ref": "defs.schema.json#/$defs/field_name"
             },
+            "value": {},
+            "only_if_empty": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "field",
+            "value"
+          ],
+          "properties": {
+            "kind": {
+              "const": "add_list_item"
+            },
+            "field": {
+              "$ref": "defs.schema.json#/$defs/field_name"
+            },
+            "value": {}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "field",
+            "value"
+          ],
+          "properties": {
+            "kind": {
+              "const": "remove_list_item"
+            },
+            "field": {
+              "$ref": "defs.schema.json#/$defs/field_name"
+            },
             "value": {}
           },
           "additionalProperties": false

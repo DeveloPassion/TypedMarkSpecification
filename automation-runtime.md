@@ -126,10 +126,18 @@ Rules:
 - `MN-163` `set_field` MUST target a top-level field declared in the target note's effective `frontmatter`.
 - `MN-164` `set_field` MUST NOT target a field declaring `computed`, `immutable: true`, or `const_value`.
 - `MN-165` A `set_field` value MUST satisfy the target field's effective type, nullability, and value constraints.
+- `MN-310` `set_field` with effective `only_if_empty: true` MUST have no effect unless the target's effective value is absent, null, an empty string, or an empty list.
 - `MN-166` `add_tag` MUST append its tag when absent.
 - `MN-167` `remove_tag` MUST remove only the exact stored tag named by the action.
 - `MN-168` `remove_tag` targeting an effective mandatory tag is an `action_failed` failure.
 - `MN-169` `add_tag` and `remove_tag` MUST preserve the relative order of every unaffected stored tag.
+- `MN-311` `add_list_item` and `remove_list_item` MUST target a top-level `type: list` field that `set_field` could target under `MN-163` and `MN-164`.
+- `MN-312` A list-item action `value` MUST satisfy the target field's effective `items` definition.
+- `MN-313` A list-item action starts from the target's effective value, treating an absent or null value as an empty list.
+- `MN-314` `add_list_item` MUST append its value when no item is equal under field-value equality, and MUST otherwise have no effect.
+- `MN-315` `remove_list_item` MUST remove every item equal to its value under field-value equality and preserve the relative order of the remaining items.
+- `MN-316` The list produced by a list-item action MUST satisfy the target field's effective type, nullability, and value constraints.
+- `MN-317` In one wave, a list-item action and a `set_field` action on the same field of the same note, or adding and removing equal items there, are a `conflicting_write` failure.
 - `MN-170` `move_note` MUST produce a final path conforming to the target note's effective storage rules.
 - `MN-171` `move_note` MUST update resolvable internal references whose targets would otherwise break, or abort before committing the move.
 - `MN-172` `archive_note` MUST set the core `archived` field to `true`.
@@ -152,7 +160,7 @@ Rules:
 - `MN-184` Every one-hop execution attempt MUST produce the portable automation run report defined in [Conformance and Roadmap](automation-reports.md#automation-run-reports).
 - `MN-193` For each execution target, every action except `create_note` applies to that target note.
 - `MN-194` A `create_note` action creates a distinct managed note through the ordinary creation pipeline.
-- `MN-195` Committed one-hop `set_field`, `add_tag`, `remove_tag`, and `logical_delete_note` effects produce `note.updated` events.
+- `MN-195` Committed one-hop `set_field`, `add_tag`, `remove_tag`, `add_list_item`, `remove_list_item`, and `logical_delete_note` effects produce `note.updated` events.
 - `MN-196` A committed one-hop `move_note` effect produces a `note.moved` event.
 - `MN-197` A committed one-hop `archive_note` effect produces a `note.archived` event.
 - `MN-198` A committed one-hop `create_note` effect produces a `note.created` event.

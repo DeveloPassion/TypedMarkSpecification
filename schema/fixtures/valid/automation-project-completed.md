@@ -21,6 +21,13 @@ actions:
     value: false
   - kind: add_tag
     tag: state/completed
+  - kind: remove_list_item
+    field: watchers
+    value: "[[Review Board]]"
+  - kind: set_field
+    field: completed_on
+    value: 2026-10-22
+    only_if_empty: true
   - kind: archive_note
 failure: abort
 ---

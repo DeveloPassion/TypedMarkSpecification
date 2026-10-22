@@ -51,6 +51,13 @@ actions:
     value: false
   - kind: add_tag
     tag: state/completed
+  - kind: remove_list_item
+    field: watchers
+    value: "[[Review Board]]"
+  - kind: set_field
+    field: completed_on
+    value: 2026-10-22
+    only_if_empty: true
   - kind: archive_note
 failure: abort
 ```
@@ -91,8 +98,10 @@ Rules:
 - `CM-266` If a scheduled local time occurs twice because of an offset transition, its occurrence is the earlier instant.
 - `CM-267` A schedule executor MUST emit at most one `schedule.tick` event for each automation and scheduled instant.
 - `CM-268` `actions` MUST be a non-empty ordered list.
-- `CM-269` Supported action kinds are `set_field`, `add_tag`, `remove_tag`, `move_note`, `archive_note`, `create_note`, `logical_delete_note`, and `hard_delete_note`.
+- `CM-269` Supported action kinds are `set_field`, `add_tag`, `remove_tag`, `add_list_item`, `remove_list_item`, `move_note`, `archive_note`, `create_note`, `logical_delete_note`, and `hard_delete_note`.
 - `CM-270` `set_field` MUST declare a top-level `field` name and a parsed YAML `value`.
+- `CM-554` `set_field` MAY declare a boolean `only_if_empty`, and when omitted its effective value is `false`.
+- `CM-555` `add_list_item` and `remove_list_item` MUST declare a top-level `field` name and one parsed YAML item `value`.
 - `CM-271` `add_tag` and `remove_tag` MUST declare one tag satisfying the stored tag-entry grammar in [Field Definition Reference](field-definition-reference.md).
 - `CM-272` `move_note` MUST declare a collection-relative Markdown `path`.
 - `CM-273` `archive_note`, `logical_delete_note`, and `hard_delete_note` MUST NOT declare action operands.
