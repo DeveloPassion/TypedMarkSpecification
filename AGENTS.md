@@ -61,6 +61,14 @@ The prose specification is the single source of truth. The JSON Schemas under
 - Schemas MUST NOT introduce or relax rules on their own; if a rule cannot be
   expressed in JSON Schema, list it in `schema/docs/schema-boundary.md` instead.
 
+## Hard rule: every compatibility change has a ledger entry
+
+`schema/docs/migration-0.1.md` is the compatibility ledger for the current
+compatibility line (`FND-14`). Any change to a governed artifact's shape or
+meaning MUST add or update its row there, classified as breaking (automatic,
+manual, regenerate, tools), relaxing, clarification, or additive, in the same
+commit.
+
 ## Conventions
 
 - Normative language uses RFC 2119/8174 keywords (`MUST`, `SHOULD`, `MAY`);
