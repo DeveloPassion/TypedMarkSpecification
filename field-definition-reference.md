@@ -46,6 +46,7 @@ Property applicability at a glance:
 | `nullable` | declared fields except anonymous `items` | `false`, subject to the dedicated Core-field contract |
 | `default_value` | declared fields except anonymous `items` | unavailable with generation strategies or `computed` |
 | `relationship_kind` | top-level note-link fields | absent |
+| `inverse` | relationship-bearing fields | absent; see [Relationship Model](relationships-headings-and-templates.md#relationship-model) |
 | `format` | `text`, `link`, and `time` where supported | required for `link` and `time` |
 | `validate_exists`, `targets` | note-link definitions | `false` / absent |
 | `not_empty` | object | `false` |
@@ -62,6 +63,7 @@ Property representation:
 | `nullable`, `deprecated`, `validate_exists`, `not_empty`, `not_blank` | Boolean |
 | `unique` | Boolean or `collection` |
 | `relationship_kind` | `belongs_to`, `related_to`, `contains`, or `depends_on` |
+| `inverse` | Field name |
 | `generated` | `false` or a supported strategy; `now_on_write` excludes `immutable: true` |
 | `targets` | Non-empty list of unique note-type slugs |
 | `min`, `max` | Scalar bound or count as defined below |

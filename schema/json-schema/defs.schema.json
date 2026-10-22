@@ -308,6 +308,10 @@
             "depends_on"
           ]
         },
+        "inverse": {
+          "$comment": "Pairing, existence and symmetry of the named field are semantic checks.",
+          "$ref": "#/$defs/field_name"
+        },
         "items": {
           "$ref": "#/$defs/list_items_field_definition"
         },
@@ -633,6 +637,19 @@
                 ]
               }
             }
+          }
+        },
+        {
+          "$comment": "inverse is valid only on relationship-bearing fields",
+          "if": {
+            "required": [
+              "inverse"
+            ]
+          },
+          "then": {
+            "required": [
+              "relationship_kind"
+            ]
           }
         },
         {

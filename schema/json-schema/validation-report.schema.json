@@ -172,6 +172,7 @@
             "invalid_note_link",
             "invalid_relationship_definition",
             "invalid_relationship_instance",
+            "inverse_mismatch",
             "invalid_heading",
             "invalid_template_region",
             "template_drift",

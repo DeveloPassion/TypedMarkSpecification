@@ -39,6 +39,11 @@ Rules:
 - `RHT-10` Inverse views MAY be derived by tooling and MUST NOT require duplicate schema declarations.
 - `RHT-293` `contains` and `depends_on` instances are the unique resolved targets of frontmatter fields declaring that kind.
 - `RHT-294` Resolved `depends_on` instances MUST NOT form a cycle; each note on a cycle is reported as `invalid_relationship_instance`.
+- `RHT-296` A relationship-bearing field MAY declare `inverse`, naming the field that stores the same relationship from the target's side.
+- `RHT-297` Every concrete note type a field with `inverse` admits MUST declare the named field as relationship-bearing, with an `inverse` naming the original field.
+- `RHT-298` Inverse fields MUST pair `belongs_to` with `contains`, `related_to` with `related_to`, or `related_to` with `depends_on`.
+- `RHT-299` When a field with `inverse` resolves to a managed note that does not link back through the named field, the target is reported as `inverse_mismatch`.
+- `RHT-300` Logically deleted notes neither require nor supply inverse links.
 
 ## Relationship Constraints
 
@@ -74,7 +79,9 @@ Rules:
 - `RHT-42` Applications MAY allow transient draft states during authoring, but a persisted note or instantiated collection claimed as conforming MUST satisfy the cardinality rules derived from its note type.
 
 Because each kind and target type has one field, a writer linking a task to a
-project always knows which field to write.
+project always knows which field to write. Declaring
+`related_projects: {inverse: related_tasks}` on tasks, and the reverse on
+projects, also lets validators report one-sided links.
 
 For example, a declared target with `min: 1` needs one resolved, non-deleted
 managed target. A deleted source is still validated against its own constraints;

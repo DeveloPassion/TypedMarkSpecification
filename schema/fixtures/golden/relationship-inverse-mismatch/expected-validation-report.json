@@ -1,0 +1,28 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
+  "valid": true,
+  "results": [
+    {
+      "code": "inverse_mismatch",
+      "severity": "warn",
+      "path": "projects/Launch.md",
+      "rule_id": "RHT-299",
+      "message": "related_tasks does not list Ship, which lists Launch in related_projects.",
+      "note_type": "project",
+      "field": "related_tasks"
+    },
+    {
+      "code": "inverse_mismatch",
+      "severity": "warn",
+      "path": "tasks/Build.md",
+      "rule_id": "RHT-299",
+      "message": "related_projects does not list Launch, which lists Build in related_tasks.",
+      "note_type": "task",
+      "field": "related_projects"
+    }
+  ]
+}

@@ -183,6 +183,9 @@
         "invalid_relationship_instance": {
           "$ref": "defs.schema.json#/$defs/validation_severity"
         },
+        "inverse_mismatch": {
+          "$ref": "defs.schema.json#/$defs/validation_severity"
+        },
         "invalid_heading": {
           "$ref": "defs.schema.json#/$defs/validation_severity"
         },

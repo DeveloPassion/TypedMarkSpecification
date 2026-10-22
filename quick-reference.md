@@ -59,6 +59,7 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | stop a value from changing | `immutable: true` | [Field Definition Reference](field-definition-reference.md#immutable) |
 | keep a value unique | `unique: true` (per type) or `unique: collection` | [Field Definition Reference](field-definition-reference.md#unique) |
 | say "every meeting belongs to a project" | `relationship_kind: belongs_to` field + relationship cardinality | [Relationships](relationships-headings-and-templates.md#relationship-constraints) |
+| keep `related_tasks` and `related_projects` in step | `inverse` on both fields (one-sided links are `inverse_mismatch` warnings) | [Relationship Model](relationships-headings-and-templates.md#relationship-model) |
 | list a project's tasks or a task's prerequisites | `relationship_kind: contains` or `depends_on` (no cycles) | [Relationship Model](relationships-headings-and-templates.md#relationship-model) |
 | file notes by date, quarter, or week | `{field:format}` over a stored/effective date field | [Storage rules](note-type-schemas.md#storage-rules) |
 | add a required name suffix | `note_name_suffix.pattern` | [Storage rules](note-type-schemas.md#storage-rules) |

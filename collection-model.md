@@ -104,6 +104,7 @@ validation_defaults:
   invalid_note_link: error
   invalid_relationship_definition: error
   invalid_relationship_instance: error
+  inverse_mismatch: warn
   invalid_heading: error
   invalid_template_region: error
   template_drift: warn
@@ -134,7 +135,7 @@ Rules:
 - `CM-40` The collection timezone governs floating temporal interpretation and instant localization where their authoritative contracts require it.
 - `CM-41` Collections whose authors work in a single zone SHOULD declare `timezone` explicitly.
 - `CM-43` Supported validation severities are `error`, `warn`, `info`, and `off`.
-- `CM-45` An omitted severity key takes its core default severity: `unknown_field` and `template_drift` default to `warn`, and every other severity key defined on this page defaults to `error`.
+- `CM-45` An omitted severity key takes its core default severity: `unknown_field`, `template_drift`, and `inverse_mismatch` default to `warn`, and every other severity key defined on this page defaults to `error`.
 - `CM-46` Severity keys are the diagnostic categories defined by the applicable Core and optional contracts; an undeclared key is evaluated under `unknown_field`.
 - `CM-47` A note or artifact with any `error` violation is non-conforming.
 - `CM-48` A note or artifact with only `warn` or `info` issues remains structurally usable.
@@ -158,6 +159,7 @@ Rules:
 - `CM-61` `invalid_note_link` applies when an internal note link violates the syntax or resolution rules defined in [Note Links](note-links.md).
 - `CM-62` `invalid_relationship_definition` applies when relationship declarations violate the relationship model defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - `CM-63` `invalid_relationship_instance` applies when resolved typed relationship instances violate the declared relationship cardinality constraints defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
+- `CM-556` `inverse_mismatch` applies when a declared inverse field lacks the back-link required by [Relationships, Headings, and Templates](relationships-headings-and-templates.md#relationship-model).
 - `CM-64` `invalid_heading` applies when a managed note violates the effective heading rules defined in [Relationships, Headings, and Templates](relationships-headings-and-templates.md).
 - `CM-200` The effective `metadata_directory`, `exclude_paths`, `validation_defaults`, and `automation_defaults` values participate in conformance exactly as if their default values had been physically written in `typedmark.md`.
 

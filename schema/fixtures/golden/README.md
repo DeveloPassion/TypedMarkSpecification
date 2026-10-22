@@ -98,6 +98,10 @@ timezone-local ISO week formatting, sparse defaults, and archive replacement.
 invalid resolved basenames. `storage-declarations-invalid` checks active and
 archive placeholders without any notes, while `storage-timezone-invalid`
 reports an invalid named timezone at the collection configuration.
+`relationship-inverse-mismatch` pairs `related_tasks` and `related_projects`;
+each one-sided link is an `inverse_mismatch` warning on the note missing the
+back-link, so the collection stays valid.
+
 `relationship-kinds-valid` lists a project's tasks with `contains` and an
 acyclic `depends_on` diamond, with an inbound `contains` query.
 `relationship-kinds-invalid` exceeds a `contains` maximum and reports every
