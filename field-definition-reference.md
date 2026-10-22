@@ -286,7 +286,7 @@ Rules:
 - `FDR-161` A `targets` violation is an `invalid_field_value` failure.
 - `FDR-162` An unresolved value does not violate `targets`; existence is governed by `validate_exists`.
 - `FDR-163` For values stored in a field declaring `targets`, the id, name, and alias passes of name-based resolution consider only managed notes whose concrete note type satisfies `targets`; path-formed targets resolve normally and are then validated against `targets`.
-- `FDR-164` A relationship-bearing field MAY declare `targets`; its declared targets SHOULD be consistent with the type-level relationship declarations, and a resolved typed relationship instance is validated against both.
+- `FDR-164` A relationship-bearing field MAY declare `targets`; every concrete note type its `targets` admit MUST be declared under its relationship kind in the effective relationship block, and a resolved typed relationship instance is validated against both.
 
 ### `not_empty`
 

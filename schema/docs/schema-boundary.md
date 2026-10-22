@@ -127,7 +127,8 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
   stored-value agreement (all tool / validator-time behaviors)
 - managed-note conformance: note-type association, sparse effective values,
   explicit normalization, note-link syntax and resolution, unresolved
-  placeholder links, relationship instance counting and cardinality, heading
+  placeholder links, relationship instance counting and cardinality, field
+  target agreement with relationship blocks and one field per kind and target, heading
   rules, storage-path conformance including archived state
 - link-value interpretation: [Note Links](../../note-links.md#link-parsing)
   owns internal-link fragment syntax, UTF-8 percent decoding and anchors;

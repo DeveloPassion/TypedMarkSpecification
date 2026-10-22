@@ -98,6 +98,10 @@ timezone-local ISO week formatting, sparse defaults, and archive replacement.
 invalid resolved basenames. `storage-declarations-invalid` checks active and
 archive placeholders without any notes, while `storage-timezone-invalid`
 reports an invalid named timezone at the collection configuration.
+`relationship-fields-invalid` rejects a relationship field admitting a target
+not declared under its kind (FDR-164) and two fields of one kind admitting the
+same target type (RHT-292).
+
 `storage-free-name-valid` keeps author-chosen names independent of `title`,
 with a field-derived prefix and an archive folder that keeps the free name.
 `storage-free-name-invalid` separates folder and affix mismatches, an empty free

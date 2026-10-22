@@ -1,0 +1,24 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_relationship_definition",
+      "severity": "error",
+      "path": ".typedmark/schemas/meeting.md",
+      "rule_id": "RHT-292",
+      "message": "Two related_to fields admit the person target type."
+    },
+    {
+      "code": "invalid_relationship_definition",
+      "severity": "error",
+      "path": ".typedmark/schemas/task.md",
+      "rule_id": "FDR-164",
+      "message": "A belongs_to field admits a target type not declared under belongs_to."
+    }
+  ]
+}

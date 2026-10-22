@@ -49,6 +49,7 @@ Rules:
 - `RHT-15` Every referenced target note type MUST be a note type defined in the same collection; it MAY be abstract.
 - `RHT-20` Within a single relationship kind, a target note type identifier MUST appear at most once.
 - `RHT-21` The target note type sets for `belongs_to` and `related_to` MUST be disjoint for a given source note type, after expanding abstract targets to their concrete descendants.
+- `RHT-292` Two relationship-bearing fields of one source note type with the same relationship kind MUST NOT admit the same concrete target note type; a field without `targets` admits every concrete type declared under its kind.
 - `RHT-25` If present, `min` and `max` MUST be non-negative integers.
 - `RHT-26` If both are present, `max` MUST be greater than or equal to `min`.
 - `RHT-27` If a target note type is not declared, no typed-relationship constraint applies to links targeting notes of that type; such links remain valid internal note links and do not create typed relationship instances.
@@ -66,6 +67,9 @@ Rules:
 - `RHT-40` A Markdown link in body content with a destination that is not a supported internal note-link form does not participate in typed relationship conformance.
 - `RHT-41` Temporary draft states during authoring or UI workflows are outside persisted conformance.
 - `RHT-42` Applications MAY allow transient draft states during authoring, but a persisted note or instantiated collection claimed as conforming MUST satisfy the cardinality rules derived from its note type.
+
+Because each kind and target type has one field, a writer linking a task to a
+project always knows which field to write.
 
 For example, a declared target with `min: 1` needs one resolved, non-deleted
 managed target. A deleted source is still validated against its own constraints;
