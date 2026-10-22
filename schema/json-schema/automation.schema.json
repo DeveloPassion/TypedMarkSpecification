@@ -32,7 +32,7 @@
       "$ref": "#/$defs/scope"
     },
     "when": {
-      "$ref": "defs.schema.json#/$defs/frontmatter_predicate_block"
+      "$ref": "#/$defs/automation_predicate_block"
     },
     "actions": {
       "type": "array",
@@ -138,6 +138,38 @@
     }
   ],
   "$defs": {
+    "automation_predicate_block": {
+      "$comment": "The note-type mapping predicate shape plus older_than, which is valid only in automation when predicates.",
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "minProperties": 1,
+        "properties": {
+          "exists": {
+            "$ref": "defs.schema.json#/$defs/frontmatter_predicate/properties/exists"
+          },
+          "equals": {
+            "$ref": "defs.schema.json#/$defs/frontmatter_predicate/properties/equals"
+          },
+          "regex": {
+            "$ref": "defs.schema.json#/$defs/frontmatter_predicate/properties/regex"
+          },
+          "contains_any": {
+            "$ref": "defs.schema.json#/$defs/frontmatter_predicate/properties/contains_any"
+          },
+          "contains_all": {
+            "$ref": "defs.schema.json#/$defs/frontmatter_predicate/properties/contains_all"
+          },
+          "older_than": {
+            "$comment": "One non-zero ISO 8601 component in years, months, weeks or days; the field must be a top-level date or datetime (semantic).",
+            "type": "string",
+            "pattern": "^P[1-9][0-9]*[YMWD]$"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
     "field_change_predicate": {
       "type": "object",
       "minProperties": 1,

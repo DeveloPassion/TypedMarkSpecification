@@ -62,6 +62,30 @@ actions:
 failure: abort
 ```
 
+A daily schedule can archive work some time after it finishes:
+
+<!-- typedmark-example: artifact=automation -->
+```yaml
+specification_version: 0.1.0
+automation: archive-finished-tasks
+description: Archive tasks thirty days after completion.
+trigger:
+  kind: schedule
+  schedule:
+    cadence: daily
+    at: "02:00"
+scope:
+  note_types:
+    - task
+when:
+  status:
+    equals: done
+  completed_on:
+    older_than: P30D
+actions:
+  - kind: archive_note
+```
+
 Rules:
 
 - `CM-240` `<metadata_directory>/automations/` MAY be omitted when the collection defines no automation rules.
@@ -82,7 +106,10 @@ Rules:
 - `CM-253` Each identifier in `scope.note_types` MUST resolve to exactly one concrete note type.
 - `CM-254` `scope.path` MUST declare exactly one of `equals`, `under`, or `regex`.
 - `CM-282` `scope.path` uses the common [Path Matching](collection-model.md#path-matching) semantics.
-- `CM-255` `when`, when present, MUST use the frontmatter predicate shape and semantics defined for `note_type_mappings` in [Collection Model](collection-model.md#note-type-mappings).
+- `CM-255` `when`, when present, MUST use the frontmatter predicate shape and semantics defined for `note_type_mappings` in [Collection Model](collection-model.md#note-type-mappings), plus `older_than`.
+- `CM-557` An `older_than` predicate MUST target a top-level `date` or `datetime` field and declare an ISO 8601 duration with one non-zero year, month, week, or day component, such as `P30D`.
+- `CM-558` `older_than` matches when the field's effective value plus the duration, computed in the collection timezone with a date taken as the start of its day, is at or before the trigger instant.
+- `CM-559` The trigger instant is the scheduled instant for a schedule trigger and the event's `occurred_at` otherwise; an absent or null value does not match `older_than`.
 - `CM-256` `trigger.scope_transition` MAY be omitted, and when omitted its effective value is `matches_after`.
 - `CM-257` `trigger.scope_transition` MUST be `matches_after`, `enters`, or `leaves`.
 - `CM-258` `matches_after` evaluates the combined `scope` and `when` target predicate against the event's after snapshot, except that `note.deleted` uses its before snapshot.

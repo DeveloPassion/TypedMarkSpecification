@@ -1,7 +1,7 @@
 {
   "prefixes": {
     "FND": { "page": "foundations.md", "last": 95 },
-    "CM": { "page": "collection-model.md", "last": 556 },
+    "CM": { "page": "collection-model.md", "last": 559 },
     "NTS": { "page": "note-type-schemas.md", "last": 183 },
     "FDR": { "page": "field-definition-reference.md", "last": 287 },
     "MN": { "page": "managed-notes-and-properties.md", "last": 317 },
@@ -451,6 +451,9 @@
     "CM-269": "automation-artifacts.md",
     "CM-554": "automation-artifacts.md",
     "CM-555": "automation-artifacts.md",
+    "CM-557": "automation-artifacts.md",
+    "CM-558": "automation-artifacts.md",
+    "CM-559": "automation-artifacts.md",
     "CM-270": "automation-artifacts.md",
     "CM-271": "automation-artifacts.md",
     "CM-272": "automation-artifacts.md",
