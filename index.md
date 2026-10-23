@@ -53,6 +53,7 @@ New here? Read the [Manifesto](manifesto.md) for the why, then follow [Getting S
 - [Note Type Schemas](note-type-schemas.md): local note-type definitions, storage, naming, and effective-schema construction
 - [Field Definition Reference](field-definition-reference.md): every property a field can declare
 - [Field Compatibility and Conversion](field-conversions.md): an optional shared contract for queries, datasets, and migrations
+- [Note Re-typing](note-retyping.md): converting a note to another type without losing information
 - [Managed Notes and Properties](managed-notes-and-properties.md): managed-note metadata and field materialization
 - [Note Links](note-links.md): how links between notes are written and resolved
 - [Relationships, Headings, and Templates](relationships-headings-and-templates.md): relationships, body headings, and starter templates

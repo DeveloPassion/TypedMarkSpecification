@@ -79,6 +79,7 @@ No migration is needed; each item is new optional syntax.
 | `contains` and `depends_on` relationship kinds, acyclic `depends_on` | [Relationship Model](../../relationships-headings-and-templates.md#relationship-model) |
 | `inverse` relationship fields | [Relationship Model](../../relationships-headings-and-templates.md#relationship-model) |
 | Heading entries with `description`, and `capture_h2` | [Heading Rules](../../relationships-headings-and-templates.md#heading-rules) |
+| Note re-typing with a `typedmark-preserved` block (optional writer contract) | [Note Re-typing](../../note-retyping.md) |
 | Lifecycle `states` on fields with allowed values | [Field Definition Reference](../../field-definition-reference.md#states) |
 | Automation `add_list_item`, `remove_list_item`, `set_field.only_if_empty`, `set_field.value_from`, and `when` predicates `older_than` and `state`, with `to_state` / `from_state` change predicates | [Automation Rules](../../automation-artifacts.md#automation-rules) |
 

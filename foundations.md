@@ -314,6 +314,7 @@ The authoritative contract for each governed element and cross-tool runtime surf
 | Note values and core fields | [Managed Notes](managed-notes-and-properties.md) |
 | Field definitions | [Field Reference](field-definition-reference.md) |
 | Field conversion | [Conversions](field-conversions.md) |
+| Note re-typing | [Re-typing](note-retyping.md) |
 | Links | [Note Links](note-links.md) |
 | Relationships and headings | [Body Contracts](relationships-headings-and-templates.md) |
 | Tracking and expansion | [Tracking](template-tracking.md), [Expansion](content-expansion.md) |

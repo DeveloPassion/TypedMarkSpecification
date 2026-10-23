@@ -36,6 +36,7 @@ const PAGES: Page[] = [
   { file: "note-type-schemas.md", out: "note-type-schemas.html", nav: "Note Type Schemas", section: "Specification" },
   { file: "field-definition-reference.md", out: "field-definition-reference.html", nav: "Field Definition Reference", section: "Specification" },
   { file: "field-conversions.md", out: "field-conversions.html", nav: "Field Conversions", section: "Shared Contracts" },
+  { file: "note-retyping.md", out: "note-retyping.html", nav: "Note Re-typing", section: "Shared Contracts" },
   { file: "managed-notes-and-properties.md", out: "managed-notes-and-properties.html", nav: "Managed Notes and Properties", section: "Specification" },
   { file: "note-links.md", out: "note-links.html", nav: "Note Links", section: "Specification" },
   {
