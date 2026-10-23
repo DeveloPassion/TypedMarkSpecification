@@ -6,9 +6,12 @@
     "test": "bun test ./scripts ./schema ./docs",
     "validate-fixtures": "bun schema/validate-fixtures.ts",
     "build-site": "bun docs/build.ts",
-    "lint-rule-ids": "bun scripts/lint-rule-ids.ts"
+    "lint-rule-ids": "bun scripts/lint-rule-ids.ts",
+    "format": "biome format --write .",
+    "format:check": "biome format ."
   },
   "devDependencies": {
+    "@biomejs/biome": "2.6.2",
     "ajv": "^8.20.0",
     "marked": "^18.0.5",
     "yaml": "^2.9.0"
