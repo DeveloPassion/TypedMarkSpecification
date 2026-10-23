@@ -44,9 +44,12 @@ describe("historical rule identities", () => {
     const docs = documents();
     docs["collection.md"] = page("- `CM-1` A rule MUST hold.");
     docs["queries.md"] = page("- `CM-2` Another rule MUST hold.");
-    expect(lintSpecification(docs, {
-      ...registry, relocations: { "CM-2": "queries.md" },
-    })).toEqual([]);
+    expect(
+      lintSpecification(docs, {
+        ...registry,
+        relocations: { "CM-2": "queries.md" },
+      }),
+    ).toEqual([]);
   });
 
   test("rejects an unregistered move", () => {
@@ -72,9 +75,7 @@ describe("historical rule identities", () => {
 
   test("rejects duplicate and unallocated identifiers", () => {
     const docs = documents();
-    docs["collection.md"] = page(
-      "- `CM-1` A rule MUST hold.\n- `CM-1` A duplicate MUST fail.\n- `CM-3` An unallocated rule MUST fail.",
-    );
+    docs["collection.md"] = page("- `CM-1` A rule MUST hold.\n- `CM-1` A duplicate MUST fail.\n- `CM-3` An unallocated rule MUST fail.");
     const failures = lintSpecification(docs, registry).join("\n");
     expect(failures).toContain("duplicate identifier CM-1");
     expect(failures).toContain("CM-3 is not allocated");
@@ -83,10 +84,12 @@ describe("historical rule identities", () => {
   test("new identifiers require increasing their prefix allocation", () => {
     const docs = documents();
     docs["queries.md"] = page("- `QRY-1` A new rule MUST hold.");
-    expect(lintSpecification(docs, {
-      ...registry,
-      prefixes: { ...registry.prefixes, QRY: { page: "queries.md", last: 1 } },
-    })).toEqual([]);
+    expect(
+      lintSpecification(docs, {
+        ...registry,
+        prefixes: { ...registry.prefixes, QRY: { page: "queries.md", last: 1 } },
+      }),
+    ).toEqual([]);
   });
 
   test("rejects stale relocation targets and unallocated retirements", () => {
@@ -104,9 +107,7 @@ describe("rule references and existing lint rules", () => {
   test("mixed LF and CRLF fences do not hide subsequent rules", () => {
     const docs = documents();
     docs["collection.md"] = page("- `CM-1` One rule MUST hold.\n- `CM-2` Another rule MUST hold.");
-    docs["collection.md"] = docs["collection.md"].replace(
-      "Rules:", "```yaml\nexample: true\r\n```\r\n\nRules:",
-    );
+    docs["collection.md"] = docs["collection.md"].replace("Rules:", "```yaml\nexample: true\r\n```\r\n\nRules:");
     expect(lintSpecification(docs, registry)).toEqual([]);
   });
   test("rejects dangling references outside rule lists", () => {
@@ -119,9 +120,12 @@ describe("rule references and existing lint rules", () => {
   test("retired references must be replaced in live documentation", () => {
     const docs = documents();
     docs["collection.md"] = page("- `CM-1` A rule MUST hold.", "See `CM-2`.");
-    expect(lintSpecification(docs, {
-      ...registry, retired: { "CM-2": "Replaced by CM-1." },
-    }).join("\n")).toContain("retired rule reference CM-2");
+    expect(
+      lintSpecification(docs, {
+        ...registry,
+        retired: { "CM-2": "Replaced by CM-1." },
+      }).join("\n"),
+    ).toContain("retired rule reference CM-2");
   });
 
   test("code examples are not interpreted as rule declarations or prose references", () => {
@@ -144,8 +148,7 @@ describe("rule references and existing lint rules", () => {
 
   test("tilde and longer backtick fences hide examples without hiding later prose", () => {
     const docs = documents();
-    docs["collection.md"] += "\n~~~text\nMUST ignore `CM-98`.\n~~~\n"
-      + "````markdown\n```\nMUST ignore `CM-99`.\n```\n````\nSee `CM-77`.\n";
+    docs["collection.md"] += "\n~~~text\nMUST ignore `CM-98`.\n~~~\n" + "````markdown\n```\nMUST ignore `CM-99`.\n```\n````\nSee `CM-77`.\n";
     const failures = lintSpecification(docs, registry).join("\n");
     expect(failures).not.toContain("CM-98");
     expect(failures).not.toContain("CM-99");

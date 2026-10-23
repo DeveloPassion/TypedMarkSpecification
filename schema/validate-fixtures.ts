@@ -43,18 +43,41 @@ const ROOT = join(import.meta.dir, "..");
 // Keep explicit known tags; only implicit merge behavior stays disabled.
 // https://eemeli.org/yaml/#schema-options
 const YAML_CORE_OPTIONS = {
-  version: "1.2", schema: "core", resolveKnownTags: true, merge: false, uniqueKeys: true,
+  version: "1.2",
+  schema: "core",
+  resolveKnownTags: true,
+  merge: false,
+  uniqueKeys: true,
 } as const;
 
 const SPEC_PAGES = [
-  "index.md", "manifesto.md", "getting-started.md", "foundations.md", "extensions.md",
-  "collection-model.md", "note-type-schemas.md", "field-definition-reference.md", "field-conversions.md",
-  "managed-notes-and-properties.md", "note-links.md",
-  "relationships-headings-and-templates.md", "systems-composition-evolution.md",
-  "migration-effects.md", "conformance-and-roadmap.md", "quick-reference.md",
-  "schema-reuse.md", "property-sets.md", "queries.md", "datasets-and-views.md",
-  "expressions.md", "authoring.md", "template-tracking.md", "content-expansion.md",
-  "automation-artifacts.md", "automation-runtime.md", "automation-reports.md",
+  "index.md",
+  "manifesto.md",
+  "getting-started.md",
+  "foundations.md",
+  "extensions.md",
+  "collection-model.md",
+  "note-type-schemas.md",
+  "field-definition-reference.md",
+  "field-conversions.md",
+  "managed-notes-and-properties.md",
+  "note-links.md",
+  "relationships-headings-and-templates.md",
+  "systems-composition-evolution.md",
+  "migration-effects.md",
+  "conformance-and-roadmap.md",
+  "quick-reference.md",
+  "schema-reuse.md",
+  "property-sets.md",
+  "queries.md",
+  "datasets-and-views.md",
+  "expressions.md",
+  "authoring.md",
+  "template-tracking.md",
+  "content-expansion.md",
+  "automation-artifacts.md",
+  "automation-runtime.md",
+  "automation-reports.md",
   "marketplace-catalog.md",
 ];
 
@@ -99,7 +122,11 @@ export function buildValidators(): Record<string, ValidateFunction> {
     idsByFile[file] = schema.$id;
   }
   const validators: Record<string, ValidateFunction> = {};
-  for (const [prefix, file] of Object.entries({ ...ARTIFACT_SCHEMAS, "conformance-vector": "conformance-vector.schema.json", "conformance-query": "conformance-query.schema.json" })) {
+  for (const [prefix, file] of Object.entries({
+    ...ARTIFACT_SCHEMAS,
+    "conformance-vector": "conformance-vector.schema.json",
+    "conformance-query": "conformance-query.schema.json",
+  })) {
     const validate = ajv.getSchema(idsByFile[file]!);
     if (!validate) throw new Error(`schema ${file} did not compile`);
     // Preserve AJV's live errors/schema metadata while projecting call inputs.
@@ -113,10 +140,7 @@ export function buildValidators(): Record<string, ValidateFunction> {
   return validators;
 }
 
-function validatorFor(
-  validators: Record<string, ValidateFunction>,
-  fixture: string,
-): ValidateFunction {
+function validatorFor(validators: Record<string, ValidateFunction>, fixture: string): ValidateFunction {
   for (const [prefix, validate] of Object.entries(validators)) {
     if (fixture.startsWith(prefix)) return validate;
   }
@@ -129,9 +153,7 @@ function extractFrontmatter(text: string, required = true): unknown {
     if (!required) return {};
     throw new Error("fixture has no frontmatter block");
   }
-  const end = lines.findIndex(
-    (line, index) => index > 0 && (line === "---" || line === "..."),
-  );
+  const end = lines.findIndex((line, index) => index > 0 && (line === "---" || line === "..."));
   if (end === -1) {
     if (!required) return {};
     throw new Error("fixture frontmatter block is not closed");
@@ -145,19 +167,13 @@ function extractFrontmatter(text: string, required = true): unknown {
   if (!isMap(document.contents)) throw new Error("frontmatter must be a mapping");
   const value = document.toJS();
   // A YAML mapping-shaped tag can materialize a Set rather than a mapping.
-  if (value === null || typeof value !== "object" || Array.isArray(value)
-    || ![null, Object.prototype].includes(Object.getPrototypeOf(value))) {
+  if (value === null || typeof value !== "object" || Array.isArray(value) || ![null, Object.prototype].includes(Object.getPrototypeOf(value))) {
     throw new Error("frontmatter must be a mapping");
   }
   return value;
 }
 
-export function validateExamples(
-  text: string,
-  pageName: string,
-  validators: Record<string, ValidateFunction>,
-  failures: string[],
-): number {
+export function validateExamples(text: string, pageName: string, validators: Record<string, ValidateFunction>, failures: string[]): number {
   let checked = 0;
   const newlineCount = (value: string) => value.split("\n").length - 1;
   const eligible = new Set(["yaml", "yml", "json", "markdown", "md"]);
@@ -179,8 +195,7 @@ export function validateExamples(
       }
 
       if (token.type === "html" && token.raw.includes("typedmark-example")) {
-        const match = /^<!-- typedmark-example: (?:artifact=([a-z][a-z0-9-]*)|(fragment|body): (\S[^\r\n]*)) -->$/
-          .exec(token.raw.trim());
+        const match = /^<!-- typedmark-example: (?:artifact=([a-z][a-z0-9-]*)|(fragment|body): (\S[^\r\n]*)) -->$/.exec(token.raw.trim());
         if (!match) {
           failures.push(`${label}: invalid typedmark-example annotation`);
         } else if (match[1] && !Object.hasOwn(validators, match[1])) {
@@ -212,8 +227,8 @@ export function validateExamples(
           // Marked's fence capture omits the content's final line break.
           // Restore it before YAML interpretation, not after scalar resolution.
           // https://github.com/markedjs/marked/blob/v18.0.5/src/rules.ts
-          const document = lang === "json" ? JSON.parse(token.text)
-            : markdown ? extractFrontmatter(token.text) : parseYaml(token.text + "\n", YAML_CORE_OPTIONS);
+          const document =
+            lang === "json" ? JSON.parse(token.text) : markdown ? extractFrontmatter(token.text) : parseYaml(token.text + "\n", YAML_CORE_OPTIONS);
           if (annotation.kind === "artifact") {
             checked += 1;
             validateShape(validators[annotation.schema!]!, document, `${label} (${annotation.schema})`, failures);
@@ -241,10 +256,7 @@ export function validateExamples(
   return checked;
 }
 
-function validateSpecExamples(
-  validators: Record<string, ValidateFunction>,
-  failures: string[],
-): number {
+function validateSpecExamples(validators: Record<string, ValidateFunction>, failures: string[]): number {
   return SPEC_PAGES.reduce((checked, pageName) => {
     const failureCount = failures.length;
     const count = validateExamples(readUtf8File(join(ROOT, pageName)), pageName, validators, failures);
@@ -254,9 +266,7 @@ function validateSpecExamples(
 }
 
 function objectValue(value: unknown): Record<string, unknown> | null {
-  return typeof value === "object" && value !== null && !Array.isArray(value)
-    ? value as Record<string, unknown>
-    : null;
+  return typeof value === "object" && value !== null && !Array.isArray(value) ? (value as Record<string, unknown>) : null;
 }
 
 function collectFiles(directory: string): string[] {
@@ -282,8 +292,19 @@ function compareReportResults(left: unknown, right: unknown): number {
   const leftResult = objectValue(left) ?? {};
   const rightResult = objectValue(right) ?? {};
   const keys = [
-    "path", "rule_id", "code", "note_type", "field", "relationship", "heading",
-    "expansion", "dataset", "view", "template_region", "drift_kind", "extension",
+    "path",
+    "rule_id",
+    "code",
+    "note_type",
+    "field",
+    "relationship",
+    "heading",
+    "expansion",
+    "dataset",
+    "view",
+    "template_region",
+    "drift_kind",
+    "extension",
   ];
   for (const key of keys) {
     const compared = compareCodePoints(
@@ -295,12 +316,7 @@ function compareReportResults(left: unknown, right: unknown): number {
   return 0;
 }
 
-function validateShape(
-  validate: ValidateFunction,
-  document: unknown,
-  label: string,
-  failures: string[],
-): void {
+function validateShape(validate: ValidateFunction, document: unknown, label: string, failures: string[]): void {
   if (validate(document)) return;
   failures.push(`${label}: expected to pass shape validation`);
   for (const error of (validate.errors ?? []).slice(0, 3)) {
@@ -322,12 +338,7 @@ function wellFormedRequirement(id: string, version: unknown): boolean {
   return !!requirementValidator({ [id]: version });
 }
 
-export function validateExpectedReportCoverage(
-  report: unknown,
-  collection: unknown,
-  label: string,
-  failures: string[],
-): void {
+export function validateExpectedReportCoverage(report: unknown, collection: unknown, label: string, failures: string[]): void {
   const reportObject = objectValue(report);
   const collectionObject = objectValue(collection);
   const required = objectValue(reportObject?.required_extensions);
@@ -336,8 +347,7 @@ export function validateExpectedReportCoverage(
   const declarationPresent = Object.hasOwn(collectionObject, "extensions");
   const declarationObject = objectValue(collectionObject.extensions);
   // Explicit YAML tags may produce Map/Set values, not ordinary mappings.
-  const rawDeclared = declarationObject && [null, Object.prototype].includes(Object.getPrototypeOf(declarationObject))
-    ? declarationObject : null;
+  const rawDeclared = declarationObject && [null, Object.prototype].includes(Object.getPrototypeOf(declarationObject)) ? declarationObject : null;
   const entries = Object.entries(rawDeclared ?? {});
   const declared = Object.fromEntries(entries.filter(([id, version]) => wellFormedRequirement(id, version)));
   const malformed = declarationPresent && (!rawDeclared || Object.keys(declared).length !== entries.length);
@@ -365,17 +375,16 @@ export function validateExpectedReportCoverage(
     if (typeof rule === "string" && !rule.includes("/")) {
       validateRuleReference(rule, label, failures);
     }
-    if (typeof rule === "string" && rule.includes("/")
-      && rule.slice(0, rule.indexOf("/")) !== extension) {
+    if (typeof rule === "string" && rule.includes("/") && rule.slice(0, rule.indexOf("/")) !== extension) {
       failures.push(`${label}: qualified rule must match its extension context`);
     }
-    if (result.code === "extension_violation"
-      && (typeof extension !== "string" || !Object.hasOwn(evaluated, extension))) {
+    if (result.code === "extension_violation" && (typeof extension !== "string" || !Object.hasOwn(evaluated, extension))) {
       failures.push(`${label}: extension_violation must identify an evaluated required extension`);
     }
-    if (result.code === "unsupported_extension"
-      && (typeof extension !== "string" || !Object.hasOwn(required, extension)
-        || Object.hasOwn(evaluated, extension))) {
+    if (
+      result.code === "unsupported_extension" &&
+      (typeof extension !== "string" || !Object.hasOwn(required, extension) || Object.hasOwn(evaluated, extension))
+    ) {
       failures.push(`${label}: unsupported_extension must identify a required extension not claimed as evaluated`);
     }
   }
@@ -409,14 +418,12 @@ function validateQueryCases(path: string, validators: Record<string, ValidateFun
         if (JSON.stringify(Object.keys(row).sort()) !== JSON.stringify(aliases)) failures.push(`${label}: expected row columns differ from projection aliases`);
       }
     }
-  } catch (error) { failures.push(`${path}: ${error instanceof Error ? error.message : String(error)}`); }
+  } catch (error) {
+    failures.push(`${path}: ${error instanceof Error ? error.message : String(error)}`);
+  }
 }
 
-export function validateGoldenVectors(
-  validators: Record<string, ValidateFunction>,
-  failures: string[],
-  goldenDirectory = GOLDEN_DIR,
-): number {
+export function validateGoldenVectors(validators: Record<string, ValidateFunction>, failures: string[], goldenDirectory = GOLDEN_DIR): number {
   if (!existsSync(goldenDirectory)) {
     failures.push("golden fixtures: expected schema/fixtures/golden to exist");
     return 0;
@@ -459,14 +466,8 @@ export function validateGoldenVectors(
       continue;
     }
 
-    validateShape(
-      validators["validation-report"]!, report,
-      `golden/${vector}/expected-validation-report.json`, failures,
-    );
-    validateShape(
-      validators.typedmark!, typedmark,
-      `golden/${vector}/collection/typedmark.md`, failures,
-    );
+    validateShape(validators["validation-report"]!, report, `golden/${vector}/expected-validation-report.json`, failures);
+    validateShape(validators.typedmark!, typedmark, `golden/${vector}/collection/typedmark.md`, failures);
     validateExpectedReportCoverage(report, typedmark, `golden/${vector}`, failures);
     validateQueryCases(join(vectorRoot, "query-cases.json"), validators, failures);
 
@@ -503,9 +504,7 @@ export function validateGoldenVectors(
     }
 
     const typedmarkObject = objectValue(typedmark);
-    const metadataDirectory = typeof typedmarkObject?.metadata_directory === "string"
-      ? typedmarkObject.metadata_directory
-      : ".typedmark";
+    const metadataDirectory = typeof typedmarkObject?.metadata_directory === "string" ? typedmarkObject.metadata_directory : ".typedmark";
     const metadataRoot = join(collectionRoot, metadataDirectory);
     const schemaRoot = join(metadataRoot, "schemas");
     const templateRoot = join(metadataRoot, "templates");
@@ -524,16 +523,14 @@ export function validateGoldenVectors(
         const schema = extractFrontmatter(readUtf8File(schemaPath));
         validateShape(validators["note-type"]!, schema, `golden/${vector}/${basename(schemaPath)}`, failures);
         const schemaObject = objectValue(schema);
-        const noteType = schemaObject && !Object.hasOwn(schemaObject, "note_type")
-          ? basename(schemaPath, ".md") : schemaObject?.note_type;
+        const noteType = schemaObject && !Object.hasOwn(schemaObject, "note_type") ? basename(schemaPath, ".md") : schemaObject?.note_type;
         if (typeof noteType === "string" && basename(schemaPath, ".md") !== noteType) {
           failures.push(`golden/${vector}: schema basename does not match note_type ${noteType}`);
         }
         if (schemaObject?.abstract !== true && typeof noteType === "string") {
           const templateObject = objectValue(schemaObject.template);
           const templateFile = templateObject?.file;
-          if (typeof templateFile === "string"
-            && !existsSync(join(templateRoot, ...templateFile.split("/")))) {
+          if (typeof templateFile === "string" && !existsSync(join(templateRoot, ...templateFile.split("/")))) {
             failures.push(`golden/${vector}: missing template ${templateFile}`);
           }
         }
@@ -650,9 +647,7 @@ function main(): number {
       const passed = validate(document);
       if (passed !== mustPass) {
         const expectation = mustPass ? "pass" : "fail";
-        failures.push(
-          `${bucket}/${fixture}: expected to ${expectation} shape validation`,
-        );
+        failures.push(`${bucket}/${fixture}: expected to ${expectation} shape validation`);
         for (const error of (validate.errors ?? []).slice(0, 3)) {
           failures.push(`  ${error.instancePath || "/"}: ${error.message}`);
         }

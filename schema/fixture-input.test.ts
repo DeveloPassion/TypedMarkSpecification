@@ -12,7 +12,10 @@ const template = "collection/.typedmark/templates/meeting.md";
 const note = "collection/Meetings/2026-06-10 - Kickoff.md";
 const report = "expected-validation-report.json";
 const markdownPaths = [configuration, schema, template, note];
-const optionalPaths = [["template", template], ["note", note]] as const;
+const optionalPaths = [
+  ["template", template],
+  ["note", note],
+] as const;
 
 function original(path: string, vector = "core-valid"): string {
   return readFileSync(join(goldenRoot, vector, path), "utf8");
@@ -43,11 +46,7 @@ function checkFiles(files: Record<string, string | Uint8Array>, source = "core-v
 function corruptUtf8(text: string, marker: string, bytes: number[]): Buffer {
   const offset = text.indexOf(marker);
   if (offset < 0) throw new Error(`test input is missing ${marker}`);
-  return Buffer.concat([
-    Buffer.from(text.slice(0, offset)),
-    Buffer.from(bytes),
-    Buffer.from(text.slice(offset + marker.length)),
-  ]);
+  return Buffer.concat([Buffer.from(text.slice(0, offset)), Buffer.from(bytes), Buffer.from(text.slice(offset + marker.length))]);
 }
 
 describe("golden Markdown input grammar", () => {
@@ -59,18 +58,13 @@ describe("golden Markdown input grammar", () => {
     ["CR", "\r", ""],
     ["CR with BOM", "\r", "\uFEFF"],
   ])("accepts %s in governed artifacts, templates, and notes", (_label, newline, bom) => {
-    const files = Object.fromEntries(markdownPaths.map((path) => [
-      path, bom + original(path).replace(/\r\n?|\n/g, newline),
-    ]));
+    const files = Object.fromEntries(markdownPaths.map((path) => [path, bom + original(path).replace(/\r\n?|\n/g, newline)]));
     expect(checkFiles(files)).toEqual([]);
   });
 
-  test.each([" ---", "--- ", "\uFEFF\uFEFF---"])(
-    "rejects a required frontmatter opener that is not exact: %j", (opening) => {
-      expect(checkFiles({ [configuration]: original(configuration).replace(/^---/, opening) }))
-        .not.toEqual([]);
-    },
-  );
+  test.each([" ---", "--- ", "\uFEFF\uFEFF---"])("rejects a required frontmatter opener that is not exact: %j", (opening) => {
+    expect(checkFiles({ [configuration]: original(configuration).replace(/^---/, opening) })).not.toEqual([]);
+  });
 
   test("accepts an ellipsis closing delimiter at EOF", () => {
     const source = original(configuration).replace(/\r\n?/g, "\n");
@@ -92,74 +86,83 @@ describe("golden Markdown input grammar", () => {
   });
 
   for (const [label, path] of optionalPaths) {
-    test.each(["!!set {}", "!!omap []"])(
-      `rejects top-level %s in optional ${label} frontmatter`, (value) => {
-        expect(checkFiles({ [path]: `---\n${value}\n---\nBody.\n` }).join("\n"))
-          .toContain("frontmatter must be a mapping");
-      },
-    );
+    test.each(["!!set {}", "!!omap []"])(`rejects top-level %s in optional ${label} frontmatter`, (value) => {
+      expect(checkFiles({ [path]: `---\n${value}\n---\nBody.\n` }).join("\n")).toContain("frontmatter must be a mapping");
+    });
   }
 
   test("recognizes invalid optional frontmatter with CR-only delimiters", () => {
-    expect(checkFiles({ [note]: "---\r[one, two]\r---\rBody.\r" }).join("\n"))
-      .toContain("frontmatter must be a mapping");
+    expect(checkFiles({ [note]: "---\r[one, two]\r---\rBody.\r" }).join("\n")).toContain("frontmatter must be a mapping");
   });
 
   test("keeps nested tagged metadata opaque when parsing optional frontmatter", () => {
-    const source = "---\nnote_type: meeting\nx_editor:\n"
-      + "  selection: !!set {one: null, two: null}\n"
-      + "  order: !!omap [{one: 1}, {two: 2}]\n---\nBody.\n";
+    const source =
+      "---\nnote_type: meeting\nx_editor:\n" + "  selection: !!set {one: null, two: null}\n" + "  order: !!omap [{one: 1}, {two: 2}]\n---\nBody.\n";
     expect(checkFiles({ [template]: source, [note]: source })).toEqual([]);
   });
 });
 
 describe("golden UTF-8 input boundaries", () => {
   test.each([
-    ["configuration frontmatter", configuration, original(configuration), "Canonical", [0xC3, 0x28]],
+    ["configuration frontmatter", configuration, original(configuration), "Canonical", [0xc3, 0x28]],
     ["configuration body", configuration, original(configuration), "complete", [0x80]],
-    ["schema body", schema, original(schema), "records", [0xED, 0xA0, 0x80]],
-    ["template without frontmatter", template, "# Template\nBroken bytes: HERE\n", "HERE", [0xC0, 0xAF]],
-    ["managed-note body", note, original(note), "kickoff", [0xF4, 0x90, 0x80, 0x80]],
+    ["schema body", schema, original(schema), "records", [0xed, 0xa0, 0x80]],
+    ["template without frontmatter", template, "# Template\nBroken bytes: HERE\n", "HERE", [0xc0, 0xaf]],
+    ["managed-note body", note, original(note), "kickoff", [0xf4, 0x90, 0x80, 0x80]],
   ] as const)("rejects malformed UTF-8 in %s", (_label, path, source, marker, bytes) => {
-    expect(checkFiles({ [path]: corruptUtf8(source, marker, [...bytes]) }).join("\n"))
-      .toMatch(/utf-?8/i);
+    expect(checkFiles({ [path]: corruptUtf8(source, marker, [...bytes]) }).join("\n")).toMatch(/utf-?8/i);
   });
 
   test("rejects malformed UTF-8 inside an otherwise valid expected-report message", () => {
     const vector = "unsupported-required-extension";
     const value = JSON.parse(original(report, vector));
     value.results[0].message = "HERE";
-    expect(checkFiles({
-      [report]: corruptUtf8(JSON.stringify(value), "HERE", [0xE2, 0x82]),
-    }, vector).join("\n")).toMatch(/utf-?8/i);
+    expect(
+      checkFiles(
+        {
+          [report]: corruptUtf8(JSON.stringify(value), "HERE", [0xe2, 0x82]),
+        },
+        vector,
+      ).join("\n"),
+    ).toMatch(/utf-?8/i);
   });
 
   test("reports malformed UTF-8 before validating optional JSON context", () => {
     const vector = "unsupported-required-extension";
-    expect(checkFiles({
-      "vector.json": corruptUtf8(original("vector.json", vector), "review", [0xFF]),
-    }, vector).join("\n")).toMatch(/utf-?8/i);
+    expect(
+      checkFiles(
+        {
+          "vector.json": corruptUtf8(original("vector.json", vector), "review", [0xff]),
+        },
+        vector,
+      ).join("\n"),
+    ).toMatch(/utf-?8/i);
   });
 
   test("rejects malformed UTF-8 in otherwise valid optional query predicate text", () => {
     const vector = "query-pilot-valid";
-    expect(checkFiles({
-      "query-cases.json": corruptUtf8(original("query-cases.json", vector),
-        "draft", [0xFF]),
-    }, vector).join("\n")).toMatch(/utf-?8/i);
+    expect(
+      checkFiles(
+        {
+          "query-cases.json": corruptUtf8(original("query-cases.json", vector), "draft", [0xff]),
+        },
+        vector,
+      ).join("\n"),
+    ).toMatch(/utf-?8/i);
   });
 
   test("accepts an encoded replacement character and preserves interior BOMs", () => {
-    const files = Object.fromEntries(markdownPaths.map((path) => [
-      path, original(path).replace("Canonical", "Literal \uFFFD")
-        + "\r\nLiteral \uFFFD and interior \uFEFF.\r\n---\r\n[body text\r",
-    ]));
+    const files = Object.fromEntries(
+      markdownPaths.map((path) => [
+        path,
+        original(path).replace("Canonical", "Literal \uFFFD") + "\r\nLiteral \uFFFD and interior \uFEFF.\r\n---\r\n[body text\r",
+      ]),
+    );
     expect(checkFiles(files)).toEqual([]);
   });
 
   test("leaves non-Markdown binary assets outside text decoding", () => {
-    expect(checkFiles({ "collection/Assets/sample.bin": Buffer.from([0x00, 0xFF, 0xC0, 0x80]) }))
-      .toEqual([]);
+    expect(checkFiles({ "collection/Assets/sample.bin": Buffer.from([0x00, 0xff, 0xc0, 0x80]) })).toEqual([]);
   });
 
   test("preserves the JSON caller's rejection of a leading BOM", () => {

@@ -17,17 +17,22 @@ test.each([
   [Object.create(null), Object.create(null)],
 ])("rejects non-scalar entries without invoking authored object methods: %j", (first, second) => {
   expect(validate(document([first, second]))).toBe(false);
-  expect(validate.errors).toContainEqual(expect.objectContaining({
-    instancePath: "/frontmatter/value/allowed_values/0", keyword: "type",
-  }));
+  expect(validate.errors).toContainEqual(
+    expect.objectContaining({
+      instancePath: "/frontmatter/value/allowed_values/0",
+      keyword: "type",
+    }),
+  );
 });
 
 test("rejects distinct cyclic mappings while preserving aliases in opaque positions", () => {
-  const first: Record<string, unknown> = {}, second: Record<string, unknown> = {};
+  const first: Record<string, unknown> = {},
+    second: Record<string, unknown> = {};
   first.self = first;
   second.self = second;
   const value = {
-    ...document([first, second]), x_vendor: first,
+    ...document([first, second]),
+    x_vendor: first,
     frontmatter: {
       value: { type: "text", allowed_values: [first, second] },
       defaulted: { type: "any", default_value: first },
@@ -35,7 +40,7 @@ test("rejects distinct cyclic mappings while preserving aliases in opaque positi
     },
   };
   expect(validate(value)).toBe(false);
-  expect(validate.errors?.every(error => error.instancePath.includes("/allowed_values/"))).toBe(true);
+  expect(validate.errors?.every((error) => error.instancePath.includes("/allowed_values/"))).toBe(true);
   expect(value.x_vendor).toBe(first);
   expect(value.frontmatter.defaulted.default_value).toBe(first);
   expect(value.frontmatter.fixed.const_value).toBe(second);
@@ -44,7 +49,8 @@ test("rejects distinct cyclic mappings while preserving aliases in opaque positi
 });
 
 test.each(["!!set {one: null}", "!!omap [{one: 1}]", "!!timestamp 2026-09-15T00:00:00Z", "!!binary SGVsbG8="])(
-  "native %s remains opaque metadata, not a scalar allowed value", tag => {
+  "native %s remains opaque metadata, not a scalar allowed value",
+  (tag) => {
     const native = parse(`value: ${tag}`).value;
     expect(validate({ ...document([native]), x_vendor: native })).toBe(false);
     expect(validate({ ...noteType, x_vendor: native, frontmatter: { value: { type: "any", default_value: native } } })).toBe(true);
@@ -71,9 +77,15 @@ test.each([
   expect(validate(document(values as unknown[]))).toBe(true);
 });
 
-test.each([["x", "x"], ["__proto_", "__proto_"], [1, 1.0], [false, false], [null, null]])("retains scalar duplicate rejection: %j", (first, second) => {
+test.each([
+  ["x", "x"],
+  ["__proto_", "__proto_"],
+  [1, 1.0],
+  [false, false],
+  [null, null],
+])("retains scalar duplicate rejection: %j", (first, second) => {
   expect(validate(document([first, second]))).toBe(false);
-  expect(validate.errors?.some(error => error.keyword === "uniqueItems")).toBe(true);
+  expect(validate.errors?.some((error) => error.keyword === "uniqueItems")).toBe(true);
 });
 
 test("the published schema rejects object entries without a projection adapter", () => {
@@ -81,5 +93,5 @@ test("the published schema rejects object entries without a projection adapter",
   ajv.addSchema(definitions);
   const field = ajv.getSchema(`${definitions.$id}#/$defs/field_definition`)!;
   expect(field({ type: "text", allowed_values: [{ valueOf: 1 }, { valueOf: 2 }] })).toBe(false);
-  expect(field.errors?.every(error => error.keyword === "type")).toBe(true);
+  expect(field.errors?.every((error) => error.keyword === "type")).toBe(true);
 });

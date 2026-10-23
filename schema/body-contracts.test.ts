@@ -3,8 +3,11 @@ import { buildValidators } from "./validate-fixtures";
 
 const validators = buildValidators();
 const expansion = {
-  id: "title", mode: "auto", state: "materialized",
-  source: { kind: "self_field", field: "title" }, render: { item: "${value}" },
+  id: "title",
+  mode: "auto",
+  state: "materialized",
+  source: { kind: "self_field", field: "title" },
+  render: { item: "${value}" },
 };
 
 test("body descriptors inherit versions instead of storing them", () => {

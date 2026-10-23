@@ -14,7 +14,12 @@ const structuralLocations = [
   ["collection vocabularies", "typedmark", `${collection}\nvocabularies:`, "/vocabularies"],
   ["note-type frontmatter", "note-type", `${noteType}\nfrontmatter:`, "/frontmatter"],
   ["nested object fields", "note-type", `${noteType}\nfrontmatter:\n  x_notes:\n    type: object\n    fields:`, "/frontmatter/x_notes/fields"],
-  ["object fields inside list items", "note-type", `${noteType}\nfrontmatter:\n  rows:\n    type: list\n    items:\n      type: object\n      fields:`, "/frontmatter/rows/items/fields"],
+  [
+    "object fields inside list items",
+    "note-type",
+    `${noteType}\nfrontmatter:\n  rows:\n    type: list\n    items:\n      type: object\n      fields:`,
+    "/frontmatter/rows/items/fields",
+  ],
 ] as const;
 
 describe("tagged YAML structural containers", () => {
@@ -22,35 +27,26 @@ describe("tagged YAML structural containers", () => {
     test.each(["!!set {}", "!!omap []"])(`rejects %s as ${label}`, (tagged) => {
       const validate = validators[artifact]!;
       expect(validate(parseYaml(`${source} ${tagged}`))).toBe(false);
-      expect(validate.errors).toEqual(expect.arrayContaining([
-        expect.objectContaining({ instancePath, keyword: "type" }),
-      ]));
+      expect(validate.errors).toEqual(expect.arrayContaining([expect.objectContaining({ instancePath, keyword: "type" })]));
     });
   }
 
-  test.each(["!!timestamp 2026-09-15T12:34:56Z", '!!binary ""'])(
-    "rejects other native tagged values as structural mappings: %s", (tagged) => {
-      const validate = validators.typedmark!;
-      expect(validate(parseYaml(`${collection}\nvalidation_defaults: ${tagged}`))).toBe(false);
-      expect(validate.errors?.some((error) =>
-        error.instancePath === "/validation_defaults" && error.keyword === "type")).toBe(true);
-    },
-  );
+  test.each(["!!timestamp 2026-09-15T12:34:56Z", '!!binary ""'])("rejects other native tagged values as structural mappings: %s", (tagged) => {
+    const validate = validators.typedmark!;
+    expect(validate(parseYaml(`${collection}\nvalidation_defaults: ${tagged}`))).toBe(false);
+    expect(validate.errors?.some((error) => error.instancePath === "/validation_defaults" && error.keyword === "type")).toBe(true);
+  });
 
   test("refreshes validator errors on failing and successful calls", () => {
     const validate = validators.typedmark!;
     expect(validate(parseYaml(`${collection}\nvalidation_defaults: !!set {}`))).toBe(false);
-    expect(validate.errors).toEqual(expect.arrayContaining([
-      expect.objectContaining({ instancePath: "/validation_defaults", keyword: "type" }),
-    ]));
+    expect(validate.errors).toEqual(expect.arrayContaining([expect.objectContaining({ instancePath: "/validation_defaults", keyword: "type" })]));
 
     expect(validate(parseYaml(`${collection}\nvalidation_defaults: {}`))).toBe(true);
     expect(validate.errors).toBeNull();
 
     expect(validate(parseYaml(`${collection}\nvocabularies: !!omap []`))).toBe(false);
-    expect(validate.errors).toEqual(expect.arrayContaining([
-      expect.objectContaining({ instancePath: "/vocabularies", keyword: "type" }),
-    ]));
+    expect(validate.errors).toEqual(expect.arrayContaining([expect.objectContaining({ instancePath: "/vocabularies", keyword: "type" })]));
     expect(validate.errors?.some((error) => error.instancePath === "/validation_defaults")).toBe(false);
 
     expect(validate(parseYaml(collection))).toBe(true);
@@ -59,23 +55,20 @@ describe("tagged YAML structural containers", () => {
 });
 
 describe("opaque YAML values", () => {
-  test.each([
-    "!!set {one: null, two: null}",
-    "!!omap [{one: 1}, {two: 2}]",
-    "!!timestamp 2026-09-15T12:34:56Z",
-    "!!binary SGVsbG8=",
-  ])("accepts %s inside vendor metadata without changing the value", (tagged) => {
-    const document = parseYaml(`${collection}\nx_editor:\n  validation_defaults: ${tagged}`);
-    const metadata = document.x_editor;
-    const original = metadata.validation_defaults;
-    const snapshot = structuredClone(original);
-    expect(validators.typedmark!(document)).toBe(true);
-    expect(document.x_editor).toBe(metadata);
-    expect(document.x_editor.validation_defaults).toBe(original);
-    // Buffer's structured clone is a Uint8Array; compare the bytes in that case.
-    expect(Buffer.isBuffer(original) ? [...original] : original)
-      .toEqual(Buffer.isBuffer(original) ? [...snapshot] : snapshot);
-  });
+  test.each(["!!set {one: null, two: null}", "!!omap [{one: 1}, {two: 2}]", "!!timestamp 2026-09-15T12:34:56Z", "!!binary SGVsbG8="])(
+    "accepts %s inside vendor metadata without changing the value",
+    (tagged) => {
+      const document = parseYaml(`${collection}\nx_editor:\n  validation_defaults: ${tagged}`);
+      const metadata = document.x_editor;
+      const original = metadata.validation_defaults;
+      const snapshot = structuredClone(original);
+      expect(validators.typedmark!(document)).toBe(true);
+      expect(document.x_editor).toBe(metadata);
+      expect(document.x_editor.validation_defaults).toBe(original);
+      // Buffer's structured clone is a Uint8Array; compare the bytes in that case.
+      expect(Buffer.isBuffer(original) ? [...original] : original).toEqual(Buffer.isBuffer(original) ? [...snapshot] : snapshot);
+    },
+  );
 
   // Default/constant type conformance stays semantic; allowed_values also has
   // the scalar-only shape constraint from FDR-197.
@@ -108,7 +101,10 @@ frontmatter:
     expect(document.x_payload).toBe(original);
     expect(document.x_copy).toBe(original);
     expect(document.frontmatter.value.default_value).toBe(original);
-    expect([...original]).toEqual([["one", 1], ["two", 2]]);
+    expect([...original]).toEqual([
+      ["one", 1],
+      ["two", 2],
+    ]);
   });
 
   test("rejects an aliased structural value while preserving the caller's graph", () => {

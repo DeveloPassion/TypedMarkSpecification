@@ -27,7 +27,10 @@ export function shapeValue(value: unknown): unknown {
     for (const [key, child] of Object.entries(source)) {
       // Assignment could treat an authored __proto__ key as a prototype write.
       Object.defineProperty(target, key, {
-        value: project(child), enumerable: true, writable: true, configurable: true,
+        value: project(child),
+        enumerable: true,
+        writable: true,
+        configurable: true,
       });
     }
   }

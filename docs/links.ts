@@ -1,18 +1,13 @@
 import { posix } from "node:path";
 import type { RuleRegistry } from "../scripts/lint-rule-ids";
 
-export function rewritePageLinks(
-  html: string,
-  sourceFile: string,
-  pages: ReadonlyArray<{ file: string; out: string }>,
-): string {
+export function rewritePageLinks(html: string, sourceFile: string, pages: ReadonlyArray<{ file: string; out: string }>): string {
   const outputs = new Map(pages.map((page) => [page.file, page.out]));
-  return html.replace(/href="([^"#?]+\.md)([?#][^"]*)?"/g,
-    (original, target: string, suffix?: string) => {
-      if (/^(?:[a-z][a-z0-9+.-]*:|\/)/i.test(target)) return original;
-      const sourceTarget = posix.normalize(posix.join(posix.dirname(sourceFile), target));
-      return `href="${outputs.get(sourceTarget) ?? sourceTarget}${suffix ?? ""}"`;
-    });
+  return html.replace(/href="([^"#?]+\.md)([?#][^"]*)?"/g, (original, target: string, suffix?: string) => {
+    if (/^(?:[a-z][a-z0-9+.-]*:|\/)/i.test(target)) return original;
+    const sourceTarget = posix.normalize(posix.join(posix.dirname(sourceFile), target));
+    return `href="${outputs.get(sourceTarget) ?? sourceTarget}${suffix ?? ""}"`;
+  });
 }
 
 export function renderMovedRuleLinks(
@@ -31,6 +26,5 @@ export function renderMovedRuleLinks(
     if (!output) throw new Error(`moved rule ${id} has unpublished destination ${destination}`);
     links.push(`<li id="${Bun.escapeHTML(id)}"><a href="${Bun.escapeHTML(output)}#${Bun.escapeHTML(id)}">${Bun.escapeHTML(id)}</a></li>`);
   }
-  return links.length === 0 ? ""
-    : `<details class="moved-rules"><summary>Moved rule references</summary><ul>${links.join("")}</ul></details>`;
+  return links.length === 0 ? "" : `<details class="moved-rules"><summary>Moved rule references</summary><ul>${links.join("")}</ul></details>`;
 }

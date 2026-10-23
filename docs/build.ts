@@ -38,7 +38,12 @@ const PAGES: Page[] = [
   { file: "field-conversions.md", out: "field-conversions.html", nav: "Field Conversions", section: "Shared Contracts" },
   { file: "managed-notes-and-properties.md", out: "managed-notes-and-properties.html", nav: "Managed Notes and Properties", section: "Specification" },
   { file: "note-links.md", out: "note-links.html", nav: "Note Links", section: "Specification" },
-  { file: "relationships-headings-and-templates.md", out: "relationships-headings-and-templates.html", nav: "Relationships, Headings, Templates, and Content Expansion", section: "Specification" },
+  {
+    file: "relationships-headings-and-templates.md",
+    out: "relationships-headings-and-templates.html",
+    nav: "Relationships, Headings, Templates, and Content Expansion",
+    section: "Specification",
+  },
   { file: "schema-reuse.md", out: "schema-reuse.html", nav: "Schema Reuse", section: "Reuse" },
   { file: "property-sets.md", out: "property-sets.html", nav: "Property Sets", section: "Reuse" },
   { file: "queries.md", out: "queries.html", nav: "Portable Queries", section: "Optional Contracts" },
@@ -115,8 +120,7 @@ function renderPage(markdown: string, sourceFile: string): { html: string; toc: 
   });
 
   // Turn rule identifiers into anchored, linkable chips.
-  html = html.replace(/<li><code>([A-Z]{2,3}-\d+)<\/code>/g,
-    '<li id="$1"><a class="rule-id" href="#$1">$1</a>');
+  html = html.replace(/<li><code>([A-Z]{2,3}-\d+)<\/code>/g, '<li id="$1"><a class="rule-id" href="#$1">$1</a>');
 
   html += renderMovedRuleLinks(sourceFile, PAGES, ruleRegistry);
   return { html, toc };
@@ -190,9 +194,7 @@ const AUDIENCE_LABELS: Record<string, string> = {
 };
 
 function shell(page: Page, title: string, content: string, toc: TocEntry[], audience: string | null): string {
-  const badge = audience && AUDIENCE_LABELS[audience]
-    ? `<span class="badge badge-${audience}">${AUDIENCE_LABELS[audience]}</span>`
-    : "";
+  const badge = audience && AUDIENCE_LABELS[audience] ? `<span class="badge badge-${audience}">${AUDIENCE_LABELS[audience]}</span>` : "";
   return `<!doctype html>
 <html lang="en">
 <head>

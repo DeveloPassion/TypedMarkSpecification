@@ -19,9 +19,15 @@ import registry from "./rule-registry.json";
 
 const ROOT = join(import.meta.dir, "..");
 const CORE_PAGES = [
-  "foundations.md", "collection-model.md", "note-type-schemas.md",
-  "field-definition-reference.md", "managed-notes-and-properties.md", "note-links.md",
-  "relationships-headings-and-templates.md", "extensions.md", "conformance-and-roadmap.md",
+  "foundations.md",
+  "collection-model.md",
+  "note-type-schemas.md",
+  "field-definition-reference.md",
+  "managed-notes-and-properties.md",
+  "note-links.md",
+  "relationships-headings-and-templates.md",
+  "extensions.md",
+  "conformance-and-roadmap.md",
 ];
 const REUSE_PAGES = ["schema-reuse.md", "property-sets.md"];
 // Core budgets keep the essentials readable. Raised from 600 rules / 20,000
@@ -35,20 +41,9 @@ export interface RuleRegistry {
   retired: Record<string, string>;
 }
 
-const NON_AUTHORITATIVE_PREAMBLE_PAGES = new Set([
-  "index.md",
-  "manifesto.md",
-  "getting-started.md",
-  "quick-reference.md",
-]);
+const NON_AUTHORITATIVE_PREAMBLE_PAGES = new Set(["index.md", "manifesto.md", "getting-started.md", "quick-reference.md"]);
 
-const EXTRA_TRIGGERS = new Set([
-  "Encoding and layout:",
-  "Key and element order:",
-  "Scalars:",
-  "Supported generation strategies:",
-  "The update flow:",
-]);
+const EXTRA_TRIGGERS = new Set(["Encoding and layout:", "Key and element order:", "Scalars:", "Supported generation strategies:", "The update flow:"]);
 
 const NORMATIVE_KEYWORD = /\b(?:MUST|SHOULD|MAY|OPTIONAL|RECOMMENDED|REQUIRED)\b/;
 
@@ -62,8 +57,7 @@ function proseLines(text: string): Array<string | null> {
   return text.split(/\r?\n/).map((line) => {
     const marker = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(line);
     if (fence) {
-      if (marker && marker[1]![0] === fence[0]
-        && marker[1]!.length >= fence.length && marker[2]!.trim() === "") {
+      if (marker && marker[1]![0] === fence[0] && marker[1]!.length >= fence.length && marker[2]!.trim() === "") {
         fence = undefined;
       }
       return null;
@@ -108,10 +102,7 @@ export function ruleLines(text: string): number[] {
   return result;
 }
 
-export function lintSpecification(
-  documents: Record<string, string>,
-  registry: RuleRegistry,
-): string[] {
+export function lintSpecification(documents: Record<string, string>, registry: RuleRegistry): string[] {
   const failures: string[] = [];
   const allocated = new Map<string, string>();
   const seen = new Map<string, string>();
@@ -216,12 +207,13 @@ function main(): number {
     documents[file] = readFileSync(join(ROOT, file), "utf8");
   }
   const failures = lintSpecification(documents, registry);
-  const countRules = (pages: string[]) =>
-    pages.reduce((total, page) => total + ruleLines(documents[page] ?? "").length, 0);
+  const countRules = (pages: string[]) => pages.reduce((total, page) => total + ruleLines(documents[page] ?? "").length, 0);
   const coreCount = countRules(CORE_PAGES);
   const reuseCount = countRules(REUSE_PAGES);
-  const readingWords = [...CORE_PAGES, "manifesto.md", "getting-started.md"]
-    .reduce((total, page) => total + (documents[page]?.trim().split(/\s+/u).length ?? 0), 0);
+  const readingWords = [...CORE_PAGES, "manifesto.md", "getting-started.md"].reduce(
+    (total, page) => total + (documents[page]?.trim().split(/\s+/u).length ?? 0),
+    0,
+  );
   if (coreCount > CORE_RULE_BUDGET) failures.push(`Core budget: ${coreCount} rules exceeds ${CORE_RULE_BUDGET}`);
   if (reuseCount > 100) failures.push(`Reuse budget: ${reuseCount} rules exceeds 100`);
   if (readingWords > READING_WORD_BUDGET) failures.push(`Core reading-path budget: ${readingWords} words exceeds ${READING_WORD_BUDGET}`);
@@ -233,9 +225,7 @@ function main(): number {
     if (!(page in documents)) failures.push(`missing published page ${page}`);
   }
 
-  const reportSchema = JSON.parse(readFileSync(
-    join(ROOT, "schema", "json-schema", "validation-report.schema.json"), "utf8",
-  ));
+  const reportSchema = JSON.parse(readFileSync(join(ROOT, "schema", "json-schema", "validation-report.schema.json"), "utf8"));
   const reportRulePattern = new RegExp(reportSchema.$defs.result.properties.rule_id.pattern);
   for (const prefix of Object.keys(registry.prefixes)) {
     if (!reportRulePattern.test(`${prefix}-1`)) {
@@ -247,8 +237,7 @@ function main(): number {
     console.error(`\n${failures.length} specification rule lint problem(s)`);
     return 1;
   }
-  const count = Object.values(registry.prefixes).reduce((total, { last }) => total + last, 0)
-    - Object.keys(registry.retired).length;
+  const count = Object.values(registry.prefixes).reduce((total, { last }) => total + last, 0) - Object.keys(registry.retired).length;
   console.log(`all ${count} rule identifiers are present, unique, and registered`);
   console.log(`budgets: Core ${coreCount}/${CORE_RULE_BUDGET} rules, Reuse ${reuseCount}/100, reading path ${readingWords}/${READING_WORD_BUDGET} words`);
   return 0;

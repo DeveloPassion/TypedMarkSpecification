@@ -8,7 +8,11 @@ const schema = {
   storage: { folder_pattern: "", note_name_pattern: "{title}" },
 };
 const completeSchema = {
-  ...schema, note_type: "note", label: "Note", icon: "file", frontmatter: {},
+  ...schema,
+  note_type: "note",
+  label: "Note",
+  icon: "file",
+  frontmatter: {},
 };
 
 test("local schemas can omit deterministic metadata and an empty field mapping", () => {
@@ -35,9 +39,12 @@ test("count ranges preserve general cardinality and permit the neutral empty ran
 });
 
 test("Core note_type is not redundantly declared as a field", () => {
-  expect(validate({
-    ...completeSchema, frontmatter: { note_type: { type: "text", const_value: "note" } },
-  })).toBe(false);
+  expect(
+    validate({
+      ...completeSchema,
+      frontmatter: { note_type: { type: "text", const_value: "note" } },
+    }),
+  ).toBe(false);
 });
 
 test("fixed Core field types cannot be widened", () => {
