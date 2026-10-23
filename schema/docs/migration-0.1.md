@@ -75,6 +75,7 @@ No migration is needed; each item is new optional syntax.
 | Core-defined managed-note fields (`note_type`, `id`, `deleted`, `archived`, `aliases`, `tags`, `title`, `description`, `created_at`, `updated_at`) | [Managed Notes and Properties](../../managed-notes-and-properties.md) |
 | New `validation_defaults` keys for the added diagnostic categories, including `inverse_mismatch` (default `warn`) | [Collection Model](../../collection-model.md) |
 | Query `include_deleted` | [Portable Queries](../../queries.md) |
+| `{field:name}` / `{field:folder}` storage placeholders over a parent note link | [Storage Rules](../../note-type-schemas.md#storage-rules) |
 | `note_name_regex` constraining a free name | [Storage Rules](../../note-type-schemas.md#storage-rules) |
 | `contains` and `depends_on` relationship kinds, acyclic `depends_on` | [Relationship Model](../../relationships-headings-and-templates.md#relationship-model) |
 | `inverse` relationship fields | [Relationship Model](../../relationships-headings-and-templates.md#relationship-model) |

@@ -171,7 +171,10 @@ evaluation of substituted text.
 | `archive` | Optional block with alternate `folder_pattern` and the same optional name keys |
 
 For example, `{meeting_date:YYYY}/{meeting_date:MM}` names a folder from a
-declared date; `{now:YYYY}` needs an actual field named `now`.
+declared date; `{now:YYYY}` needs an actual field named `now`. A project's
+decision log can live beside it: with a `belongs_to` field `project`,
+`folder_pattern: "{project:folder}/{project:name}"` and `note_name_pattern:
+Decisions` place it at `Projects/Launch/Decisions.md` for `Projects/Launch.md`.
 
 Free names are author-chosen, not stored. Without a stored `title`, `{title}`
 alone is effectively free.
@@ -187,13 +190,16 @@ Rules:
 - `NTS-117` A placeholder MUST have the form `{field_name}` or `{field_name:format}`.
 - `NTS-124` A placeholder MUST reference a top-level effective field or Core field.
 - `NTS-125` Storage placeholders MUST NOT traverse nested fields.
-- `NTS-127` A formatted placeholder MUST reference a `date` or `datetime` and use `YYYY`, `MM`, `DD`, `YYYY-MM`, `YYYY-MM-DD`, `Q`, `WW`, or `GGGG`.
+- `NTS-127` A formatted placeholder MUST reference a `date` or `datetime` and use `YYYY`, `MM`, `DD`, `YYYY-MM`, `YYYY-MM-DD`, `Q`, `WW`, or `GGGG`, or reference a single note-link field and use `name` or `folder`.
+- `NTS-184` `{field:name}` resolves to the basename without `.md`, and `{field:folder}` to the collection-relative folder, of the managed note the field's effective value currently resolves to.
+- `NTS-185` `:folder` MUST appear only in `folder_pattern`; its value may contain `/`, and an empty segment it leaves is dropped.
+- `NTS-186` A link placeholder whose value does not resolve to a managed note makes the path unresolvable.
 - `NTS-120` `Q` is the quarter number `1` through `4`, `WW` is the zero-padded ISO 8601 week number `01` through `53`, and `GGGG` is the four-digit ISO 8601 week-numbering year; week-based patterns SHOULD pair `WW` with `GGGG` rather than `YYYY`.
 - `NTS-128` Datetime components MUST be taken from the effective instant in the collection timezone; date components use the calendar date as written.
 - `NTS-129` Substitution MUST use effective scalar field values.
 - `NTS-130` Every referenced value MUST be concrete and non-null when the path is evaluated.
 - `NTS-132` List, tags, object, and `any` fields MUST NOT be used in storage placeholders.
-- `NTS-133` A substituted value MUST NOT contain slash, backslash, or control characters, or equal `.` or `..`.
+- `NTS-133` A substituted value other than a `:folder` value MUST NOT contain slash, backslash, or control characters, or equal `.` or `..`.
 - `NTS-134` A resolved note basename MUST be a non-empty string not beginning with `.`.
 - `NTS-180` A resolved path MUST be free of control characters and `.` or `..` path segments, regardless of whether they came from literal text or substituted values.
 - `NTS-178` Substituted text MUST NOT be reparsed as storage-pattern syntax.
@@ -205,6 +211,7 @@ Rules:
 - `NTS-148` A writer creating a note MUST derive its initial path from the effective storage patterns and values it will write.
 - `NTS-150` A writer MUST obtain every necessary concrete value and free name before creating a note at a conforming path.
 - `NTS-183` A writer moving a note to a free-name contract MUST keep its name part unless given another.
+- `NTS-187` A writer moving or renaming a note SHOULD move the notes whose storage paths depend on it.
 - `NTS-152` A writer MUST NOT create or move a note onto an occupied note or artifact path.
 - `NTS-154` Tools SHOULD report resolved paths differing only by letter case and names reserved on common filesystems, including Windows device names and path components ending in a dot or space.
 - `NTS-156` Archiving MUST preserve the note's type and its effective non-null identifier.

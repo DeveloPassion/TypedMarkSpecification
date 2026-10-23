@@ -122,6 +122,10 @@ note on a `depends_on` cycle, but not a note that only depends on the cycle.
 not declared under its kind (FDR-164) and two fields of one kind admitting the
 same target type (RHT-292).
 
+`storage-linked-notes` stores a project's decision log beside it with
+`{project:folder}/{project:name}`; a decision filed beside another project is a
+path mismatch.
+
 `storage-free-name-valid` keeps author-chosen names independent of `title`,
 with a field-derived prefix and an archive folder that keeps the free name.
 `storage-free-name-invalid` separates folder and affix mismatches, an empty free

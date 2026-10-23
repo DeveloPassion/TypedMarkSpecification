@@ -1,0 +1,18 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [
+    {
+      "code": "path",
+      "severity": "error",
+      "path": "Projects/Other/Decisions.md",
+      "rule_id": "NTS-146",
+      "message": "The decision belongs beside Launch, at Projects/Launch/Decisions.md.",
+      "note_type": "decision"
+    }
+  ]
+}

@@ -2,7 +2,7 @@
   "prefixes": {
     "FND": { "page": "foundations.md", "last": 95 },
     "CM": { "page": "collection-model.md", "last": 564 },
-    "NTS": { "page": "note-type-schemas.md", "last": 183 },
+    "NTS": { "page": "note-type-schemas.md", "last": 187 },
     "FDR": { "page": "field-definition-reference.md", "last": 292 },
     "MN": { "page": "managed-notes-and-properties.md", "last": 317 },
     "NL": { "page": "note-links.md", "last": 42 },

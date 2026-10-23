@@ -62,6 +62,7 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | keep `related_tasks` and `related_projects` in step | `inverse` on both fields (one-sided links are `inverse_mismatch` warnings) | [Relationship Model](relationships-headings-and-templates.md#relationship-model) |
 | list a project's tasks or a task's prerequisites | `relationship_kind: contains` or `depends_on` (no cycles) | [Relationship Model](relationships-headings-and-templates.md#relationship-model) |
 | file notes by date, quarter, or week | `{field:format}` over a stored/effective date field | [Storage rules](note-type-schemas.md#storage-rules) |
+| keep companion notes beside their parent (`Projects/Launch/Decisions.md`) | `{project:folder}/{project:name}` over a single note-link field | [Storage rules](note-type-schemas.md#storage-rules) |
 | add a required name suffix | `note_name_suffix.pattern` | [Storage rules](note-type-schemas.md#storage-rules) |
 | let authors choose note names, optionally by shape | omit `note_name_pattern`; add `note_name_regex`, e.g. `"^[a-z0-9]+(?:[.-][a-z0-9]+)*$"` for `net.proto.bgp` | [Storage rules](note-type-schemas.md#storage-rules) |
 | map notes to types by tag or folder | `note_type_mappings` with `kind: tag` or `kind: folder` | [Note-type mappings](collection-model.md#note-type-mappings) |
