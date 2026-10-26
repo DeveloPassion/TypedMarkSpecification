@@ -90,6 +90,7 @@ No migration is needed; each item is new optional syntax.
 | Creation `inputs` on note-type schemas | [Creation Inputs](../../note-type-schemas.md#creation-inputs) |
 | Validation-result `fix` advice | [Validation Reports](../../conformance-and-roadmap.md#validation-reports) |
 | Relationship predicate `context_note` | [Portable Queries](../../queries.md#relationship-predicates) |
+| `from_date` date-part fields | [Expressions](../../expressions.md#from_date) |
 
 ## Ledger discipline and verification
 

@@ -239,6 +239,32 @@
         "computed": {
           "$ref": "#/$defs/non_empty_string"
         },
+        "from_date": {
+          "$comment": "A sibling date part (FDR-293); the source field and part/type pairing are semantic (FDR-294).",
+          "type": "object",
+          "required": [
+            "field",
+            "part"
+          ],
+          "properties": {
+            "field": {
+              "$ref": "#/$defs/field_name"
+            },
+            "part": {
+              "enum": [
+                "YYYY",
+                "MM",
+                "DD",
+                "Q",
+                "WW",
+                "GGGG",
+                "YYYY-MM",
+                "YYYY-MM-DD"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
         "unique": {
           "anyOf": [
             {
@@ -869,6 +895,51 @@
               "type": {
                 "const": "integer"
               }
+            }
+          }
+        },
+        {
+          "$comment": "from_date is valid only for integer and text fields and excludes derivation, generation and defaulting mechanisms",
+          "if": {
+            "required": [
+              "from_date"
+            ]
+          },
+          "then": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "integer",
+                  "text"
+                ]
+              },
+              "immutable": {
+                "const": false
+              }
+            },
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "computed"
+                  ]
+                },
+                {
+                  "required": [
+                    "generated"
+                  ]
+                },
+                {
+                  "required": [
+                    "default_value"
+                  ]
+                },
+                {
+                  "required": [
+                    "const_value"
+                  ]
+                }
+              ]
             }
           }
         },

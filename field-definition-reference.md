@@ -40,6 +40,7 @@ Property applicability at a glance:
 | `label`, `description`, `icon` | any declared field | optional human-facing metadata |
 | `generated` | declared fields | `false`; strategies are unavailable on anonymous `items`; [additional strategies](authoring.md#additional-generation-strategies) |
 | [`computed`](expressions.md#computed) | top-level `text` fields | sibling-field derivation only |
+| [`from_date`](expressions.md#from_date) | top-level `integer` and `text` fields | one sibling date part |
 | `unique` | top-level scalar fields | `false`; per-note-type or collection scope |
 | `deprecated` | declared fields | `false` |
 | [`immutable`](authoring.md#immutable) | top-level and nested object fields | `false`; unavailable on anonymous `items` |

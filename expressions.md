@@ -13,6 +13,7 @@ Authoritative for:
 
 - the shared expression language
 - computed field definitions, sibling-field scope, and stored-value evaluation
+- date-part fields derived from a sibling date (`from_date`)
 
 See also:
 
@@ -66,6 +67,35 @@ Rules:
 - `FDR-236` `computed` MUST NOT depend on the note body, resolved note links, query results, collection-global state, or any data outside the sibling-field scope defined above.
 - `FDR-237` A `computed` field whose stored value disagrees with its evaluated expression is a note-level `invalid_field_value` failure, not a schema-shape failure.
 - `FDR-238` A syntactically invalid shared expression, an unresolved sibling-field reference, a type-incompatible reference, or an unknown transform name makes the declaring artifact invalid.
+
+## `from_date`
+
+Periodic notes file and query by their period, so they store its parts: a
+weekly note keeps its ISO year and week beside its date. `from_date` derives
+such a part from one sibling `date` or `datetime` field with the storage-pattern
+formats, so tools fill and check it instead of authors:
+
+<!-- typedmark-example: fragment: Date parts derived from a weekly note's date. -->
+```yaml
+week_start:
+  type: date
+  nullable: false
+year:
+  type: integer
+  from_date: {field: week_start, part: GGGG}
+week:
+  type: text
+  from_date: {field: week_start, part: WW}
+```
+
+Rules:
+
+- `FDR-293` `from_date` MAY be declared only on a top-level `integer` or `text` field, as a mapping whose `field` names a sibling top-level `date` or `datetime` field and whose `part` is a storage date format.
+- `FDR-294` `part` MUST be `YYYY`, `MM`, `DD`, `Q`, `WW`, or `GGGG` on an `integer` field, and any of those or `YYYY-MM` or `YYYY-MM-DD` on a `text` field.
+- `FDR-295` The derived value formats the source's effective value as [Storage Rules](note-type-schemas.md#storage-rules) do (`NTS-120`, `NTS-128`); an `integer` field holds that text's numeric value.
+- `FDR-296` A field declaring `from_date` MUST NOT declare `computed`, `generated`, `default_value`, `const_value`, or `immutable: true`.
+- `FDR-297` When the source has no non-null effective value, the derived value is null.
+- `FDR-298` Writers MUST store the derived value as `FDR-233` requires for `computed`, and a stored value differing from it is an `invalid_field_value` failure.
 
 ## Shared Expression Language
 

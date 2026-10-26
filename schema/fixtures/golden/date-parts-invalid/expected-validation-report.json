@@ -1,0 +1,28 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {"typedmark:expressions": "0.1.0"},
+  "evaluated_extensions": {"typedmark:expressions": "0.1.0"},
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_field_value",
+      "severity": "error",
+      "path": "Weekly/2026/2026-W01.md",
+      "rule_id": "FDR-298",
+      "message": "week is 1, but week_start gives 01",
+      "note_type": "weekly",
+      "field": "week"
+    },
+    {
+      "code": "invalid_field_value",
+      "severity": "error",
+      "path": "Weekly/2026/2026-W01.md",
+      "rule_id": "FDR-298",
+      "message": "year is 2025, but week_start gives the ISO year 2026",
+      "note_type": "weekly",
+      "field": "year"
+    }
+  ]
+}
