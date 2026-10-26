@@ -111,6 +111,55 @@ actions:
   - kind: archive_note
 ```
 
+Targeting can also test emptiness and order. When a lent item comes back, a
+rule can remove its loan date, so the field returns to its default instead of
+holding an explicit null:
+
+<!-- typedmark-example: artifact=automation -->
+```yaml
+specification_version: 0.1.0
+automation: clear-loan-date
+description: Remove the loan date once the item is no longer lent.
+trigger:
+  kind: event
+  event: note.updated
+  scope_transition: enters
+scope:
+  note_types:
+    - item
+when:
+  lent_to:
+    empty: true
+actions:
+  - kind: unset_field
+    field: lent_on
+```
+
+Selling one of several copies keeps the item owned:
+
+<!-- typedmark-example: artifact=automation -->
+```yaml
+specification_version: 0.1.0
+automation: sell-one-copy
+description: Stop offering an item for sale when one of several copies sells.
+trigger:
+  kind: event
+  event: note.updated
+  changed:
+    sale_stage:
+      to: sold
+scope:
+  note_types:
+    - item
+when:
+  copies:
+    greater_than: 1
+actions:
+  - kind: remove_list_item
+    field: ownership
+    value: for_sale
+```
+
 Rules:
 
 - `CM-240` `<metadata_directory>/automations/` MAY be omitted when the collection defines no automation rules.
@@ -131,12 +180,14 @@ Rules:
 - `CM-253` Each identifier in `scope.note_types` MUST resolve to exactly one concrete note type.
 - `CM-254` `scope.path` MUST declare exactly one of `equals`, `under`, or `regex`.
 - `CM-282` `scope.path` uses the common [Path Matching](collection-model.md#path-matching) semantics.
-- `CM-255` `when`, when present, MUST use the frontmatter predicate shape and semantics defined for `note_type_mappings` in [Collection Model](collection-model.md#note-type-mappings), plus `older_than`.
+- `CM-255` `when`, when present, MUST use the frontmatter predicate shape and semantics defined for `note_type_mappings` in [Collection Model](collection-model.md#note-type-mappings), plus `older_than`, `state`, `empty`, and the ordering operators.
 - `CM-557` An `older_than` predicate MUST target a top-level `date` or `datetime` field and declare an ISO 8601 duration with one non-zero year, month, week, or day component, such as `P30D`.
 - `CM-558` `older_than` matches when the field's effective value plus the duration, computed in the collection timezone with a date taken as the start of its day, is at or before the trigger instant.
 - `CM-560` A `when` predicate MAY declare `state`, a mapping of `done`, `outcome`, and `role` values, only on a field declaring `states` for every target type.
 - `CM-561` A `state` predicate matches when the field's effective value is non-null and its state annotation, with the defaults of `FDR-291`, equals every declared key.
 - `CM-562` A `trigger.changed` predicate MAY declare `from_state` and `to_state`, which apply `state` predicate semantics to the change's before and after values.
+- `CM-565` An `empty` predicate MUST be a boolean, and it matches when whether the field's effective value is absent, null, an empty string, or an empty list equals it.
+- `CM-566` A `when` predicate MAY declare `less_than`, `less_than_or_equal`, `greater_than`, or `greater_than_or_equal` only on a field whose type the portable query ordering rules `CM-334` through `CM-338`, `CM-389`, `CM-390`, and `CM-401` admit for every target type, and it applies those rules to the field's effective value.
 - `CM-559` The trigger instant is the scheduled instant for a schedule trigger and the event's `occurred_at` otherwise; an absent or null value does not match `older_than`.
 - `CM-256` `trigger.scope_transition` MAY be omitted, and when omitted its effective value is `matches_after`.
 - `CM-257` `trigger.scope_transition` MUST be `matches_after`, `enters`, or `leaves`.
@@ -153,12 +204,13 @@ Rules:
 - `CM-266` If a scheduled local time occurs twice because of an offset transition, its occurrence is the earlier instant.
 - `CM-267` A schedule executor MUST emit at most one `schedule.tick` event for each automation and scheduled instant.
 - `CM-268` `actions` MUST be a non-empty ordered list.
-- `CM-269` Supported action kinds are `set_field`, `add_tag`, `remove_tag`, `add_list_item`, `remove_list_item`, `move_note`, `archive_note`, `create_note`, `logical_delete_note`, and `hard_delete_note`.
+- `CM-269` Supported action kinds are `set_field`, `add_tag`, `remove_tag`, `add_list_item`, `remove_list_item`, `unset_field`, `move_note`, `archive_note`, `create_note`, `logical_delete_note`, and `hard_delete_note`.
 - `CM-270` `set_field` MUST declare a top-level `field` name and exactly one of a parsed YAML `value` or a `value_from`.
 - `CM-563` `value_from` MUST be `trigger_date`, valid only for a `date` field, or `trigger_datetime`, valid only for a `datetime` field.
 - `CM-564` `trigger_date` resolves to the trigger instant's calendar date in the collection timezone, and `trigger_datetime` to the trigger instant with the collection timezone's offset.
 - `CM-554` `set_field` MAY declare a boolean `only_if_empty`, and when omitted its effective value is `false`.
 - `CM-555` `add_list_item` and `remove_list_item` MUST declare a top-level `field` name and one parsed YAML item `value`.
+- `CM-567` `unset_field` MUST declare a top-level `field` name and no other operand.
 - `CM-271` `add_tag` and `remove_tag` MUST declare one tag satisfying the stored tag-entry grammar in [Field Definition Reference](field-definition-reference.md).
 - `CM-272` `move_note` MUST declare a collection-relative Markdown `path`.
 - `CM-273` `archive_note`, `logical_delete_note`, and `hard_delete_note` MUST NOT declare action operands.

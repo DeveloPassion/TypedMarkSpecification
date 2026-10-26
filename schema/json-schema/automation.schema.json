@@ -139,7 +139,7 @@
   ],
   "$defs": {
     "automation_predicate_block": {
-      "$comment": "The note-type mapping predicate shape plus older_than, which is valid only in automation when predicates.",
+      "$comment": "The note-type mapping predicate shape plus older_than, state, empty and the ordering operators, which are valid only in automation when predicates.",
       "type": "object",
       "minProperties": 1,
       "additionalProperties": {
@@ -168,6 +168,33 @@
           },
           "state": {
             "$ref": "#/$defs/state_predicate"
+          },
+          "empty": {
+            "type": "boolean"
+          },
+          "less_than": {
+            "$comment": "A non-null operand valid for an orderable field type (semantic, CM-566).",
+            "not": {
+              "type": "null"
+            }
+          },
+          "less_than_or_equal": {
+            "$comment": "A non-null operand valid for an orderable field type (semantic, CM-566).",
+            "not": {
+              "type": "null"
+            }
+          },
+          "greater_than": {
+            "$comment": "A non-null operand valid for an orderable field type (semantic, CM-566).",
+            "not": {
+              "type": "null"
+            }
+          },
+          "greater_than_or_equal": {
+            "$comment": "A non-null operand valid for an orderable field type (semantic, CM-566).",
+            "not": {
+              "type": "null"
+            }
           }
         },
         "additionalProperties": false
@@ -532,6 +559,22 @@
               "$ref": "defs.schema.json#/$defs/field_name"
             },
             "value": {}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "field"
+          ],
+          "properties": {
+            "kind": {
+              "const": "unset_field"
+            },
+            "field": {
+              "$ref": "defs.schema.json#/$defs/field_name"
+            }
           },
           "additionalProperties": false
         },

@@ -165,7 +165,7 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
   migration impact computation; composition determinism; and canonical
   serialization
 - automation semantics: artifact basenames and reference resolution, schedule
-  due-instant evaluation, event matching, action target compatibility,
+  due-instant evaluation, event matching, predicate and action target compatibility (orderable `when` fields, `unset_field` targets),
   capability negotiation, staged execution, and propagation termination
 - specification-version support: artifact-local version selection, template
   version inheritance, and tool support for the compatibility lines defined in

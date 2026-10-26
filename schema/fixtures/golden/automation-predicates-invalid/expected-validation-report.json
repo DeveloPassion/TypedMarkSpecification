@@ -1,0 +1,34 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {
+    "typedmark:authoring": "0.1.0",
+    "typedmark:automation": "0.1.0"
+  },
+  "evaluated_extensions": {
+    "typedmark:authoring": "0.1.0",
+    "typedmark:automation": "0.1.0"
+  },
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_automation",
+      "severity": "error",
+      "path": ".typedmark/automations/order-a-list.md",
+      "rule_id": "CM-566",
+      "message": "Ordering predicates need an orderable field type",
+      "note_type": "item",
+      "field": "ownership"
+    },
+    {
+      "code": "invalid_automation",
+      "severity": "error",
+      "path": ".typedmark/automations/unset-immutable.md",
+      "rule_id": "CM-278",
+      "message": "The immutable field cannot be removed",
+      "note_type": "item",
+      "field": "acquired_on"
+    }
+  ]
+}

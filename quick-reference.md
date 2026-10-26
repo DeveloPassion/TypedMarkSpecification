@@ -73,6 +73,8 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | stamp the date work becomes done | `set_field` with `value_from: trigger_date` and `only_if_empty: true` | [Automation rules](automation-artifacts.md#automation-rules) |
 | react when work becomes done | `trigger.changed.status.to_state: {done: true}` or `when: {status: {state: {done: true}}}` | [Automation rules](automation-artifacts.md#automation-rules) |
 | archive notes some time after they finish | a daily schedule with `when: {status: {state: {done: true}}, completed_on: {older_than: P30D}}` and `archive_note` | [Automation rules](automation-artifacts.md#automation-rules) |
+| remove a value so the field falls back to its default | `unset_field` | [Automation rules](automation-artifacts.md#automation-rules) |
+| target notes whose field is empty, or above or below a bound | `when: {lent_to: {empty: true}}`, `when: {copies: {greater_than: 1}}` | [Automation rules](automation-artifacts.md#automation-rules) |
 | react to note changes or a schedule | an automation artifact under `<metadata_directory>/automations/` | [Automation rules](automation-artifacts.md#automation-rules) |
 | let automation changes trigger further rules safely | propagation mode with `automation_defaults.max_propagation_waves` | [Dependency propagation](automation-runtime.md#dependency-propagation-and-consistency) |
 | select, filter, sort, group, or limit managed notes portably | a portable query descriptor with `where`, `select`, `order_by`, `group_by`, and `limit` | [Portable Queries](queries.md#portable-queries) |

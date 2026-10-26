@@ -127,6 +127,10 @@ Rules:
 - `MN-164` `set_field` MUST NOT target a field declaring `computed`, `immutable: true`, or `const_value`.
 - `MN-165` A `set_field` value, including a resolved `value_from`, MUST satisfy the target field's effective type, nullability, and value constraints.
 - `MN-310` `set_field` with effective `only_if_empty: true` MUST have no effect unless the target's effective value is absent, null, an empty string, or an empty list.
+- `MN-318` `unset_field` MUST target a field that `set_field` could target under `MN-163` and `MN-164`.
+- `MN-319` `unset_field` MUST remove the target's stored key, so its effective value becomes the field's absence fallback, and MUST have no effect when the key is absent.
+- `MN-320` `unset_field` on a field without a conforming absence fallback is an `action_failed` failure.
+- `MN-321` In one wave, `unset_field` and another action writing the same field of the same note are a `conflicting_write` failure.
 - `MN-166` `add_tag` MUST append its tag when absent.
 - `MN-167` `remove_tag` MUST remove only the exact stored tag named by the action.
 - `MN-168` `remove_tag` targeting an effective mandatory tag is an `action_failed` failure.
@@ -160,7 +164,7 @@ Rules:
 - `MN-184` Every one-hop execution attempt MUST produce the portable automation run report defined in [Conformance and Roadmap](automation-reports.md#automation-run-reports).
 - `MN-193` For each execution target, every action except `create_note` applies to that target note.
 - `MN-194` A `create_note` action creates a distinct managed note through the ordinary creation pipeline.
-- `MN-195` Committed one-hop `set_field`, `add_tag`, `remove_tag`, `add_list_item`, `remove_list_item`, and `logical_delete_note` effects produce `note.updated` events.
+- `MN-195` Committed one-hop `set_field`, `add_tag`, `remove_tag`, `add_list_item`, `remove_list_item`, `unset_field`, and `logical_delete_note` effects produce `note.updated` events.
 - `MN-196` A committed one-hop `move_note` effect produces a `note.moved` event.
 - `MN-197` A committed one-hop `archive_note` effect produces a `note.archived` event.
 - `MN-198` A committed one-hop `create_note` effect produces a `note.created` event.
