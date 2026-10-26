@@ -82,6 +82,7 @@ consumers rather than creating a query dependency for systems.
 | `typedmark:expansion` | content-expansion markers | `typedmark:expressions` at `0.1.0` | [Content Expansion](content-expansion.md) |
 | `typedmark:automation` | automation artifacts or an explicit `automation_defaults` block | none | [Artifacts](automation-artifacts.md), [Runtime](automation-runtime.md), [Reports](automation-reports.md) |
 | `typedmark:systems` | system fields, composition provenance, or history | none | [Systems](systems-composition-evolution.md), [Migration](migration-effects.md) |
+| `typedmark:effective-schema` | never by collections; export documents carry it | none | [Effective Schema Export](effective-schema.md) |
 
 Rules:
 

@@ -1,0 +1,62 @@
+{
+  "contract": "typedmark:effective-schema",
+  "version": "0.1.0",
+  "specification_version": "0.1.0",
+  "note_type": "task",
+  "label": "task",
+  "description": "Tasks that ask for their priority.",
+  "fields": {
+    "note_type": {
+      "definition": {
+        "type": "text",
+        "nullable": false
+      },
+      "origin": {
+        "kind": "core",
+        "source": "base"
+      }
+    },
+    "priority": {
+      "definition": {
+        "type": "text",
+        "allowed_values": [
+          "high",
+          "low"
+        ],
+        "default_value": "low"
+      },
+      "origin": {
+        "kind": "local"
+      }
+    }
+  },
+  "storage": {
+    "folder_pattern": "Tasks"
+  },
+  "inputs": [
+    "priority"
+  ],
+  "headings": {
+    "required_h2": [],
+    "optional_h2": [],
+    "allow_other_h2": true,
+    "require_order": false,
+    "require_h1_title": false
+  },
+  "relationships": {
+    "belongs_to": {
+      "allowed_note_types": {}
+    },
+    "related_to": {
+      "allowed_note_types": {}
+    },
+    "contains": {
+      "allowed_note_types": {}
+    },
+    "depends_on": {
+      "allowed_note_types": {}
+    }
+  },
+  "mandatory_tags": [],
+  "unknown_field": "error"
+}

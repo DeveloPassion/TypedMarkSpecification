@@ -99,4 +99,5 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | give a note alternative link names | core field `aliases` | [Core-defined fields](managed-notes-and-properties.md#core-defined-frontmatter-field-names) |
 | publish my setup for others | declare `version` and `scaffold`; list it in a marketplace | [Systems](systems-composition-evolution.md) |
 | let an agent repair a finding safely | a result's `fix` action | [Validation Reports](conformance-and-roadmap.md#validation-reports) |
+| give an agent a note type's resolved fields and where they come from | a `typedmark:effective-schema` export | [Effective Schema Export](effective-schema.md) |
 | validate artifacts in my editor or CI | the published JSON Schemas | [schema/](https://github.com/DeveloPassion/TypedMarkSpecification/tree/main/schema) |

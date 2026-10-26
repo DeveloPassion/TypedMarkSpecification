@@ -61,6 +61,7 @@ const SPEC_PAGES = [
   "field-definition-reference.md",
   "field-conversions.md",
   "note-retyping.md",
+  "effective-schema.md",
   "managed-notes-and-properties.md",
   "note-links.md",
   "relationships-headings-and-templates.md",
@@ -98,6 +99,7 @@ const ARTIFACT_SCHEMAS: Record<string, string> = {
   "template-tracking": "template-tracking.schema.json",
   marketplace: "marketplace.schema.json",
   "validation-report": "validation-report.schema.json",
+  "effective-schema": "effective-schema.schema.json",
 };
 
 function readUtf8File(path: string): string {

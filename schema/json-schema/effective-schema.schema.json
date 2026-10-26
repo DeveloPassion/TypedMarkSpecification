@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developassion.github.io/TypedMarkSpecification/schema/effective-schema.schema.json",
+  "title": "TypedMark effective-schema export",
+  "description": "A read-only export of one concrete note type's effective schema. Authoritative semantics: effective-schema.md.",
+  "type": "object",
+  "required": [
+    "contract",
+    "version",
+    "specification_version",
+    "note_type",
+    "label",
+    "description",
+    "fields",
+    "storage",
+    "headings",
+    "relationships",
+    "mandatory_tags",
+    "unknown_field"
+  ],
+  "properties": {
+    "contract": {
+      "const": "typedmark:effective-schema"
+    },
+    "version": {
+      "const": "0.1.0"
+    },
+    "specification_version": {
+      "$ref": "defs.schema.json#/$defs/specification_version"
+    },
+    "note_type": {
+      "$ref": "defs.schema.json#/$defs/slug"
+    },
+    "label": {
+      "$ref": "defs.schema.json#/$defs/non_empty_string"
+    },
+    "description": {
+      "$ref": "defs.schema.json#/$defs/non_empty_string"
+    },
+    "icon": {
+      "$ref": "defs.schema.json#/$defs/non_empty_string"
+    },
+    "ancestors": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "defs.schema.json#/$defs/slug"
+      }
+    },
+    "fields": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "defs.schema.json#/$defs/field_name"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "definition",
+          "origin"
+        ],
+        "properties": {
+          "definition": {
+            "$ref": "defs.schema.json#/$defs/field_definition"
+          },
+          "origin": {
+            "$ref": "#/$defs/origin"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "storage": {
+      "$ref": "defs.schema.json#/$defs/storage_block"
+    },
+    "template": {
+      "$ref": "defs.schema.json#/$defs/template_block"
+    },
+    "inputs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "defs.schema.json#/$defs/field_name"
+      }
+    },
+    "headings": {
+      "$ref": "defs.schema.json#/$defs/headings_block"
+    },
+    "relationships": {
+      "$ref": "defs.schema.json#/$defs/relationships_block"
+    },
+    "mandatory_tags": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "defs.schema.json#/$defs/tag"
+      }
+    },
+    "unknown_field": {
+      "$ref": "defs.schema.json#/$defs/validation_severity"
+    },
+    "count": {
+      "type": "object",
+      "properties": {
+        "min": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "guidance": {
+      "$ref": "defs.schema.json#/$defs/guidance_block"
+    },
+    "conditions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "defs.schema.json#/$defs/condition_rule"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "origin": {
+      "type": "object",
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "core",
+            "local",
+            "ancestor",
+            "property_set"
+          ]
+        },
+        "source": {
+          "$ref": "defs.schema.json#/$defs/slug"
+        }
+      },
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "kind": {
+            "enum": [
+              "ancestor",
+              "property_set"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "source"
+        ]
+      },
+      "else": {
+        "not": {
+          "required": [
+            "source"
+          ]
+        }
+      }
+    }
+  }
+}
