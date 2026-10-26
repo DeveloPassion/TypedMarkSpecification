@@ -141,6 +141,42 @@ presentation:
 Shows the shared project board used by planning dashboards.
 ```
 
+Swimlanes split the same columns horizontally. This task board gives each
+project its own lane, with tasks that belong to no project in a final lane:
+
+<!-- typedmark-example: artifact=view -->
+```markdown
+---
+specification_version: 0.1.0
+view: task-board-by-project
+description: Open tasks by workflow state, one lane per project.
+query:
+  specification_version: 0.1.0
+  note_types: [task]
+  select:
+    - {kind: field, field: title, as: title}
+    - {kind: field, field: status, as: status}
+    - {kind: field, field: project, as: project}
+  order_by:
+    - {column: title, direction: asc}
+presentation:
+  layout: board
+  fields:
+    - {column: title, label: Task}
+  board:
+    column: status
+    columns:
+      - {value: todo, label: To do}
+      - {value: doing, label: Doing}
+      - {value: done, label: Done}
+    lanes:
+      column: project
+      empty_label: No project
+---
+
+Lanes follow project order; tasks without a project come last.
+```
+
 Rules:
 
 - `CM-408` `<metadata_directory>/views/` MAY be omitted when the collection defines no saved views.
@@ -178,6 +214,11 @@ Rules:
 - `CM-433` A `board` layout MUST contain `presentation.board`.
 - `CM-468` Every non-board layout MUST omit `presentation.board`.
 - `CM-434` A board presentation MUST partition the resolved ordered rows by `presentation.board.column` independently of any query `group_by` value.
+- `CM-568` `presentation.board.lanes` MAY be omitted, and a board without it has exactly one lane holding every row.
+- `CM-569` A present `lanes.column` MUST resolve to exactly one projected column, other than `presentation.board.column`, whose value is scalar or null in every retained row and whose field types `CM-334` admits for ordering.
+- `CM-570` A board with lanes MUST present one lane per distinct non-null lane value, in ascending order under the portable query ordering rules, followed by one final lane for null values when at least one such row exists.
+- `CM-571` An omitted `lanes.empty_label` MUST have the effective value `None`, and the null lane MUST use the effective `empty_label`.
+- `CM-572` Every lane MUST present the declared board columns and apply `CM-439` through `CM-444` and `CM-470` to its own rows.
 - `CM-435` `presentation.board.column` MUST resolve to exactly one projected column whose value is scalar or null in every retained row.
 - `CM-436` `presentation.board.columns` MUST be a non-empty ordered list whose entries contain scalar or null `value`.
 - `CM-469` A board-column `label`, if present, MUST be non-empty.
@@ -190,7 +231,7 @@ Rules:
 - `CM-443` The unmapped column MUST use the effective `unmapped_label`.
 - `CM-470` The unmapped column MUST NOT appear when it has no rows.
 - `CM-444` Rows within a board column MUST preserve their relative portable-query order.
-- `CM-445` Presentation MUST NOT add, remove, duplicate, or reorder result rows except for the board partition defined by `CM-439` through `CM-444`.
+- `CM-445` Presentation MUST NOT add, remove, duplicate, or reorder result rows except for the board partition defined by `CM-439` through `CM-444` and the lanes defined by `CM-568` through `CM-572`.
 - `CM-446` Tools MAY choose visual styling, dimensions, controls, and value widgets beyond the layout family, field order, labels, grouping, and board partition defined here.
 - `CM-447` Cursor position, selection, collapsed groups, scroll offsets, temporary filters, and other per-session state MUST NOT alter the saved-view artifact's portable result.
 - `CM-448` A read-only projected or computed value MUST NOT become writable merely because a saved view presents or groups by it.

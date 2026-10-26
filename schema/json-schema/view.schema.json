@@ -139,6 +139,26 @@
         "unmapped_label": {
           "$ref": "defs.schema.json#/$defs/non_empty_string",
           "default": "Other"
+        },
+        "lanes": {
+          "$ref": "#/$defs/board_lanes"
+        }
+      },
+      "additionalProperties": false
+    },
+    "board_lanes": {
+      "$comment": "Swimlanes over one orderable scalar projected column; lane values come from the rows (CM-569, CM-570).",
+      "type": "object",
+      "required": [
+        "column"
+      ],
+      "properties": {
+        "column": {
+          "$ref": "defs.schema.json#/$defs/field_name"
+        },
+        "empty_label": {
+          "$ref": "defs.schema.json#/$defs/non_empty_string",
+          "default": "None"
         }
       },
       "additionalProperties": false

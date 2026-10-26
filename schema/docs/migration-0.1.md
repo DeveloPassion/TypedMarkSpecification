@@ -86,6 +86,7 @@ No migration is needed; each item is new optional syntax.
 | Automation `add_list_item`, `remove_list_item`, `set_field.only_if_empty`, `set_field.value_from`, and `when` predicates `older_than` and `state`, with `to_state` / `from_state` change predicates | [Automation Rules](../../automation-artifacts.md#automation-rules) |
 | Optional name affixes (`optional: true` on `note_name_prefix` / `note_name_suffix`) | [Storage Rules](../../note-type-schemas.md#storage-rules) |
 | Automation `unset_field`, and `when` predicates `empty`, `less_than`, `less_than_or_equal`, `greater_than`, and `greater_than_or_equal` | [Automation Rules](../../automation-artifacts.md#automation-rules) |
+| Board swimlanes (`presentation.board.lanes`) | [Saved Views](../../datasets-and-views.md#saved-views) |
 
 ## Ledger discipline and verification
 

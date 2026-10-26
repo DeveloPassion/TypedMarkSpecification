@@ -1,0 +1,32 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {
+    "typedmark:queries": "0.1.0",
+    "typedmark:views": "0.1.0"
+  },
+  "evaluated_extensions": {
+    "typedmark:queries": "0.1.0",
+    "typedmark:views": "0.1.0"
+  },
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_view",
+      "severity": "error",
+      "path": ".typedmark/views/by-labels.md",
+      "rule_id": "CM-569",
+      "message": "Lane column is not an orderable scalar column",
+      "view": "by-labels"
+    },
+    {
+      "code": "invalid_view",
+      "severity": "error",
+      "path": ".typedmark/views/same-axis.md",
+      "rule_id": "CM-569",
+      "message": "Lane column repeats the board column",
+      "view": "same-axis"
+    }
+  ]
+}

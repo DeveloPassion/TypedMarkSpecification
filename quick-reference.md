@@ -80,6 +80,7 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | select, filter, sort, group, or limit managed notes portably | a portable query descriptor with `where`, `select`, `order_by`, `group_by`, and `limit` | [Portable Queries](queries.md#portable-queries) |
 | reuse one multi-type result in several presentations | a dataset artifact under `<metadata_directory>/datasets/` and saved views that reference it | [Datasets](datasets-and-views.md#datasets) |
 | save and share a table, list, cards, or board view | a saved-view artifact under `<metadata_directory>/views/` | [Saved Views](datasets-and-views.md#saved-views) |
+| split a board into swimlanes (per project, area, or type) | `presentation.board.lanes.column` | [Saved Views](datasets-and-views.md#saved-views) |
 | build a readable Markdown dashboard from datasets or saved views | one or more dataset- or view-backed content expansions in an ordinary note | [Content Expansion](content-expansion.md#content-expansion) |
 | detect and reconcile static template changes without overwriting note edits | `typedmark:template-region` markers plus `template_regions` baseline receipts | [Template Drift Tracking](template-tracking.md#template-drift-tracking) |
 | keep a Markdown region synchronized with a field, relationship, or query result | a `typedmark:expansion` marker with `mode: auto` or `manual` | [Content Expansion](content-expansion.md#content-expansion) |
