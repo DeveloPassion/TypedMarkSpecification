@@ -34,7 +34,8 @@ Classes:
 | `kind` | Breaking, manual | Remove descriptive kinds. Express desired cardinality with `count.min/max`; choose the intended minimum explicitly for former singleton types. |
 | `archive.policy` | Breaking, automatic | Omit the archive block for active-path storage, or retain alternate folder/name patterns without the policy enum. |
 | Affix `required: true` | Breaking, automatic | Remove the switch; every supplied affix applies. |
-| Affix `required: false` | Breaking, manual | Choose one naming contract and review existing filenames. There is no automatic equivalence between two formerly valid names and one new name. |
+| Affix `required: false` | Breaking, automatic | Replace the switch with `optional: true`; names with and without the affix stay valid (`NTS-188`). |
+| Managed notes with a name affix and no stored `title` | Breaking, automatic | The effective `title` is now the name part without the affixes (`NTS-192`). To keep the former value, store `title` explicitly as the whole basename; otherwise review H1 headings and title constraints that relied on the affix. |
 | `{now:format}` | Breaking, manual | Reference an explicitly stored/generated date field instead. Historical dates that are not known need manual input, not inference. |
 | `folder_scopes` | Breaking, manual | Author explicit concrete types/mappings or reuse declarations. The repository example migration is not a general-purpose lossless migration algorithm. |
 | Required template files/full template frontmatter | Relaxing | Implicit templates can be derived; explicit files can supply partial or body-only overrides. Explicitly named missing files remain errors. |
@@ -83,6 +84,7 @@ No migration is needed; each item is new optional syntax.
 | Note re-typing with a `typedmark-preserved` block (optional writer contract) | [Note Re-typing](../../note-retyping.md) |
 | Lifecycle `states` on fields with allowed values | [Field Definition Reference](../../field-definition-reference.md#states) |
 | Automation `add_list_item`, `remove_list_item`, `set_field.only_if_empty`, `set_field.value_from`, and `when` predicates `older_than` and `state`, with `to_state` / `from_state` change predicates | [Automation Rules](../../automation-artifacts.md#automation-rules) |
+| Optional name affixes (`optional: true` on `note_name_prefix` / `note_name_suffix`) | [Storage Rules](../../note-type-schemas.md#storage-rules) |
 
 ## Ledger discipline and verification
 

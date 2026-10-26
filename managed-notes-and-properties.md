@@ -107,7 +107,7 @@ fallbacks; state defaults and timestamp strategies remain fixed.
 | `archived` | Non-null checkbox | `false` | Compatible constraints; fixed `false` default |
 | `aliases` | List of unique non-empty text values | `[]` | Compatible item/value constraints and defaults |
 | `tags` | Non-null `tags` value | `[]` | Compatible constraints and defaults |
-| `title` | Text or null | Note basename without `.md` | Compatible constraints and defaults |
+| `title` | Text or null | The note's [name part](note-type-schemas.md#storage-rules) (`NTS-192`) | Compatible constraints and defaults |
 | `description` | Text or null | Null | Compatible constraints and defaults |
 | `created_at` | Datetime or null | Null on read | Compatible constraints; fixed `generated: now` when materialized |
 | `updated_at` | Datetime or null | Null on read | Compatible constraints; fixed `generated: now_on_write` when materialized |
@@ -128,8 +128,9 @@ Rules:
 - `MN-303` A writer making a semantic change MUST refresh an existing concrete `updated_at` according to `now_on_write`.
 - `MN-304` A no-op write MUST NOT refresh `updated_at`.
 
-For example, `Kickoff.md` defaults its title to `Kickoff`; explicit null remains
-null. A schema can constrain the title, not change its type.
+For example, `Kickoff.md` defaults its title to `Kickoff`, and
+`Launch (Project).md` to `Launch` when its type declares the ` (Project)`
+suffix; explicit null remains null. A schema can constrain the title, not change its type.
 
 `template_regions` belongs to [Template Tracking](template-tracking.md), not to
 the Core field set. Extension-owned fields are recognized only under their

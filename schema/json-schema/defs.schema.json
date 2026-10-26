@@ -1249,6 +1249,10 @@
       "properties": {
         "pattern": {
           "$ref": "#/$defs/storage_name_pattern"
+        },
+        "optional": {
+          "$comment": "A decorative affix a conforming name may omit (NTS-188).",
+          "type": "boolean"
         }
       },
       "additionalProperties": false

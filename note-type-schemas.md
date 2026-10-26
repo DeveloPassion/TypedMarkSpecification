@@ -104,8 +104,9 @@ headings:
   required_h2: [Agenda, Notes]
 ```
 
-Store the intended Core `title` for composite names; its basename fallback
-would otherwise include the date prefix.
+Store the intended Core `title` for composite names; its name-part fallback
+would otherwise include the date, which a name pattern produces rather than an
+affix.
 
 Rules:
 
@@ -167,7 +168,7 @@ evaluation of substituted text.
 | `folder_pattern` | Relative folder, optionally empty for the root; `/` separators; no backslash, leading/trailing slash, or `.` / `..` segment |
 | `note_name_pattern` | Optional non-empty basename pattern without slash, backslash, or a `.md` extension |
 | `note_name_regex` | Optional ECMA-262 free-name constraint; excludes `note_name_pattern` |
-| `note_name_prefix`, `note_name_suffix` | Optional mapping with a non-empty `pattern`; every supplied affix applies |
+| `note_name_prefix`, `note_name_suffix` | Optional mapping with a non-empty `pattern` and an optional boolean `optional`; every supplied affix applies unless it is optional |
 | `archive` | Optional block with alternate `folder_pattern` and the same optional name keys |
 
 For example, `{meeting_date:YYYY}/{meeting_date:MM}` names a folder from a
@@ -179,13 +180,36 @@ Decisions` place it at `Projects/Launch/Decisions.md` for `Projects/Launch.md`.
 Free names are author-chosen, not stored. Without a stored `title`, `{title}`
 alone is effectively free.
 
+A note's name part is its basename without the affixes it carries. It is the
+free name, the text a name pattern must produce, and the default `title`, so
+`Launch (Project).md` is titled `Launch` without storing a duplicate. An
+optional affix is a decoration: notes may carry it or not, and writers add it
+only when asked. With this suffix, `Growth mindset.md` and
+`Growth mindset (Permanent).md` both conform, and both have the name part
+`Growth mindset`:
+
+<!-- typedmark-example: fragment: An optional decorative note-name suffix. -->
+```yaml
+storage:
+  folder_pattern: notes
+  note_name_suffix:
+    pattern: " (Permanent)"
+    optional: true
+```
+
 Rules:
 
 - `NTS-97` A supplied storage block MUST contain `folder_pattern`.
 - `NTS-177` Storage declarations MUST satisfy the Storage Rules shape table.
 - `NTS-101` Storage patterns govern both path validation and note creation.
-- `NTS-113` A resolved name consists of the resolved prefix, name pattern or free name, and suffix in that order.
-- `NTS-181` Without `note_name_pattern`, the free name is the non-empty basename text between resolved affixes.
+- `NTS-113` A resolved name consists of the resolved prefix, name pattern or free name, and suffix in that order, where an absent optional affix contributes nothing.
+- `NTS-188` An affix declaring `optional: true` MAY be absent from a conforming basename; an omitted `optional` has the effective value `false`.
+- `NTS-192` A note's name part is its basename without `.md`, without the resolved prefix it starts with, and without the resolved suffix it ends with, under the storage contract `NTS-138` selects; a prefix and suffix that would overlap are not removed.
+- `NTS-193` An affix whose pattern cannot be resolved, or references `title` while the note stores no `title`, is not removed from the name part.
+- `NTS-189` An optional affix is removed only when the name part remains non-empty, and it is present exactly when it is removed.
+- `NTS-181` Without `note_name_pattern`, the free name is the note's name part, which MUST be non-empty.
+- `NTS-190` A writer creating a note MUST omit an optional affix unless its caller explicitly requests it.
+- `NTS-191` A writer moving or renaming a note MUST keep each optional affix present or absent unless its caller explicitly requests otherwise.
 - `NTS-182` A free name MUST fully match any `note_name_regex`.
 - `NTS-117` A placeholder MUST have the form `{field_name}` or `{field_name:format}`.
 - `NTS-124` A placeholder MUST reference a top-level effective field or Core field.
