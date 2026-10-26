@@ -171,6 +171,40 @@ on the other hand, yield a complete report with errors.
 
 Malformed declarations retain well-formed requirements while reporting malformed entries separately; see this [projected report](schema/fixtures/valid/validation-report-malformed-extensions.json).
 
+A result can also say how to repair the note. The fix is one ordinary
+automation action, offered only when the schema and the note determine it, such
+as a missing mandatory tag:
+
+<!-- typedmark-example: artifact=validation-report -->
+```json
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [{
+    "code": "invalid_field_value",
+    "severity": "error",
+    "path": "Projects/Launch.md",
+    "rule_id": "MN-128",
+    "note_type": "project",
+    "field": "tags",
+    "message": "tags is missing the mandatory tag project",
+    "fix": {"kind": "add_tag", "tag": "project"}
+  }]
+}
+```
+
+Rules:
+
+- `CR-110` A result MAY include `fix`, one action in the shape of [Automation Rules](automation-artifacts.md#automation-rules) that applies to the note at `path`.
+- `CR-111` A `fix` MUST be a `set_field` without `value_from` or `only_if_empty`, an `unset_field`, an `add_tag`, or a `move_note` action.
+- `CR-112` A producer MUST include a `fix` only when the effective schema and the note determine it and applying it alone is expected to remove the result.
+- `CR-113` Validation MUST NOT apply a `fix`; applying one is an ordinary write under the applicable writer rules.
+- `CR-114` Conformance comparison of validation reports MUST ignore `fix`.
+
 ### Automation Run Reports
 
 The authoritative contract is now in [Automation Run Reports](automation-reports.md).

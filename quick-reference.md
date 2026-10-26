@@ -95,4 +95,5 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | soft-delete or archive a note | core fields `deleted` / `archived` | [Core-defined fields](managed-notes-and-properties.md#core-defined-frontmatter-field-names) |
 | give a note alternative link names | core field `aliases` | [Core-defined fields](managed-notes-and-properties.md#core-defined-frontmatter-field-names) |
 | publish my setup for others | declare `version` and `scaffold`; list it in a marketplace | [Systems](systems-composition-evolution.md) |
+| let an agent repair a finding safely | a result's `fix` action | [Validation Reports](conformance-and-roadmap.md#validation-reports) |
 | validate artifacts in my editor or CI | the published JSON Schemas | [schema/](https://github.com/DeveloPassion/TypedMarkSpecification/tree/main/schema) |

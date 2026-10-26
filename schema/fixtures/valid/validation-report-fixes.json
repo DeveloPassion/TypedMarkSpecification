@@ -1,0 +1,39 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [
+    {
+      "code": "path",
+      "severity": "error",
+      "path": "Inbox/Launch.md",
+      "rule_id": "NTS-146",
+      "message": "Expected managed-note path Projects/Launch.md",
+      "note_type": "project",
+      "fix": {"kind": "move_note", "path": "Projects/Launch.md"}
+    },
+    {
+      "code": "missing_required_field",
+      "severity": "error",
+      "path": "Inbox/Launch.md",
+      "rule_id": "MN-99",
+      "message": "status is explicitly null but is not nullable",
+      "note_type": "project",
+      "field": "status",
+      "fix": {"kind": "unset_field", "field": "status"}
+    },
+    {
+      "code": "invalid_field_value",
+      "severity": "error",
+      "path": "Inbox/Launch.md",
+      "rule_id": "MN-128",
+      "message": "tags is missing the mandatory tag project",
+      "note_type": "project",
+      "field": "tags",
+      "fix": {"kind": "add_tag", "tag": "project"}
+    }
+  ]
+}

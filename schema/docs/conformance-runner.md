@@ -155,7 +155,7 @@ every machine-stable field, including `specification_version`, `mode`,
 `evaluation`, both extension maps, `valid`, and the result objects and their
 optional context. Omitted context and an explicit value remain distinct.
 
-Ignore only human-readable `message` values in equality comparisons. A message
+Ignore only human-readable `message` values and optional `fix` advice (`CR-114`) in equality comparisons. A message
 still needs to satisfy the report's shape requirements. Do not ignore unexpected
 findings, unknown context, duplicate findings, or an incomplete evaluation.
 

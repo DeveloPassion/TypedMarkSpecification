@@ -1,0 +1,18 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [
+    {
+      "code": "path",
+      "severity": "error",
+      "path": "Projects/Launch.md",
+      "rule_id": "NTS-146",
+      "message": "Expected managed-note path Archive/Launch.md",
+      "fix": {"kind": "archive_note"}
+    }
+  ]
+}

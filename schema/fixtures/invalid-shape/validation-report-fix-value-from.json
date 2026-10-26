@@ -1,0 +1,19 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [
+    {
+      "code": "missing_declared_field",
+      "severity": "error",
+      "path": "Projects/Launch.md",
+      "rule_id": "MN-98",
+      "message": "started_on has no conforming effective value",
+      "field": "started_on",
+      "fix": {"kind": "set_field", "field": "started_on", "value_from": "trigger_date"}
+    }
+  ]
+}

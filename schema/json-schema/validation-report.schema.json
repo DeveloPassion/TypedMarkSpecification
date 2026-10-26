@@ -197,6 +197,40 @@
         "message": {
           "$ref": "defs.schema.json#/$defs/non_empty_string"
         },
+        "fix": {
+          "$comment": "One automation action that repairs the finding (CR-110, CR-111); set_field takes a literal value only.",
+          "allOf": [
+            {
+              "$ref": "automation.schema.json#/$defs/action"
+            },
+            {
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "set_field",
+                    "unset_field",
+                    "add_tag",
+                    "move_note"
+                  ]
+                }
+              },
+              "not": {
+                "anyOf": [
+                  {
+                    "required": [
+                      "value_from"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "only_if_empty"
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        },
         "note_type": {
           "$ref": "defs.schema.json#/$defs/slug"
         },
