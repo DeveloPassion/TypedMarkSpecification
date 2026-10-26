@@ -1,0 +1,11 @@
+{
+  "specification_version": "0.1.0",
+  "note_types": ["task"],
+  "where": {
+    "kind": "relationship",
+    "relationship": "belongs_to",
+    "note_types": ["project"],
+    "context_note": true
+  },
+  "select": [{"kind": "path", "as": "path"}]
+}

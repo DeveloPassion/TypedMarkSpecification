@@ -1,0 +1,9 @@
+{
+  "specification_version": "0.1.0",
+  "where": {
+    "kind": "relationship",
+    "relationship": "belongs_to",
+    "context_note": "this"
+  },
+  "select": [{"kind": "path", "as": "path"}]
+}

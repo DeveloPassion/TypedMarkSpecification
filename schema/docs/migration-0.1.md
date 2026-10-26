@@ -89,6 +89,7 @@ No migration is needed; each item is new optional syntax.
 | Board swimlanes (`presentation.board.lanes`) | [Saved Views](../../datasets-and-views.md#saved-views) |
 | Creation `inputs` on note-type schemas | [Creation Inputs](../../note-type-schemas.md#creation-inputs) |
 | Validation-result `fix` advice | [Validation Reports](../../conformance-and-roadmap.md#validation-reports) |
+| Relationship predicate `context_note` | [Portable Queries](../../queries.md#relationship-predicates) |
 
 ## Ledger discipline and verification
 

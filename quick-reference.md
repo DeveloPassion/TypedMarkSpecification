@@ -82,6 +82,7 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | reuse one multi-type result in several presentations | a dataset artifact under `<metadata_directory>/datasets/` and saved views that reference it | [Datasets](datasets-and-views.md#datasets) |
 | save and share a table, list, cards, or board view | a saved-view artifact under `<metadata_directory>/views/` | [Saved Views](datasets-and-views.md#saved-views) |
 | split a board into swimlanes (per project, area, or type) | `presentation.board.lanes.column` | [Saved Views](datasets-and-views.md#saved-views) |
+| show only this project's tasks with one shared dataset | a relationship predicate with `context_note: true` | [Portable Queries](queries.md#relationship-predicates) |
 | build a readable Markdown dashboard from datasets or saved views | one or more dataset- or view-backed content expansions in an ordinary note | [Content Expansion](content-expansion.md#content-expansion) |
 | detect and reconcile static template changes without overwriting note edits | `typedmark:template-region` markers plus `template_regions` baseline receipts | [Template Drift Tracking](template-tracking.md#template-drift-tracking) |
 | keep a Markdown region synchronized with a field, relationship, or query result | a `typedmark:expansion` marker with `mode: auto` or `manual` | [Content Expansion](content-expansion.md#content-expansion) |

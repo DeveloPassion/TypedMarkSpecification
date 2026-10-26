@@ -1,0 +1,26 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {
+    "typedmark:expansion": "0.1.0",
+    "typedmark:expressions": "0.1.0",
+    "typedmark:queries": "0.1.0"
+  },
+  "evaluated_extensions": {
+    "typedmark:expansion": "0.1.0",
+    "typedmark:expressions": "0.1.0",
+    "typedmark:queries": "0.1.0"
+  },
+  "valid": false,
+  "results": [
+    {
+      "code": "expansion_drift",
+      "severity": "error",
+      "path": "projects/Launch.md",
+      "rule_id": "RHT-164",
+      "message": "The materialized list includes another project's task.",
+      "expansion": "tasks"
+    }
+  ]
+}

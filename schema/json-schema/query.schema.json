@@ -544,6 +544,10 @@
         },
         "count": {
           "$ref": "#/$defs/count_range"
+        },
+        "context_note": {
+          "$comment": "Keep only the note containing the evaluating content expansion (CM-573).",
+          "type": "boolean"
         }
       },
       "additionalProperties": false

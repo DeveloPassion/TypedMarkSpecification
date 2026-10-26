@@ -183,6 +183,31 @@ Rules:
 - `CM-354` A present `count` MUST contain `min`, `max`, or both as non-negative integers.
 - `CM-355` An omitted `count.min` MUST have the effective value `0`.
 - `CM-394` An omitted `count.max` MUST impose no upper bound.
+
+A query evaluated for a content expansion can refer to the note that contains
+it. One dataset of tasks can then back the board, calendar, and list of every
+project, each showing only that project's tasks:
+
+<!-- typedmark-example: artifact=query -->
+```json
+{
+  "specification_version": "0.1.0",
+  "note_types": ["task"],
+  "where": {
+    "kind": "relationship",
+    "relationship": "belongs_to",
+    "note_types": ["project"],
+    "context_note": true
+  },
+  "select": [{"kind": "field", "field": "title", "as": "title"}]
+}
+```
+
+Rules:
+
+- `CM-573` A relationship predicate MAY declare a boolean `context_note`; when `true`, only the context note remains among the related notes before `where` and `count` apply.
+- `CM-574` The context note is the managed note containing the content expansion whose `query`, `dataset`, or `view` source is evaluated, including through a view's referenced dataset.
+- `CM-575` Any other evaluation has no context note, and a predicate with `context_note: true` then retains no related notes.
 - `CM-356` A present `count.min` MUST NOT exceed a present `count.max`.
 - `CM-357` A relationship predicate MUST match exactly when the number of retained unique related notes is within its inclusive effective count range.
 - `CM-358` A nested relationship predicate MUST evaluate against the related note as its candidate.
