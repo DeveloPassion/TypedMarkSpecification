@@ -91,6 +91,7 @@ No migration is needed; each item is new optional syntax.
 | Validation-result `fix` advice | [Validation Reports](../../conformance-and-roadmap.md#validation-reports) |
 | Relationship predicate `context_note` | [Portable Queries](../../queries.md#relationship-predicates) |
 | `from_date` date-part fields | [Expressions](../../expressions.md#from_date) |
+| Writable boards (`presentation.board.writable`) and a `rank` field | [Saved Views](../../datasets-and-views.md#saved-views) |
 
 ## Ledger discipline and verification
 

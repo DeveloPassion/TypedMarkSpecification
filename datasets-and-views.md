@@ -177,6 +177,21 @@ presentation:
 Lanes follow project order; tasks without a project come last.
 ```
 
+A board can also be where work is edited. A writable board turns a move between
+columns into an ordinary field write, and a rank field keeps the order people
+give cards inside a column:
+
+<!-- typedmark-example: fragment: A writable board ordered by a rank field. -->
+```yaml
+board:
+  column: status
+  columns:
+    - {value: todo}
+    - {value: done}
+  writable: true
+  rank: manual_order
+```
+
 Rules:
 
 - `CM-408` `<metadata_directory>/views/` MAY be omitted when the collection defines no saved views.
@@ -230,12 +245,18 @@ Rules:
 - `CM-442` An omitted `presentation.board.unmapped_label` MUST have the effective value `Other`.
 - `CM-443` The unmapped column MUST use the effective `unmapped_label`.
 - `CM-470` The unmapped column MUST NOT appear when it has no rows.
-- `CM-444` Rows within a board column MUST preserve their relative portable-query order.
-- `CM-445` Presentation MUST NOT add, remove, duplicate, or reorder result rows except for the board partition defined by `CM-439` through `CM-444` and the lanes defined by `CM-568` through `CM-572`.
+- `CM-444` Rows within a board column MUST preserve their relative portable-query order, except as a board `rank` orders them.
+- `CM-445` Presentation MUST NOT add, remove, duplicate, or reorder result rows except for the board partition defined by `CM-439` through `CM-444` the lanes defined by `CM-568` through `CM-572`, and the rank order defined by `CM-578`.
 - `CM-446` Tools MAY choose visual styling, dimensions, controls, and value widgets beyond the layout family, field order, labels, grouping, and board partition defined here.
 - `CM-447` Cursor position, selection, collapsed groups, scroll offsets, temporary filters, and other per-session state MUST NOT alter the saved-view artifact's portable result.
 - `CM-448` A read-only projected or computed value MUST NOT become writable merely because a saved view presents or groups by it.
-- `CM-523` A saved view MUST NOT perform a write through any presented column in this specification version.
+- `CM-523` A saved view MUST NOT perform a write through any presented column, except the board moves defined by `CM-576` through `CM-581`.
+- `CM-576` `presentation.board.writable` MAY be `true` only when `presentation.board.column` is a `field` projection of a top-level field that `set_field` could target on every admitted note type under `MN-163` and `MN-164`.
+- `CM-577` On a writable board, moving a row into another declared column MUST write that column's value to the row's note as an ordinary `set_field` write, subject to automation and validation like any other edit.
+- `CM-578` `presentation.board.rank` MAY name a `field` projection of a top-level `number` field; rows within each column are then ordered by ascending rank, rows without a rank after ranked rows, and ties in portable-query order.
+- `CM-579` On a writable board with a rank, the rank field MUST be assignable as `CM-576` requires, and a move MUST give the moved row a rank strictly between its new neighbours' ranks, below the first, or above the last.
+- `CM-580` When no such rank is representable, a writer MAY first renumber that column's ranks in their current order.
+- `CM-581` A board move MUST NOT target the unmapped column or change a row's lane.
 - `CM-449` Every note type, field path, projection alias, and board value referenced by a saved view MUST remain valid against the effective collection model.
 - `CM-450` A system release that renames or removes a saved-view reference MUST update or retire the affected saved view in the same release.
 - `CM-451` A saved-view shape, reference-resolution, query-evaluation, or presentation-semantics failure MUST be an `invalid_view` failure.

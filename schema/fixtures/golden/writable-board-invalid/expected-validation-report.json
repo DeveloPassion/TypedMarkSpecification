@@ -1,0 +1,32 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {
+    "typedmark:queries": "0.1.0",
+    "typedmark:views": "0.1.0"
+  },
+  "evaluated_extensions": {
+    "typedmark:queries": "0.1.0",
+    "typedmark:views": "0.1.0"
+  },
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_view",
+      "severity": "error",
+      "path": ".typedmark/views/constant-column.md",
+      "rule_id": "CM-576",
+      "message": "The board column projects a constant field.",
+      "view": "constant-column"
+    },
+    {
+      "code": "invalid_view",
+      "severity": "error",
+      "path": ".typedmark/views/text-rank.md",
+      "rule_id": "CM-578",
+      "message": "The rank column is not a number field.",
+      "view": "text-rank"
+    }
+  ]
+}

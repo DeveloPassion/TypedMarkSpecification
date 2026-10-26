@@ -142,6 +142,15 @@
         },
         "lanes": {
           "$ref": "#/$defs/board_lanes"
+        },
+        "writable": {
+          "$comment": "Column moves write the column field (CM-576, CM-577); assignability is semantic.",
+          "type": "boolean",
+          "default": false
+        },
+        "rank": {
+          "$comment": "A projected number field ordering rows within each column (CM-578).",
+          "$ref": "defs.schema.json#/$defs/field_name"
         }
       },
       "additionalProperties": false
