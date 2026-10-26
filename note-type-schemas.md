@@ -78,6 +78,7 @@ Core does not guess storage.
 | `frontmatter` | Empty local mapping | Field-definition mapping |
 | `storage` | Required effectively for concrete types | Storage block below |
 | `template` | Optional | Explicit relative `file` reference when supplied |
+| `inputs` | Omitted | Ordered field names to ask for at creation |
 | `relationships` | Empty relationship constraints | Relationship block |
 | `headings` | No heading constraints | Heading block |
 | `guidance` | Omitted | Optional non-empty `when_to_use` / `when_not_to_use` text |
@@ -257,3 +258,21 @@ Rules:
 - `NTS-45` That path MUST NOT be absolute, contain `..` segments, or restate the metadata/templates prefix.
 - `NTS-47` A supplied template file path MUST end in `.md`.
 - `NTS-159` When no effective explicit template reference exists, the conventional template filename is `<note_type>.md`.
+
+## Creation Inputs
+
+`inputs` lists the fields a writer asks for when a person or agent creates a
+note, in order, using each field's label and description. A task can ask for
+its priority and effort even though both have defaults.
+
+<!-- typedmark-example: fragment: Fields to ask for when creating a task. -->
+```yaml
+inputs: [priority, effort, due]
+```
+
+Rules:
+
+- `NTS-194` A supplied `inputs` MUST be a non-empty ordered list of unique names of top-level effective fields or Core fields other than `note_type`.
+- `NTS-195` An input field MUST NOT declare `computed`, a generation strategy, or `const_value`.
+- `NTS-196` A writer asking a person or agent for values while creating a note SHOULD ask for the effective `inputs` in declared order before other values.
+- `NTS-197` An input MAY be left unanswered when its field has a conforming effective value without it.

@@ -1,0 +1,26 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_note_type_schema",
+      "severity": "error",
+      "path": ".typedmark/schemas/task.md",
+      "rule_id": "NTS-194",
+      "message": "The input owner is not a declared field.",
+      "note_type": "task"
+    },
+    {
+      "code": "invalid_note_type_schema",
+      "severity": "error",
+      "path": ".typedmark/schemas/task.md",
+      "rule_id": "NTS-195",
+      "message": "The input created is generated.",
+      "note_type": "task"
+    }
+  ]
+}

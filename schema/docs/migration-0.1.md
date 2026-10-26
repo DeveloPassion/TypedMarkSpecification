@@ -87,6 +87,7 @@ No migration is needed; each item is new optional syntax.
 | Optional name affixes (`optional: true` on `note_name_prefix` / `note_name_suffix`) | [Storage Rules](../../note-type-schemas.md#storage-rules) |
 | Automation `unset_field`, and `when` predicates `empty`, `less_than`, `less_than_or_equal`, `greater_than`, and `greater_than_or_equal` | [Automation Rules](../../automation-artifacts.md#automation-rules) |
 | Board swimlanes (`presentation.board.lanes`) | [Saved Views](../../datasets-and-views.md#saved-views) |
+| Creation `inputs` on note-type schemas | [Creation Inputs](../../note-type-schemas.md#creation-inputs) |
 
 ## Ledger discipline and verification
 

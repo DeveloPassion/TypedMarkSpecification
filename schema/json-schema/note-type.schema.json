@@ -103,6 +103,15 @@
     "guidance": {
       "$ref": "defs.schema.json#/$defs/guidance_block"
     },
+    "inputs": {
+      "$comment": "Fields a writer asks for at creation; declaration and eligibility are semantic (NTS-194, NTS-195).",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "defs.schema.json#/$defs/field_name"
+      }
+    },
     "conditions": {
       "type": "array",
       "minItems": 1,

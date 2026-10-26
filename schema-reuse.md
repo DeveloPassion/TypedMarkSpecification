@@ -31,7 +31,7 @@ being the type of a managed note itself.
 Rules:
 
 - `NTS-11` If the selected concrete type declares `extends`, the tool MUST load its abstract ancestor chain from farthest ancestor to the selected type.
-- `NTS-13` Inheritance of `storage`, `template`, `mandatory_tags`, `guidance`, `unknown_field`, `conditions`, and `count` uses whole-key replacement; the last declaration in ancestor-to-concrete order wins.
+- `NTS-13` Inheritance of `storage`, `template`, `inputs`, `mandatory_tags`, `guidance`, `unknown_field`, `conditions`, and `count` uses whole-key replacement; the last declaration in ancestor-to-concrete order wins.
 - `NTS-14` Property-set selection MUST use collection defaults, concrete exclusions, and concrete opt-in property sets under [Property Sets](property-sets.md).
 - `NTS-98` A descendant's explicit storage block replaces its inherited storage block completely.
 - `NTS-171` The last schema in ancestor-to-concrete order declaring `mandatory_tags` supplies the type-level policy, or an empty list applies when none declares it.
@@ -39,7 +39,7 @@ Rules:
 - `NTS-36` If present, `extends` MUST be a non-empty slug and MUST resolve to exactly one abstract note type under `<metadata_directory>/schemas/`.
 - `NTS-37` A note type MUST NOT extend itself directly or transitively.
 - `NTS-38` Because `extends` is singular, a note type MUST inherit from at most one parent.
-- `NTS-39` Abstract note types MAY contribute storage, templates, mandatory tags, fields, relationships, headings, guidance, unknown-field policy, conditions, and counts.
+- `NTS-39` Abstract note types MAY contribute storage, templates, inputs, mandatory tags, fields, relationships, headings, guidance, unknown-field policy, conditions, and counts.
 - `NTS-41` Concrete types MAY omit locally any reusable definitions they inherit under this contract.
 
 ## Abstract Inheritance Example

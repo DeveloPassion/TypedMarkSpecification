@@ -55,6 +55,7 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | restrict a field to fixed values | `allowed_values`, or `allowed_values_from` with a vocabulary | [Field Definition Reference](field-definition-reference.md#allowed_values) |
 | make link fields point at real notes | `validate_exists: true` | [Field Definition Reference](field-definition-reference.md#validate_exists) |
 | restrict which note types a link targets | `targets` on the link field | [Field Definition Reference](field-definition-reference.md#targets) |
+| ask for priority and effort when creating a task | `inputs: [priority, effort]` | [Creation Inputs](note-type-schemas.md#creation-inputs) |
 | auto-fill creation dates or ids | Core `generated: now` or `uuid`; other generators use Authoring | [Field Definition Reference](field-definition-reference.md#generated) |
 | stop a value from changing | `immutable: true` | [Field Definition Reference](field-definition-reference.md#immutable) |
 | keep a value unique | `unique: true` (per type) or `unique: collection` | [Field Definition Reference](field-definition-reference.md#unique) |
