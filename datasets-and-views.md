@@ -12,7 +12,7 @@ Audience: collection authors and tool authors sharing query results and presenta
 Authoritative for:
 
 - reusable dataset artifacts, row identity, and the common projected column contract
-- saved-view artifacts and portable table, list, cards, and board presentations
+- saved-view artifacts and portable table, list, cards, board, and tree presentations
 - Obsidian Bases interoperability
 
 See also:
@@ -21,6 +21,7 @@ See also:
 - [Queries](queries.md): portable query descriptors, evaluation, and mapped-field projections
 - [Field Compatibility and Conversion](field-conversions.md): compatibility of heterogeneous source fields
 - [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md): dataset- and view-backed content expansion
+- [Note Links](note-links.md): link resolution behind tree parents
 
 In path notation on this page, `<metadata_directory>` means the directory name declared by `typedmark.md` `metadata_directory`.
 
@@ -192,6 +193,49 @@ board:
   rank: manual_order
 ```
 
+A tree arranges rows under their parents, as a work breakdown does. The parent
+is a projected link field, so the same relationship that files a task under its
+project builds the hierarchy. A note with two parents appears under both, a
+cycle is cut where it re-enters, and an optional context shows the ancestors
+the query filtered out, such as a finished project above an open task. A
+writable tree turns a move under another row into an ordinary write of the
+parent link:
+
+<!-- typedmark-example: artifact=view -->
+```markdown
+---
+specification_version: 0.1.0
+view: work-breakdown
+label: Work Breakdown
+description: Open tasks under their parent tasks and projects.
+query:
+  specification_version: 0.1.0
+  note_types: [task]
+  where:
+    kind: field
+    field: archived
+    operator: equals
+    value: false
+  select:
+    - {kind: field, field: title, as: title}
+    - {kind: field, field: status, as: status}
+    - {kind: field, field: parent, as: parent}
+  order_by:
+    - {column: title, direction: asc}
+presentation:
+  layout: tree
+  fields:
+    - {column: title, label: Task}
+    - {column: status, label: Status}
+  tree:
+    parent: parent
+    context: ancestors
+    writable: true
+---
+
+Projects above the listed tasks appear as read-only context rows.
+```
+
 Rules:
 
 - `CM-408` `<metadata_directory>/views/` MAY be omitted when the collection defines no saved views.
@@ -213,19 +257,19 @@ Rules:
 - `CM-520` A present `dataset` MUST resolve to exactly one artifact under `<metadata_directory>/datasets/`.
 - `CM-521` A referenced dataset's `specification_version` MUST equal the saved view's top-level `specification_version`.
 - `CM-522` A dataset-backed saved view MUST use the referenced dataset's projected column contract without changing its query, membership, values, ordering, grouping, limit, or row identity.
-- `CM-422` `presentation.layout` MUST be exactly `table`, `list`, `cards`, or `board`.
+- `CM-422` `presentation.layout` MUST be exactly `table`, `list`, `cards`, `board`, or `tree`.
 - `CM-423` `presentation.fields` MUST be a non-empty ordered list.
 - `CM-424` Every `presentation.fields` entry MUST contain `column`.
 - `CM-466` A `presentation.fields` entry's `label`, if present, MUST be non-empty.
 - `CM-425` Every presented `column` MUST resolve to exactly one alias in the saved view's embedded query or referenced dataset query.
 - `CM-426` Presented `column` values MUST be unique within one saved view.
 - `CM-427` A presented field's display name MUST be its `label` when present and its `column` alias otherwise.
-- `CM-428` For `list`, `cards`, and `board`, the first presented field MUST be the primary field.
-- `CM-467` Later presented fields in `list`, `cards`, and `board` MUST retain declared order as secondary fields.
+- `CM-428` For `list`, `cards`, `board`, and `tree`, the first presented field MUST be the primary field.
+- `CM-467` Later presented fields in `list`, `cards`, `board`, and `tree` MUST retain declared order as secondary fields.
 - `CM-429` A `table` layout MUST present one result row per table row and one presented field per table column in declared order.
 - `CM-430` A `list` layout MUST present one result row per list entry.
 - `CM-431` A `cards` layout MUST present one result row per card.
-- `CM-432` A non-board layout MUST present query groups, when present, as ordered sections without changing group or row order.
+- `CM-432` A `table`, `list`, or `cards` layout MUST present query groups, when present, as ordered sections without changing group or row order.
 - `CM-433` A `board` layout MUST contain `presentation.board`.
 - `CM-468` Every non-board layout MUST omit `presentation.board`.
 - `CM-434` A board presentation MUST partition the resolved ordered rows by `presentation.board.column` independently of any query `group_by` value.
@@ -246,17 +290,31 @@ Rules:
 - `CM-443` The unmapped column MUST use the effective `unmapped_label`.
 - `CM-470` The unmapped column MUST NOT appear when it has no rows.
 - `CM-444` Rows within a board column MUST preserve their relative portable-query order, except as a board `rank` orders them.
-- `CM-445` Presentation MUST NOT add, remove, duplicate, or reorder result rows except for the board partition defined by `CM-439` through `CM-444` the lanes defined by `CM-568` through `CM-572`, and the rank order defined by `CM-578`.
-- `CM-446` Tools MAY choose visual styling, dimensions, controls, and value widgets beyond the layout family, field order, labels, grouping, and board partition defined here.
-- `CM-447` Cursor position, selection, collapsed groups, scroll offsets, temporary filters, and other per-session state MUST NOT alter the saved-view artifact's portable result.
+- `CM-582` A `tree` layout MUST contain `presentation.tree`, and every other layout MUST omit it.
+- `CM-583` `presentation.tree.parent` MUST resolve to exactly one projected column that is a `field` projection of a `link` field, or of a `list` field whose `items` are `link`, on every admitted note type.
+- `CM-584` A row's parents are the other result rows whose notes are resolved targets of its parent value under [Note Links](note-links.md); unresolved links, links to its own note, and links to notes outside the result add no parent.
+- `CM-585` A tree presentation MUST arrange the resolved ordered rows by their parents independently of any query `group_by` value.
+- `CM-586` Rows without a parent MUST be roots, each row's children MUST appear below it, and roots and the children of each row MUST keep portable-query order.
+- `CM-587` A row with several parents MUST appear under each of them, every occurrence presenting the same row.
+- `CM-588` An occurrence that would repeat a row already on its path from the root MUST be omitted together with its subtree.
+- `CM-589` While some result row appears nowhere, the first such row in portable-query order MUST become an additional root after the existing roots.
+- `CM-590` `presentation.tree.context` MAY be omitted, MUST be `none` or `ancestors` when present, and defaults to `none`.
+- `CM-591` With `context: ancestors`, every non-deleted managed note outside the result that is a resolved target of the parent field of a row or of another context row MUST appear once as a context row; a context row's own parent value is read through the parent column's field path when its note type declares that field.
+- `CM-592` A context row MUST present the view's projections evaluated on its note and MUST be distinguishable from result rows; among its siblings it takes the portable-query position of its earliest result-row descendant, before a result row at the same position, with ties between context rows broken by path in code-point order.
+- `CM-445` Presentation MUST NOT add, remove, duplicate, or reorder result rows except for the board partition defined by `CM-439` through `CM-444` the lanes defined by `CM-568` through `CM-572`, the rank order defined by `CM-578`, and the tree arrangement defined by `CM-584` through `CM-592`.
+- `CM-446` Tools MAY choose visual styling, dimensions, controls, and value widgets beyond the layout family, field order, labels, grouping, board partition, and tree arrangement defined here.
+- `CM-447` Cursor position, selection, collapsed groups or tree rows, scroll offsets, temporary filters, and other per-session state MUST NOT alter the saved-view artifact's portable result.
 - `CM-448` A read-only projected or computed value MUST NOT become writable merely because a saved view presents or groups by it.
-- `CM-523` A saved view MUST NOT perform a write through any presented column, except the board moves defined by `CM-576` through `CM-581`.
+- `CM-523` A saved view MUST NOT perform a write through any presented column, except the board moves defined by `CM-576` through `CM-581` and the tree moves defined by `CM-593` through `CM-595`.
 - `CM-576` `presentation.board.writable` MAY be `true` only when `presentation.board.column` is a `field` projection of a top-level field that `set_field` could target on every admitted note type under `MN-163` and `MN-164`.
 - `CM-577` On a writable board, moving a row into another declared column MUST write that column's value to the row's note as an ordinary `set_field` write, subject to automation and validation like any other edit.
 - `CM-578` `presentation.board.rank` MAY name a `field` projection of a top-level `number` field; rows within each column are then ordered by ascending rank, rows without a rank after ranked rows, and ties in portable-query order.
 - `CM-579` On a writable board with a rank, the rank field MUST be assignable as `CM-576` requires, and a move MUST give the moved row a rank strictly between its new neighbours' ranks, below the first, or above the last.
 - `CM-580` When no such rank is representable, a writer MAY first renumber that column's ranks in their current order.
 - `CM-581` A board move MUST NOT target the unmapped column or change a row's lane.
+- `CM-593` `presentation.tree.writable` MAY be `true` only when `presentation.tree.parent` is a `field` projection of a top-level `link` field that `set_field` and `unset_field` could target on every admitted note type under `MN-163` and `MN-164`.
+- `CM-594` On a writable tree, moving a row under another row MUST write a link resolving to that row's note as an ordinary `set_field` write, and moving it to the root level MUST remove the field with `unset_field`, each subject to automation and validation like any other edit.
+- `CM-595` A tree move MUST NOT place a row under itself or one of its descendants, and MUST NOT move a context row.
 - `CM-449` Every note type, field path, projection alias, and board value referenced by a saved view MUST remain valid against the effective collection model.
 - `CM-450` A system release that renames or removes a saved-view reference MUST update or retire the affected saved view in the same release.
 - `CM-451` A saved-view shape, reference-resolution, query-evaluation, or presentation-semantics failure MUST be an `invalid_view` failure.

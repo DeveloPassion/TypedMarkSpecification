@@ -62,7 +62,8 @@
             "table",
             "list",
             "cards",
-            "board"
+            "board",
+            "tree"
           ]
         },
         "fields": {
@@ -74,6 +75,9 @@
         },
         "board": {
           "$ref": "#/$defs/board"
+        },
+        "tree": {
+          "$ref": "#/$defs/tree"
         }
       },
       "additionalProperties": false,
@@ -98,6 +102,31 @@
             "not": {
               "required": [
                 "board"
+              ]
+            }
+          }
+        },
+        {
+          "$comment": "CM-582",
+          "if": {
+            "properties": {
+              "layout": {
+                "const": "tree"
+              }
+            },
+            "required": [
+              "layout"
+            ]
+          },
+          "then": {
+            "required": [
+              "tree"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "tree"
               ]
             }
           }
@@ -151,6 +180,32 @@
         "rank": {
           "$comment": "A projected number field ordering rows within each column (CM-578).",
           "$ref": "defs.schema.json#/$defs/field_name"
+        }
+      },
+      "additionalProperties": false
+    },
+    "tree": {
+      "$comment": "Rows under their parents through a projected link column (CM-583); link-typed projection and assignability are semantic.",
+      "type": "object",
+      "required": [
+        "parent"
+      ],
+      "properties": {
+        "parent": {
+          "$ref": "defs.schema.json#/$defs/field_name"
+        },
+        "context": {
+          "$comment": "Out-of-result ancestors as read-only context rows (CM-590, CM-591).",
+          "enum": [
+            "none",
+            "ancestors"
+          ],
+          "default": "none"
+        },
+        "writable": {
+          "$comment": "Moves write or remove the parent link (CM-593, CM-594).",
+          "type": "boolean",
+          "default": false
         }
       },
       "additionalProperties": false
