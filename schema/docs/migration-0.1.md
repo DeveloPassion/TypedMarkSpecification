@@ -93,6 +93,7 @@ No migration is needed; each item is new optional syntax.
 | `from_date` date-part fields | [Expressions](../../expressions.md#from_date) |
 | Writable boards (`presentation.board.writable`) and a `rank` field | [Saved Views](../../datasets-and-views.md#saved-views) |
 | Tree layout (`presentation.tree`) with context ancestors and writable parent moves | [Saved Views](../../datasets-and-views.md#saved-views) |
+| Calendar and timeline layouts (`presentation.calendar`, `presentation.timeline`) with backlogs and writable date moves | [Saved Views](../../datasets-and-views.md#saved-views) |
 | `typedmark:effective-schema` export documents | [Effective Schema Export](../../effective-schema.md) |
 
 ## Ledger discipline and verification

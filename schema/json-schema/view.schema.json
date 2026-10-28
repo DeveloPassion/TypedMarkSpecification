@@ -63,7 +63,9 @@
             "list",
             "cards",
             "board",
-            "tree"
+            "tree",
+            "calendar",
+            "timeline"
           ]
         },
         "fields": {
@@ -78,6 +80,12 @@
         },
         "tree": {
           "$ref": "#/$defs/tree"
+        },
+        "calendar": {
+          "$ref": "#/$defs/calendar"
+        },
+        "timeline": {
+          "$ref": "#/$defs/timeline"
         }
       },
       "additionalProperties": false,
@@ -102,6 +110,56 @@
             "not": {
               "required": [
                 "board"
+              ]
+            }
+          }
+        },
+        {
+          "$comment": "CM-596",
+          "if": {
+            "properties": {
+              "layout": {
+                "const": "calendar"
+              }
+            },
+            "required": [
+              "layout"
+            ]
+          },
+          "then": {
+            "required": [
+              "calendar"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "calendar"
+              ]
+            }
+          }
+        },
+        {
+          "$comment": "CM-596",
+          "if": {
+            "properties": {
+              "layout": {
+                "const": "timeline"
+              }
+            },
+            "required": [
+              "layout"
+            ]
+          },
+          "then": {
+            "required": [
+              "timeline"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "timeline"
               ]
             }
           }
@@ -204,6 +262,72 @@
         },
         "writable": {
           "$comment": "Moves write or remove the parent link (CM-593, CM-594).",
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "calendar": {
+      "$comment": "Rows on the days of one or more date dimensions (CM-597 to CM-600); date typing and assignability are semantic.",
+      "type": "object",
+      "required": [
+        "dates"
+      ],
+      "properties": {
+        "dates": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/calendar_date"
+          }
+        },
+        "backlog": {
+          "type": "boolean",
+          "default": false
+        },
+        "writable": {
+          "$comment": "Moves write or remove one date (CM-605, CM-606).",
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "calendar_date": {
+      "type": "object",
+      "required": [
+        "column"
+      ],
+      "properties": {
+        "column": {
+          "$ref": "defs.schema.json#/$defs/field_name"
+        },
+        "label": {
+          "$ref": "defs.schema.json#/$defs/non_empty_string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "timeline": {
+      "$comment": "Rows as spans from start to an optional end (CM-601 to CM-604); date typing and assignability are semantic.",
+      "type": "object",
+      "required": [
+        "start"
+      ],
+      "properties": {
+        "start": {
+          "$ref": "defs.schema.json#/$defs/field_name"
+        },
+        "end": {
+          "$ref": "defs.schema.json#/$defs/field_name"
+        },
+        "backlog": {
+          "type": "boolean",
+          "default": false
+        },
+        "writable": {
+          "$comment": "Moves shift or resize the span (CM-605, CM-607).",
           "type": "boolean",
           "default": false
         }

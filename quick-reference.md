@@ -41,7 +41,7 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | Propagation | Deterministic multi-wave automation execution that commits only at a valid fixed point | [Managed Notes and Properties](automation-runtime.md#dependency-propagation-and-consistency) |
 | Portable query | A plain-JSON, read-only descriptor for filtering managed notes and projecting deterministic result rows | [Portable Queries](queries.md#portable-queries) |
 | Dataset | A governed reusable query with stable row identity and a common projected column contract across note types | [Datasets](datasets-and-views.md#datasets) |
-| Saved view | A governed presentation over an embedded portable query or referenced dataset, using a table, list, cards, board, or tree layout | [Saved Views](datasets-and-views.md#saved-views) |
+| Saved view | A governed presentation over an embedded portable query or referenced dataset, using a table, list, cards, board, tree, calendar, or timeline layout | [Saved Views](datasets-and-views.md#saved-views) |
 | Template region | Marker-delimited static Markdown with a per-note baseline receipt for portable three-way drift detection | [Template Drift Tracking](template-tracking.md#template-drift-tracking) |
 | Content expansion | Marker-delimited plain Markdown derived from a declared source, with automatic, manual, once, and ejectable modes | [Content Expansion](content-expansion.md#content-expansion) |
 
@@ -82,10 +82,11 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | let automation changes trigger further rules safely | propagation mode with `automation_defaults.max_propagation_waves` | [Dependency propagation](automation-runtime.md#dependency-propagation-and-consistency) |
 | select, filter, sort, group, or limit managed notes portably | a portable query descriptor with `where`, `select`, `order_by`, `group_by`, and `limit` | [Portable Queries](queries.md#portable-queries) |
 | reuse one multi-type result in several presentations | a dataset artifact under `<metadata_directory>/datasets/` and saved views that reference it | [Datasets](datasets-and-views.md#datasets) |
-| save and share a table, list, cards, board, or tree view | a saved-view artifact under `<metadata_directory>/views/` | [Saved Views](datasets-and-views.md#saved-views) |
+| save and share a table, list, cards, board, tree, calendar, or timeline view | a saved-view artifact under `<metadata_directory>/views/` | [Saved Views](datasets-and-views.md#saved-views) |
 | split a board into swimlanes (per project, area, or type) | `presentation.board.lanes.column` | [Saved Views](datasets-and-views.md#saved-views) |
 | move cards between columns and order them by hand | `presentation.board.writable: true` and `rank: manual_order` | [Saved Views](datasets-and-views.md#saved-views) |
 | show tasks under their parent tasks and projects (work breakdown) | `layout: tree` with `tree.parent`, `context: ancestors`, `writable: true` | [Saved Views](datasets-and-views.md#saved-views) |
+| see tasks on their scheduled and due days, or as spans on a plan | `layout: calendar` with `calendar.dates`, or `layout: timeline` with `start`/`end` | [Saved Views](datasets-and-views.md#saved-views) |
 | show only this project's tasks with one shared dataset | a relationship predicate with `context_note: true` | [Portable Queries](queries.md#relationship-predicates) |
 | build a readable Markdown dashboard from datasets or saved views | one or more dataset- or view-backed content expansions in an ordinary note | [Content Expansion](content-expansion.md#content-expansion) |
 | detect and reconcile static template changes without overwriting note edits | `typedmark:template-region` markers plus `template_regions` baseline receipts | [Template Drift Tracking](template-tracking.md#template-drift-tracking) |

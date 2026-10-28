@@ -83,7 +83,7 @@ descriptors are covered by their descriptor schemas, and the core-defined
   mapped source shapes; ordering, grouping, count-range, and limit shapes
 - dataset keys, nested query shape, row-identity grammar, and saved-view keys,
   embedded-query or dataset-reference exclusivity, presented-field entries,
-  layout families, and board- and tree-layout configuration
+  layout families, and board-, tree-, calendar-, and timeline-layout configuration
 - template-region descriptor keys and identifier grammar, plus baseline and
   detached receipt variants in a managed note's `template_regions` value
 - Core field types and compatible declaration constraints, including the ban
@@ -154,8 +154,9 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
   reference resolution, and schema-evolution compatibility
 - saved-view semantics: query or dataset version agreement, projection-reference resolution,
   visible-field uniqueness, layout interpretation, explicit board-column equality,
-  fallback-column placement, tree parent link projections and writable
-  assignability, schema-evolution compatibility, and Bases conversion
+  fallback-column placement, tree parent link projections, calendar and
+  timeline date projections, writable assignability, schema-evolution
+  compatibility, and Bases conversion
   loss diagnostics
 - template-region semantics: marker parsing and pairing, nesting boundaries,
   marker-to-receipt correspondence, region extraction, digest calculation,

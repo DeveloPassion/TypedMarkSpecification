@@ -12,7 +12,7 @@ Audience: collection authors and tool authors sharing query results and presenta
 Authoritative for:
 
 - reusable dataset artifacts, row identity, and the common projected column contract
-- saved-view artifacts and portable table, list, cards, board, and tree presentations
+- saved-view artifacts and portable table, list, cards, board, tree, calendar, and timeline presentations
 - Obsidian Bases interoperability
 
 See also:
@@ -236,6 +236,56 @@ presentation:
 Projects above the listed tasks appear as read-only context rows.
 ```
 
+A calendar places rows on the days of their dates. Several date fields can be
+plotted together, so a task shows on the day it is scheduled and on the day it
+is due, each entry labelled with its dimension. A backlog lists the rows a
+dimension has no date for, and a writable calendar turns a drop on another day,
+or on the backlog, into a write of that one date:
+
+<!-- typedmark-example: artifact=view -->
+```markdown
+---
+specification_version: 0.1.0
+view: task-calendar
+description: Open tasks on their scheduled and due days.
+query:
+  specification_version: 0.1.0
+  note_types: [task]
+  select:
+    - {kind: field, field: title, as: title}
+    - {kind: field, field: scheduled, as: scheduled}
+    - {kind: field, field: due, as: due}
+presentation:
+  layout: calendar
+  fields:
+    - {column: title, label: Task}
+  calendar:
+    dates:
+      - {column: scheduled, label: Scheduled}
+      - {column: due, label: Due}
+    backlog: true
+    writable: true
+---
+
+Undated tasks wait in the backlog of each dimension.
+```
+
+A timeline draws each row as a span from a start to an optional end, one row
+per line, the way a project plan does. Moving a span shifts both dates by the
+same number of days; resizing writes only the end that moved:
+
+<!-- typedmark-example: fragment: A writable timeline over start and end dates. -->
+```yaml
+layout: timeline
+fields:
+  - {column: title}
+timeline:
+  start: start
+  end: end
+  backlog: true
+  writable: true
+```
+
 Rules:
 
 - `CM-408` `<metadata_directory>/views/` MAY be omitted when the collection defines no saved views.
@@ -257,15 +307,15 @@ Rules:
 - `CM-520` A present `dataset` MUST resolve to exactly one artifact under `<metadata_directory>/datasets/`.
 - `CM-521` A referenced dataset's `specification_version` MUST equal the saved view's top-level `specification_version`.
 - `CM-522` A dataset-backed saved view MUST use the referenced dataset's projected column contract without changing its query, membership, values, ordering, grouping, limit, or row identity.
-- `CM-422` `presentation.layout` MUST be exactly `table`, `list`, `cards`, `board`, or `tree`.
+- `CM-422` `presentation.layout` MUST be exactly `table`, `list`, `cards`, `board`, `tree`, `calendar`, or `timeline`.
 - `CM-423` `presentation.fields` MUST be a non-empty ordered list.
 - `CM-424` Every `presentation.fields` entry MUST contain `column`.
 - `CM-466` A `presentation.fields` entry's `label`, if present, MUST be non-empty.
 - `CM-425` Every presented `column` MUST resolve to exactly one alias in the saved view's embedded query or referenced dataset query.
 - `CM-426` Presented `column` values MUST be unique within one saved view.
 - `CM-427` A presented field's display name MUST be its `label` when present and its `column` alias otherwise.
-- `CM-428` For `list`, `cards`, `board`, and `tree`, the first presented field MUST be the primary field.
-- `CM-467` Later presented fields in `list`, `cards`, `board`, and `tree` MUST retain declared order as secondary fields.
+- `CM-428` For every layout other than `table`, the first presented field MUST be the primary field.
+- `CM-467` Later presented fields in every layout other than `table` MUST retain declared order as secondary fields.
 - `CM-429` A `table` layout MUST present one result row per table row and one presented field per table column in declared order.
 - `CM-430` A `list` layout MUST present one result row per list entry.
 - `CM-431` A `cards` layout MUST present one result row per card.
@@ -301,11 +351,20 @@ Rules:
 - `CM-590` `presentation.tree.context` MAY be omitted, MUST be `none` or `ancestors` when present, and defaults to `none`.
 - `CM-591` With `context: ancestors`, every non-deleted managed note outside the result that is a resolved target of the parent field of a row or of another context row MUST appear once as a context row; a context row's own parent value is read through the parent column's field path when its note type declares that field.
 - `CM-592` A context row MUST present the view's projections evaluated on its note and MUST be distinguishable from result rows; among its siblings it takes the portable-query position of its earliest result-row descendant, before a result row at the same position, with ties between context rows broken by path in code-point order.
-- `CM-445` Presentation MUST NOT add, remove, duplicate, or reorder result rows except for the board partition defined by `CM-439` through `CM-444` the lanes defined by `CM-568` through `CM-572`, the rank order defined by `CM-578`, and the tree arrangement defined by `CM-584` through `CM-592`.
-- `CM-446` Tools MAY choose visual styling, dimensions, controls, and value widgets beyond the layout family, field order, labels, grouping, board partition, and tree arrangement defined here.
-- `CM-447` Cursor position, selection, collapsed groups or tree rows, scroll offsets, temporary filters, and other per-session state MUST NOT alter the saved-view artifact's portable result.
+- `CM-596` A `calendar` layout MUST contain `presentation.calendar`, a `timeline` layout MUST contain `presentation.timeline`, and every other layout MUST omit each of them.
+- `CM-597` Every `presentation.calendar.dates` entry MUST resolve to exactly one projected column whose field definitions are `date` or `datetime` on every admitted note type, and the entries' columns MUST be unique.
+- `CM-598` A calendar MUST present one entry per row and non-null date dimension, on the day of that value; a `datetime` falls on its day in the collection timezone.
+- `CM-599` Entries on one day MUST keep portable-query order, one row's entries on that day MUST follow declared dimension order, and every entry MUST show its dimension's `label`, or its `column` when `label` is omitted.
+- `CM-600` `presentation.calendar.backlog` MAY be omitted and defaults to `false`; when `true`, every row whose value for a dimension is null MUST be listed in that dimension's backlog in portable-query order.
+- `CM-601` `presentation.timeline.start` MUST resolve to exactly one projected column whose field definitions are `date` or `datetime` on every admitted note type, and a present `presentation.timeline.end` MUST resolve to another such column.
+- `CM-602` A timeline MUST present one span per row with a non-null start, in portable-query order, from its start to its end; a `date` start begins its day and a `date` end ends its day in the collection timezone.
+- `CM-603` A row without an `end` column, with a null end, or with a reversed end MUST be presented as a span covering only its start, a whole day for a `date`; a `date` end is reversed when its day precedes the day its start begins on, and a `datetime` end when its instant precedes the start.
+- `CM-604` `presentation.timeline.backlog` MAY be omitted and defaults to `false`; when `true`, every row whose start is null MUST be listed in the timeline backlog in portable-query order.
+- `CM-445` Presentation MUST NOT add, remove, duplicate, or reorder result rows except for the board partition defined by `CM-439` through `CM-444` the lanes defined by `CM-568` through `CM-572`, the rank order defined by `CM-578`, the tree arrangement defined by `CM-584` through `CM-592`, and the calendar and timeline placement defined by `CM-598` through `CM-604`.
+- `CM-446` Tools MAY choose visual styling, dimensions, controls, and value widgets beyond the layout family, field order, labels, grouping, board partition, tree arrangement, and calendar and timeline placement defined here.
+- `CM-447` Cursor position, selection, collapsed groups or tree rows, visible date ranges and zoom, scroll offsets, temporary filters, and other per-session state MUST NOT alter the saved-view artifact's portable result.
 - `CM-448` A read-only projected or computed value MUST NOT become writable merely because a saved view presents or groups by it.
-- `CM-523` A saved view MUST NOT perform a write through any presented column, except the board moves defined by `CM-576` through `CM-581` and the tree moves defined by `CM-593` through `CM-595`.
+- `CM-523` A saved view MUST NOT perform a write through any presented column, except the board moves defined by `CM-576` through `CM-581`, the tree moves defined by `CM-593` through `CM-595`, and the calendar and timeline moves defined by `CM-605` through `CM-608`.
 - `CM-576` `presentation.board.writable` MAY be `true` only when `presentation.board.column` is a `field` projection of a top-level field that `set_field` could target on every admitted note type under `MN-163` and `MN-164`.
 - `CM-577` On a writable board, moving a row into another declared column MUST write that column's value to the row's note as an ordinary `set_field` write, subject to automation and validation like any other edit.
 - `CM-578` `presentation.board.rank` MAY name a `field` projection of a top-level `number` field; rows within each column are then ordered by ascending rank, rows without a rank after ranked rows, and ties in portable-query order.
@@ -315,6 +374,10 @@ Rules:
 - `CM-593` `presentation.tree.writable` MAY be `true` only when `presentation.tree.parent` is a `field` projection of a top-level `link` field that `set_field` and `unset_field` could target on every admitted note type under `MN-163` and `MN-164`.
 - `CM-594` On a writable tree, moving a row under another row MUST write a link resolving to that row's note as an ordinary `set_field` write, and moving it to the root level MUST remove the field with `unset_field`, each subject to automation and validation like any other edit.
 - `CM-595` A tree move MUST NOT place a row under itself or one of its descendants, and MUST NOT move a context row.
+- `CM-605` `presentation.calendar.writable` or `presentation.timeline.writable` MAY be `true` only when every date dimension, or the timeline's `start` and any `end`, is a `field` projection of a top-level `date` or `datetime` field that `set_field` and `unset_field` could target on every admitted note type under `MN-163` and `MN-164`.
+- `CM-606` On a writable calendar, moving an entry to another day MUST write that day to the entry's dimension field, and moving it to the backlog MUST remove that field with `unset_field`, each as an ordinary edit subject to automation and validation.
+- `CM-607` On a writable timeline, moving a span MUST shift its start and any non-null end by the same number of days, resizing MUST write only the moved endpoint and MUST NOT reverse the end under `CM-603`, and moving a row to the backlog MUST remove its start with `unset_field`, each as an ordinary edit subject to automation and validation.
+- `CM-608` A moved `datetime` MUST keep its wall-clock time in the collection timezone and its stored form, floating or with an explicit offset recomputed for the new instant, and a move whose new wall-clock time is skipped or repeated in the collection timezone MUST be refused.
 - `CM-449` Every note type, field path, projection alias, and board value referenced by a saved view MUST remain valid against the effective collection model.
 - `CM-450` A system release that renames or removes a saved-view reference MUST update or retire the affected saved view in the same release.
 - `CM-451` A saved-view shape, reference-resolution, query-evaluation, or presentation-semantics failure MUST be an `invalid_view` failure.
