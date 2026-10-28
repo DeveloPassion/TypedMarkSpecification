@@ -61,6 +61,7 @@ const SPEC_PAGES = [
   "field-definition-reference.md",
   "field-conversions.md",
   "note-retyping.md",
+  "edits-and-renames.md",
   "effective-schema.md",
   "managed-notes-and-properties.md",
   "note-links.md",

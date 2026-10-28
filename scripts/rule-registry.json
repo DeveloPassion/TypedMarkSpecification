@@ -13,7 +13,8 @@
     "EXT": { "page": "extensions.md", "last": 30 },
     "RT": { "page": "note-retyping.md", "last": 20 },
     "ES": { "page": "effective-schema.md", "last": 10 },
-    "QRY": { "page": "queries.md", "last": 2 }
+    "QRY": { "page": "queries.md", "last": 2 },
+    "ER": { "page": "edits-and-renames.md", "last": 15 }
   },
   "relocations": {
     "FDR-249": "field-conversions.md",

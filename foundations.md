@@ -315,6 +315,7 @@ The authoritative contract for each governed element and cross-tool runtime surf
 | Field definitions | [Field Reference](field-definition-reference.md) |
 | Field conversion | [Conversions](field-conversions.md) |
 | Note re-typing | [Re-typing](note-retyping.md) |
+| Edit fidelity, renames, re-filing | [Edits and Renames](edits-and-renames.md) |
 | Effective-schema export | [Export](effective-schema.md) |
 | Links | [Note Links](note-links.md) |
 | Relationships and headings | [Body Contracts](relationships-headings-and-templates.md) |

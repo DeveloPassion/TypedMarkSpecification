@@ -54,6 +54,7 @@ New here? Read the [Manifesto](manifesto.md) for the why, then follow [Getting S
 - [Field Definition Reference](field-definition-reference.md): every property a field can declare
 - [Field Compatibility and Conversion](field-conversions.md): an optional shared contract for queries, datasets, and migrations
 - [Note Re-typing](note-retyping.md): converting a note to another type without losing information
+- [Edits and Renames](edits-and-renames.md): edits that keep untouched formatting, and renames that keep links working
 - [Effective Schema Export](effective-schema.md): a resolved note type, with field provenance, for agents and tools
 - [Managed Notes and Properties](managed-notes-and-properties.md): managed-note metadata and field materialization
 - [Note Links](note-links.md): how links between notes are written and resolved
