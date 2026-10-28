@@ -30,10 +30,18 @@ const CORE_PAGES = [
   "conformance-and-roadmap.md",
 ];
 const REUSE_PAGES = ["schema-reuse.md", "property-sets.md"];
-// Core budgets keep the essentials readable. Raised from 600 rules / 20,000
-// words (set by the #123 refocus) to make room for typed relationships (#137).
+// The Core Profile reading path in index.md. Extensions and Conformance are on
+// the tool-author path: their rules count toward the Core budget, not their words.
+const CORE_PROFILE_PATH = [
+  "manifesto.md",
+  "getting-started.md",
+  ...CORE_PAGES.filter((page) => page !== "extensions.md" && page !== "conformance-and-roadmap.md"),
+];
+// Core budgets keep the essentials readable. Rules were raised from 600 to 650
+// for typed relationships (#137); the reading path measures the Core Profile
+// path only, at the 20,000 words set by the #123 refocus (#176).
 const CORE_RULE_BUDGET = 650;
-const READING_WORD_BUDGET = 21500;
+const READING_WORD_BUDGET = 20000;
 
 export interface RuleRegistry {
   prefixes: Record<string, { page: string; last: number }>;
@@ -210,10 +218,7 @@ function main(): number {
   const countRules = (pages: string[]) => pages.reduce((total, page) => total + ruleLines(documents[page] ?? "").length, 0);
   const coreCount = countRules(CORE_PAGES);
   const reuseCount = countRules(REUSE_PAGES);
-  const readingWords = [...CORE_PAGES, "manifesto.md", "getting-started.md"].reduce(
-    (total, page) => total + (documents[page]?.trim().split(/\s+/u).length ?? 0),
-    0,
-  );
+  const readingWords = CORE_PROFILE_PATH.reduce((total, page) => total + (documents[page]?.trim().split(/\s+/u).length ?? 0), 0);
   if (coreCount > CORE_RULE_BUDGET) failures.push(`Core budget: ${coreCount} rules exceeds ${CORE_RULE_BUDGET}`);
   if (reuseCount > 100) failures.push(`Reuse budget: ${reuseCount} rules exceeds 100`);
   if (readingWords > READING_WORD_BUDGET) failures.push(`Core reading-path budget: ${readingWords} words exceeds ${READING_WORD_BUDGET}`);
