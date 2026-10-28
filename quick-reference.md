@@ -64,6 +64,7 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | list a project's tasks or a task's prerequisites | `relationship_kind: contains` or `depends_on` (no cycles) | [Relationship Model](relationships-headings-and-templates.md#relationship-model) |
 | file notes by date, quarter, or week | `{field:format}` over a stored/effective date field | [Storage rules](note-type-schemas.md#storage-rules) |
 | store a periodic note's year, quarter, month, or week from its date | `from_date: {field: date, part: GGGG}` | [Expressions](expressions.md#from_date) |
+| link a periodic note to its week or month note | `from_date` or `computed` name + `self_field` expansion | [Expressions](expressions.md#links-to-enclosing-periods) |
 | keep companion notes beside their parent (`Projects/Launch/Decisions.md`) | `{project:folder}/{project:name}` over a single note-link field | [Storage rules](note-type-schemas.md#storage-rules) |
 | add a required name suffix | `note_name_suffix.pattern` | [Storage rules](note-type-schemas.md#storage-rules) |
 | accept names with or without a decorative suffix, titled without it | `note_name_suffix: {pattern: " (Permanent)", optional: true}` | [Storage rules](note-type-schemas.md#storage-rules) |

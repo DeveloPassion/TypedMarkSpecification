@@ -1,0 +1,27 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {"typedmark:expressions": "0.1.0", "typedmark:expansion": "0.1.0"},
+  "evaluated_extensions": {"typedmark:expressions": "0.1.0", "typedmark:expansion": "0.1.0"},
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_field_value",
+      "severity": "error",
+      "path": "Daily/2026/2025-12-29.md",
+      "rule_id": "FDR-234",
+      "message": "Stored computed value differs from its expression",
+      "note_type": "daily",
+      "field": "week_note"
+    },
+    {
+      "code": "expansion_drift",
+      "severity": "error",
+      "path": "Weekly/2026/2026-W01.md",
+      "rule_id": "RHT-164",
+      "message": "Stored expansion differs from current rendered source",
+      "expansion": "month"
+    }
+  ]
+}

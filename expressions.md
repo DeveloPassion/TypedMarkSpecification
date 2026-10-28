@@ -97,6 +97,37 @@ Rules:
 - `FDR-297` When the source has no non-null effective value, the derived value is null.
 - `FDR-298` Writers MUST store the derived value as `FDR-233` requires for `computed`, and a stored value differing from it is an `invalid_field_value` failure.
 
+### Links to Enclosing Periods
+
+Periodic notes usually link to the notes of the periods that contain them.
+Those notes are named from their own dates, so a `from_date` part, or a
+`computed` field joining parts, yields the target's name, and a `self_field`
+[content expansion](content-expansion.md#sources-and-rendering) renders it as a
+link. A daily note on 2025-12-29 belongs to week `2026-W01` but to month
+`2025-12`:
+
+<!-- typedmark-example: fragment: Daily-note fields naming its week and month notes. -->
+```yaml
+date: {type: date, nullable: false}
+iso_year: {type: text, from_date: {field: date, part: GGGG}}
+week: {type: text, from_date: {field: date, part: WW}}
+week_note: {type: text, computed: '${iso_year}-W${week}'}
+month_note: {type: text, from_date: {field: date, part: YYYY-MM}}
+```
+
+<!-- typedmark-example: body: Materialized expansion rendering the week-note link. -->
+```markdown
+<!-- typedmark:expansion {"id":"week","mode":"auto","state":"materialized","source":{"kind":"self_field","field":"week_note"},"render":{"item":"[[${value}]]"}} -->
+[[2026-W01]]
+<!-- /typedmark:expansion -->
+```
+
+The rendered name matches the target type's `note_name_pattern` by convention
+only, and the link is body text, not a relationship: queries use the stored
+parts instead. A week that ends in another month, and links to the previous or
+next period, need date arithmetic, which the expression language does not
+define (`FND-70`).
+
 ## Shared Expression Language
 
 Several governed surfaces need to derive values from structured data. Rather than defining separate mini-languages for each feature, TypedMark defines one shared expression language and lets each consumer define its own input scope, required result type, and evaluation timing.
