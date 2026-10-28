@@ -264,9 +264,97 @@
           "$comment": "Moves write or remove the parent link (CM-593, CM-594).",
           "type": "boolean",
           "default": false
+        },
+        "rollups": {
+          "$comment": "Display-only values derived from children (CM-609 to CM-616); column typing and uniqueness are semantic.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/tree_rollup"
+          }
         }
       },
       "additionalProperties": false
+    },
+    "tree_rollup": {
+      "type": "object",
+      "required": [
+        "column",
+        "aggregate"
+      ],
+      "properties": {
+        "column": {
+          "$ref": "defs.schema.json#/$defs/field_name"
+        },
+        "aggregate": {
+          "enum": [
+            "sum",
+            "min",
+            "max",
+            "count",
+            "weighted_mean"
+          ]
+        },
+        "weight": {
+          "$ref": "defs.schema.json#/$defs/field_name"
+        },
+        "state": {
+          "$ref": "defs.schema.json#/$defs/field_name"
+        },
+        "done_value": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false,
+      "dependentRequired": {
+        "state": [
+          "done_value"
+        ],
+        "done_value": [
+          "state"
+        ]
+      },
+      "allOf": [
+        {
+          "$comment": "CM-611",
+          "if": {
+            "properties": {
+              "aggregate": {
+                "const": "weighted_mean"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "weight"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "weight"
+              ]
+            }
+          }
+        },
+        {
+          "$comment": "CM-615",
+          "if": {
+            "properties": {
+              "aggregate": {
+                "const": "count"
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "required": [
+                "done_value"
+              ]
+            }
+          }
+        }
+      ]
     },
     "calendar": {
       "$comment": "Rows on the days of one or more date dimensions (CM-597 to CM-600); date typing and assignability are semantic.",

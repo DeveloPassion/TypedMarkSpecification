@@ -154,9 +154,9 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
   reference resolution, and schema-evolution compatibility
 - saved-view semantics: query or dataset version agreement, projection-reference resolution,
   visible-field uniqueness, layout interpretation, explicit board-column equality,
-  fallback-column placement, tree parent link projections, calendar and
-  timeline date projections, writable assignability, schema-evolution
-  compatibility, and Bases conversion
+  fallback-column placement, tree parent link projections and rollup
+  columns, calendar and timeline date projections, writable assignability,
+  schema-evolution compatibility, and Bases conversion
   loss diagnostics
 - template-region semantics: marker parsing and pairing, nesting boundaries,
   marker-to-receipt correspondence, region extraction, digest calculation,

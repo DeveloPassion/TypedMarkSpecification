@@ -236,6 +236,22 @@ presentation:
 Projects above the listed tasks appear as read-only context rows.
 ```
 
+A tree can also roll values up from children, as a work breakdown sums
+estimates and averages progress. A row's own value wins; a row without one
+shows the value derived from its children, counting a task listed under two
+of its subtasks once. Progress can be weighted by the
+estimates, and done rows can count as finished whatever they store. Rolled-up
+values are presentation only: nothing is written back:
+
+<!-- typedmark-example: fragment: Tree rollups of estimates and weighted progress. -->
+```yaml
+tree:
+  parent: parent
+  rollups:
+    - {column: estimate, aggregate: sum}
+    - {column: progress, aggregate: weighted_mean, weight: estimate, state: status, done_value: 100}
+```
+
 A calendar places rows on the days of their dates. Several date fields can be
 plotted together, so a task shows on the day it is scheduled and on the day it
 is due, each entry labelled with its dimension. A backlog lists the rows a
@@ -374,6 +390,14 @@ Rules:
 - `CM-593` `presentation.tree.writable` MAY be `true` only when `presentation.tree.parent` is a `field` projection of a top-level `link` field that `set_field` and `unset_field` could target on every admitted note type under `MN-163` and `MN-164`.
 - `CM-594` On a writable tree, moving a row under another row MUST write a link resolving to that row's note as an ordinary `set_field` write, and moving it to the root level MUST remove the field with `unset_field`, each subject to automation and validation like any other edit.
 - `CM-595` A tree move MUST NOT place a row under itself or one of its descendants, and MUST NOT move a context row.
+- `CM-609` `presentation.tree.rollups` MAY be omitted; a present list MUST be non-empty, and each entry's `column` MUST be a unique presented column.
+- `CM-610` A rollup's `aggregate` MUST be `sum`, `min`, `max`, `count`, or `weighted_mean`, and except for `count` its column MUST project `integer` or `number` fields on every admitted note type.
+- `CM-611` A `weighted_mean` MUST name a `weight` resolving to another projected `integer` or `number` column whose own rollup, if any, is not a `weighted_mean`, and every other aggregate MUST omit `weight`.
+- `CM-612` For `sum`, `min`, `max`, and `weighted_mean`, an occurrence's contributors are itself when it has a non-null own value and otherwise the rows contributing to its child occurrences, each row counted once from its first occurrence in tree order; its rolled-up value aggregates its contributors' own values, or is null when it has none.
+- `CM-613` A `weighted_mean` weights each contributor by the weight column's rolled-up value at that contributor's occurrence when the tree rolls that column up and by its own value otherwise, counts a null weight as zero, and takes the unweighted mean when the weights total zero.
+- `CM-614` A `count` is the number of distinct result rows with a non-null value in the occurrence's subtree, the occurrence included.
+- `CM-615` A rollup other than `count` MAY supply a number `done_value` together with `state`, a projected column whose field declares `states` on every admitted note type; a row whose `state` value is annotated `done: true` then has `done_value` as its own value for that rollup.
+- `CM-616` A rolled-up value MUST replace the occurrence's presented value for its column, MUST NOT be written to any note, and SHOULD be marked when it comes from children rather than the row's own value.
 - `CM-605` `presentation.calendar.writable` or `presentation.timeline.writable` MAY be `true` only when every date dimension, or the timeline's `start` and any `end`, is a `field` projection of a top-level `date` or `datetime` field that `set_field` and `unset_field` could target on every admitted note type under `MN-163` and `MN-164`.
 - `CM-606` On a writable calendar, moving an entry to another day MUST write that day to the entry's dimension field, and moving it to the backlog MUST remove that field with `unset_field`, each as an ordinary edit subject to automation and validation.
 - `CM-607` On a writable timeline, moving a span MUST shift its start and any non-null end by the same number of days, resizing MUST write only the moved endpoint and MUST NOT reverse the end under `CM-603`, and moving a row to the backlog MUST remove its start with `unset_field`, each as an ordinary edit subject to automation and validation.

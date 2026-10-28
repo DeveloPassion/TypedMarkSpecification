@@ -1,0 +1,14 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {"typedmark:queries": "0.1.0", "typedmark:views": "0.1.0"},
+  "evaluated_extensions": {"typedmark:queries": "0.1.0", "typedmark:views": "0.1.0"},
+  "valid": false,
+  "results": [
+    {"code": "invalid_view", "severity": "error", "path": ".typedmark/views/hidden-rollup.md", "rule_id": "CM-609", "message": "The rollup column is not presented.", "view": "hidden-rollup"},
+    {"code": "invalid_view", "severity": "error", "path": ".typedmark/views/self-weight.md", "rule_id": "CM-611", "message": "The weight repeats the rolled-up column.", "view": "self-weight"},
+    {"code": "invalid_view", "severity": "error", "path": ".typedmark/views/stateless-done.md", "rule_id": "CM-615", "message": "The state column declares no states.", "view": "stateless-done"},
+    {"code": "invalid_view", "severity": "error", "path": ".typedmark/views/text-sum.md", "rule_id": "CM-610", "message": "A sum needs a number column.", "view": "text-sum"}
+  ]
+}
