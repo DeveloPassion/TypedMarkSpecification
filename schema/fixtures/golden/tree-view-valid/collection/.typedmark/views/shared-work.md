@@ -1,7 +1,7 @@
 ---
 specification_version: 0.1.0
 view: shared-work
-description: Tasks under every parent they list, read-only.
+description: Tasks under every parent they list; a move changes one occurrence.
 query:
   specification_version: 0.1.0
   note_types: [task]
@@ -14,4 +14,5 @@ presentation:
     - {column: path}
   tree:
     parent: parents
+    writable: true
 ---

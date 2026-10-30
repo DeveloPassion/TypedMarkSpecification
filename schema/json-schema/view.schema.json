@@ -261,7 +261,7 @@
           "default": "none"
         },
         "writable": {
-          "$comment": "Moves write or remove the parent link (CM-593, CM-594).",
+          "$comment": "Moves write or remove the parent link, or one occurrence's item in a list of parents (CM-593, CM-594, CM-617, CM-618).",
           "type": "boolean",
           "default": false
         },

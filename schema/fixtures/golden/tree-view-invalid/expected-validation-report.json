@@ -2,8 +2,8 @@
   "specification_version": "0.1.0",
   "mode": "instantiated_collection",
   "evaluation": "complete",
-  "required_extensions": {"typedmark:queries": "0.1.0", "typedmark:views": "0.1.0"},
-  "evaluated_extensions": {"typedmark:queries": "0.1.0", "typedmark:views": "0.1.0"},
+  "required_extensions": {"typedmark:authoring": "0.1.0", "typedmark:queries": "0.1.0", "typedmark:views": "0.1.0"},
+  "evaluated_extensions": {"typedmark:authoring": "0.1.0", "typedmark:queries": "0.1.0", "typedmark:views": "0.1.0"},
   "valid": false,
   "results": [
     {
@@ -17,10 +17,10 @@
     {
       "code": "invalid_view",
       "severity": "error",
-      "path": ".typedmark/views/writable-list.md",
+      "path": ".typedmark/views/writable-immutable.md",
       "rule_id": "CM-593",
-      "message": "A writable tree parent must be a single link field.",
-      "view": "writable-list"
+      "message": "A writable tree parent must be a link or list-of-links field that set_field can target.",
+      "view": "writable-immutable"
     }
   ]
 }

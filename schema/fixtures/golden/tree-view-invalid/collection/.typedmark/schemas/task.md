@@ -9,4 +9,9 @@ frontmatter:
     type: list
     items: {type: link, format: note_link}
     nullable: true
+  origins:
+    type: list
+    items: {type: link, format: note_link}
+    nullable: true
+    immutable: true
 ---

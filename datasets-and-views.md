@@ -199,7 +199,9 @@ project builds the hierarchy. A note with two parents appears under both, a
 cycle is cut where it re-enters, and an optional context shows the ancestors
 the query filtered out, such as a finished project above an open task. A
 writable tree turns a move under another row into an ordinary write of the
-parent link:
+parent link. When the parent is a list of links, a move changes only the
+occurrence that was dragged: the new parent's link takes the old parent's place
+in the list, and the other parents stay where they were:
 
 <!-- typedmark-example: artifact=view -->
 ```markdown
@@ -380,16 +382,18 @@ Rules:
 - `CM-446` Tools MAY choose visual styling, dimensions, controls, and value widgets beyond the layout family, field order, labels, grouping, board partition, tree arrangement, and calendar and timeline placement defined here.
 - `CM-447` Cursor position, selection, collapsed groups or tree rows, visible date ranges and zoom, scroll offsets, temporary filters, and other per-session state MUST NOT alter the saved-view artifact's portable result.
 - `CM-448` A read-only projected or computed value MUST NOT become writable merely because a saved view presents or groups by it.
-- `CM-523` A saved view MUST NOT perform a write through any presented column, except the board moves defined by `CM-576` through `CM-581`, the tree moves defined by `CM-593` through `CM-595`, and the calendar and timeline moves defined by `CM-605` through `CM-608`.
+- `CM-523` A saved view MUST NOT perform a write through any presented column, except the board moves defined by `CM-576` through `CM-581`, the tree moves defined by `CM-593` through `CM-595`, `CM-617`, and `CM-618`, and the calendar and timeline moves defined by `CM-605` through `CM-608`.
 - `CM-576` `presentation.board.writable` MAY be `true` only when `presentation.board.column` is a `field` projection of a top-level field that `set_field` could target on every admitted note type under `MN-163` and `MN-164`.
 - `CM-577` On a writable board, moving a row into another declared column MUST write that column's value to the row's note as an ordinary `set_field` write, subject to automation and validation like any other edit.
 - `CM-578` `presentation.board.rank` MAY name a `field` projection of a top-level `number` field; rows within each column are then ordered by ascending rank, rows without a rank after ranked rows, and ties in portable-query order.
 - `CM-579` On a writable board with a rank, the rank field MUST be assignable as `CM-576` requires, and a move MUST give the moved row a rank strictly between its new neighbours' ranks, below the first, or above the last.
 - `CM-580` When no such rank is representable, a writer MAY first renumber that column's ranks in their current order.
 - `CM-581` A board move MUST NOT target the unmapped column or change a row's lane.
-- `CM-593` `presentation.tree.writable` MAY be `true` only when `presentation.tree.parent` is a `field` projection of a top-level `link` field that `set_field` and `unset_field` could target on every admitted note type under `MN-163` and `MN-164`.
-- `CM-594` On a writable tree, moving a row under another row MUST write a link resolving to that row's note as an ordinary `set_field` write, and moving it to the root level MUST remove the field with `unset_field`, each subject to automation and validation like any other edit.
+- `CM-593` `presentation.tree.writable` MAY be `true` only when `presentation.tree.parent` is a `field` projection of a top-level `link` field, or `list` field whose `items` are `link`, that `set_field` and `unset_field` could target on every admitted note type under `MN-163` and `MN-164`.
+- `CM-594` On a writable tree whose parent field is a `link`, moving a row under another row MUST write a link resolving to that row's note as an ordinary `set_field` write, and moving it to the root level MUST remove the field with `unset_field`, each subject to automation and validation like any other edit.
 - `CM-595` A tree move MUST NOT place a row under itself or one of its descendants, and MUST NOT move a context row.
+- `CM-617` On a writable tree whose parent field is a list, moving the occurrence of a row under parent P to another row Q MUST write the row's whole list as an ordinary `set_field` write, keeping every other item and its order: when no item resolves to Q's note, the first item resolving to P's note is replaced by a link resolving to Q's note, and every other item resolving to P's note is removed.
+- `CM-618` On such a tree, moving an occurrence under P to the root level MUST remove every item resolving to P's note, removing the field with `unset_field` when no item remains, and moving a root occurrence under Q MUST append a link resolving to Q's note.
 - `CM-609` `presentation.tree.rollups` MAY be omitted; a present list MUST be non-empty, and each entry's `column` MUST be a unique presented column.
 - `CM-610` A rollup's `aggregate` MUST be `sum`, `min`, `max`, `count`, or `weighted_mean`, and except for `count` its column MUST project `integer` or `number` fields on every admitted note type.
 - `CM-611` A `weighted_mean` MUST name a `weight` resolving to another projected `integer` or `number` column whose own rollup, if any, is not a `weighted_mean`, and every other aggregate MUST omit `weight`.
