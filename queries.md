@@ -22,6 +22,7 @@ See also:
 - [Field Definition Reference](field-definition-reference.md): field types and value equality
 - [Field Compatibility and Conversion](field-conversions.md): mapped-field conversions
 - [Datasets and Views](datasets-and-views.md): reusable query results and presentation
+- [Task Items](items.md): one row per checklist item with `rows: items`
 - [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md): resolved relationships and query-backed content expansion
 
 ## Portable Queries
@@ -111,7 +112,7 @@ For example, this predicate selects notes under `Projects/` that carry either of
 
 Rules:
 
-- `CM-318` Predicate `kind` values in this specification version are exactly `all`, `any`, `not`, `path`, `field`, and `relationship`.
+- `CM-318` Predicate `kind` values in this specification version are exactly `all`, `any`, `not`, `path`, `field`, and `relationship`, plus `item` under [Task Items](items.md).
 - `CM-319` An `all` or `any` predicate MUST contain a non-empty `predicates` list.
 - `CM-320` An `all` predicate matches exactly when every child predicate matches.
 - `CM-321` An `any` predicate matches exactly when at least one child predicate matches.
@@ -241,7 +242,7 @@ This descriptor orders rows by status and due date, keeps null due dates last, l
 
 Rules:
 
-- `CM-359` Projection entry `kind` values in this specification version are exactly `path`, `note_type`, `field`, and `mapped_field`.
+- `CM-359` Projection entry `kind` values in this specification version are exactly `path`, `note_type`, `field`, and `mapped_field`, plus `item` under [Task Items](items.md).
 - `CM-360` Every projection entry MUST contain an `as` value satisfying the field-name grammar.
 - `CM-361` Projection aliases MUST be unique within one query.
 - `CM-362` A `path` projection MUST produce the matching note's normalized collection-relative path including `.md`.

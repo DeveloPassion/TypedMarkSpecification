@@ -50,6 +50,7 @@ const PAGES: Page[] = [
   { file: "schema-reuse.md", out: "schema-reuse.html", nav: "Schema Reuse", section: "Reuse" },
   { file: "property-sets.md", out: "property-sets.html", nav: "Property Sets", section: "Reuse" },
   { file: "queries.md", out: "queries.html", nav: "Portable Queries", section: "Optional Contracts" },
+  { file: "items.md", out: "items.html", nav: "Task Items", section: "Optional Contracts" },
   { file: "datasets-and-views.md", out: "datasets-and-views.html", nav: "Datasets and Views", section: "Optional Contracts" },
   { file: "expressions.md", out: "expressions.html", nav: "Expressions", section: "Optional Contracts" },
   { file: "authoring.md", out: "authoring.html", nav: "Authoring", section: "Optional Contracts" },

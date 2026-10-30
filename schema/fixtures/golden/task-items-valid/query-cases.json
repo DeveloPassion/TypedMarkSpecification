@@ -1,0 +1,383 @@
+[
+  {
+    "name": "open-items-in-document-order",
+    "query_version": "0.1.0",
+    "rules": [
+      "ITM-2",
+      "ITM-6",
+      "ITM-7",
+      "ITM-8",
+      "ITM-9",
+      "ITM-10",
+      "ITM-11",
+      "ITM-12",
+      "ITM-17"
+    ],
+    "query": {
+      "specification_version": "0.1.0",
+      "note_types": [
+        "daily-note"
+      ],
+      "rows": "items",
+      "where": {
+        "kind": "item",
+        "property": "checked",
+        "operator": "equals",
+        "value": false
+      },
+      "select": [
+        {
+          "kind": "path",
+          "as": "path"
+        },
+        {
+          "kind": "item",
+          "property": "line",
+          "as": "line"
+        },
+        {
+          "kind": "item",
+          "property": "text",
+          "as": "text"
+        },
+        {
+          "kind": "item",
+          "property": "status",
+          "as": "status"
+        },
+        {
+          "kind": "item",
+          "property": "heading",
+          "as": "heading"
+        },
+        {
+          "kind": "item",
+          "property": "depth",
+          "as": "depth"
+        },
+        {
+          "kind": "item",
+          "property": "parent_line",
+          "as": "parent_line"
+        }
+      ]
+    },
+    "expected_result": {
+      "evaluation": "complete",
+      "rows": [
+        {
+          "path": "Daily/2026-10-29.md",
+          "line": 5,
+          "text": "Renew the passport",
+          "status": " ",
+          "heading": null,
+          "depth": 0,
+          "parent_line": null
+        },
+        {
+          "path": "Daily/2026-10-30.md",
+          "line": 9,
+          "text": "Call the printer",
+          "status": " ",
+          "heading": "Today",
+          "depth": 0,
+          "parent_line": null
+        },
+        {
+          "path": "Daily/2026-10-30.md",
+          "line": 12,
+          "text": "Ask for a quote",
+          "status": " ",
+          "heading": "Today",
+          "depth": 1,
+          "parent_line": 9
+        },
+        {
+          "path": "Daily/2026-10-30.md",
+          "line": 21,
+          "text": "Quoted item",
+          "status": " ",
+          "heading": "Later",
+          "depth": 0,
+          "parent_line": null
+        },
+        {
+          "path": "Daily/2026-10-30.md",
+          "line": 26,
+          "text": "",
+          "status": " ",
+          "heading": "Later",
+          "depth": 0,
+          "parent_line": null
+        }
+      ]
+    }
+  },
+  {
+    "name": "custom-statuses-and-note-fields",
+    "query_version": "0.1.0",
+    "rules": [
+      "ITM-4",
+      "ITM-8",
+      "ITM-15",
+      "ITM-16",
+      "ITM-17",
+      "CM-331"
+    ],
+    "query": {
+      "specification_version": "0.1.0",
+      "rows": "items",
+      "where": {
+        "kind": "any",
+        "predicates": [
+          {
+            "kind": "item",
+            "property": "status",
+            "operator": "regex",
+            "value": "[/-]"
+          },
+          {
+            "kind": "field",
+            "field": "energy",
+            "operator": "less_than",
+            "value": 3
+          }
+        ]
+      },
+      "select": [
+        {
+          "kind": "note_type",
+          "as": "type"
+        },
+        {
+          "kind": "path",
+          "as": "path"
+        },
+        {
+          "kind": "item",
+          "property": "line",
+          "as": "line"
+        },
+        {
+          "kind": "item",
+          "property": "checked",
+          "as": "checked"
+        },
+        {
+          "kind": "item",
+          "property": "status",
+          "as": "status"
+        },
+        {
+          "kind": "field",
+          "field": "energy",
+          "as": "energy"
+        }
+      ],
+      "order_by": [
+        {
+          "column": "checked",
+          "direction": "desc"
+        }
+      ]
+    },
+    "expected_result": {
+      "evaluation": "complete",
+      "rows": [
+        {
+          "type": "daily-note",
+          "path": "Daily/2026-10-29.md",
+          "line": 6,
+          "checked": true,
+          "status": "x",
+          "energy": 2
+        },
+        {
+          "type": "daily-note",
+          "path": "Daily/2026-10-30.md",
+          "line": 13,
+          "checked": true,
+          "status": "/",
+          "energy": 4
+        },
+        {
+          "type": "daily-note",
+          "path": "Daily/2026-10-30.md",
+          "line": 23,
+          "checked": true,
+          "status": "-",
+          "energy": 4
+        },
+        {
+          "type": "daily-note",
+          "path": "Daily/2026-10-29.md",
+          "line": 5,
+          "checked": false,
+          "status": " ",
+          "energy": 2
+        }
+      ]
+    }
+  },
+  {
+    "name": "items-ordered-limited-and-grouped",
+    "query_version": "0.1.0",
+    "rules": [
+      "ITM-3",
+      "ITM-17",
+      "CM-382",
+      "CM-397"
+    ],
+    "query": {
+      "specification_version": "0.1.0",
+      "rows": "items",
+      "select": [
+        {
+          "kind": "item",
+          "property": "heading",
+          "as": "heading"
+        },
+        {
+          "kind": "item",
+          "property": "text",
+          "as": "text"
+        },
+        {
+          "kind": "path",
+          "as": "path"
+        },
+        {
+          "kind": "item",
+          "property": "line",
+          "as": "line"
+        }
+      ],
+      "order_by": [
+        {
+          "column": "line",
+          "direction": "asc"
+        }
+      ],
+      "limit": 4,
+      "group_by": [
+        "heading"
+      ]
+    },
+    "expected_result": {
+      "evaluation": "complete",
+      "rows": [
+        {
+          "heading": null,
+          "text": "Book the venue",
+          "path": "Projects/Launch.md",
+          "line": 4
+        },
+        {
+          "heading": null,
+          "text": "Renew the passport",
+          "path": "Daily/2026-10-29.md",
+          "line": 5
+        },
+        {
+          "heading": null,
+          "text": "Pay the rent",
+          "path": "Daily/2026-10-29.md",
+          "line": 6
+        },
+        {
+          "heading": "Today",
+          "text": "Call the printer",
+          "path": "Daily/2026-10-30.md",
+          "line": 9
+        }
+      ],
+      "groups": [
+        {
+          "key": [
+            null
+          ],
+          "rows": [
+            {
+              "heading": null,
+              "text": "Book the venue",
+              "path": "Projects/Launch.md",
+              "line": 4
+            },
+            {
+              "heading": null,
+              "text": "Renew the passport",
+              "path": "Daily/2026-10-29.md",
+              "line": 5
+            },
+            {
+              "heading": null,
+              "text": "Pay the rent",
+              "path": "Daily/2026-10-29.md",
+              "line": 6
+            }
+          ]
+        },
+        {
+          "key": [
+            "Today"
+          ],
+          "rows": [
+            {
+              "heading": "Today",
+              "text": "Call the printer",
+              "path": "Daily/2026-10-30.md",
+              "line": 9
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "item-predicate-needs-item-rows",
+    "query_version": "0.1.0",
+    "rules": [
+      "ITM-14"
+    ],
+    "query": {
+      "specification_version": "0.1.0",
+      "where": {
+        "kind": "item",
+        "property": "checked",
+        "operator": "equals",
+        "value": false
+      },
+      "select": [
+        {
+          "kind": "path",
+          "as": "path"
+        }
+      ]
+    },
+    "expected_error": "ITM-14"
+  },
+  {
+    "name": "item-regex-on-integer-property",
+    "query_version": "0.1.0",
+    "rules": [
+      "ITM-16"
+    ],
+    "query": {
+      "specification_version": "0.1.0",
+      "rows": "items",
+      "where": {
+        "kind": "item",
+        "property": "line",
+        "operator": "regex",
+        "value": "1"
+      },
+      "select": [
+        {
+          "kind": "path",
+          "as": "path"
+        }
+      ]
+    },
+    "expected_error": "ITM-16"
+  }
+]

@@ -80,7 +80,8 @@ descriptors are covered by their descriptor schemas, and the core-defined
   state, current-time restrictions, and render-block shape
 - portable-query descriptor keys; recursive boolean, path, field, and
   relationship predicate variants; direct and mapped projection variants;
-  mapped source shapes; ordering, grouping, count-range, and limit shapes
+  mapped source shapes; ordering, grouping, count-range, and limit shapes;
+  the `rows` mode and `item` predicate and projection shapes
 - dataset keys, nested query shape, row-identity grammar, and saved-view keys,
   embedded-query or dataset-reference exclusivity, presented-field entries,
   layout families, and board-, tree-, calendar-, and timeline-layout configuration
@@ -149,6 +150,9 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
   projection-alias uniqueness and resolution, mapped-source overlap, declared
   conversion-class agreement, target compatibility, count-range consistency,
   compatible ordering domains, deterministic row order, grouping, and limiting
+- task-item semantics: item recognition in the note body, item property
+  values, `item` predicates and projections only with `rows: items`, item
+  operand compatibility, line-order tie-breaking, and read-only item views
 - dataset semantics: query-version agreement, projection-contract resolution,
   row-identity validity and uniqueness, source-backed/read-only classification,
   reference resolution, and schema-evolution compatibility

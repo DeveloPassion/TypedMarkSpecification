@@ -76,6 +76,7 @@ consumers rather than creating a query dependency for systems.
 | `typedmark:reuse` | abstract schemas, `extends`, property-set artifacts/references, or conditions | none | [Schema Reuse](schema-reuse.md), [Property Sets](property-sets.md) |
 | `typedmark:queries` | a query is embedded in a governed artifact or body surface | none | [Queries](queries.md) |
 | `typedmark:views` | dataset or saved-view artifacts | `typedmark:queries` at `0.1.0` | [Datasets and Views](datasets-and-views.md) |
+| `typedmark:items` | an embedded query with `rows: items` | `typedmark:queries` at `0.1.0` | [Task Items](items.md) |
 | `typedmark:expressions` | `computed` or `from_date` field definitions, or expression-based rendering | none | [Expressions](expressions.md) |
 | `typedmark:authoring` | `immutable: true`, `ulid`, `random`, or `sequence` generation | none | [Authoring](authoring.md) |
 | `typedmark:template-tracking` | template-region markers or `template_regions` receipts | none | [Template Tracking](template-tracking.md) |

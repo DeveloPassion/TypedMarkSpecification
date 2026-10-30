@@ -88,6 +88,7 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | move cards between columns and order them by hand | `presentation.board.writable: true` and `rank: manual_order` | [Saved Views](datasets-and-views.md#saved-views) |
 | show tasks under their parent tasks and projects (work breakdown) | `layout: tree` with `tree.parent` (a link or a list of links), `context: ancestors`, `writable: true` | [Saved Views](datasets-and-views.md#saved-views) |
 | see tasks on their scheduled and due days, or as spans on a plan | `layout: calendar` with `calendar.dates`, or `layout: timeline` with `start`/`end` | [Saved Views](datasets-and-views.md#saved-views) |
+| list the open checklist items of many notes | a query with `rows: items` and an `item` predicate on `checked` | [Task Items](items.md) |
 | roll estimates and progress up a work breakdown | `tree.rollups` with `sum` and `weighted_mean` (`weight`, `done_value`) | [Saved Views](datasets-and-views.md#saved-views) |
 | show only this project's tasks with one shared dataset | a relationship predicate with `context_note: true` | [Portable Queries](queries.md#relationship-predicates) |
 | build a readable Markdown dashboard from datasets or saved views | one or more dataset- or view-backed content expansions in an ordinary note | [Content Expansion](content-expansion.md#content-expansion) |

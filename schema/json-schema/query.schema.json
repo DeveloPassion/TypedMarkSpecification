@@ -19,6 +19,14 @@
     "note_types": {
       "$ref": "#/$defs/note_types"
     },
+    "rows": {
+      "$comment": "Item rows are defined by the typedmark:items extension (ITM-1).",
+      "enum": [
+        "notes",
+        "items"
+      ],
+      "default": "notes"
+    },
     "where": {
       "$ref": "#/$defs/predicate"
     },
@@ -72,6 +80,9 @@
         },
         {
           "$ref": "#/$defs/mapped_field_selection"
+        },
+        {
+          "$ref": "#/$defs/item_selection"
         }
       ]
     },
@@ -240,6 +251,9 @@
         },
         {
           "$ref": "#/$defs/relationship_predicate"
+        },
+        {
+          "$ref": "#/$defs/item_predicate"
         }
       ]
     },
@@ -565,6 +579,66 @@
           "type": "integer",
           "minimum": 0
         }
+      },
+      "additionalProperties": false
+    },
+    "item_property": {
+      "enum": [
+        "text",
+        "status",
+        "checked",
+        "line",
+        "depth",
+        "parent_line",
+        "heading"
+      ]
+    },
+    "item_selection": {
+      "type": "object",
+      "required": [
+        "kind",
+        "property",
+        "as"
+      ],
+      "properties": {
+        "kind": {
+          "const": "item"
+        },
+        "property": {
+          "$ref": "#/$defs/item_property"
+        },
+        "as": {
+          "$ref": "defs.schema.json#/$defs/field_name"
+        }
+      },
+      "additionalProperties": false
+    },
+    "item_predicate": {
+      "type": "object",
+      "required": [
+        "kind",
+        "property",
+        "operator",
+        "value"
+      ],
+      "properties": {
+        "kind": {
+          "const": "item"
+        },
+        "property": {
+          "$ref": "#/$defs/item_property"
+        },
+        "operator": {
+          "enum": [
+            "equals",
+            "regex",
+            "less_than",
+            "less_than_or_equal",
+            "greater_than",
+            "greater_than_or_equal"
+          ]
+        },
+        "value": {}
       },
       "additionalProperties": false
     }

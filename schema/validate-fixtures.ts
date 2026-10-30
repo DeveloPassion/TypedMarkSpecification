@@ -73,6 +73,7 @@ const SPEC_PAGES = [
   "schema-reuse.md",
   "property-sets.md",
   "queries.md",
+  "items.md",
   "datasets-and-views.md",
   "expressions.md",
   "authoring.md",
