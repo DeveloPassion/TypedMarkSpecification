@@ -280,15 +280,15 @@
         },
         {
           "heading": null,
+          "text": "Brief [[2026-10-30]] about [[Launch]], [[Missing]] and [[2026-10-30|today]]",
+          "path": "Projects/Launch.md",
+          "line": 5
+        },
+        {
+          "heading": null,
           "text": "Pay the rent",
           "path": "Daily/2026-10-29.md",
           "line": 6
-        },
-        {
-          "heading": "Today",
-          "text": "Call the printer",
-          "path": "Daily/2026-10-30.md",
-          "line": 9
         }
       ],
       "groups": [
@@ -311,23 +311,65 @@
             },
             {
               "heading": null,
+              "text": "Brief [[2026-10-30]] about [[Launch]], [[Missing]] and [[2026-10-30|today]]",
+              "path": "Projects/Launch.md",
+              "line": 5
+            },
+            {
+              "heading": null,
               "text": "Pay the rent",
               "path": "Daily/2026-10-29.md",
               "line": 6
             }
           ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "items-linking-a-note",
+    "query_version": "0.1.0",
+    "rules": [
+      "ITM-16",
+      "ITM-19"
+    ],
+    "query": {
+      "specification_version": "0.1.0",
+      "rows": "items",
+      "where": {
+        "kind": "item",
+        "property": "links",
+        "operator": "contains_any",
+        "value": [
+          "Daily/2026-10-30.md"
+        ]
+      },
+      "select": [
+        {
+          "kind": "path",
+          "as": "path"
         },
         {
-          "key": [
-            "Today"
-          ],
-          "rows": [
-            {
-              "heading": "Today",
-              "text": "Call the printer",
-              "path": "Daily/2026-10-30.md",
-              "line": 9
-            }
+          "kind": "item",
+          "property": "line",
+          "as": "line"
+        },
+        {
+          "kind": "item",
+          "property": "links",
+          "as": "links"
+        }
+      ]
+    },
+    "expected_result": {
+      "evaluation": "complete",
+      "rows": [
+        {
+          "path": "Projects/Launch.md",
+          "line": 5,
+          "links": [
+            "Daily/2026-10-30.md",
+            "Projects/Launch.md"
           ]
         }
       ]
@@ -370,6 +412,32 @@
         "property": "line",
         "operator": "regex",
         "value": "1"
+      },
+      "select": [
+        {
+          "kind": "path",
+          "as": "path"
+        }
+      ]
+    },
+    "expected_error": "ITM-16"
+  },
+  {
+    "name": "item-links-need-containment",
+    "query_version": "0.1.0",
+    "rules": [
+      "ITM-16"
+    ],
+    "query": {
+      "specification_version": "0.1.0",
+      "rows": "items",
+      "where": {
+        "kind": "item",
+        "property": "links",
+        "operator": "equals",
+        "value": [
+          "Daily/2026-10-30.md"
+        ]
       },
       "select": [
         {

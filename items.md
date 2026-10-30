@@ -12,7 +12,7 @@ Audience: tool authors implementing queries over checklist items inside note bod
 Authoritative for:
 
 - the `typedmark:items` extension and its `rows: items` query mode
-- task-item recognition in note bodies and the item properties
+- task-item recognition in note bodies and the item properties, including the notes an item links to
 - `item` predicates and projections, and the order of item rows
 
 See also:
@@ -21,6 +21,7 @@ See also:
 - [Datasets and Views](datasets-and-views.md): reusable results and presentation
 - [Relationships, Headings, Templates, and Content Expansion](relationships-headings-and-templates.md#heading-rules): heading detection and heading text
 - [Extensions](extensions.md#standard-contracts): declaration and dependencies
+- [Note Links](note-links.md): link resolution behind an item's `links`
 
 The unit of typing stays the note. Checklist lines such as `- [ ] Call the
 printer` are not typed, identified, or written through this contract. It only
@@ -92,30 +93,32 @@ Rules:
 - `ITM-10` An item's `line` MUST be the 1-based number of its first line in the note file, counting frontmatter lines.
 - `ITM-11` An item's `parent_line` MUST be the `line` of the nearest task item that contains it, or null, and its `depth` MUST be the number of task items that contain it.
 - `ITM-12` An item's `heading` MUST be the heading text, under `RHT-47` and `RHT-56`, of the nearest heading before the item in document order, or null when there is none.
+- `ITM-19` An item's `links` MUST list, once each and in order of first appearance, the normalized collection-relative paths of the managed notes that the internal note links in its `text` resolve to under [Note Links](note-links.md), omitting unresolved and ambiguous links and links to assets.
 
 ## Item Predicates and Projections
 
 An `item` predicate or projection names one item property. The properties
 behave like fields of a fixed type, so they compare, match, and order under the
 rules for those types. Item values are read-only: a view can present them but
-cannot write a checklist line back.
+cannot write a checklist line back. `links` holds the notes an item mentions,
+so a project can list the open items that link to it:
 
-<!-- typedmark-example: fragment: Item predicate selecting started or open items in one section. -->
+<!-- typedmark-example: fragment: Item predicate selecting started or open items that link to one project. -->
 ```json
 {
   "kind": "all",
   "predicates": [
     {"kind": "item", "property": "status", "operator": "regex", "value": "[ /]"},
-    {"kind": "item", "property": "heading", "operator": "equals", "value": "Today"}
+    {"kind": "item", "property": "links", "operator": "contains_any", "value": ["Projects/Launch.md"]}
   ]
 }
 ```
 
 Rules:
 
-- `ITM-13` An `item` predicate MUST contain `property`, `operator`, and `value`, and an `item` projection MUST contain `property` and `as`; `property` MUST be `text`, `status`, `checked`, `line`, `depth`, `parent_line`, or `heading`.
+- `ITM-13` An `item` predicate MUST contain `property`, `operator`, and `value`, and an `item` projection MUST contain `property` and `as`; `property` MUST be `text`, `status`, `checked`, `line`, `depth`, `parent_line`, `heading`, or `links`.
 - `ITM-14` `item` predicates and projections MUST be used only in a query with `rows: items`.
-- `ITM-15` `text`, `status`, and `heading` MUST behave as `text` fields, `checked` as a `checkbox` field, and `line`, `depth`, and `parent_line` as `integer` fields, with `parent_line` and `heading` nullable and every other property non-null.
-- `ITM-16` An `item` predicate's `operator` MUST be `equals`, `regex`, or an ordering operator, evaluated under `CM-332` through `CM-340` and `CM-401` for its property's type, with `regex` used only on `text`, `status`, and `heading`.
+- `ITM-15` `text`, `status`, and `heading` MUST behave as `text` fields, `checked` as a `checkbox` field, `line`, `depth`, and `parent_line` as `integer` fields, and `links` as a `list` field of `text` items, with `parent_line` and `heading` nullable and every other property non-null.
+- `ITM-16` An `item` predicate's `operator` MUST be `equals`, `regex`, or an ordering operator on every property but `links`, and `contains_any` or `contains_all` with normalized collection-relative note paths on `links`, evaluated under `CM-332` through `CM-344` and `CM-401` for its property's type, with `regex` used only on `text`, `status`, and `heading`.
 - `ITM-17` Item rows with equal values for every `order_by` entry and the same path MUST be ordered by ascending `line`, and an omitted `order_by` MUST order item rows by path and then by ascending `line`.
 - `ITM-18` Item projections MUST be read-only, and a dataset or saved view whose query uses `rows: items` MUST NOT set a presentation's `writable` to `true`.
