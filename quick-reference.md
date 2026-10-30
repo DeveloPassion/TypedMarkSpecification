@@ -78,6 +78,7 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | react when work becomes done | `trigger.changed.status.to_state: {done: true}` or `when: {status: {state: {done: true}}}` | [Automation rules](automation-artifacts.md#automation-rules) |
 | archive notes some time after they finish | a daily schedule with `when: {status: {state: {done: true}}, completed_on: {older_than: P30D}}` and `archive_note` | [Automation rules](automation-artifacts.md#automation-rules) |
 | remove a value so the field falls back to its default | `unset_field` | [Automation rules](automation-artifacts.md#automation-rules) |
+| act only when a field is empty or past a threshold | `when: {due: {empty: true}}` or `when: {progress: {greater_than: 50}}` | [Automation rules](automation-artifacts.md#automation-rules) |
 | target notes whose field is empty, or above or below a bound | `when: {lent_to: {empty: true}}`, `when: {copies: {greater_than: 1}}` | [Automation rules](automation-artifacts.md#automation-rules) |
 | react to note changes or a schedule | an automation artifact under `<metadata_directory>/automations/` | [Automation rules](automation-artifacts.md#automation-rules) |
 | let automation changes trigger further rules safely | propagation mode with `automation_defaults.max_propagation_waves` | [Dependency propagation](automation-runtime.md#dependency-propagation-and-consistency) |
