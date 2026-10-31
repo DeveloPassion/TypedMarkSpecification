@@ -199,7 +199,9 @@ project builds the hierarchy. A note with two parents appears under both, a
 cycle is cut where it re-enters, and an optional context shows the ancestors
 the query filtered out, such as a finished project above an open task. A
 writable tree turns a move under another row into an ordinary write of the
-parent link. When the parent is a list of links, a move changes only the
+parent link. When each note type keeps its parent in a different field, such as
+tasks under projects and projects under goals, a `mapped_field` parent reads
+the right field per type; such a tree is read-only. When the parent is a list of links, a move changes only the
 occurrence that was dragged: the new parent's link takes the old parent's place
 in the list, and the other parents stay where they were:
 
@@ -359,7 +361,7 @@ Rules:
 - `CM-470` The unmapped column MUST NOT appear when it has no rows.
 - `CM-444` Rows within a board column MUST preserve their relative portable-query order, except as a board `rank` orders them.
 - `CM-582` A `tree` layout MUST contain `presentation.tree`, and every other layout MUST omit it.
-- `CM-583` `presentation.tree.parent` MUST resolve to exactly one projected column that is a `field` projection of a `link` field, or of a `list` field whose `items` are `link`, on every admitted note type.
+- `CM-583` `presentation.tree.parent` MUST resolve to exactly one projected column that is either a `field` projection of a `link` field, or of a `list` field whose `items` are `link`, on every admitted note type, or a `mapped_field` projection whose `definition` is such a field.
 - `CM-584` A row's parents are the other result rows whose notes are resolved targets of its parent value under [Note Links](note-links.md); unresolved links, links to its own note, and links to notes outside the result add no parent.
 - `CM-585` A tree presentation MUST arrange the resolved ordered rows by their parents independently of any query `group_by` value.
 - `CM-586` Rows without a parent MUST be roots, each row's children MUST appear below it, and roots and the children of each row MUST keep portable-query order.
@@ -367,7 +369,7 @@ Rules:
 - `CM-588` An occurrence that would repeat a row already on its path from the root MUST be omitted together with its subtree.
 - `CM-589` While some result row appears nowhere, the first such row in portable-query order MUST become an additional root after the existing roots.
 - `CM-590` `presentation.tree.context` MAY be omitted, MUST be `none` or `ancestors` when present, and defaults to `none`.
-- `CM-591` With `context: ancestors`, every non-deleted managed note outside the result that is a resolved target of the parent field of a row or of another context row MUST appear once as a context row; a context row's own parent value is read through the parent column's field path when its note type declares that field.
+- `CM-591` With `context: ancestors`, every non-deleted managed note outside the result that is a resolved target of the parent field of a row or of another context row MUST appear once as a context row; a context row's own parent value is read through the parent column's field path, or for a `mapped_field` parent through the source mapping that matches its note type, when its note type declares that field.
 - `CM-592` A context row MUST present the view's projections evaluated on its note and MUST be distinguishable from result rows; among its siblings it takes the portable-query position of its earliest result-row descendant, before a result row at the same position, with ties between context rows broken by path in code-point order.
 - `CM-596` A `calendar` layout MUST contain `presentation.calendar`, a `timeline` layout MUST contain `presentation.timeline`, and every other layout MUST omit each of them.
 - `CM-597` Every `presentation.calendar.dates` entry MUST resolve to exactly one projected column whose field definitions are `date` or `datetime` on every admitted note type, and the entries' columns MUST be unique.
