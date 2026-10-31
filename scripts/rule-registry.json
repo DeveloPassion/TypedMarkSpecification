@@ -1,7 +1,7 @@
 {
   "prefixes": {
     "FND": { "page": "foundations.md", "last": 95 },
-    "CM": { "page": "collection-model.md", "last": 618 },
+    "CM": { "page": "collection-model.md", "last": 621 },
     "NTS": { "page": "note-type-schemas.md", "last": 197 },
     "FDR": { "page": "field-definition-reference.md", "last": 298 },
     "MN": { "page": "managed-notes-and-properties.md", "last": 321 },
@@ -346,6 +346,9 @@
     "CM-616": "datasets-and-views.md",
     "CM-617": "datasets-and-views.md",
     "CM-618": "datasets-and-views.md",
+    "CM-619": "queries.md",
+    "CM-620": "queries.md",
+    "CM-621": "queries.md",
     "CM-521": "datasets-and-views.md",
     "CM-522": "datasets-and-views.md",
     "CM-422": "datasets-and-views.md",

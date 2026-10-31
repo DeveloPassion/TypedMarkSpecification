@@ -1,11 +1,12 @@
 [
   {
-    "name": "suppressed-non-utf8-links-block-query-model",
+    "name": "suppressed-non-utf8-links-leave-the-note-out",
     "query_version": "0.1.0",
     "rules": [
+      "NL-6",
       "CM-54",
-      "NL-11",
-      "CM-307"
+      "CM-619",
+      "CM-620"
     ],
     "query": {
       "specification_version": "0.1.0",
@@ -19,6 +20,12 @@
         }
       ]
     },
-    "expected_error": "CM-307"
+    "expected_result": {
+      "evaluation": "complete",
+      "rows": [],
+      "skipped": [
+        "Notes/Source.md"
+      ]
+    }
   }
 ]

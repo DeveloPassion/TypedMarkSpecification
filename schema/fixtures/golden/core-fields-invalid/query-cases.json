@@ -1,9 +1,10 @@
 [
   {
-    "name": "invalid-core-fields-block-query-model",
+    "name": "invalid-core-fields-leave-notes-out",
     "query_version": "0.1.0",
     "rules": [
-      "CM-308",
+      "CM-619",
+      "CM-620",
       "MN-35",
       "MN-99"
     ],
@@ -16,6 +17,13 @@
         }
       ]
     },
-    "expected_error": "CM-308"
+    "expected_result": {
+      "evaluation": "complete",
+      "rows": [],
+      "skipped": [
+        "Bad.md",
+        "Unsafe.md"
+      ]
+    }
   }
 ]

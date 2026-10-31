@@ -65,6 +65,7 @@ No migration is needed; each item accepts input that 0.0.1 rejected.
 | `scaffold.notes[].from_template` is optional; the type's template or a derived starter applies | [Systems](../../systems-composition-evolution.md) |
 | Core state flags need no explicit `default_value` | [Managed Notes and Properties](../../managed-notes-and-properties.md) |
 | Storage may omit `note_name_pattern` for an author-chosen free name | [Storage Rules](../../note-type-schemas.md#storage-rules) |
+| A query leaves out notes whose own values or links cannot be resolved, and reports them, instead of failing (`CM-619` to `CM-621`); a configuration or schema that cannot be resolved still fails it (`CM-308`) | [Portable Queries](../../queries.md#descriptor-and-evaluation-surface) |
 
 ## Additive changes
 

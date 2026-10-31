@@ -31,7 +31,7 @@ A portable query is a plain JSON descriptor for selecting and projecting managed
 
 ### Descriptor and Evaluation Surface
 
-Evaluation begins from managed notes after note-type association and effective-schema construction. It uses current parsed field values and concrete resolved relationships, so abstract schemas and property sets influence a query only through the effective model they produce.
+Evaluation begins from managed notes after note-type association and effective-schema construction. It uses current parsed field values and concrete resolved relationships, so abstract schemas and property sets influence a query only through the effective model they produce. A note whose own values or links cannot be resolved is left out and reported, so one broken note does not hide every other row; a configuration or schema that cannot be resolved still fails the query.
 
 This query selects active projects in one area and names each projected column explicitly:
 
@@ -74,7 +74,10 @@ Rules:
 - `CM-306` The initial candidate set MUST contain the non-deleted managed notes in the snapshot, plus deleted notes when `include_deleted` is true.
 - `CM-386` The initial candidate set MUST exclude governed artifacts, excluded paths, assets, and untyped notes.
 - `CM-307` Before evaluating a candidate, a query evaluator MUST resolve its concrete type, effective schema and field values, and concrete relationships.
-- `CM-308` Query evaluation MUST fail when a note admitted by the top-level `note_types` filter cannot provide the effective model required by `CM-307`.
+- `CM-308` Query evaluation MUST fail when the collection configuration, or the effective schema of a concrete note type admitted by the top-level `note_types` filter, cannot be resolved.
+- `CM-619` A candidate whose frontmatter, field values, or relationships cannot be resolved under `CM-307` MUST be left out of the candidate set and of every relationship traversal instead of failing the evaluation.
+- `CM-620` A query evaluation MUST report the normalized collection-relative paths of the notes it left out under `CM-619`, once each in path order.
+- `CM-621` Notes left out under `CM-619` MUST NOT by themselves make a dataset, saved view, or content expansion invalid or its evaluation incomplete, and a tool presenting the remaining rows SHOULD show how many notes were left out.
 - `CM-309` An omitted top-level `note_types` MUST admit every candidate note type.
 - `CM-310` A present top-level `note_types` MUST be a non-empty list of unique concrete or abstract note-type identifiers.
 - `CM-311` Every note-type identifier in a query MUST resolve to exactly one concrete or abstract note type.

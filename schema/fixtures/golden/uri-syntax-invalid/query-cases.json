@@ -1,13 +1,59 @@
 [
   {
-    "name": "invalid-uri-value-blocks-admitted-note-model",
+    "name": "invalid-uri-value-leaves-the-note-out",
     "query_version": "0.1.0",
-    "rules": ["FDR-140", "CM-308"],
+    "rules": [
+      "FDR-140",
+      "CM-619",
+      "CM-620"
+    ],
     "query": {
       "specification_version": "0.1.0",
-      "note_types": ["uri-source"],
-      "select": [{"kind": "path", "as": "path"}]
+      "note_types": [
+        "uri-source"
+      ],
+      "select": [
+        {
+          "kind": "path",
+          "as": "path"
+        }
+      ]
     },
-    "expected_error": "CM-308"
+    "expected_result": {
+      "evaluation": "complete",
+      "rows": [],
+      "skipped": [
+        "Notes/URI.md"
+      ]
+    }
+  },
+  {
+    "name": "valid-notes-remain-beside-skipped-ones",
+    "query_version": "0.1.0",
+    "rules": [
+      "CM-619",
+      "CM-620"
+    ],
+    "query": {
+      "specification_version": "0.1.0",
+      "select": [
+        {
+          "kind": "path",
+          "as": "path"
+        }
+      ]
+    },
+    "expected_result": {
+      "evaluation": "complete",
+      "rows": [
+        {
+          "path": "Notes/N [draft].md"
+        }
+      ],
+      "skipped": [
+        "Notes/Source.md",
+        "Notes/URI.md"
+      ]
+    }
   }
 ]

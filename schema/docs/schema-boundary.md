@@ -149,7 +149,8 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
   effective-field compatibility, typed comparisons, relationship traversal,
   projection-alias uniqueness and resolution, mapped-source overlap, declared
   conversion-class agreement, target compatibility, count-range consistency,
-  compatible ordering domains, deterministic row order, grouping, and limiting
+  compatible ordering domains, deterministic row order, grouping, and limiting,
+  and which notes are left out because their own model cannot be resolved
 - task-item semantics: item recognition in the note body, item property
   values, `item` predicates and projections only with `rows: items`, item
   operand compatibility, line-order tie-breaking, and read-only item views
