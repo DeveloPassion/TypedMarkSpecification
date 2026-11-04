@@ -13,6 +13,7 @@ Authoritative for:
 
 - the fidelity of edits to an existing note's frontmatter
 - rewriting internal note links when a note is renamed or moved
+- moving a note's own folder with it
 - re-filing notes whose storage patterns read an edited value
 
 See also:
@@ -90,7 +91,7 @@ Rules:
 - `ER-7` Renaming or moving a note MUST rewrite every internal note link, in frontmatter or in a body, that resolved to the note before the change, so that it resolves to the note at its new path.
 - `ER-8` A rewritten link MUST keep its form, display text, anchor, and embed marker, and a path target MUST keep its relative or root-relative style and the presence or absence of its `.md` extension.
 - `ER-9` A rewritten name target MUST stay a name when the new name resolves to the note from the containing note, and MUST otherwise become a root-relative path.
-- `ER-10` Every other link that resolved before the change MUST still resolve to the same note afterwards, rewritten as `ER-8` and `ER-9` describe when the change would otherwise break or redirect it.
+- `ER-10` Every other link that resolved before the change MUST still resolve to the same note or file afterwards, rewritten as `ER-8` and `ER-9` describe when the change would otherwise break or redirect it.
 - `ER-11` Links that did not resolve before the change, including ambiguous ones, MUST NOT be rewritten.
 
 ## Re-filing
@@ -107,3 +108,23 @@ Rules:
 - `ER-13` Moving a note MUST also move every note whose storage resolves through it by `{field:folder}` or `{field:name}` (`NTS-184`, `NTS-186`), repeating until no further note moves.
 - `ER-14` An edit, rename, or move and every move and link rewrite it requires MUST be written atomically; when a target path is taken or any of them cannot be applied safely, the writer MUST write nothing and report why.
 - `ER-15` A writer SHOULD offer a preview listing the notes it will move and the links it will rewrite before writing.
+
+## Note Folders
+
+A note in a folder of its own ([`NTS-198`](note-type-schemas.md#storage-rules))
+usually owns that folder: its attachments, canvases, and other notes live
+there with it. When the note moves to another folder of its own, the whole
+folder goes with it, and every file keeps its place relative to the note. A
+caller can ask to move only the note. When the note leaves its folder for a
+path outside one, nothing else can follow it, so the other files stay and the
+writer says so.
+
+Renaming `Projects/Launch/Launch (Project).md` to
+`Projects/Go-live/Go-live (Project).md` also moves `Projects/Launch/Board.canvas`
+to `Projects/Go-live/Board.canvas`, and rewrites every link to either file.
+
+Rules:
+
+- `ER-16` When a note in its own folder moves to a path in its own folder, the writer MUST move every other file and subfolder of the old note folder with it, keeping each path relative to the note, unless the caller explicitly asks to move only the note.
+- `ER-17` `ER-7` to `ER-11` and `ER-14` MUST apply to every file a note-folder move carries as they apply to the note.
+- `ER-18` A writer whose change leaves other files in the folder a note left MUST list those files in its preview and report.

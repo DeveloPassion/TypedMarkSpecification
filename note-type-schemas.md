@@ -216,8 +216,8 @@ storage:
   note_folder: optional
 ```
 
-A writer moves only the note; the other files in its folder stay where they are
-unless their own storage resolves through the note.
+A writer that claims [Edits and Renames](edits-and-renames.md#note-folders)
+moves the rest of the folder with the note.
 
 Rules:
 
