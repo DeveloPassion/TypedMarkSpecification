@@ -170,7 +170,8 @@ evaluation of substituted text.
 | `note_name_pattern` | Optional non-empty basename pattern without slash, backslash, or a `.md` extension |
 | `note_name_regex` | Optional ECMA-262 free-name constraint; excludes `note_name_pattern` |
 | `note_name_prefix`, `note_name_suffix` | Optional mapping with a non-empty `pattern` and an optional boolean `optional`; every supplied affix applies unless it is optional |
-| `archive` | Optional block with alternate `folder_pattern` and the same optional name keys |
+| `note_folder` | Optional `required` or `optional`; the note sits in a folder named after its name part |
+| `archive` | Optional block with alternate `folder_pattern` and the same optional name and folder keys |
 
 For example, `{meeting_date:YYYY}/{meeting_date:MM}` names a folder from a
 declared date; `{now:YYYY}` needs an actual field named `now`. A project's
@@ -198,6 +199,26 @@ storage:
     optional: true
 ```
 
+A note can also live in a folder of its own, named after its name part, with
+its related files beside it. `note_folder: required` makes that folder part of
+the path; `note_folder: optional` accepts the note in its own folder or directly
+in the resolved folder. With this contract, `Projects/Launch/Launch (Project).md`
+and `Projects/Rollout (Project).md` both conform, but
+`Projects/Launch (Project)/Launch (Project).md` does not, because the folder
+takes the name part without the suffix:
+
+<!-- typedmark-example: fragment: A project stored in a folder of its own. -->
+```yaml
+storage:
+  folder_pattern: Projects
+  note_name_suffix:
+    pattern: " (Project)"
+  note_folder: optional
+```
+
+A writer moves only the note; the other files in its folder stay where they are
+unless their own storage resolves through the note.
+
 Rules:
 
 - `NTS-97` A supplied storage block MUST contain `folder_pattern`.
@@ -209,8 +230,10 @@ Rules:
 - `NTS-193` An affix whose pattern cannot be resolved, or references `title` while the note stores no `title`, is not removed from the name part.
 - `NTS-189` An optional affix is removed only when the name part remains non-empty, and it is present exactly when it is removed.
 - `NTS-181` Without `note_name_pattern`, the free name is the note's name part, which MUST be non-empty.
-- `NTS-190` A writer creating a note MUST omit an optional affix unless its caller explicitly requests it.
-- `NTS-191` A writer moving or renaming a note MUST keep each optional affix present or absent unless its caller explicitly requests otherwise.
+- `NTS-198` With `note_folder`, the note's basename MUST sit in a folder named exactly the note's name part, directly inside the resolved folder.
+- `NTS-199` With `note_folder: optional`, a note MAY instead sit directly in the resolved folder, and it is in its own folder exactly when its parent folder is the resolved folder followed by its name part.
+- `NTS-190` A writer creating a note MUST omit an optional affix and an optional note folder unless its caller explicitly requests them.
+- `NTS-191` A writer moving or renaming a note MUST keep each optional affix and an optional note folder present or absent unless its caller explicitly requests otherwise.
 - `NTS-182` A free name MUST fully match any `note_name_regex`.
 - `NTS-117` A placeholder MUST have the form `{field_name}` or `{field_name:format}`.
 - `NTS-124` A placeholder MUST reference a top-level effective field or Core field.
@@ -225,10 +248,10 @@ Rules:
 - `NTS-130` Every referenced value MUST be concrete and non-null when the path is evaluated.
 - `NTS-132` List, tags, object, and `any` fields MUST NOT be used in storage placeholders.
 - `NTS-133` A substituted value other than a `:folder` value MUST NOT contain slash, backslash, or control characters, or equal `.` or `..`.
-- `NTS-134` A resolved note basename MUST be a non-empty string not beginning with `.`.
+- `NTS-134` A resolved note basename, and a note folder name, MUST be a non-empty string not beginning with `.`.
 - `NTS-180` A resolved path MUST be free of control characters and `.` or `..` path segments, regardless of whether they came from literal text or substituted values.
 - `NTS-178` Substituted text MUST NOT be reparsed as storage-pattern syntax.
-- `NTS-137` The resolved note path is the resolved folder plus basename and `.md`, with no leading separator for an empty folder.
+- `NTS-137` The resolved note path is the resolved folder, then the note folder when the note has one, then the basename and `.md`, with no leading separator for an empty folder.
 - `NTS-138` Effective `archived` selects the active or archived storage contract.
 - `NTS-144` An archived note with an archive block MUST use its alternate patterns.
 - `NTS-145` Without an archive block, an archived note MUST continue to satisfy the active storage patterns.

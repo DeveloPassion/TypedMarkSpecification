@@ -1328,6 +1328,13 @@
       },
       "additionalProperties": false
     },
+    "note_folder": {
+      "$comment": "The note sits in a folder named after its name part (NTS-198); optional also accepts it directly in the resolved folder (NTS-199).",
+      "enum": [
+        "required",
+        "optional"
+      ]
+    },
     "archive_block": {
       "type": "object",
       "required": [
@@ -1356,6 +1363,9 @@
         },
         "note_name_suffix": {
           "$ref": "#/$defs/note_name_affix"
+        },
+        "note_folder": {
+          "$ref": "#/$defs/note_folder"
         }
       },
       "additionalProperties": false
@@ -1388,6 +1398,9 @@
         },
         "note_name_suffix": {
           "$ref": "#/$defs/note_name_affix"
+        },
+        "note_folder": {
+          "$ref": "#/$defs/note_folder"
         },
         "archive": {
           "$ref": "#/$defs/archive_block"

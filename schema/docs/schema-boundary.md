@@ -122,7 +122,7 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
   absent archive blocks use active storage
 - value semantics: `default_value`/`const_value`/`allowed_values` conformance to
   the declared type, `min <= max`, `states` keys being allowed values, regex dialect (including `note_name_regex`),
-  storage placeholder resolution (including linked-note `:name`/`:folder`), name-part extraction between resolved and optional affixes,
+  storage placeholder resolution (including linked-note `:name`/`:folder`), name-part extraction between resolved and optional affixes, note-folder placement,
   generation-strategy value production, shared expression-language syntax,
   consumer-specific reference resolution, transform validity, null handling, and
   stored-value agreement (all tool / validator-time behaviors)

@@ -67,6 +67,7 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | link a periodic note to its week or month note | `from_date` or `computed` name + `self_field` expansion | [Expressions](expressions.md#links-to-enclosing-periods) |
 | keep companion notes beside their parent (`Projects/Launch/Decisions.md`) | `{project:folder}/{project:name}` over a single note-link field | [Storage rules](note-type-schemas.md#storage-rules) |
 | add a required name suffix | `note_name_suffix.pattern` | [Storage rules](note-type-schemas.md#storage-rules) |
+| store a note in a folder of its own, such as `Projects/Launch/Launch (Project).md` | `note_folder: optional` (or `required`) in `storage` | [Storage rules](note-type-schemas.md#storage-rules) |
 | accept names with or without a decorative suffix, titled without it | `note_name_suffix: {pattern: " (Permanent)", optional: true}` | [Storage rules](note-type-schemas.md#storage-rules) |
 | let authors choose note names, optionally by shape | omit `note_name_pattern`; add `note_name_regex`, e.g. `"^[a-z0-9]+(?:[.-][a-z0-9]+)*$"` for `net.proto.bgp` | [Storage rules](note-type-schemas.md#storage-rules) |
 | map notes to types by tag or folder | `note_type_mappings` with `kind: tag` or `kind: folder` | [Note-type mappings](collection-model.md#note-type-mappings) |
