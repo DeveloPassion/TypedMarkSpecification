@@ -6,7 +6,8 @@
       "NL-6",
       "CM-54",
       "CM-619",
-      "CM-620"
+      "CM-620",
+      "QRY-3"
     ],
     "query": {
       "specification_version": "0.1.0",
@@ -25,6 +26,18 @@
       "rows": [],
       "skipped": [
         "Notes/Source.md"
+      ],
+      "skipped_details": [
+        {
+          "path": "Notes/Source.md",
+          "results": [
+            {
+              "code": "invalid_note_link",
+              "rule_id": "NL-6",
+              "field": "details.references"
+            }
+          ]
+        }
       ]
     }
   }

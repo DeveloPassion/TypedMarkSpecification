@@ -6,7 +6,8 @@
       "CM-619",
       "CM-620",
       "MN-35",
-      "MN-99"
+      "MN-99",
+      "QRY-3"
     ],
     "query": {
       "specification_version": "0.1.0",
@@ -23,6 +24,38 @@
       "skipped": [
         "Bad.md",
         "Unsafe.md"
+      ],
+      "skipped_details": [
+        {
+          "path": "Bad.md",
+          "results": [
+            {
+              "code": "missing_required_field",
+              "rule_id": "MN-99",
+              "field": "id"
+            },
+            {
+              "code": "invalid_field_value",
+              "rule_id": "MN-35",
+              "field": "aliases"
+            },
+            {
+              "code": "invalid_field_value",
+              "rule_id": "MN-128",
+              "field": "tags"
+            }
+          ]
+        },
+        {
+          "path": "Unsafe.md",
+          "results": [
+            {
+              "code": "invalid_field_value",
+              "rule_id": "MN-82",
+              "field": "aliases"
+            }
+          ]
+        }
       ]
     }
   }

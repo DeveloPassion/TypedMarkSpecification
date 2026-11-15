@@ -5,7 +5,8 @@
     "rules": [
       "FDR-140",
       "CM-619",
-      "CM-620"
+      "CM-620",
+      "QRY-3"
     ],
     "query": {
       "specification_version": "0.1.0",
@@ -24,6 +25,18 @@
       "rows": [],
       "skipped": [
         "Notes/URI.md"
+      ],
+      "skipped_details": [
+        {
+          "path": "Notes/URI.md",
+          "results": [
+            {
+              "code": "invalid_field_value",
+              "rule_id": "FDR-140",
+              "field": "homepage"
+            }
+          ]
+        }
       ]
     }
   },
@@ -32,7 +45,8 @@
     "query_version": "0.1.0",
     "rules": [
       "CM-619",
-      "CM-620"
+      "CM-620",
+      "QRY-3"
     ],
     "query": {
       "specification_version": "0.1.0",
@@ -53,6 +67,48 @@
       "skipped": [
         "Notes/Source.md",
         "Notes/URI.md"
+      ],
+      "skipped_details": [
+        {
+          "path": "Notes/Source.md",
+          "results": [
+            {
+              "code": "invalid_field_value",
+              "rule_id": "FDR-140",
+              "field": "homepage"
+            },
+            {
+              "code": "invalid_field_value",
+              "rule_id": "FDR-140",
+              "field": "authority_uri"
+            },
+            {
+              "code": "invalid_field_value",
+              "rule_id": "FDR-140",
+              "field": "raw_uri"
+            },
+            {
+              "code": "invalid_field_value",
+              "rule_id": "FDR-140",
+              "field": "relative_uri"
+            },
+            {
+              "code": "invalid_note_link",
+              "rule_id": "NL-6",
+              "field": "reference"
+            }
+          ]
+        },
+        {
+          "path": "Notes/URI.md",
+          "results": [
+            {
+              "code": "invalid_field_value",
+              "rule_id": "FDR-140",
+              "field": "homepage"
+            }
+          ]
+        }
       ]
     }
   }
