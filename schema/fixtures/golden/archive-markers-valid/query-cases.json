@@ -1,0 +1,120 @@
+[
+  {
+    "name": "folder-marker-archives-unstored-note",
+    "query_version": "0.1.0",
+    "rules": [
+      "ARC-4",
+      "ARC-6",
+      "ARC-8",
+      "CM-365",
+      "CM-388"
+    ],
+    "query": {
+      "specification_version": "0.1.0",
+      "note_types": [
+        "project"
+      ],
+      "where": {
+        "kind": "all",
+        "predicates": [
+          {
+            "kind": "field",
+            "field": "archived",
+            "operator": "equals",
+            "value": true
+          },
+          {
+            "kind": "field",
+            "field": "archived",
+            "operator": "exists",
+            "value": false
+          }
+        ]
+      },
+      "select": [
+        {
+          "kind": "path",
+          "as": "path"
+        },
+        {
+          "kind": "field",
+          "field": "archived",
+          "as": "archived"
+        }
+      ],
+      "order_by": [
+        {
+          "column": "path",
+          "direction": "asc"
+        }
+      ]
+    },
+    "expected_result": {
+      "evaluation": "complete",
+      "rows": [
+        {
+          "path": "Archives/Projects/2026/Rollout.md",
+          "archived": null
+        }
+      ]
+    }
+  },
+  {
+    "name": "unmatched-note-stays-active",
+    "query_version": "0.1.0",
+    "rules": [
+      "ARC-6",
+      "ARC-8",
+      "CM-365"
+    ],
+    "query": {
+      "specification_version": "0.1.0",
+      "note_types": [
+        "project"
+      ],
+      "where": {
+        "kind": "all",
+        "predicates": [
+          {
+            "kind": "field",
+            "field": "archived",
+            "operator": "equals",
+            "value": false
+          },
+          {
+            "kind": "field",
+            "field": "archived",
+            "operator": "exists",
+            "value": false
+          }
+        ]
+      },
+      "select": [
+        {
+          "kind": "path",
+          "as": "path"
+        },
+        {
+          "kind": "field",
+          "field": "archived",
+          "as": "archived"
+        }
+      ],
+      "order_by": [
+        {
+          "column": "path",
+          "direction": "asc"
+        }
+      ]
+    },
+    "expected_result": {
+      "evaluation": "complete",
+      "rows": [
+        {
+          "path": "Projects/Launch.md",
+          "archived": null
+        }
+      ]
+    }
+  }
+]

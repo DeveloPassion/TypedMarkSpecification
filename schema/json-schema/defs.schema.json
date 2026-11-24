@@ -1499,6 +1499,35 @@
         "$ref": "#/$defs/frontmatter_predicate"
       }
     },
+    "when_block": {
+      "$comment": "The when block of a kind: fixed note-type mapping (CM-94 to CM-113), reused by archive_markers (ARC-2).",
+      "type": "object",
+      "minProperties": 1,
+      "properties": {
+        "path": {
+          "type": "object",
+          "minProperties": 1,
+          "properties": {
+            "equals": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "under": {
+              "type": "string",
+              "minLength": 2,
+              "pattern": "/$"
+            },
+            "regex": {
+              "$ref": "#/$defs/non_empty_string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "frontmatter": {
+          "$ref": "#/$defs/frontmatter_predicate_block"
+        }
+      },
+      "additionalProperties": false
+    },
     "condition_rule": {
       "$comment": "Field-name resolution against the effective frontmatter is a semantic check.",
       "type": "object",

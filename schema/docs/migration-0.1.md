@@ -87,6 +87,7 @@ No migration is needed; each item is new optional syntax.
 | Note re-typing with a `typedmark-preserved` block (optional writer contract) | [Note Re-typing](../../note-retyping.md) |
 | Edit fidelity, link-preserving renames and moves, and re-filing (optional writer contract) | [Edits and Renames](../../edits-and-renames.md) |
 | `typedmark:items`: `rows: items` queries with one read-only row per task item, `item` predicates and projections, and the notes an item links to (`links`) | [Task Items](../../items.md) |
+| `typedmark:archive-markers`: `archive_markers` in `typedmark.md` derive effective `archived` from the note's path and stored frontmatter when the note does not store `archived` | [Archive Markers](../../archive-markers.md) |
 | Lifecycle `states` on fields with allowed values | [Field Definition Reference](../../field-definition-reference.md#states) |
 | Automation `add_list_item`, `remove_list_item`, `set_field.only_if_empty`, `set_field.value_from`, and `when` predicates `older_than` and `state`, with `to_state` / `from_state` change predicates | [Automation Rules](../../automation-artifacts.md#automation-rules) |
 | Optional name affixes (`optional: true` on `note_name_prefix` / `note_name_suffix`) | [Storage Rules](../../note-type-schemas.md#storage-rules) |

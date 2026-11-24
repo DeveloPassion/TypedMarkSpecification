@@ -62,6 +62,7 @@ New here? Read the [Manifesto](manifesto.md) for the why, then follow [Getting S
 - [Schema Reuse](schema-reuse.md) and [Property Sets](property-sets.md): optional inheritance, shared blocks, and conditional constraints
 - [Portable Queries](queries.md) and [Datasets and Views](datasets-and-views.md): optional querying and presentation contracts
 - [Task Items](items.md): optional queries over checklist items inside note bodies
+- [Archive Markers](archive-markers.md): optional archived state from a note's folder or stored values
 - [Expressions](expressions.md) and [Authoring](authoring.md): optional derivation, extra generators, and immutability
 - [Template Tracking](template-tracking.md) and [Content Expansion](content-expansion.md): optional tracked and derived body content
 - [Automation Artifacts](automation-artifacts.md), [Automation Runtime](automation-runtime.md), and [Automation Interchange](automation-reports.md): optional automation declarations and execution

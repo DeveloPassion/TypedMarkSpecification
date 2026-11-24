@@ -74,6 +74,7 @@ const SPEC_PAGES = [
   "property-sets.md",
   "queries.md",
   "items.md",
+  "archive-markers.md",
   "datasets-and-views.md",
   "expressions.md",
   "authoring.md",

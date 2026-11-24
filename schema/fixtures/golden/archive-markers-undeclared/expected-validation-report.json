@@ -1,0 +1,26 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [
+    {
+      "code": "path",
+      "severity": "error",
+      "path": "Archives/Projects/2026/Rollout.md",
+      "rule_id": "NTS-146",
+      "message": "Expected managed-note path Projects/<free name>.md",
+      "note_type": "project"
+    },
+    {
+      "code": "invalid_extension_declaration",
+      "severity": "error",
+      "path": "typedmark.md",
+      "rule_id": "EXT-16",
+      "message": "This construct requires typedmark:archive-markers",
+      "extension": "typedmark:archive-markers"
+    }
+  ]
+}

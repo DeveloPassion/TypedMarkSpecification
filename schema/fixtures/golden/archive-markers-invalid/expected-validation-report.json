@@ -1,0 +1,30 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {
+    "typedmark:archive-markers": "0.1.0"
+  },
+  "evaluated_extensions": {
+    "typedmark:archive-markers": "0.1.0"
+  },
+  "valid": false,
+  "results": [
+    {
+      "code": "path",
+      "severity": "error",
+      "path": "Archives/Projects/2025/Rollout.md",
+      "rule_id": "NTS-146",
+      "message": "Expected managed-note path Archives/Projects/2026/<free name>.md",
+      "note_type": "project"
+    },
+    {
+      "code": "path",
+      "severity": "error",
+      "path": "Archives/Projects/2026/Kept.md",
+      "rule_id": "NTS-146",
+      "message": "Expected managed-note path Projects/<free name>.md",
+      "note_type": "project"
+    }
+  ]
+}

@@ -211,6 +211,13 @@ marker. `note-link-fragment-invalid` rejects raw Unicode, spaces and punctuation
 under NL-6; those links do not create relationship instances.
 `note-link-fragment-suppressed` retains query blocking with displayed findings off.
 
+`archive-markers-valid` archives a note by its folder without a stored
+`archived` value, and its query cases select it by the derived value.
+`archive-markers-invalid` shows that the archive storage still checks the year
+folder, and that a stored `archived: false` wins over the marker.
+`archive-markers-undeclared` uses markers without their extension: they are
+reported and not applied.
+
 `inline-lexer-unicode-valid` keeps code-contained links excluded beside escaped
 astral characters, including a backslash before a code span's closing delimiter
 and links inside HTML-contained prose. `inline-lexer-backticks-invalid` exposes a

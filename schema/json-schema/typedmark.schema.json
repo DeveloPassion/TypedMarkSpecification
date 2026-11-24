@@ -217,6 +217,14 @@
       },
       "additionalProperties": false
     },
+    "archive_markers": {
+      "$comment": "typedmark:archive-markers (ARC-2). Each entry is a note-type mapping when block; regex dialect and the extension declaration are semantic checks.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "defs.schema.json#/$defs/when_block"
+      }
+    },
     "note_type_mappings": {
       "type": "array",
       "minItems": 1,
@@ -314,32 +322,7 @@
                 "$ref": "defs.schema.json#/$defs/slug"
               },
               "when": {
-                "type": "object",
-                "minProperties": 1,
-                "properties": {
-                  "path": {
-                    "type": "object",
-                    "minProperties": 1,
-                    "properties": {
-                      "equals": {
-                        "$ref": "defs.schema.json#/$defs/non_empty_string"
-                      },
-                      "under": {
-                        "type": "string",
-                        "minLength": 2,
-                        "pattern": "/$"
-                      },
-                      "regex": {
-                        "$ref": "defs.schema.json#/$defs/non_empty_string"
-                      }
-                    },
-                    "additionalProperties": false
-                  },
-                  "frontmatter": {
-                    "$ref": "defs.schema.json#/$defs/frontmatter_predicate_block"
-                  }
-                },
-                "additionalProperties": false
+                "$ref": "defs.schema.json#/$defs/when_block"
               }
             },
             "additionalProperties": false

@@ -82,6 +82,8 @@ descriptors are covered by their descriptor schemas, and the core-defined
   relationship predicate variants; direct and mapped projection variants;
   mapped source shapes; ordering, grouping, count-range, and limit shapes;
   the `rows` mode and `item` predicate and projection shapes
+- the `archive_markers` list in collection configuration, each entry a `when`
+  block with the shape of a `kind: fixed` note-type mapping
 - dataset keys, nested query shape, row-identity grammar, and saved-view keys,
   embedded-query or dataset-reference exclusivity, presented-field entries,
   layout families, and board-, tree-, calendar-, and timeline-layout configuration
@@ -133,7 +135,8 @@ These rules are normative but cannot (or should not) be expressed in JSON Schema
   inverse-field pairing and back-links, `depends_on` acyclicity, plain-data
   system YAML (`SCE-159`), `capture_h2`
   naming a declared heading, heading
-  rules, storage-path conformance including archived state
+  rules, storage-path conformance including archived state, and the archived
+  state that `archive_markers` derive
 - link-value interpretation: [Note Links](../../note-links.md#link-parsing)
   owns internal-link fragment syntax, UTF-8 percent decoding and anchors;
   [Field Definition Reference](../../field-definition-reference.md#format)

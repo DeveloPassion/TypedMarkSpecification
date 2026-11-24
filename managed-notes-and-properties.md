@@ -142,6 +142,7 @@ applicable declared contracts.
 
 Deletion and archiving are independent flags. For example, an archived note can
 also be logically deleted without losing its identity or being removed from disk.
+The [Archive Markers](archive-markers.md) extension can derive `archived` from a note's folder.
 
 Rules:
 

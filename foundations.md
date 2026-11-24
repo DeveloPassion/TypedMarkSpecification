@@ -323,6 +323,7 @@ The authoritative contract for each governed element and cross-tool runtime surf
 | Expressions and extended authoring | [Expressions](expressions.md), [Authoring](authoring.md) |
 | Queries | [Queries](queries.md) |
 | Task items in note bodies | [Task Items](items.md) |
+| Archived state from paths or stored values | [Archive Markers](archive-markers.md) |
 | Validation reports and conformance | [Conformance](conformance-and-roadmap.md) |
 | Automation execution and reports | [Runtime](automation-runtime.md), [Reports](automation-reports.md) |
 | Catalog | [Marketplace Catalog](marketplace-catalog.md) |

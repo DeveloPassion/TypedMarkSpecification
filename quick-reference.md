@@ -105,6 +105,7 @@ This page is non-normative. It maps terms and tasks to the sections that govern 
 | explain sections and route quick captures | heading entries `{text, description}` and `headings.capture_h2` | [Heading rules](relationships-headings-and-templates.md#heading-rules) |
 | enforce the H1 matches the title | `headings.require_h1_title: true` | [Heading rules](relationships-headings-and-templates.md#heading-rules) |
 | soft-delete or archive a note | core fields `deleted` / `archived` | [Core-defined fields](managed-notes-and-properties.md#core-defined-frontmatter-field-names) |
+| treat notes in an archive folder as archived without storing `archived` | `archive_markers` with a `path.under` entry | [Archive Markers](archive-markers.md) |
 | give a note alternative link names | core field `aliases` | [Core-defined fields](managed-notes-and-properties.md#core-defined-frontmatter-field-names) |
 | publish my setup for others | declare `version` and `scaffold`; list it in a marketplace | [Systems](systems-composition-evolution.md) |
 | let an agent repair a finding safely | a result's `fix` action | [Validation Reports](conformance-and-roadmap.md#validation-reports) |

@@ -15,7 +15,8 @@
     "ES": { "page": "effective-schema.md", "last": 10 },
     "QRY": { "page": "queries.md", "last": 4 },
     "ER": { "page": "edits-and-renames.md", "last": 18 },
-    "ITM": { "page": "items.md", "last": 19 }
+    "ITM": { "page": "items.md", "last": 19 },
+    "ARC": { "page": "archive-markers.md", "last": 12 }
   },
   "relocations": {
     "FDR-249": "field-conversions.md",
