@@ -75,6 +75,7 @@ No migration is needed; each item is new optional syntax.
 | Addition | Owner |
 | --- | --- |
 | Reasons for left-out notes: a query evaluation that reports them lists, beside the unchanged list of paths (`CM-620`), at least one finding per note, and a presenting tool shows the first (`QRY-3`, `QRY-4`); `CM-619` to `CM-621` keep their meaning | [Portable Queries](../../queries.md#descriptor-and-evaluation-surface) |
+| Unreadable notes: a query evaluation also reports, apart from the left-out notes, the notes whose frontmatter cannot be parsed and whose type therefore cannot be known, with their reasons, and a presenting tool shows how many (`QRY-5`, `QRY-6`); `CM-619` to `CM-621` keep their meaning | [Portable Queries](../../queries.md#descriptor-and-evaluation-surface) |
 | `extensions` declarations with exact versions, and capability-scoped `evaluation`, `required_extensions`, and `evaluated_extensions` in reports | [Extensions and Capabilities](../../extensions.md), [Conformance](../../conformance-and-roadmap.md#validation-reports) |
 | Core-defined managed-note fields (`note_type`, `id`, `deleted`, `archived`, `aliases`, `tags`, `title`, `description`, `created_at`, `updated_at`) | [Managed Notes and Properties](../../managed-notes-and-properties.md) |
 | New `validation_defaults` keys for the added diagnostic categories, including `inverse_mismatch` (default `warn`) | [Collection Model](../../collection-model.md) |

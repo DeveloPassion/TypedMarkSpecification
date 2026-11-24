@@ -1,0 +1,31 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_note_frontmatter",
+      "severity": "error",
+      "path": "Inbox/Broken.md",
+      "rule_id": "MN-118",
+      "message": "Flow sequence in block collection must be sufficiently indented and end with a ] at line 2, column 1:\n\nstatus: [\n\n^\n"
+    },
+    {
+      "code": "invalid_note_frontmatter",
+      "severity": "error",
+      "path": "Tasks/Duplicate.md",
+      "rule_id": "MN-118",
+      "message": "Map keys must be unique at line 2, column 1:\n\ntags: [type/task]\ntags: [type/task]\n^\n"
+    },
+    {
+      "code": "invalid_note_frontmatter",
+      "severity": "error",
+      "path": "Tasks/Unclosed.md",
+      "rule_id": "MN-118",
+      "message": "Flow sequence in block collection must be sufficiently indented and end with a ] at line 3, column 1:\n\nstatus: [\n\n^\n"
+    }
+  ]
+}

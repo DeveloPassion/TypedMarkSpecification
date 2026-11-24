@@ -80,6 +80,8 @@ Rules:
 - `CM-621` Notes left out under `CM-619` MUST NOT by themselves make a dataset, saved view, or content expansion invalid or its evaluation incomplete, and a tool presenting the remaining rows SHOULD show how many notes were left out.
 - `QRY-3` A tool that reports the notes left out under `CM-619` SHOULD report at least one reason for each, as a finding with the `code`, `rule_id`, `message`, and, when one applies, `field` of a validation-report result, listed under the note's normalized collection-relative path in the order of `CM-620`.
 - `QRY-4` A tool presenting the remaining rows SHOULD show the first reason for each left-out note it names, not only how many notes were left out.
+- `QRY-5` A query evaluation SHOULD report, separately from the notes left out under `CM-619`, the normalized collection-relative paths of the collection notes whose frontmatter cannot be parsed and that no note-type mapping associates without it, once each in path order, each with at least one reason in the shape of `QRY-3`.
+- `QRY-6` Notes reported under `QRY-5` MUST NOT by themselves make a dataset, saved view, or content expansion invalid or its evaluation incomplete, and a tool presenting the remaining rows SHOULD show how many of them it could not read and the first reason for each it names.
 - `CM-309` An omitted top-level `note_types` MUST admit every candidate note type.
 - `CM-310` A present top-level `note_types` MUST be a non-empty list of unique concrete or abstract note-type identifiers.
 - `CM-311` Every note-type identifier in a query MUST resolve to exactly one concrete or abstract note type.
