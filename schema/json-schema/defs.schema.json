@@ -52,9 +52,13 @@
       "type": "string",
       "pattern": "^[a-z][a-z0-9_]*$"
     },
+    "nested_field_name": {
+      "type": "string",
+      "pattern": "^[a-z][a-zA-Z0-9_]*$"
+    },
     "dotted_field_path": {
       "type": "string",
-      "pattern": "^[a-z][a-z0-9_]*(?:\\.[a-z][a-z0-9_]*)*$"
+      "pattern": "^[a-z][a-z0-9_]*(?:\\.[a-z][a-zA-Z0-9_]*)*$"
     },
     "collection_name": {
       "type": "string",
@@ -352,7 +356,7 @@
         "fields": {
           "type": "object",
           "propertyNames": {
-            "$ref": "#/$defs/field_name"
+            "$ref": "#/$defs/nested_field_name"
           },
           "additionalProperties": {
             "$ref": "#/$defs/nested_field_definition"

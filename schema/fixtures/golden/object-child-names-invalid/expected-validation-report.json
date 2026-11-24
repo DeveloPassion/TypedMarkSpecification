@@ -1,0 +1,28 @@
+{
+  "specification_version": "0.1.0",
+  "mode": "instantiated_collection",
+  "evaluation": "complete",
+  "required_extensions": {},
+  "evaluated_extensions": {},
+  "valid": false,
+  "results": [
+    {
+      "code": "invalid_field_value",
+      "severity": "error",
+      "path": "Tasks/Broken.md",
+      "rule_id": "FDR-15",
+      "message": "time_entries must satisfy the datetime value contract",
+      "note_type": "task",
+      "field": "time_entries"
+    },
+    {
+      "code": "unknown_field",
+      "severity": "warn",
+      "path": "Tasks/Broken.md",
+      "rule_id": "MN-112",
+      "message": "time_entries.0.pomodoroId is not declared",
+      "note_type": "task",
+      "field": "time_entries.pomodoroId"
+    }
+  ]
+}

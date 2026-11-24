@@ -84,12 +84,14 @@ and defaults can provide effective values, without stored frontmatter.
 
 Field declarations name top-level note properties or children of an `object`.
 For example, `reviewed_at` is a valid declaration name, while `reviewed-at` is
-not. Unknown stored properties follow the unknown-field policy rather than
-being silently renamed.
+not. A child of an `object` can also use lower camel case, such as
+`startTime`. Unknown stored properties follow the unknown-field policy rather
+than being silently renamed.
 
 Rules:
 
-- `MN-25` A declared field name MUST match `^[a-z][a-z0-9_]*$` as a complete string.
+- `MN-25` A declared top-level field name MUST match `^[a-z][a-z0-9_]*$` as a complete string.
+- `MN-322` A field name declared in an `object.fields` mapping MUST match `^[a-z][a-zA-Z0-9_]*$` as a complete string.
 - `MN-29` A field name MUST be unique within the `frontmatter` or `object.fields` mapping declaring it.
 - `MN-33` Repeated declarations of the same field name through supported reuse mechanisms merge under the [Property Sets](property-sets.md) rules rather than creating distinct fields.
 
