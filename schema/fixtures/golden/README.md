@@ -219,10 +219,12 @@ folder, and that a stored `archived: false` wins over the marker.
 reported and not applied.
 
 `query-unreadable-notes` types tasks by tag and holds two tasks whose
-frontmatter cannot be parsed, so their type cannot be known: queries report
-them under `unreadable` (`QRY-5`) and never in `skipped`, even with a type
-filter. A note typed by its folder with broken frontmatter is still left out
-and listed in `skipped` (`CM-619`). The expected report lists each
+frontmatter cannot be parsed, so their type cannot be known: queries that admit
+tasks report them under `unreadable` (`QRY-5`), never in `skipped`, because
+they lie in the task storage folder (`QRY-7`). A query over captures does not
+name them, and a broken note in `Books/`, which no type stores, is named by no
+query. A note typed by its folder with broken frontmatter is still left out and
+listed in `skipped` (`CM-619`). The expected report lists each
 `invalid_note_frontmatter` finding, which is what allows these notes in a
 golden collection.
 
