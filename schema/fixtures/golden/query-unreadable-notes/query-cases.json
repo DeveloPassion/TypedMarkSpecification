@@ -1,0 +1,156 @@
+[
+  {
+    "name": "unreadable-notes-are-reported-apart",
+    "query_version": "0.1.0",
+    "rules": [
+      "CM-619",
+      "CM-620",
+      "QRY-3",
+      "QRY-5",
+      "QRY-6",
+      "QRY-7",
+      "MN-118"
+    ],
+    "query": {
+      "specification_version": "0.1.0",
+      "select": [
+        {
+          "kind": "path",
+          "as": "path"
+        }
+      ]
+    },
+    "expected_result": {
+      "evaluation": "complete",
+      "rows": [
+        {
+          "path": "Tasks/Open.md"
+        }
+      ],
+      "skipped": [
+        "Inbox/Broken.md"
+      ],
+      "skipped_details": [
+        {
+          "path": "Inbox/Broken.md",
+          "results": [
+            {
+              "code": "invalid_note_frontmatter",
+              "rule_id": "MN-118"
+            }
+          ]
+        }
+      ],
+      "unreadable": [
+        {
+          "path": "Tasks/Duplicate.md",
+          "results": [
+            {
+              "code": "invalid_note_frontmatter",
+              "rule_id": "MN-118"
+            }
+          ]
+        },
+        {
+          "path": "Tasks/Unclosed.md",
+          "results": [
+            {
+              "code": "invalid_note_frontmatter",
+              "rule_id": "MN-118"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "unreadable-notes-follow-the-storage-folders",
+    "query_version": "0.1.0",
+    "rules": [
+      "CM-313",
+      "QRY-5",
+      "QRY-6",
+      "QRY-7"
+    ],
+    "query": {
+      "specification_version": "0.1.0",
+      "note_types": [
+        "task"
+      ],
+      "select": [
+        {
+          "kind": "path",
+          "as": "path"
+        }
+      ]
+    },
+    "expected_result": {
+      "evaluation": "complete",
+      "rows": [
+        {
+          "path": "Tasks/Open.md"
+        }
+      ],
+      "unreadable": [
+        {
+          "path": "Tasks/Duplicate.md",
+          "results": [
+            {
+              "code": "invalid_note_frontmatter",
+              "rule_id": "MN-118"
+            }
+          ]
+        },
+        {
+          "path": "Tasks/Unclosed.md",
+          "results": [
+            {
+              "code": "invalid_note_frontmatter",
+              "rule_id": "MN-118"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "unreadable-notes-outside-the-admitted-folders-are-not-named",
+    "query_version": "0.1.0",
+    "rules": [
+      "CM-313",
+      "CM-619",
+      "QRY-5",
+      "QRY-7"
+    ],
+    "query": {
+      "specification_version": "0.1.0",
+      "note_types": [
+        "capture"
+      ],
+      "select": [
+        {
+          "kind": "path",
+          "as": "path"
+        }
+      ]
+    },
+    "expected_result": {
+      "evaluation": "complete",
+      "rows": [],
+      "skipped": [
+        "Inbox/Broken.md"
+      ],
+      "skipped_details": [
+        {
+          "path": "Inbox/Broken.md",
+          "results": [
+            {
+              "code": "invalid_note_frontmatter",
+              "rule_id": "MN-118"
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

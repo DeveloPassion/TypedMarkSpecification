@@ -218,6 +218,16 @@ folder, and that a stored `archived: false` wins over the marker.
 `archive-markers-undeclared` uses markers without their extension: they are
 reported and not applied.
 
+`query-unreadable-notes` types tasks by tag and holds two tasks whose
+frontmatter cannot be parsed, so their type cannot be known: queries that admit
+tasks report them under `unreadable` (`QRY-5`), never in `skipped`, because
+they lie in the task storage folder (`QRY-7`). A query over captures does not
+name them, and a broken note in `Books/`, which no type stores, is named by no
+query. A note typed by its folder with broken frontmatter is still left out and
+listed in `skipped` (`CM-619`). The expected report lists each
+`invalid_note_frontmatter` finding, which is what allows these notes in a
+golden collection.
+
 `inline-lexer-unicode-valid` keeps code-contained links excluded beside escaped
 astral characters, including a backslash before a code span's closing delimiter
 and links inside HTML-contained prose. `inline-lexer-backticks-invalid` exposes a

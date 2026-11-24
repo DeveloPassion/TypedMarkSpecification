@@ -25,7 +25,7 @@
  */
 
 import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { basename, extname, join } from "node:path";
+import { basename, extname, join, relative, sep } from "node:path";
 import { Ajv2020, type ValidateFunction } from "ajv/dist/2020";
 import { Lexer, type Token } from "marked";
 import { isMap, parse as parseYaml, parseDocument } from "yaml";
@@ -344,6 +344,18 @@ function wellFormedRequirement(id: string, version: unknown): boolean {
   return !!requirementValidator({ [id]: version });
 }
 
+/** Collection-relative paths for which the expected report lists an `invalid_note_frontmatter` result. */
+export function expectedUnparseablePaths(report: unknown): Set<string> {
+  const results = objectValue(report)?.results;
+  if (!Array.isArray(results)) return new Set();
+  return new Set(
+    results
+      .map((result) => objectValue(result))
+      .filter((result) => result?.code === "invalid_note_frontmatter" && typeof result.path === "string")
+      .map((result) => result!.path as string),
+  );
+}
+
 export function validateExpectedReportCoverage(report: unknown, collection: unknown, label: string, failures: string[]): void {
   const reportObject = objectValue(report);
   const collectionObject = objectValue(collection);
@@ -617,10 +629,13 @@ export function validateGoldenVectors(validators: Record<string, ValidateFunctio
       }
     }
 
+    // A note may have unparseable frontmatter only when the expected report says so (MN-118).
+    const unparseable = expectedUnparseablePaths(report);
     for (const markdownPath of collectFiles(collectionRoot).filter((path) => extname(path) === ".md")) {
       try {
         extractFrontmatter(readUtf8File(markdownPath), false);
       } catch (error) {
+        if (unparseable.has(relative(collectionRoot, markdownPath).split(sep).join("/"))) continue;
         failures.push(`golden/${vector}/${basename(markdownPath)}: ${error instanceof Error ? error.message : String(error)}`);
       }
     }

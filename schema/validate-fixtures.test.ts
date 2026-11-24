@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { cpSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { buildValidators, validateExamples, validateGoldenVectors } from "./validate-fixtures";
 
@@ -246,5 +246,39 @@ describe("golden query cases", () => {
   test("rejects stale rule references and mismatched projected columns", () => {
     expect(checkQueryCases([{ ...queryCase, rules: ["CM-999999"] }]).join("\n")).toContain("rule");
     expect(checkQueryCases([{ ...queryCase, expected_result: { evaluation: "complete", rows: [{ wrong: 1 }] } }]).join("\n")).toContain("columns");
+  });
+});
+
+describe("golden notes with unparseable frontmatter", () => {
+  function check(expectFinding: boolean): string[] {
+    const root = join(import.meta.dir, `.fixture-test-${crypto.randomUUID()}`);
+    try {
+      const vector = join(root, "core-valid");
+      cpSync(join(import.meta.dir, "fixtures", "golden", "core-valid"), vector, { recursive: true });
+      writeFileSync(join(vector, "collection", "Broken.md"), "---\nstatus: [\n---\n");
+      if (expectFinding) {
+        const reportPath = join(vector, "expected-validation-report.json");
+        const report = JSON.parse(readFileSync(reportPath, "utf8"));
+        report.valid = false;
+        report.results = [
+          ...report.results,
+          { code: "invalid_note_frontmatter", severity: "error", path: "Broken.md", rule_id: "MN-118", message: "Unclosed flow sequence" },
+        ];
+        writeFileSync(reportPath, JSON.stringify(report));
+      }
+      const failures: string[] = [];
+      validateGoldenVectors(validators, failures, root);
+      return failures;
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  }
+
+  test("fails when the expected report does not list the note", () => {
+    expect(check(false).join("\n")).toContain("Broken.md");
+  });
+
+  test("passes when the expected report lists invalid_note_frontmatter for the note (MN-118)", () => {
+    expect(check(true)).toEqual([]);
   });
 });
